@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Pequeña introducción a la creación de plugins para munin">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Munin: creando plugins | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/munin-plugins/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Pequeña introducción a la creación de plugins para munin">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/munin/" title="Munin" type="text/html">
+<link rel="next" href="/blog/selectores-css/" title="Selectores CSS" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Munin: creando plugins">
+<meta property="og:url" content="http://magmax.org/blog/munin-plugins/">
+<meta property="og:description" content="Pequeña introducción a la creación de plugins para munin">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2013-08-30T00:00:00+00:00">
+<meta property="article:updated" content="2013-08-30T00:00:00">
+<meta property="article:tag" content="munin">
+<meta property="article:tag" content="sysadmin">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Pequeña introducción a la creación de plugins para munin">
+<meta name="twitter:url" content="http://magmax.org//blog/munin-plugins/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/munin-plugins/" class="u-url">Munin: creando plugins</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2013-08-30T00:00:00+00:00" title="2013-08-30">2013-08-30</time>
+                // <time class="updated dt-updated" datetime="2013-08-30T00:00:00" title="2013-08-30">2013-08-30</time></p>
+              <p class="commentline">            <a href="/blog/munin-plugins/#disqus_thread" data-disqus-identifier="cache/posts/munin-plugins.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>En el <a href="/blog/munin" title="Munin">artículo anterior</a> vimos las características de <a href="http://munin-monitoring.org/" title="Munin page">Munin</a>; en esta ocasión veremos cómo adaptarlo a nuestras necesidades escribiendo plugins específicos para nosotros.</p>
+<p>Los plugins pueden escribirse en cualquier lenguaje. Veremos la estructura básica, independiente del lenguaje en el que lo escribamos.</p>
+<!-- TEASER_END -->
+
+<h2 id="lo-basico">Lo básico</h2>
+<p>Un plugin para munin debe escribir sus resultados por la salida estándar. Lo importante es cumplir varias condiciones:</p>
+<ol>
+<li>La ejecución debe ser <strong>rápida</strong>. Pensad que se lanzará al menos una vez por minuto y que, si tarda demasiado, Munin asumirá que ha fallado.</li>
+<li>No debe consumir muchos recursos. Cuantos más requiera, más influirá el observador en lo observado.</li>
+</ol>
+<p>Además, un plugin puede recibir un parámetro, indicando el tipo de operación que se requiere. Vamos a ver qué parámetros hay, cuáles son obligatorios y cuáles opcionales. Podéis encontrarlos todos en <a href="http://munin-monitoring.org/wiki/ConcisePlugins" title="The Concise guide to plugin authoring">The Concise guide to plugin authoring</a>, aquí sólo comentaré los más importantes:</p>
+<h3 id="sin-parametros">Sin parámetros</h3>
+<p>Obligatorio. La llamada más básica es sin parámetros. <a href="http://munin-monitoring.org/" title="Munin page">Munin</a> llamará así a sus plugins cuando le interese recoger las mediciones.</p>
+<p>Su estructura es la siguiente:</p>
+<pre class="code literal-block">[métrica].value [valor]
+</pre>
+
+
+<p>Nuestro plugin podrá devolver varias líneas como ésa, con una métrica por línea. Ejemplo:</p>
+<pre class="code literal-block">load.value 7.8890
+memory.value 84.321
+</pre>
+
+
+<h3 id="config">config</h3>
+<p>Obligatorio. Cuando se llame a nuestro plugin con el parámetro "config", significa que munin nos pregunta qué valores vamos a devolver. La estructura básica puede ser la siguiente:</p>
+<pre class="code literal-block">graph_title [Título de nuestro gráfico]
+graph_category [Categoría en la que clasificar nuestro gráfico]
+graph_vlabel [Etiqueta del eje vertical]
+[métrica].label [Etiqueta de la métrica]
+</pre>
+
+
+<h3 id="autoconf">autoconf</h3>
+<p>Opcional. Devolverá "yes" cuando el plugin detecte que se cumplen todas las condiciones para poder ejecutarse. Por ejemplo, un plugin que toma mediciones de Jenkins podría detectar si Jenkins está instalado.</p>
+<p>En caso de que no se cumplan estas condiciones, devolverá <strong>"no. [razón]"</strong>, de manera que la razón aparezca cuando ejecutemos <code>munin-node-configure</code>, como vimos en el <a href="/blog/munin" title="Munin">artículo anterior</a>.</p>
+<p>Para utilizar esta característica, debemos añadir en un comentario las cadenas:</p>
+<pre class="code literal-block">#%# family=auto
+#%# capabilities=autoconf
+</pre>
+
+
+<h3 id="suggest">suggest</h3>
+<p>Opcional. Munin suele crear un gráfico por plugin, pero en ocasiones podemos necesitar más: un plugin que comprueba un puerto podría comprobar varios; varias interfaces de red en lugar de una, etc.</p>
+<p>Para que funcione, requiere encontrar en el código la cadena "#%# capabilities=suggest", aunque podemos aprovechar la de <code>autoconf</code>, separándolo con espacios:</p>
+<pre class="code literal-block">#%# capabilities=autoconf suggest
+</pre>
+
+
+<p>Al llamarlo con esta opción, el plugin debe imprimir qué recursos puede atender. Al llamarlo sin parámetros, el plugin tomará un parámetro extra de su propio nombre, por lo que deberemos llamarlo "plugin_parámetro". Ejemplo:</p>
+<pre class="code literal-block">if_ suggest
+eth0
+eth1
+</pre>
+
+
+<p>En este ejemplo podríamos configurar los plugins "if_eth0" e "if_eth1". Mirad el apartado de instalación para terminar de entenderlo.</p>
+<h2 id="instalacion">Instalación</h2>
+<p>Para instalar nuestro plugin, basta con copiarlo con los plugins de <a href="http://munin-monitoring.org/" title="Munin page">Munin</a>, en el directorio <code>/usr/share/munin/plugins</code>. Una vez hecho esto, existen dos opciones:</p>
+<ul>
+<li>Si nuestro plugin admite "autoconf", podemos instalarlo tal y como se explicó en el <a href="/blog/munin" title="Munin">artículo anterior</a>:</li>
+</ul>
+<pre class="code literal-block"><span class="nv">$ </span>munin-node-configure --suggest --remove-also --shell <span class="p">|</span> bash
+</pre>
+
+
+<ul>
+<li>
+<p>Si no es así, podemos crear un enlace a mano en el directorio <code>/etc/munin/plugins</code>. En este caso, debemos tener dos cosas en cuenta:</p>
+<ul>
+<li>Si más tarde usamos <code>munin-node-configure</code>, el enlace se borrará.</li>
+<li>Si acepta la opción <code>suggest</code>, deberíamos crear los enlaces con el parámetro que se requiere. Ejemplo:</li>
+</ul>
+</li>
+</ul>
+<pre class="code literal-block"><span class="nv">$ </span>ls -l /etc/munin/plugins/if_*
+if_eth0 -&gt; /usr/share/munin/plugins/if_
+if_wlan0 -&gt; /usr/share/munin/plugins/if_
+</pre>
+
+
+<h2 id="multigraficos">Multigráficos</h2>
+<p>En ocasiones puede interesarnos generar varios gráficos desde un único plugin en lugar de provocar varias llamadas al mismo con distintos argumentos. Por ejemplo, si estamos obteniendo información de los trabajos de Jenkins, es absurdo (y lento) solicitarle dos veces la misma información a Jenkins. Por eso podemos generar dos gráficos desde el mismo plugin.</p>
+<p>Para ello debemos alterar la salida de las mediciones y de la configuración, añadiendo en ambas <code>multigraph [nombre del gráfico]</code> al comienzo de cada gráfico. El "nombre del gráfico" debe coincidir en la configuración y los valores.</p>
+<h2 id="ejemplo-completo-en-bash">Ejemplo completo en bash</h2>
+<p>Veamos un ejemplo completo en bash: Un pequeño plugin que muestra el estado de la cola en Jenkins. Soportará <code>autoconf</code>:</p>
+<pre class="code literal-block"><span class="c">#!/bin/sh</span>
+
+<span class="nv">JENKINS_URL</span><span class="o">=</span>http://localhost:8080
+
+<span class="c">#%# family=auto</span>
+<span class="c">#%# capabilities=autoconf</span>
+
+<span class="k">case</span> <span class="nv">$1</span> in
+    config<span class="o">)</span>
+        cat <span class="s">&lt;&lt;'EOM'</span>
+<span class="s">graph_title Jenkins queue</span>
+<span class="s">graph_category Jenkins</span>
+<span class="s">graph_vlabel jobs</span>
+<span class="s">load.label Num of Jobs</span>
+<span class="s">EOM</span>
+    <span class="p">;;</span>
+    autoconf<span class="o">)</span>
+        <span class="k">if</span> <span class="o">[[</span> <span class="k">$(</span>wget -q <span class="nv">$JENKINS_URL</span><span class="k">)</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span> <span class="nb">echo</span> <span class="s2">"no. Jenkins is not running"</span><span class="p">;</span>
+        <span class="k">else</span> <span class="nb">echo</span> <span class="s2">"yes"</span>
+        <span class="k">fi</span>
+    <span class="p">;;</span>
+    *<span class="o">)</span>
+        <span class="nb">echo</span> -n <span class="s2">"jobs.value "</span>
+        wget <span class="s2">"</span><span class="nv">$JENKINS_URL</span><span class="s2">/queue/api/json?pretty=true&amp;tree=items[id]"</span> -O - -q<span class="p">|</span>grep <span class="s1">'"id"'</span><span class="p">|</span>wc -l
+    <span class="p">;;</span>
+<span class="k">esac</span>
+</pre>
+
+
+<h2 id="mas-informacion">Más información</h2>
+<p>Tenéis más información en la página de <a href="http://munin-monitoring.org/" title="Munin page">Munin</a>, en concreto <a href="http://munin-monitoring.org/wiki/HowToWritePlugins" title="How to write Munin plugins">cómo escribir plugins</a> y todos sus enlaces.</p>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2013-08-30T00:00:00+00:00" title="2013-08-30">2013-08-30</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/munin/" rel="tag">munin</a>
+                <a class="label label-primary p-category" href="/categories/sysadmin/" rel="tag">sysadmin</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/munin/" rel="prev" title="Munin">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/selectores-css/" rel="next" title="Selectores CSS">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/munin-plugins/",
+        disqus_title="Munin: creando plugins",
+        disqus_identifier="cache/posts/munin-plugins.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Creación de un pequeño framework web utilizando exclusivamente la librería estándar de Python">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Micro-framework web en Python | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/micro-web-framework-en-python/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Creación de un pequeño framework web utilizando exclusivamente la librería estándar de Python">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/usando-git3/" title="Usando Git(3): Internals" type="text/html">
+<link rel="next" href="/blog/webviews-en-el-escritorio/" title="WebViews en el escritorio" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Micro-framework web en Python">
+<meta property="og:url" content="http://magmax.org/blog/micro-web-framework-en-python/">
+<meta property="og:description" content="Creación de un pequeño framework web utilizando exclusivamente la librería estándar de Python">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2013-12-01T00:00:00+00:00">
+<meta property="article:updated" content="2013-12-01T00:00:00">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="web">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Creación de un pequeño framework web utilizando exclusivamente la librería estándar de Python">
+<meta name="twitter:url" content="http://magmax.org//blog/micro-web-framework-en-python/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/micro-web-framework-en-python/" class="u-url">Micro-framework web en Python</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2013-12-01T00:00:00+00:00" title="2013-12-01">2013-12-01</time>
+                // <time class="updated dt-updated" datetime="2013-12-01T00:00:00" title="2013-12-01">2013-12-01</time></p>
+              <p class="commentline">            <a href="/blog/micro-web-framework-en-python/#disqus_thread" data-disqus-identifier="cache/posts/micro-web-framework-en-python.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>En esta ocasión necesito un pequeño servidor web. Nada de otro mundo. Poco más que el <a href="http://docs.python.org/2/library/simplehttpserver.html">SimpleHTTPServer</a>. Podría utilizar <a href="http://www.tornadoweb.org/en/stable/">tornado</a>, <a href="https://www.djangoproject.com/">django</a>, <a href="http://bottlepy.org/docs/dev/">bottle</a> o cualquiera de tantos... Pero no necesito tanta parafernalia y no quiero añadir más dependencias.</p>
+<p>Y como parece que hoy en día todo el mundo tiene que crearse su propio <em>framework</em> web, pues aquí está el mío, ea.</p>
+<p>Debo admitir que he aprendido muchas cosas sobre por qué se hacen como se hacen los otros <em>frameworks</em>.</p>
+<p>En próximos artículos encontraremos usos para este <em>micro-framework</em>.</p>
+<!-- TEASER_END -->
+
+<h2 id="lanzando-el-servidor">Lanzando el servidor</h2>
+<p>Venga, al lío. Éste será mi programa principal:</p>
+<pre class="code literal-block"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">server_address</span> <span class="o">=</span> <span class="p">(</span><span class="s">''</span><span class="p">,</span> <span class="mi">8001</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s">'serving at'</span><span class="p">,</span> <span class="n">server_address</span>
+    <span class="n">httpd</span> <span class="o">=</span> <span class="n">HTTPServer</span><span class="p">(</span><span class="n">server_address</span><span class="p">,</span> <span class="n">HTTPRequestHandler</span><span class="p">)</span>
+    <span class="n">httpd</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
+</pre>
+
+
+<p>Línea a línea:</p>
+<ul>
+<li>sólo se ejecuta cuando es el programa principal y no cuando se ha importado.</li>
+<li>creo la dirección donde escucharé: <strong>localhost</strong> y puerto <strong>8001</strong>.</li>
+<li>Imprimo el puerto en el que estoy escuchando (que después tengo mogollón de historias y no sé dónde está cada cual).</li>
+<li>Creo mi servidor HTTP. Las peticiones las gestionará <code>HTTPRequestHandler</code>, que veremos más adelante.</li>
+<li>Y a esperar eventos para siempre.</li>
+</ul>
+<p>Y eso es todo lo que necesita mi programa principal. Vamos a gestionar las peticiones.</p>
+<h2 id="manejando-peticiones">Manejando peticiones</h2>
+<p>Vamos a implementar ahora la clase <code>HTTPRequestHandler</code> que dejé colgada. Su función será la de un <strong>router</strong>, es decir, debe decidir quién va a gestionar la <code>HTTPRequest</code>.</p>
+<p>Así que me voy a asociar expresiones regulares con manejadores, lo que resulta bastante sencillote. Para ello usaré una variable de clase. Hay maneras más bonitas de hacerlo... Pero me vale y no alarga el ejemplo:</p>
+<pre class="code literal-block"><span class="k">class</span> <span class="nc">HTTPRequestHandler</span><span class="p">(</span><span class="n">BaseHTTPRequestHandler</span><span class="p">):</span>
+    <span class="n">HANDLERS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">'/'</span><span class="p">),</span> <span class="n">Example</span><span class="p">),</span>
+        <span class="p">]</span>
+</pre>
+
+
+<p>Como estoy heredando de <code>BaseHTTPRequestHandler</code> (que está en el módulo <code>BaseHTTPServer</code>, como luego veremos), debería implementar algún método de tipo <em>callback</em>, como <code>do_GET</code>:</p>
+<pre class="code literal-block"><span class="k">class</span> <span class="nc">HTTPRequestHandler</span><span class="p">(</span><span class="n">BaseHTTPRequestHandler</span><span class="p">):</span>
+    <span class="n">HANDLERS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">'/'</span><span class="p">),</span> <span class="n">Example</span><span class="p">),</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">do_GET</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">regex</span><span class="p">,</span> <span class="n">clazz</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">HANDLERS</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+                <span class="n">handler</span> <span class="o">=</span> <span class="n">clazz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="n">handler</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">handler</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="n">httplib</span><span class="o">.</span><span class="n">NOT_FOUND</span><span class="p">)</span>
+</pre>
+
+
+<p>No os asustéis que no es para tanto. Además, seguro que ya controláis mogollón gracias al <a href="/blog/python-avanzado">tutorial avanzado de Python</a>.</p>
+<p>El método <code>do_GET</code> hace uso de muchas variables que ya nos proporciona <code>BaseHTTPRequestHandler</code>. Nada más empezar, lee el <code>path</code>, que contiene URL completa. Hago uso de la librería estándar de Python con el método <code>urlparse.urlparse</code> que me divide la URL en sus distintas partes.</p>
+<p>Ahora recorro el vector de expresiones regulares intentando que alguna de ellas encaje con el <strong>path</strong>. Por ejemplo, si mi URL era <em>"http://www.example.org/any/thing"</em>, <code>url.path</code> contendrá sólo <em>"/any/thing"</em>, que es lo que comparo con la URL.</p>
+<p>Si la expresión regular tuvo éxito, creo un objeto del tipo asociado (<code>clazz</code>), pasándole la petición (es decir, la propia clase); llamo al método <code>get</code> del objeto que acabo de crear y me adelanto a lo que os enseñaré después llamando al método de finalización.</p>
+<p>Si ninguna expresión regular se ajusta a la solicitud, lanzo un 404.</p>
+<p>Sólo me queda asegurarme de que todas las clases asociadas a una expresión regular tienen, al menos, los métodos <code>get()</code> y <code>finish()</code> y que admiten la <code>HTTPRequest</code> en su inicializador.</p>
+<h2 id="los-handlers">Los Handlers</h2>
+<p>Así que me voy a crear un manejador básico:</p>
+<pre class="code literal-block"><span class="k">class</span> <span class="nc">Handler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request</span> <span class="o">=</span> <span class="n">request</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">write</span>
+
+    <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="n">httplib</span><span class="o">.</span><span class="n">OK</span><span class="p">)</span>
+        <span class="n">encoding</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getfilesystemencoding</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s">"Content-type"</span><span class="p">,</span> <span class="s">"text/html; charset=</span><span class="si">%s</span><span class="s">"</span> <span class="o">%</span> <span class="n">encoding</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s">"Content-Length"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">length</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">end_headers</span><span class="p">()</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">wfile</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</pre>
+
+
+<p>El constructor hace 3 cosas importantes, para 3 líneas que tiene:</p>
+<ul>
+<li>se guarda la <code>HTTPRequest</code> para luego</li>
+<li>inicializa el búfer de salida. He decidido utilizar un <code>StringIO</code>, que se maneja como si fuera un fichero.</li>
+<li>liga un método de clase a un método de mi búfer.</li>
+</ul>
+<p>¿Cómo? ¿Que liga qué?</p>
+<p>Sí, acordaos que <a href="http://python.org/">Python</a> funciona básicamente como un mogollón de tablas <em>Hash</em>, así que si proporciono un elemento <code>callable</code> que pertenece a mi clase, es como si añadiera un método. Esa línea es equivalente a lo siguiente:</p>
+<pre class="code literal-block">    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre>
+
+
+<p>Pero es mucho más sencillo, ¿no? Además, es algo más rápida porque no añade un nivel de llamadas a función.</p>
+<p>El método <code>finish()</code> rebobina mi búfer, y lo manda como respuesta con un código 200, es decir, <strong>OK</strong>. La clase <code>BaseHTTPRequestHandler</code> es horrible y me obliga a un montón de parafernalias, como veis.</p>
+<p>Finalmente añado el método <code>get()</code> que es abstracto y tendré que sobreescribir.</p>
+<h2 id="todo-el-codigo">Todo el código</h2>
+<p>Y es todo lo que necesito... bueno, casi. Falta el temita de las plantillas, pero mi framework está terminado. Veamos todo el código junto:</p>
+<pre class="code literal-block"><span class="c">#!/usr/bin/env python</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">httplib</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">StringIO</span> <span class="kn">import</span> <span class="n">StringIO</span>
+<span class="kn">from</span> <span class="nn">urlparse</span> <span class="kn">import</span> <span class="n">urlparse</span>
+
+<span class="kn">from</span> <span class="nn">BaseHTTPServer</span> <span class="kn">import</span> <span class="n">HTTPServer</span><span class="p">,</span> <span class="n">BaseHTTPRequestHandler</span>
+
+
+<span class="k">class</span> <span class="nc">Handler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request</span> <span class="o">=</span> <span class="n">request</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">write</span>
+
+    <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="n">httplib</span><span class="o">.</span><span class="n">OK</span><span class="p">)</span>
+        <span class="n">encoding</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getfilesystemencoding</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s">"Content-type"</span><span class="p">,</span> <span class="s">"text/html; charset=</span><span class="si">%s</span><span class="s">"</span> <span class="o">%</span> <span class="n">encoding</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s">"Content-Length"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">length</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">end_headers</span><span class="p">()</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">wfile</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">Handler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">'&lt;html&gt;&lt;body&gt;Hello, world!!&lt;/body&gt;&lt;/html&gt;'</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">HTTPRequestHandler</span><span class="p">(</span><span class="n">BaseHTTPRequestHandler</span><span class="p">):</span>
+    <span class="n">HANDLERS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">'/'</span><span class="p">),</span> <span class="n">Example</span><span class="p">),</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">do_GET</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">urlparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">regex</span><span class="p">,</span> <span class="n">clazz</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">HANDLERS</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+                <span class="n">handler</span> <span class="o">=</span> <span class="n">clazz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="n">handler</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">handler</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_error</span><span class="p">(</span><span class="n">httplib</span><span class="o">.</span><span class="n">NOT_FOUND</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">server_address</span> <span class="o">=</span> <span class="p">(</span><span class="s">''</span><span class="p">,</span> <span class="mi">8001</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s">'serving at'</span><span class="p">,</span> <span class="n">server_address</span>
+    <span class="n">httpd</span> <span class="o">=</span> <span class="n">HTTPServer</span><span class="p">(</span><span class="n">server_address</span><span class="p">,</span> <span class="n">HTTPRequestHandler</span><span class="p">)</span>
+    <span class="n">httpd</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
+</pre>
+
+
+<p>A parte de los <strong>imports</strong>, lo único que se añade aquí es la clase <code>Example</code> que implementa mi pequeño <code>Handler</code> de ejemplo. Para ampliar mi <em>site</em> bastaría con añadir más expresiones regulares y más clases que hereden de <code>Handler</code>.</p>
+<p>También faltaría hacer que gestionara otras acciones HTTP, como POST, HEADER, DELETE, etc... ¿Alguien se atrevería a implementarlo en un comentario de este post? <strong>No debería requierir más de 8 líneas de código</strong>. Repasad el <a href="/blog/python-avanzado">tutorial avanzado de Python</a> y veréis cómo tengo razón.</p>
+<p>La clase de Ejemplo me ha quedado un poquitín fea... Así que voy a crear plantillas.</p>
+<h2 id="anadiendo-plantillas">Añadiendo plantillas</h2>
+<p>Añadiremos lo siguiente:</p>
+<pre class="code literal-block"><span class="kn">from</span> <span class="nn">String</span> <span class="kn">import</span> <span class="n">Template</span>
+
+<span class="n">template_path</span> <span class="o">=</span> <span class="s">'templates'</span>
+
+<span class="k">class</span> <span class="nc">Handler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="c"># Add this method:</span>
+    <span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">template_path</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">template</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">safe_substitution</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+</pre>
+
+
+<p>Con esto podemos crear el archivo 'templates/example.html':</p>
+<pre class="code literal-block"><span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+{greetings}
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre>
+
+
+<p>Y modificamos la clase de ejemplo:</p>
+<pre class="code literal-block"><span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">Handler</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="s">'example.html'</span><span class="p">,</span> <span class="p">{</span><span class="n">greetings</span><span class="p">:</span> <span class="s">'Hello, world!!'</span><span class="p">})</span>
+</pre>
+
+
+<h2 id="posibles-mejoras">Posibles mejoras</h2>
+<p>Hay muchos <em>frameworks</em>. Cada uno tiene unos puntos fuertes y unos débiles. Éste es bastante malo, pero para mis objetivos me basta.</p>
+<p>Éstas son algunas de las ventajas que tienen otros <em>frameworks</em> y que podrían añadirse a éste:</p>
+<ul>
+<li>Sistema de plantillas jerárquicas. Se podría implantar fácilmente utilizando <a href="http://jinja.pocoo.org/">jinja2</a>
+</li>
+<li>Gestión automática argumentos en el GET. Que las expresiones regulares generen grupos que pasan como argumento a la función del GET. Es fácil de implementar.</li>
+<li>Gestión de idiomas, que podría implementarse mediante funciones a las que se llaman desde las plantillas.</li>
+<li>Acceso a BBDD, que podría implementarse con <a href="http://www.sqlalchemy.org/">sqlalchemy</a> y no tendría nada que envidiar al sistema de <a href="https://www.djangoproject.com/">django</a>.</li>
+<li>Entorno de pruebas, aunque se podría utilizar <a href="http://mechanicalcat.net/tech/webunit/">webunit</a>.</li>
+<li>Evitar el uso de <code>BaseHTTPRequestHandler</code>. Temo que su implementación podría ser más eficiente y se podrían ahorrar numerosas llamadas, obteniendo un sistema con mejor rendimiento.</li>
+<li>Gestionar excepciones para enviar mensajes de error con un simple <code>raise</code>.</li>
+<li>Mejorar el log.</li>
+</ul>
+<p>Hay muchas cosas que se pueden hacer, pero hay que saber cuándo parar.</p>
+<p>En futuros artículos veremos al menos dos usos de este micro-framework.</p>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2013-12-01T00:00:00+00:00" title="2013-12-01">2013-12-01</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/python/" rel="tag">python</a>
+                <a class="label label-primary p-category" href="/categories/web/" rel="tag">web</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/usando-git3/" rel="prev" title="Usando Git(3): Internals">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/webviews-en-el-escritorio/" rel="next" title="WebViews en el escritorio">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/micro-web-framework-en-python/",
+        disqus_title="Micro-framework web en Python",
+        disqus_identifier="cache/posts/micro-web-framework-en-python.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

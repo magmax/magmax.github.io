@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Gestión de dominios con AWS Route 53 y comprobación de dominios.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Dominios con AWS Route 53 | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/dominios-con-aws-route-53/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Gestión de dominios con AWS Route 53 y comprobación de dominios.">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/django-no-encuentra-las-css-del-modulo-admin/" title="Django no encuentra las CSS del módulo Admin" type="text/html">
+<link rel="next" href="/blog/sistemas-distribuidos-modernos/" title="Sistemas distribuidos modernos" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Dominios con AWS Route 53">
+<meta property="og:url" content="http://magmax.org/blog/dominios-con-aws-route-53/">
+<meta property="og:description" content="Gestión de dominios con AWS Route 53 y comprobación de dominios.">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2015-12-11T00:00:00+00:00">
+<meta property="article:updated" content="2015-12-11T00:00:00+00:00">
+<meta property="article:tag" content="domain">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Gestión de dominios con AWS Route 53 y comprobación de dominios.">
+<meta name="twitter:url" content="http://magmax.org//blog/dominios-con-aws-route-53/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/dominios-con-aws-route-53/" class="u-url">Dominios con AWS Route 53</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published updated dt-updated" datetime="2015-12-11T00:00:00+00:00" title="2015-12-11">2015-12-11</time></p>
+              <p class="commentline">            <a href="/blog/dominios-con-aws-route-53/#disqus_thread" data-disqus-identifier="cache/posts/dominios-con-aws-route-53.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Recientemente he comenzado a utilizar <a class="reference external" href="https://aws.amazon.com/route53">AWS Route 53</a>. Como era novato, la lié parda y me ha costado bastante reestablecer los valores necesarios para que funcione, pero me ha servido para aprender por el camino :)</p>
+<p>Aquí voy a contar cómo hacer lo que he necesitado: gestionar un dominio con <a class="reference external" href="https://aws.amazon.com/route53">AWS Route 53</a> sin utilizar el hosting de Amazon.</p>
+<p>Si no estáis interesados en <a class="reference external" href="https://aws.amazon.com/route53">Route 53</a> pero sí en cómo comprobar vuestro dominio, podéis saltar directamente a la sección "Comprobando nuestro dominio".</p>
+<!-- TEASER_END -->
+<div class="section" id="solicitando-el-dominio">
+<h2>Solicitando el dominio</h2>
+<p>Lo primero, claro está es solicitar el dominio. Y eso pasa por encontrar un dominio que no esté ya reservado, cosa nada trivial.</p>
+<p>Para ello necesitamos cuenta en AWS, lo que nos regalará un año de hosting en una máquina pequeñita. Podéis aprovechar para guarrear. Desgraciadamente no hay regalos en cuanto al dominio.</p>
+<p>Accederemos a la <a class="reference external" href="https://console.aws.amazon.com/route53/home">consola de Route 53</a> y pulsamos sobre <tt class="docutils literal">Domains</tt>. A continuación sobre <tt class="docutils literal">Register Domain</tt> y buscaremos un dominio libre. Cuando lo tengamos, seguimos las instrucciones, introduciendo nuestros datos y tal.</p>
+<p>Al poco tiempo recibiremos un email diciendo que ya tenemos nuestro dominio disponible.</p>
+</div>
+<div class="section" id="sirviendo-nuestro-site">
+<h2>Sirviendo nuestro site</h2>
+<p>Ahora hay dos cosas que hacer: por un lado, decirle a nuestro hosting que disponemos del nuevo dominio, para que abra firewalls y demás. En mi caso estaba en <a class="reference external" href="https://openshift.redhat.com">OpenShift</a>, pero eso cambia de un hosting a otro. Incluso hay algunos que no requieren este paso.</p>
+<p>Por otra parte, hay que unir el dominio con la dirección de nuestro hosting. Esta parte sí es enteramente <a class="reference external" href="https://aws.amazon.com/route53">Route 53</a>.</p>
+<p>Para ello, y desde la <a class="reference external" href="https://console.aws.amazon.com/route53/home">consola de Route 53</a>,  nos vamos a <tt class="docutils literal">Hosted Zones</tt> (en el menú de la izquierda). Seguramente nos haya creado ya una <strong>hosted zone</strong> con el nombre de nuestro dominio y podemos usarla directamente. Si no es así, podeis leer la siguiente sección.</p>
+<p>Al entrar en la <strong>hosted zone</strong> de nuestro dominio, veremos que hay varias <strong>record set</strong> ya creadas: una de tipo <strong>NS</strong> y otra de tipo <strong>SOA</strong>. Lo que necesitamos es crear un <strong>record set</strong> más (botón <tt class="docutils literal">Create Record Set</tt>).</p>
+<p>Usaremos "www" o "*" como nombre, y el tipo <tt class="docutils literal">CNAME</tt>. No es un <strong>Alias</strong>, <strong>TTL</strong> por defecto, <strong>Routing Policy</strong> de tipo <tt class="docutils literal">Simple</tt>. En <strong>Value</strong> tenemos que poner la ruta que nos dio el proveedor, que suelen ser subdominios de un dominio más largo (algo como <em>blablabla.rhcloud.com</em>).</p>
+<p>Poco después nos llegará un mail y nuestro dominio estará disponible.</p>
+<div class="section" id="creando-el-hosted-zone">
+<h3>Creando el hosted zone</h3>
+<p>Como he dicho, era novato y borré el <strong>hosted zone</strong>, ya que AWS no iba a tener mi <em>hosting</em>... ¡Error! Y encima no encontré la documentación necesaria para reestablecerlo. No es difícil, pero tiene un pequeño truco.</p>
+<p>Lo primero es crear una <strong>hosted zone</strong> con nuestro dominio. No tiene pérdida y ya nos crea las entradas <strong>NS</strong> y <strong>SOA</strong>. No las toquéis, ya que son los servidores de AWS que nos han configurado para con nuestro DNS. Eso sí: apuntáos los servidores asociados al <strong>NS</strong>.</p>
+<p>A continuación volvemos al <tt class="docutils literal">Dashboard</tt> y seleccionamos <tt class="docutils literal">Domains</tt>, eligiendo nuestro dominio. A la derecha veremos los <strong>Name Servers</strong> que están asociados con nuestro dominio y que no coinciden con los de nuestra <strong>hosted zone</strong>, así que es necesario editarlos, eliminar los valores actuales y meter los que nos apuntamos previamente.</p>
+<p>Éste era el paso mágico que no encontré por ningún sitio, y viene a llamarse <strong>configurar el Domain Register</strong>. Hay webs que incluso me mandaban a otros servicios de DNS externos para poder hacer eso.</p>
+<p>Al cabo de un buen rato (incluso una hora) llegará un mail diciendo que está todo bien, y al cabo de aún más rato (unas pocas horas) podremos acceder normalmente.</p>
+</div>
+</div>
+<div class="section" id="comprobando-nuestro-dominio">
+<h2>Comprobando nuestro dominio</h2>
+<p>En cualquier momento podemos comprobar nuestro dominio con la orden <a class="reference external" href="http://linuxcommand.org/man_pages/dig1.html">dig</a> (disponible en el paquete de <a class="reference external" href="http://linuxcommand.org/man_pages/bind1.html">bind</a>).</p>
+<p>Para ver si nuestra <strong>hosted zone</strong> está disponible, basta con coger cualquier servidor del <strong>record set</strong> llamado <strong>NS</strong> (en mi ejemplo, "ns-905.awsdns-49.net") y hacer:</p>
+<pre class="code text"><a name="rest_code_89843b83dd854f13871806d6f6bd9e20-1"></a>$ dig @ns-905.awsdns-49.net example.org
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-2"></a>
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-3"></a>; &lt;&lt;&gt;&gt; DiG 9.10.3 &lt;&lt;&gt;&gt; @ns-905.awsdns-49.net example.org
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-4"></a>; (1 server found)
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-5"></a>;; global options: +cmd
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-6"></a>;; Got answer:
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-7"></a>;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 28833
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-8"></a>;; flags: qr aa rd; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-9"></a>;; WARNING: recursion requested but not available
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-10"></a>
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-11"></a>;; OPT PSEUDOSECTION:
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-12"></a>; EDNS: version: 0, flags:; udp: 4096
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-13"></a>;; QUESTION SECTION:
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-14"></a>;example.org.                  IN      A
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-15"></a>
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-16"></a>;; AUTHORITY SECTION:
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-17"></a>example.org.           900     IN      SOA     ns-905.awsdns-49.net. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-18"></a>
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-19"></a>;; Query time: 26 msec
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-20"></a>;; SERVER: 205.251.195.137#53(205.251.195.137)
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-21"></a>;; WHEN: vie dic 11 10:47:45 CET 2015
+<a name="rest_code_89843b83dd854f13871806d6f6bd9e20-22"></a>;; MSG SIZE  rcvd: 121
+</pre>
+<p>Con esto estamos preguntando directamente al servidor DNS por nuestro dominio.</p>
+<p>Lo siguiente es ver si nuestro dominio ya se ha registrado en los <strong>Name Servers</strong> del mundo mundial, preguntando a otros <strong>Name Servers</strong> que, en principio, no sabían de la existencia de nuestro dominio:</p>
+<pre class="code text"><a name="rest_code_7e78cd32ddc64b628049cb9355091f80-1"></a>$ dig example.org
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-2"></a>
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-3"></a>; &lt;&lt;&gt;&gt; DiG 9.10.3 &lt;&lt;&gt;&gt; example.org
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-4"></a>;; global options: +cmd
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-5"></a>;; Got answer:
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-6"></a>;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 13962
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-7"></a>;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: 1
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-8"></a>
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-9"></a>;; OPT PSEUDOSECTION:
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-10"></a>; EDNS: version: 0, flags:; udp: 512
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-11"></a>;; QUESTION SECTION:
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-12"></a>;example.org.                   IN      A
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-13"></a>
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-14"></a>;; AUTHORITY SECTION:
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-15"></a>example.org.            900     IN      SOA     ns-905.awsdns-49.net. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-16"></a>
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-17"></a>;; Query time: 110 msec
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-18"></a>;; SERVER: 192.168.1.1#53(192.168.1.1)
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-19"></a>;; WHEN: vie dic 11 10:51:14 CET 2015
+<a name="rest_code_7e78cd32ddc64b628049cb9355091f80-20"></a>;; MSG SIZE  rcvd: 121
+</pre>
+<p>Y, finalmente, podemos preguntar por el hosting concreto, con subdominio incluido:</p>
+<pre class="code text"><a name="rest_code_966576be70804fc98c881dac1a07f0f5-1"></a>$ dig www.example.org
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-2"></a>
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-3"></a>; &lt;&lt;&gt;&gt; DiG 9.10.3 &lt;&lt;&gt;&gt; www.example.org
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-4"></a>;; global options: +cmd
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-5"></a>;; Got answer:
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-6"></a>;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 47347
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-7"></a>;; flags: qr rd ra; QUERY: 1, ANSWER: 4, AUTHORITY: 0, ADDITIONAL: 1
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-8"></a>
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-9"></a>;; OPT PSEUDOSECTION:
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-10"></a>; EDNS: version: 0, flags:; udp: 512
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-11"></a>;; QUESTION SECTION:
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-12"></a>;www.example.org.               IN      A
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-13"></a>
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-14"></a>;; ANSWER SECTION:
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-15"></a>www.example.org.        300     IN      CNAME   example-example.rhcloud.com.
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-16"></a>example-example.rhcloud.com. 60     IN      CNAME   ex-std-node724.prod.rhcloud.com.
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-17"></a>ex-whatever.prod.rhcloud.com. 60 IN  CNAME   ec2-whatever.compute-1.amazonaws.com.
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-18"></a>ec2-whatever.compute-1.amazonaws.com. 604800 IN A 92.23.179.44
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-19"></a>
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-20"></a>;; Query time: 160 msec
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-21"></a>;; SERVER: 192.168.1.1#53(192.168.1.1)
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-22"></a>;; WHEN: vie dic 11 10:51:19 CET 2015
+<a name="rest_code_966576be70804fc98c881dac1a07f0f5-23"></a>;; MSG SIZE  rcvd: 179
+</pre>
+<p>Donde se ve toda la ruta necesaria para obtener la IP de nuestro <em>hosting</em>.</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2015-12-11T00:00:00+00:00" title="2015-12-11">2015-12-11</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/domain/" rel="tag">domain</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/django-no-encuentra-las-css-del-modulo-admin/" rel="prev" title="Django no encuentra las CSS del módulo Admin">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/sistemas-distribuidos-modernos/" rel="next" title="Sistemas distribuidos modernos">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/dominios-con-aws-route-53/",
+        disqus_title="Dominios con AWS Route 53",
+        disqus_identifier="cache/posts/dominios-con-aws-route-53.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

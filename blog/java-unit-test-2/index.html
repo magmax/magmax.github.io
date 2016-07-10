@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Unit tests en Java (II) | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/java-unit-test-2/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/java-unit-test/" title="Unit tests en Java" type="text/html">
+<link rel="next" href="/blog/jenkins/" title="Integración continua: Jenkins" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Unit tests en Java (II)">
+<meta property="og:url" content="http://magmax.org/blog/java-unit-test-2/">
+<meta property="og:description" content="En el último artículo comencé a explicar algunas cosas sobre los unit tests en Java. Este artículo comienza donde lo dejamos en el anterior.
+En este caso veremos cómo emplear las TestSuites para poder">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2012-07-16T00:00:00+00:00">
+<meta property="article:updated" content="2012-07-16T00:00:00">
+<meta property="article:tag" content="java testing">
+<meta property="article:tag" content="testing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/java-unit-test-2/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/java-unit-test-2/" class="u-url">Unit tests en Java (II)</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2012-07-16T00:00:00+00:00" title="2012-07-16">2012-07-16</time>
+                // <time class="updated dt-updated" datetime="2012-07-16T00:00:00" title="2012-07-16">2012-07-16</time></p>
+              <p class="commentline">            <a href="/blog/java-unit-test-2/#disqus_thread" data-disqus-identifier="cache/posts/java-unit-test-2.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>En el último artículo comencé a explicar algunas cosas sobre los <a class="reference external" href="/blog/java-unit-test">unit tests en Java</a>. Este artículo comienza donde lo dejamos en el anterior.</p>
+<p>En este caso veremos cómo emplear las TestSuites para poder evolucionar el modelo anterior.</p>
+<!-- TEASER_END -->
+<div class="section" id="el-problema">
+<h2>El problema</h2>
+<p>Como siempre, partimos de un problema y vamos caminando hacia la solución. En este caso vamos a tratar de añadir una nueva funcionalidad a nuestra clase de estadística: vamos a calcular la media de un vector de números.</p>
+<p>Como ya dijimos, trataremos de crear el test primero, siguiendo la práctica de TDD. Veremos también cómo es la necesidad la que nos obliga a tomar ciertas decisiones, y no el azar.</p>
+</div>
+<div class="section" id="primer-problema-proveedores-de-datos">
+<h2>Primer problema: Proveedores de datos.</h2>
+<p>Como hemos dicho, vamos a hacer el test. Esto supone un problema, ya que el test anterior usaba proveedores de datos y eso me ha obligado a cambiar el constructor. Aunque no fuera así, por desgracia se llamaría a la función con los parámetros del proveedor. Ninguna de estas situaciones es buena. Por eso vamos a necesitar utilizar una <tt class="docutils literal">TestSuite</tt>.</p>
+<p>Lo primero que haremos será renombrar nuestra clase <tt class="docutils literal">StatsTest</tt>, ya que no está probando la clase, sino sólo uno de los métodos. Así que es más correcto llamarla <tt class="docutils literal">StatsMedianaTest</tt>:</p>
+<pre class="code java"><a name="rest_code_541111521c6c42e0b96b5032cf5f2654-1"></a><span class="c1">// file src/test/java/org/magmax/stats/StatsMedianaTest.java</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-2"></a><span class="kn">package</span> <span class="nn">org.magmax.stats</span><span class="o">;</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-3"></a>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-4"></a><span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="o">;</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-5"></a><span class="kn">import</span> <span class="nn">java.util.Collection</span><span class="o">;</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-6"></a><span class="kn">import</span> <span class="nn">org.junit.Before</span><span class="o">;</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-7"></a><span class="kn">import</span> <span class="nn">org.junit.Test</span><span class="o">;</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-8"></a><span class="kn">import</span> <span class="nn">org.junit.runner.RunWith</span><span class="o">;</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-9"></a><span class="kn">import</span> <span class="nn">org.junit.runners.Parameterized</span><span class="o">;</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-10"></a><span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">junit</span><span class="o">.</span><span class="na">Assert</span><span class="o">.*;</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-11"></a>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-12"></a><span class="nd">@RunWith</span><span class="o">(</span><span class="n">Parameterized</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-13"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StatsMedianaTest</span> <span class="o">{</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-14"></a>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-15"></a>    <span class="kd">private</span> <span class="n">Stats</span> <span class="n">sut</span><span class="o">;</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-16"></a>    <span class="kd">private</span> <span class="kt">int</span> <span class="n">expected</span><span class="o">;</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-17"></a>    <span class="kd">private</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">;</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-18"></a>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-19"></a>    <span class="nd">@Before</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-20"></a>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setUp</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-21"></a>            <span class="n">sut</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Stats</span><span class="o">();</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-22"></a>    <span class="o">}</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-23"></a>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-24"></a>    <span class="nd">@Parameterized.Parameters</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-25"></a>    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Collection</span> <span class="nf">numbers</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-26"></a>            <span class="k">return</span> <span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="k">new</span> <span class="n">Object</span><span class="o">[][]{</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-27"></a>                                    <span class="o">{</span><span class="mi">0</span><span class="o">,</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[]{}},</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-28"></a>                                    <span class="o">{</span><span class="mi">5</span><span class="o">,</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[]{</span><span class="mi">5</span><span class="o">}},</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-29"></a>                                    <span class="o">{</span><span class="mi">3</span><span class="o">,</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[]{</span><span class="mi">1</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">5</span><span class="o">}},</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-30"></a>                                    <span class="o">{</span><span class="mi">4</span><span class="o">,</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[]{</span><span class="mi">2</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">8</span><span class="o">}},});</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-31"></a>    <span class="o">}</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-32"></a>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-33"></a>    <span class="kd">public</span> <span class="nf">StatsMedianaTest</span><span class="o">(</span><span class="kt">int</span> <span class="n">expected</span><span class="o">,</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">)</span> <span class="o">{</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-34"></a>            <span class="k">this</span><span class="o">.</span><span class="na">expected</span> <span class="o">=</span> <span class="n">expected</span><span class="o">;</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-35"></a>            <span class="k">this</span><span class="o">.</span><span class="na">input</span> <span class="o">=</span> <span class="n">input</span><span class="o">;</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-36"></a>    <span class="o">}</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-37"></a>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-38"></a>    <span class="nd">@Test</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-39"></a>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">testMediana</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-40"></a>            <span class="n">assertEquals</span><span class="o">(</span><span class="n">expected</span><span class="o">,</span> <span class="n">sut</span><span class="o">.</span><span class="na">mediana</span><span class="o">(</span><span class="n">input</span><span class="o">));</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-41"></a>    <span class="o">}</span>
+<a name="rest_code_541111521c6c42e0b96b5032cf5f2654-42"></a><span class="o">}</span>
+</pre>
+<p>Ahora podemos crear una nueva clase llamada <tt class="docutils literal">StatsTest</tt> o bien, directamente, <tt class="docutils literal">StatsSuite</tt>. En este caso dará igual y contendrá una <tt class="docutils literal">suite</tt>; JUnit se encargará de encontrar los tests que tenga dentro:</p>
+<pre class="code java"><a name="rest_code_0d6058aa4cbe4756baa5dc1161da1119-1"></a><span class="c1">// file src/test/java/org/magmax/stats/StatsTest.java</span>
+<a name="rest_code_0d6058aa4cbe4756baa5dc1161da1119-2"></a><span class="kn">package</span> <span class="nn">org.magmax.stats</span><span class="o">;</span>
+<a name="rest_code_0d6058aa4cbe4756baa5dc1161da1119-3"></a>
+<a name="rest_code_0d6058aa4cbe4756baa5dc1161da1119-4"></a><span class="kn">import</span> <span class="nn">org.junit.runner.RunWith</span><span class="o">;</span>
+<a name="rest_code_0d6058aa4cbe4756baa5dc1161da1119-5"></a><span class="kn">import</span> <span class="nn">org.junit.runners.Suite</span><span class="o">;</span>
+<a name="rest_code_0d6058aa4cbe4756baa5dc1161da1119-6"></a>
+<a name="rest_code_0d6058aa4cbe4756baa5dc1161da1119-7"></a>
+<a name="rest_code_0d6058aa4cbe4756baa5dc1161da1119-8"></a><span class="nd">@RunWith</span><span class="o">(</span><span class="n">Suite</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<a name="rest_code_0d6058aa4cbe4756baa5dc1161da1119-9"></a><span class="nd">@Suite.SuiteClasses</span><span class="o">({</span><span class="n">org</span><span class="o">.</span><span class="na">magmax</span><span class="o">.</span><span class="na">stats</span><span class="o">.</span><span class="na">StatsMedianaTest</span><span class="o">.</span><span class="na">class</span><span class="o">})</span>
+<a name="rest_code_0d6058aa4cbe4756baa5dc1161da1119-10"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StatsTest</span> <span class="o">{</span>
+<a name="rest_code_0d6058aa4cbe4756baa5dc1161da1119-11"></a>
+<a name="rest_code_0d6058aa4cbe4756baa5dc1161da1119-12"></a><span class="o">}</span>
+</pre>
+<p>Como podéis comprobar, está vacía. Todo lo que necesitamos se lo estamos dando en una anotación.</p>
+<p>Sin embargo estamos como al principio: no hemos aportado nada. Pero ahora nada impide que creemos una nueva clase y la añadamos a nuestra <tt class="docutils literal">suite</tt>:</p>
+<pre class="code java"><a name="rest_code_a0de32c90938498687c2149d60f05e67-1"></a><span class="c1">// file src/test/java/org/magmax/stats/StatsTest.java</span>
+<a name="rest_code_a0de32c90938498687c2149d60f05e67-2"></a><span class="kn">package</span> <span class="nn">org.magmax.stats</span><span class="o">;</span>
+<a name="rest_code_a0de32c90938498687c2149d60f05e67-3"></a>
+<a name="rest_code_a0de32c90938498687c2149d60f05e67-4"></a><span class="kn">import</span> <span class="nn">org.junit.runner.RunWith</span><span class="o">;</span>
+<a name="rest_code_a0de32c90938498687c2149d60f05e67-5"></a><span class="kn">import</span> <span class="nn">org.junit.runners.Suite</span><span class="o">;</span>
+<a name="rest_code_a0de32c90938498687c2149d60f05e67-6"></a>
+<a name="rest_code_a0de32c90938498687c2149d60f05e67-7"></a>
+<a name="rest_code_a0de32c90938498687c2149d60f05e67-8"></a><span class="nd">@RunWith</span><span class="o">(</span><span class="n">Suite</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<a name="rest_code_a0de32c90938498687c2149d60f05e67-9"></a><span class="nd">@Suite.SuiteClasses</span><span class="o">({</span><span class="n">org</span><span class="o">.</span><span class="na">magmax</span><span class="o">.</span><span class="na">stats</span><span class="o">.</span><span class="na">StatsMedianaTest</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+<a name="rest_code_a0de32c90938498687c2149d60f05e67-10"></a>                     <span class="n">org</span><span class="o">.</span><span class="na">magmax</span><span class="o">.</span><span class="na">stats</span><span class="o">.</span><span class="na">StatsMediaTest</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+<a name="rest_code_a0de32c90938498687c2149d60f05e67-11"></a>                     <span class="o">})</span>
+<a name="rest_code_a0de32c90938498687c2149d60f05e67-12"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StatsTest</span> <span class="o">{</span>
+<a name="rest_code_a0de32c90938498687c2149d60f05e67-13"></a>
+<a name="rest_code_a0de32c90938498687c2149d60f05e67-14"></a><span class="o">}</span>
+</pre>
+<p>Lo que nos obliga a crear la clase <tt class="docutils literal">StatsMediaTest</tt>. Por no alargarme, la creo directamente con proveedor de datos, ya que se ve claramente que lo voy a necesitar:</p>
+<pre class="code java"><a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-1"></a><span class="kn">package</span> <span class="nn">org.magmax.stats</span><span class="o">;</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-2"></a>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-3"></a><span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="o">;</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-4"></a><span class="kn">import</span> <span class="nn">java.util.Collection</span><span class="o">;</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-5"></a><span class="kn">import</span> <span class="nn">org.junit.Before</span><span class="o">;</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-6"></a><span class="kn">import</span> <span class="nn">org.junit.Test</span><span class="o">;</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-7"></a><span class="kn">import</span> <span class="nn">org.junit.runner.RunWith</span><span class="o">;</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-8"></a><span class="kn">import</span> <span class="nn">org.junit.runners.Parameterized</span><span class="o">;</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-9"></a><span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">junit</span><span class="o">.</span><span class="na">Assert</span><span class="o">.*;</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-10"></a>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-11"></a><span class="nd">@RunWith</span><span class="o">(</span><span class="n">Parameterized</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-12"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StatsMediaTest</span> <span class="o">{</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-13"></a>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-14"></a>    <span class="kd">private</span> <span class="n">Stats</span> <span class="n">sut</span><span class="o">;</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-15"></a>    <span class="kd">private</span> <span class="kt">int</span> <span class="n">expected</span><span class="o">;</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-16"></a>    <span class="kd">private</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">;</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-17"></a>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-18"></a>    <span class="nd">@Before</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-19"></a>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setUp</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-20"></a>            <span class="n">sut</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Stats</span><span class="o">();</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-21"></a>    <span class="o">}</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-22"></a>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-23"></a>    <span class="nd">@Parameterized.Parameters</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-24"></a>    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Collection</span> <span class="nf">numbers</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-25"></a>            <span class="k">return</span> <span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="k">new</span> <span class="n">Object</span><span class="o">[][]{</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-26"></a>                                    <span class="o">{</span><span class="mi">0</span><span class="o">,</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[]{}},</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-27"></a>                            <span class="o">});</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-28"></a>    <span class="o">}</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-29"></a>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-30"></a>    <span class="kd">public</span> <span class="nf">StatsMediaTest</span><span class="o">(</span><span class="kt">int</span> <span class="n">expected</span><span class="o">,</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">)</span> <span class="o">{</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-31"></a>            <span class="k">this</span><span class="o">.</span><span class="na">expected</span> <span class="o">=</span> <span class="n">expected</span><span class="o">;</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-32"></a>            <span class="k">this</span><span class="o">.</span><span class="na">input</span> <span class="o">=</span> <span class="n">input</span><span class="o">;</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-33"></a>    <span class="o">}</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-34"></a>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-35"></a>    <span class="nd">@Test</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-36"></a>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">testMedia</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-37"></a>            <span class="n">assertEquals</span><span class="o">(</span><span class="n">expected</span><span class="o">,</span> <span class="n">sut</span><span class="o">.</span><span class="na">media</span><span class="o">(</span><span class="n">input</span><span class="o">));</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-38"></a>    <span class="o">}</span>
+<a name="rest_code_50317043257a4c0ea60c03a55a9f3ea6-39"></a><span class="o">}</span>
+</pre>
+<p>Lo que nos da un error por no tener el método <em>media</em>. Lo creamos:</p>
+<pre class="code java"><a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-1"></a><span class="kn">package</span> <span class="nn">org.magmax.stats</span><span class="o">;</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-2"></a>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-3"></a><span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="o">;</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-4"></a><span class="kn">import</span> <span class="nn">java.util.Collection</span><span class="o">;</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-5"></a><span class="kn">import</span> <span class="nn">org.junit.Before</span><span class="o">;</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-6"></a><span class="kn">import</span> <span class="nn">org.junit.Test</span><span class="o">;</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-7"></a><span class="kn">import</span> <span class="nn">org.junit.runner.RunWith</span><span class="o">;</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-8"></a><span class="kn">import</span> <span class="nn">org.junit.runners.Parameterized</span><span class="o">;</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-9"></a><span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">junit</span><span class="o">.</span><span class="na">Assert</span><span class="o">.*;</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-10"></a>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-11"></a><span class="nd">@RunWith</span><span class="o">(</span><span class="n">Parameterized</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-12"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StatsMediaTest</span> <span class="o">{</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-13"></a>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-14"></a>    <span class="kd">private</span> <span class="n">Stats</span> <span class="n">sut</span><span class="o">;</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-15"></a>    <span class="kd">private</span> <span class="kt">int</span> <span class="n">expected</span><span class="o">;</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-16"></a>    <span class="kd">private</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">;</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-17"></a>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-18"></a>    <span class="nd">@Before</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-19"></a>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setUp</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-20"></a>            <span class="n">sut</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Stats</span><span class="o">();</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-21"></a>    <span class="o">}</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-22"></a>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-23"></a>    <span class="nd">@Parameterized.Parameters</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-24"></a>    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Collection</span> <span class="nf">numbers</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-25"></a>            <span class="k">return</span> <span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="k">new</span> <span class="n">Object</span><span class="o">[][]{</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-26"></a>                                    <span class="o">{</span><span class="mi">0</span><span class="o">,</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[]{}},</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-27"></a>                            <span class="o">});</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-28"></a>    <span class="o">}</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-29"></a>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-30"></a>    <span class="kd">public</span> <span class="nf">StatsMediaTest</span><span class="o">(</span><span class="kt">int</span> <span class="n">expected</span><span class="o">,</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">)</span> <span class="o">{</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-31"></a>            <span class="k">this</span><span class="o">.</span><span class="na">expected</span> <span class="o">=</span> <span class="n">expected</span><span class="o">;</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-32"></a>            <span class="k">this</span><span class="o">.</span><span class="na">input</span> <span class="o">=</span> <span class="n">input</span><span class="o">;</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-33"></a>    <span class="o">}</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-34"></a>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-35"></a>    <span class="nd">@Test</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-36"></a>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">testMedia</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-37"></a>            <span class="n">assertEquals</span><span class="o">(</span><span class="n">expected</span><span class="o">,</span> <span class="n">sut</span><span class="o">.</span><span class="na">media</span><span class="o">(</span><span class="n">input</span><span class="o">));</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-38"></a>    <span class="o">}</span>
+<a name="rest_code_49304cfec23d4e5eb20ee77afe9378cd-39"></a><span class="o">}</span>
+</pre>
+<p>Y volvemos a tener verde.</p>
+</div>
+<div class="section" id="terminando-lo-que-hemos-empezado">
+<h2>Terminando lo que hemos empezado</h2>
+<p>Como todo está explicado, voy directamente con el resultado. Primero el test, claro:</p>
+<pre class="code java"><a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-1"></a><span class="kn">package</span> <span class="nn">org.magmax.stats</span><span class="o">;</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-2"></a>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-3"></a><span class="kn">import</span> <span class="nn">java.util.Arrays</span><span class="o">;</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-4"></a><span class="kn">import</span> <span class="nn">java.util.Collection</span><span class="o">;</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-5"></a><span class="kn">import</span> <span class="nn">org.junit.Before</span><span class="o">;</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-6"></a><span class="kn">import</span> <span class="nn">org.junit.Test</span><span class="o">;</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-7"></a><span class="kn">import</span> <span class="nn">org.junit.runner.RunWith</span><span class="o">;</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-8"></a><span class="kn">import</span> <span class="nn">org.junit.runners.Parameterized</span><span class="o">;</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-9"></a><span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">junit</span><span class="o">.</span><span class="na">Assert</span><span class="o">.*;</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-10"></a>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-11"></a><span class="nd">@RunWith</span><span class="o">(</span><span class="n">Parameterized</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-12"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StatsMediaTest</span> <span class="o">{</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-13"></a>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-14"></a>    <span class="kd">private</span> <span class="n">Stats</span> <span class="n">sut</span><span class="o">;</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-15"></a>    <span class="kd">private</span> <span class="kt">int</span> <span class="n">expected</span><span class="o">;</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-16"></a>    <span class="kd">private</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">;</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-17"></a>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-18"></a>    <span class="nd">@Before</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-19"></a>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setUp</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-20"></a>            <span class="n">sut</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Stats</span><span class="o">();</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-21"></a>    <span class="o">}</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-22"></a>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-23"></a>    <span class="nd">@Parameterized.Parameters</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-24"></a>    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Collection</span> <span class="nf">numbers</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-25"></a>            <span class="k">return</span> <span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span><span class="k">new</span> <span class="n">Object</span><span class="o">[][]{</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-26"></a>                                    <span class="o">{</span><span class="mi">0</span><span class="o">,</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[]{}},</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-27"></a>                                    <span class="o">{</span><span class="mi">5</span><span class="o">,</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[]{</span><span class="mi">5</span><span class="o">}},</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-28"></a>                                    <span class="o">{</span><span class="mi">3</span><span class="o">,</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[]{</span><span class="mi">1</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">5</span><span class="o">}},</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-29"></a>                                    <span class="o">{</span><span class="mi">5</span><span class="o">,</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[]{</span><span class="mi">2</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">6</span><span class="o">,</span> <span class="mi">8</span><span class="o">}},</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-30"></a>                            <span class="o">});</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-31"></a>    <span class="o">}</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-32"></a>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-33"></a>    <span class="kd">public</span> <span class="nf">StatsMediaTest</span><span class="o">(</span><span class="kt">int</span> <span class="n">expected</span><span class="o">,</span> <span class="kt">int</span><span class="o">[]</span> <span class="n">input</span><span class="o">)</span> <span class="o">{</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-34"></a>            <span class="k">this</span><span class="o">.</span><span class="na">expected</span> <span class="o">=</span> <span class="n">expected</span><span class="o">;</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-35"></a>            <span class="k">this</span><span class="o">.</span><span class="na">input</span> <span class="o">=</span> <span class="n">input</span><span class="o">;</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-36"></a>    <span class="o">}</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-37"></a>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-38"></a>    <span class="nd">@Test</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-39"></a>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">testMedia</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-40"></a>            <span class="n">assertEquals</span><span class="o">(</span><span class="n">expected</span><span class="o">,</span> <span class="n">sut</span><span class="o">.</span><span class="na">media</span><span class="o">(</span><span class="n">input</span><span class="o">));</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-41"></a>    <span class="o">}</span>
+<a name="rest_code_8cb612e50eb04b349b0cd806dc07fe63-42"></a><span class="o">}</span>
+</pre>
+<pre class="code java"><a name="rest_code_4cb2af5d623a4de29db2879c5672547d-1"></a><span class="kn">package</span> <span class="nn">org.magmax.stats</span><span class="o">;</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-2"></a>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-3"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Stats</span> <span class="o">{</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-4"></a>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-5"></a>    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">mediana</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-6"></a>            <span class="k">if</span> <span class="o">(</span><span class="n">v</span><span class="o">.</span><span class="na">length</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-7"></a>                    <span class="k">return</span> <span class="mi">0</span><span class="o">;</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-8"></a>            <span class="o">}</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-9"></a>            <span class="k">return</span> <span class="n">v</span><span class="o">[</span><span class="n">getMiddlePosition</span><span class="o">(</span><span class="n">v</span><span class="o">.</span><span class="na">length</span><span class="o">)];</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-10"></a>    <span class="o">}</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-11"></a>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-12"></a>    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">media</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-13"></a>            <span class="k">if</span> <span class="o">(</span><span class="n">v</span><span class="o">.</span><span class="na">length</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-14"></a>                    <span class="k">return</span> <span class="mi">0</span><span class="o">;</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-15"></a>            <span class="o">}</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-16"></a>            <span class="k">return</span> <span class="n">suma</span><span class="o">(</span><span class="n">v</span><span class="o">)/</span><span class="n">v</span><span class="o">.</span><span class="na">length</span><span class="o">;</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-17"></a>    <span class="o">}</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-18"></a>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-19"></a>    <span class="kd">private</span> <span class="kt">int</span> <span class="nf">getMiddlePosition</span><span class="o">(</span><span class="kt">int</span> <span class="n">length</span><span class="o">)</span> <span class="o">{</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-20"></a>            <span class="k">return</span> <span class="o">(</span><span class="kt">int</span><span class="o">)</span> <span class="o">(</span><span class="n">length</span> <span class="o">/</span> <span class="mf">2.00001</span><span class="o">);</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-21"></a>    <span class="o">}</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-22"></a>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-23"></a>    <span class="kd">private</span> <span class="kt">int</span> <span class="nf">suma</span><span class="o">(</span><span class="kt">int</span><span class="o">[]</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-24"></a>            <span class="kt">int</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-25"></a>            <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">x</span> <span class="o">:</span> <span class="n">v</span><span class="o">)</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-26"></a>                    <span class="n">result</span> <span class="o">+=</span> <span class="n">x</span><span class="o">;</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-27"></a>            <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-28"></a>    <span class="o">}</span>
+<a name="rest_code_4cb2af5d623a4de29db2879c5672547d-29"></a><span class="o">}</span>
+</pre>
+<p>Y nuevamente he necesitado una función auxiliar :D</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2012-07-16T00:00:00+00:00" title="2012-07-16">2012-07-16</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/java-testing/" rel="tag">java testing</a>
+                <a class="label label-primary p-category" href="/categories/testing/" rel="tag">testing</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/java-unit-test/" rel="prev" title="Unit tests en Java">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/jenkins/" rel="next" title="Integración continua: Jenkins">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/java-unit-test-2/",
+        disqus_title="Unit tests en Java (II)",
+        disqus_identifier="cache/posts/java-unit-test-2.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

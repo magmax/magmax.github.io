@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Descripción del funcionamiento de DNS y resolución de nombres en Internet">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Cómo funciona Internet | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/como-funciona-internet/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Descripción del funcionamiento de DNS y resolución de nombres en Internet">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/python-distribuido-celery/" title="Python distribuido: Celery" type="text/html">
+<link rel="next" href="/blog/peewee-un-orm-para-python/" title="Peewee, un ORM para Python" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Cómo funciona Internet">
+<meta property="og:url" content="http://magmax.org/blog/como-funciona-internet/">
+<meta property="og:description" content="Descripción del funcionamiento de DNS y resolución de nombres en Internet">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2015-04-02T15:52:28+00:00">
+<meta property="article:updated" content="2015-04-02T15:52:28+00:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Descripción del funcionamiento de DNS y resolución de nombres en Internet">
+<meta name="twitter:url" content="http://magmax.org//blog/como-funciona-internet/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/como-funciona-internet/" class="u-url">Cómo funciona Internet</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published updated dt-updated" datetime="2015-04-02T15:52:28+00:00" title="2015-04-02">2015-04-02</time></p>
+              <p class="commentline">            <a href="/blog/como-funciona-internet/#disqus_thread" data-disqus-identifier="cache/posts/como-funciona-internet.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Recientemente, la Audiencia nacional ha dado un plazo de 72 horas a los proveedores de Internet para <a class="reference external" href="http://lema.rae.es/drae/?val=bloquear">bloquear</a> (<a class="reference external" href="http://lema.rae.es/drae/?val=censurar">censurar</a>) todo acceso a <em>The Pirate Bay</em>:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://www.publico.es/politica/audiencia-nacional-bloquea-acceso-the.html">La Audiencia Nacional bloquea el acceso a The Pirate Bay desde España</a></li>
+<li><a class="reference external" href="http://www.elmundo.es/blogs/elmundo/la-libertad-mas-fragil/2015/03/30/guerra-en-serio-contra-la-pirateria.html">Guerra en serio contra la piratería</a></li>
+<li><a class="reference external" href="http://lacoalicion.es/2015/03/27/bloqueado-el-acceso-a-the-pirate-bay-en-espana/">Bloqueado por orden judicial el acceso a The Pirate Bay en España</a></li>
+<li><a class="reference external" href="http://cultura.elpais.com/cultura/2015/03/27/actualidad/1427475690_024090.html">Un juez ordena el bloqueo en España de la web de descargas The Pirate Bay</a></li>
+</ul>
+<p>Éste es un artículo en el que voy a contar cómo se ponen puertas al campo, cómo se ha aplicado esta resolución y, en general, cómo funciona Internet.</p>
+<p>Es algo que podríais encontrar en cualquier libro de redes básico, como comprobaréis los lectores más avanzados.</p>
+<!-- TEASER_END -->
+<div class="section" id="que-pretende-este-articulo">
+<h2>Qué pretende este artículo</h2>
+<p>Mi intención es mostrar cómo funciona Internet y por qué la resolución de la Audiencia Nacional es completamente inútil.</p>
+<p>Este artículo podría tener efectos secundarios:</p>
+<ul class="simple">
+<li>Que no lo lea nadie en absoluto y no pase nada. Ésta es la opción más probable XD</li>
+<li>Que lo lea alguien con autoridad y saquen una ley que realmente prohiba el acceso. Permitidme que lo dude.</li>
+<li>Que me cierren el blog. Lo que demostraría que la ignorancia es su mejor arma y que ni siquiera se lo han leído.</li>
+</ul>
+</div>
+<div class="section" id="que-es-un-dominio">
+<h2>Qué es un dominio</h2>
+<p>Para localizar algo debes saber dónde está. Si quieres mandar una carta a un amigo, necesitas conocer su dirección de correo.</p>
+<p>Como alternativa, tu amigo puede contratar un servicio que consiste en un <em>dirección postal</em>, con el que también se te puede localizar por un número.</p>
+<p>En Internet todo funciona justo al revés. Todo tiene un número, aunque se puede contratar un nombre más sencillo de recordar. Al número se le conoce como <strong>dirección IP</strong> y al nombre, <strong>dominio</strong>.</p>
+<p>Las <strong>direcciones IP</strong> son números de 32 bits, es decir, números entre el 0 y el 4294967295. Como son difíciles de recordar, se dividen en 4 números de 8 bits (del 0 al 255) separados por puntos: 80.92.65.144, por ejemplo. Existen otras direcciones, que son las <strong>direcciones IPv6</strong> y que son números de 64 bits (del 0 al 18446744073709551615), pero no hablaremos de ellas aquí.</p>
+<p>Los <strong>dominios</strong> son nombres en lenguaje natural del tipo 'magmax.org'. Como véis, se trata de un nombre y una <strong>zona de autoridad</strong>. Las <strong>zonas de autoridad</strong> son la última parte de una dirección ('.org', '.com', '.es', ...). Tanto las <strong>zonas de autoridad</strong> como los <strong>dominios</strong> se pueden alquilar de forma anual.</p>
+<p>Una vez se tiene un <strong>dominio</strong>, éste puede apuntar a un conjunto de <strong>direcciones IP</strong> registrándose en un <strong>DNS</strong> (<em>Domain Name Server</em>, o <em>Servidor de nombres de dominio</em>). Los principales servidores <strong>DNS</strong> "hablan" entre ellos para compartir información y que así, cuando alguien intenta acceder a una web, se le ofrezca la <strong>dirección IP</strong> apropiada.</p>
+<p>De esta manera, cuando la Audiencia Nacional solicita el bloqueo de un dominio, lo que está haciendo es impedir que los servidores <strong>DNS</strong> te ofrezcan la <strong>dirección IP</strong> asociada al mismo.</p>
+<p>Pero... ¿Qué ocurre si accedemos a una <strong>dirección IP</strong> directamente? Pues que nos saltamos la resolución de nombres y accedemos al sitio directamente.</p>
+</div>
+<div class="section" id="servidores-web">
+<h2>Servidores web</h2>
+<p>Al otro lado de la comunicación suele haber un <strong>servidor web</strong>. Éstos pueden servir distintos dominios a la vez, de manera que la misma <strong>dirección IP</strong> ofrezca páginas diferentes dependiendo de si se ha accedido mediante un <strong>dominio</strong> u otro.</p>
+<p>Por esta razón es posible que intentéis acceder a una web mediante su <strong>dirección IP</strong> y no obtengáis el resultado esperado.</p>
+<p>Realmente un <strong>servidor web</strong> no es más que un programa que, ante una dirección web devuelve un archivo, habitualmente en lenguaje HTML.</p>
+</div>
+<div class="section" id="en-que-consiste-el-auto-de-la-audiencia-nacional">
+<h2>En qué consiste el Auto de la Audiencia Nacional</h2>
+<p>El Auto de la Audiencia Nacional obliga a los proveedores de Internet a eliminar la correspondencia entre la <strong>dirección IP</strong> y el nombre del <strong>dominio</strong>, de manera que alguien que conozca el dominio no pueda encontrar la dirección IP asociada.</p>
+<p>Mi profesor de redes me explicaba el objetivo inicial de Internet más o menos así:</p>
+<blockquote>
+Lo que querían los americanos era poder seguir mandando misiles aunque les hubieran bombardeado sus principales centros de comunicaciones</blockquote>
+<p>Es fácil ver que ambos objetivos son opuestos. ¿Quién creéis que ganará?</p>
+</div>
+<div class="section" id="como-se-resuelve-una-direccion">
+<h2>Cómo se resuelve una dirección</h2>
+<p>Como ya hemos dicho, mediante un <strong>DNS</strong>. Pero eso no es del todo cierto.</p>
+<p>El <strong>host</strong> (vuestro ordenador, vaya) trata primero de encontrar el dominio en el archivo <a class="reference external" href="http://es.wikipedia.org/wiki/Archivo_hosts">hosts</a>, que se encuentra en <tt class="docutils literal">/etc/hosts</tt> en sistemas unix,  <tt class="docutils literal"><span class="pre">C:\Windows\System32\drivers\etc\hosts</span></tt> en la mayoría de los Windows, aunque ambos tienen un formato sospechosamente idéntico.</p>
+<p>Si el archivo <a class="reference external" href="http://es.wikipedia.org/wiki/Archivo_hosts">hosts</a> contiene una dirección IP para un dominio determinado, ésta se devuelve sin preguntar al <strong>DNS</strong>. Cualquier máquina contiene una lista de <strong>servidores DNS</strong> a la que consultar cuando el archivo <a class="reference external" href="http://es.wikipedia.org/wiki/Archivo_hosts">hosts</a> no dispone de esa información, que es lo más frecuente.</p>
+<p>Cualquier proveedor de Internet ofrece uno o varios servidores DNS a sus abonados, que donde la Audiencia Nacional ha intervenido. Pero nada impide que dispongas de otros <a class="reference external" href="http://pcsupport.about.com/od/tipstricks/a/free-public-dns-servers.htm">servidores DNS públicos</a>:</p>
+<ul class="simple">
+<li>Google: 8.8.8.8, 8.8.4.4</li>
+<li>Level3: 209.244.0.3, 209.244.0.4</li>
+<li>FreeDNS: 37.235.1.174, 37.235.1.177</li>
+</ul>
+<p>De esta manera es más probable que, dado un nombre de dominio, puedas encontrar la dirección IP asociada. Y la Audiencia Nacional no tiene autoridad sobre ellos.</p>
+<p>Además, existen servicios que nos indican <strong>qué direcciones IP tiene asociadas un DNS</strong> mediante el protocolo <a class="reference external" href="http://es.wikipedia.org/wiki/WHOIS">WHOIS</a>:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://www.whois.net/">https://www.whois.net/</a></li>
+<li><a class="reference external" href="https://who.is/">https://who.is/</a></li>
+<li><a class="reference external" href="http://whois.icann.org/">http://whois.icann.org/</a></li>
+</ul>
+</div>
+<div class="section" id="bloqueando-una-direccion-ip">
+<h2>Bloqueando una dirección IP</h2>
+<p>De la misma forma, existe la opción de bloquear una dirección IP directamente mediante el uso de <strong>firewalls</strong>. Ésta sería una opción más eficaz, pero existen también <strong>direcciones IP dinámicas</strong>, de forma que en cada conexión se asigna una diferente y se cambia el nombre del dominio. Y eso sin contar la opción de crear túneles que permiten saltarse los <strong>firewalls</strong> haciendo uso de comunicaciones permitidas. Así mismo se podrían utilizar <strong>proxies</strong>, que son "espejos" de información, de manera que obtengas acceso a un recurso desde otro distinto.</p>
+<p>En cualquier caso, el servidor web se puede mover a otro dominio, se puede contratar otra dirección IP o se pueden utilizar servidores DNS privados. Habría que tener total control sobre 4294967296 direcciones en IPv4, 18446744073709551616 direcciones en IPv6.</p>
+<p>Si realmente habéis entendido este artículo, entenderéis también que puedes destruir un hormiguero, pero siempre habrá hormigas. Internet se creó para defenderse de aquéllos que intenten atacarla.</p>
+<p>¿Se puede bloquear una web? Sí. Pero creedme que no es suficiente con bloquear el dominio.</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2015-04-02T15:52:28+00:00" title="2015-04-02">2015-04-02</time></span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/python-distribuido-celery/" rel="prev" title="Python distribuido: Celery">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/peewee-un-orm-para-python/" rel="next" title="Peewee, un ORM para Python">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/como-funciona-internet/",
+        disqus_title="C\u00f3mo funciona Internet",
+        disqus_identifier="cache/posts/como-funciona-internet.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

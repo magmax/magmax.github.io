@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Creación de un entorno LAMP (Linux + Apache + MySQL + Php) con puppet en una máquina virtual Vagrant">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>LAMP con Salt | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/lamp-con-salt/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Creación de un entorno LAMP (Linux + Apache + MySQL + Php) con puppet en una máquina virtual Vagrant">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/primeros-pasos-en-angularjs/" title="Primeros pasos en AngularJS" type="text/html">
+<link rel="next" href="/blog/fracasos/" title="Fracasos" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="LAMP con Salt">
+<meta property="og:url" content="http://magmax.org/blog/lamp-con-salt/">
+<meta property="og:description" content="Creación de un entorno LAMP (Linux + Apache + MySQL + Php) con puppet en una máquina virtual Vagrant">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2014-01-22T00:00:00+00:00">
+<meta property="article:updated" content="2014-01-22T00:00:00">
+<meta property="article:tag" content="lamp">
+<meta property="article:tag" content="salt">
+<meta property="article:tag" content="saltstack">
+<meta property="article:tag" content="vagrant">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Creación de un entorno LAMP (Linux + Apache + MySQL + Php) con puppet en una máquina virtual Vagrant">
+<meta name="twitter:url" content="http://magmax.org//blog/lamp-con-salt/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/lamp-con-salt/" class="u-url">LAMP con Salt</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2014-01-22T00:00:00+00:00" title="2014-01-22">2014-01-22</time>
+                // <time class="updated dt-updated" datetime="2014-01-22T00:00:00" title="2014-01-22">2014-01-22</time></p>
+              <p class="commentline">            <a href="/blog/lamp-con-salt/#disqus_thread" data-disqus-identifier="cache/posts/lamp-con-salt.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>De la misma manera que hace unos meses conté cómo crear un entorno <a href="http://es.wikipedia.org/wiki/LAMP">LAMP</a> con <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a>, en esta ocasión haremos lo mismo con <a href="http://www.saltstack.com/">Salt</a>, también conocido como <a href="http://www.saltstack.com/">SaltStack</a>:</p>
+<ul>
+<li>crear una máquina virtual con <a href="http://www.vagrantup.com/" title="Web oficial de Vagrant">Vagrant</a>
+</li>
+<li>configurar <a href="http://www.saltstack.com/">Salt</a>
+</li>
+<li>instalar todo un entorno <a href="http://es.wikipedia.org/wiki/LAMP">LAMP</a> (Linux + Apache + MySQL + Php)</li>
+<li>descargarnos la web de un repositorio remoto <a href="http://git-scm.com/">Git</a>
+</li>
+<li>servir su contenido desde el servidor Apache.</li>
+</ul>
+<p>Y, nuevamente, todo en unos 10 minutos.</p>
+<p>Este artículo va por David P., que me habló de <a href="http://www.saltstack.com/">Salt</a>, José Antonio, que me preguntó por twitter qué sistema es el mejor, y por <a href="https://twitter.com/ricbartm">@ricbartm</a>, con quien estube hablando este viernes sobre <a href="http://www.saltstack.com/">Salt</a> ;)</p>
+<!-- TEASER_END -->
+
+<h2 id="jerarquia">Jerarquía</h2>
+<p>Para facilitaros la vida, ésta es la jerarquía de archivos que vamos a usar:</p>
+<pre class="code literal-block">.
+├── salt
+│   ├── minion
+│   └── roots
+│       └── salt
+│           ├── apache
+│           │   └── init.sls
+│           ├── logrotate
+│           │   └── init.sls
+│           ├── mysql
+│           │   ├── client.sls
+│           │   └── server.sls
+│           ├── ntp
+│           │   └── init.sls
+│           ├── php
+│           │   └── init.sls
+│           ├── php-example
+│           │   └── init.sls
+│           └── top.sls
+└── Vagrantfile
+</pre>
+
+
+<p>Como vereis, voy a instalar también <a href="http://en.wikipedia.org/wiki/Ntpd" title="Demonio Network Time Protocol, para sincronizar nuestra máquina">ntp</a> y <a href="http://linuxcommand.org/man_pages/logrotate8.html" title="Man page de logrotate">logrotate</a>, con el fin de hacer un ejemplo exactamente igual que en el artículo de <a href="/blog/lamp-con-puppet">LAMP con Puppet</a>.</p>
+<h2 id="lectura-rapida">Lectura rápida</h2>
+<p>Resulta que el artículo me ha salido más largo de lo esperado, así que he creado un <a href="https://github.com/magmax/salt-example">repositorio Git con los archivos de este artículo</a>.</p>
+<p>Sé que muchos de mis lectores agradecen artículos pequeños, así que podéis usar el repositorio y saltar directamente a la sección "Al lío". Si queréis ver en detalle alguno de los archivos, podéis ir a su sección más adelante, si lo creéis necesario.</p>
+<h2 id="vagrant">Vagrant</h2>
+<p>Éste es el contenido del archivo <strong>Vagrantfile</strong>:</p>
+<pre class="code literal-block"><span class="c1"># -*- coding:utf-8; tab-width:4; mode:ruby -*-</span>
+<span class="c1"># vi: set ft=ruby :</span>
+
+<span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="s2">"2"</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+
+  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">define</span> <span class="ss">:saltexample</span> <span class="k">do</span> <span class="o">|</span><span class="n">vm_config</span><span class="o">|</span>
+    <span class="n">vm_config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s1">'wheeze64'</span>
+    <span class="n">vm_config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box_url</span> <span class="o">=</span>  <span class="s1">'http://puppet-vagrant-boxes.puppetlabs.com/debian-70rc1-x64-vbox4210.box'</span>
+    <span class="n">vm_config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">host_name</span> <span class="o">=</span> <span class="s1">'salt-example'</span>
+
+    <span class="n">vm_config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">synced_folder</span> <span class="s2">"salt/roots/salt"</span><span class="p">,</span> <span class="s2">"/srv/salt"</span>
+    <span class="n">vm_config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">synced_folder</span> <span class="s2">"salt/roots/pillar"</span><span class="p">,</span> <span class="s2">"/srv/pillar"</span>
+
+    <span class="n">vm_config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">network</span> <span class="ss">:forwarded_port</span><span class="p">,</span> <span class="ss">host</span><span class="p">:</span> <span class="mi">10080</span><span class="p">,</span> <span class="ss">guest</span><span class="p">:</span> <span class="mi">80</span>
+
+    <span class="n">vm_config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="ss">:salt</span> <span class="k">do</span> <span class="o">|</span><span class="n">salt</span><span class="o">|</span>
+      <span class="n">salt</span><span class="o">.</span><span class="n">minion_config</span> <span class="o">=</span> <span class="s2">"salt/minion"</span>
+      <span class="n">salt</span><span class="o">.</span><span class="n">run_highstate</span> <span class="o">=</span> <span class="kp">true</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</pre>
+
+
+<p>Es similar a lo contado en la receta de <a href="/blog/lamp-con-puppet">LAMP con Puppet</a>, y lo explicaré igual de rápido.</p>
+<p>Estoy creando una máquina virtual llamada <em>"wheeze64"</em> y que me la voy a descargar de esa URL. Si ya no es válida, podéis usar cualquier otra <a href="http://www.vagrantbox.es/" title="Lista de Boxes para Vagrant">máquina virtual de la lista</a>. Además la he bautizado como <em>"salt-example"</em>.</p>
+<p>Después me aseguro de que voy a poder acceder a mi servidor web, que estará escuchando en el puerto 80 de la VM, y que estará mapeado con el puerto 10080 de la máquina host.</p>
+<p>En las dos últimas líneas configuro el provisionamiento mediante <a href="http://www.saltstack.com/">Salt</a>.</p>
+<h2 id="salt">Salt</h2>
+<p>El resto de archivos pertenecen a <a href="http://www.saltstack.com/">Salt</a>. Pero antes me gustaría aclarar algunos conceptos.</p>
+<ul>
+<li>
+<strong>minion</strong> es cada una de las máquinas que están bajo el control de <a href="http://www.saltstack.com/">Salt</a>.</li>
+<li>Los <strong>pillars</strong> son configuraciones básicas, los hechos (<strong>facts</strong> en terminología <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a>).</li>
+<li>Los <strong>states</strong> son los estados en los que debe quedar la máquina.</li>
+<li>Un archivo <strong>sls</strong> es un <em>Salt State</em>, y equivale vagamente a un módulo de <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a>.</li>
+<li>
+<a href="http://www.yaml.org/">Yaml</a> es un lenguaje de serialización legible por humanos. Os invito a profundizar un poco más en él si os decidís por <a href="http://www.saltstack.com/">Salt</a>.</li>
+<li>
+<a href="http://jinja.pocoo.org/">jinja2</a> es un lenguaje de plantillas sencillo y potente, muy típico de entornos Python. También deberíais investigarlo.</li>
+</ul>
+<p>Se pueden contar muchas más cosas, pero dejémoslo aquí. Es suficiente para una primera toma de contacto.</p>
+<p>Ahora describiré cada uno de los archivos. Son pequeños y sencillos. Estos archivos son plantillas <a href="http://jinja.pocoo.org/">jinja2</a> que generarán un archivo <a href="http://www.yaml.org/">Yaml</a>, que es la propia configuración. Parece complicado, pero veremos que no lo es tanto.</p>
+<p>El primer archivo a tener en cuenta es <strong>salt/minion</strong>, donde está la configuración genérica:</p>
+<pre class="code literal-block"><span class="n">file_client</span><span class="o">:</span> <span class="n">local</span>
+</pre>
+
+
+<p>Este archivo contiene configuración básica. En este caso se indica que la configuración es local (no hay estructura cliente-servidor).</p>
+<p>El siguiente archivo importante es <strong>salt/roots/salt/top.sls</strong>, que describe cada uno de los <strong>minion</strong>:</p>
+<pre class="code literal-block"><span class="ss">base</span><span class="p">:</span>
+  <span class="s1">'salt-example'</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">ntp</span>
+    <span class="o">-</span> <span class="n">mysql</span><span class="o">.</span><span class="n">client</span>
+    <span class="o">-</span> <span class="n">mysql</span><span class="o">.</span><span class="n">server</span>
+    <span class="o">-</span> <span class="n">apache</span>
+    <span class="o">-</span> <span class="n">php</span>
+    <span class="o">-</span> <span class="n">php</span><span class="o">-</span><span class="n">example</span>
+    <span class="o">-</span> <span class="n">logrotate</span>
+</pre>
+
+
+<p>Aquí se han indicado cada uno de los módulos que se van a instalar en la máquina <strong>salt-example</strong>.</p>
+<h3 id="logrotate">logrotate</h3>
+<p>comencemos por uno de los módulos más sencillos, que se encuentra en <strong>salt/roots/salt/logrotate/init.sls</strong>. Lo primero, aclarar que el archivo <strong>init.sls</strong> es el que se buscará por defecto dentro del módulo. Luego veremos cómo utilizar otros. Éste es el contenido:</p>
+<pre class="code literal-block"><span class="ss">logrotate</span><span class="p">:</span>
+  <span class="ss">pkg</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">installed</span>
+</pre>
+
+
+<p>Realmente estamos seteando propiedades, tales como <code>logrotate.pkg.installed = True</code>. Estas simples instrucciones crean un estado: el paquete <code>logrotate</code> (cogido del nombre del módulo) debe estar instalado.</p>
+<h3 id="ntp">ntp</h3>
+<p>Vamos con algo un poco más difícil, ya que contiene un servicio y el paquete debian no se llama igual que el módulo. El archivo es <strong>salt/roots/salt/ntp/init.sls</strong>:</p>
+<pre class="code literal-block"><span class="ss">ntp</span><span class="p">:</span>
+  <span class="ss">pkg</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">installed</span>
+    <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">ntpdate</span>
+  <span class="ss">service</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">running</span>
+    <span class="o">-</span> <span class="ss">watch</span><span class="p">:</span>
+      <span class="o">-</span> <span class="ss">pkg</span><span class="p">:</span> <span class="n">ntpdate</span>
+</pre>
+
+
+<p>En este caso, el estado creado es: el paquete <code>ntp</code> cuyo paquete debian se llama <code>ntpdate</code> debe estar instalado. Además, hay un servicio que debe estar <code>running</code> y se debe reiniciar cada vez que cambie el paquete <code>ntpdate</code>.</p>
+<p>Veremos que este mismo esquema se repite para cada uno de nuestros módulos.</p>
+<h3 id="php">php</h3>
+<p>Archivo: <strong>salt/roots/salt/php/init.sls</strong></p>
+<pre class="code literal-block"><span class="ss">php5</span><span class="p">:</span>
+  <span class="ss">pkg</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">installed</span>
+
+<span class="n">php5</span><span class="o">-</span><span class="ss">mysql</span><span class="p">:</span>
+  <span class="ss">pkg</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">installed</span>
+
+<span class="sr">/etc/</span><span class="n">php5</span><span class="o">/</span><span class="n">apache2</span><span class="o">/</span><span class="n">php</span><span class="o">.</span><span class="n">ini</span><span class="p">:</span>
+  <span class="n">file</span><span class="o">.</span><span class="n">replace</span><span class="p">:</span>
+    <span class="o">-</span> <span class="ss">pattern</span><span class="p">:</span> <span class="s1">';\s*extension=msql.so'</span>
+    <span class="o">-</span> <span class="ss">repl</span><span class="p">:</span> <span class="s1">'extension=msql.so'</span>
+
+  <span class="nb">require</span><span class="p">:</span>
+    <span class="o">-</span> <span class="ss">pkg</span><span class="p">:</span> <span class="n">php5</span><span class="o">-</span><span class="n">mysql</span>
+</pre>
+
+
+<p>La primera parte ya la hemos visto: se asegura de que tanto los paquetes <code>php5</code> como <code>php5-mysql</code> estén instalados. El último apartado lo que hace es asegurarse de que esté habilitada la extensión de mysql en apache. Para ello reemplaza la extensión comentada por la no comentada. Es un poco <em>tricky</em>, pero funcional.</p>
+<h3 id="apache">apache</h3>
+<p>Vamos con el archivo <strong>salt/roots/salt/apache/init.sls</strong>:</p>
+<pre class="code literal-block"><span class="ss">apache</span><span class="p">:</span>
+  <span class="ss">pkg</span><span class="p">:</span>
+    <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">'apache2'</span>
+    <span class="o">-</span> <span class="n">installed</span>
+  <span class="ss">service</span><span class="p">:</span>
+    <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">'apache2'</span>
+    <span class="o">-</span> <span class="n">running</span>
+    <span class="o">-</span> <span class="ss">watch</span><span class="p">:</span>
+      <span class="o">-</span> <span class="ss">pkg</span><span class="p">:</span> <span class="n">apache2</span>
+
+<span class="n">libapache2</span><span class="o">-</span><span class="n">mod</span><span class="o">-</span><span class="ss">php5</span><span class="p">:</span>
+  <span class="ss">pkg</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">installed</span>
+
+  <span class="nb">require</span><span class="p">:</span>
+    <span class="o">-</span> <span class="ss">pkg</span><span class="p">:</span> <span class="n">apache2</span>
+</pre>
+
+
+<p>Que no contiene nada que no hayamos visto ya.</p>
+<h3 id="mysql">mysql</h3>
+<p>He dividido mysql en dos partes: una que instalará el cliente y otra el servidor. Por eso el módulo no tiene el archivo <strong>init.sls</strong>, sino dos:</p>
+<h4 id="mysqlclient">mysql.client</h4>
+<p>El archivo <strong>salt/roots/salt/mysql/client.sls</strong>:</p>
+<pre class="code literal-block"><span class="n">mysql</span><span class="o">-</span><span class="ss">client</span><span class="p">:</span>
+  <span class="ss">pkg</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">installed</span>
+</pre>
+
+
+<p>Se asegura de que el cliente mysql esté instalado.</p>
+<h4 id="mysqlserver">mysql.server</h4>
+<p>El archivo <strong>salt/roots/salt/mysql/server.sls</strong>:</p>
+<pre class="code literal-block"><span class="n">mysql</span><span class="o">-</span><span class="ss">server</span><span class="p">:</span>
+  <span class="ss">pkg</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">installed</span>
+    <span class="o">-</span> <span class="ss">pkgs</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">mysql</span><span class="o">-</span><span class="n">server</span>
+
+  <span class="ss">service</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">running</span>
+    <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">mysql</span>
+    <span class="o">-</span> <span class="ss">enable</span><span class="p">:</span> <span class="no">True</span>
+    <span class="o">-</span> <span class="nb">require</span><span class="p">:</span>
+      <span class="o">-</span> <span class="ss">pkg</span><span class="p">:</span> <span class="n">mysql</span><span class="o">-</span><span class="n">server</span>
+
+<span class="c1"># Taken from https://github.com/saltstack/salt/issues/5918</span>
+<span class="n">set</span><span class="o">-</span><span class="n">mysql</span><span class="o">-</span><span class="n">root</span><span class="o">-</span><span class="ss">password</span><span class="p">:</span>
+  <span class="n">cmd</span><span class="o">.</span><span class="n">run</span><span class="p">:</span>
+  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">'echo "update user set password=PASSWORD(''secret'') where User=''root'';flush privileges;" | /usr/bin/env HOME=/ mysql -uroot mysql'</span>
+  <span class="o">-</span> <span class="ss">onlyif</span><span class="p">:</span> <span class="s1">'echo | /usr/bin/env HOME=/ mysql -u root'</span>
+  <span class="o">-</span> <span class="nb">require</span><span class="p">:</span>
+    <span class="o">-</span> <span class="ss">service</span><span class="p">:</span> <span class="n">mysql</span><span class="o">-</span><span class="n">server</span>
+    <span class="o">-</span> <span class="ss">pkg</span><span class="p">:</span> <span class="n">mysql</span><span class="o">-</span><span class="n">client</span>
+</pre>
+
+
+<p>Es, quizá, el módulo más complejo de todos. La primera parte ya la hemos visto. La sección <code>set-mysql-root-password</code> lo que hace es establecer la password de root del servidor de mysql. Es muy <em>tricky</em>, pero no he encontrado nada más sencillo.</p>
+<h3 id="php-example">php-example</h3>
+<p>Finalmente, descargamos nuestra página web. Es la misma que usé en el artículo <a href="/blog/lamp-con-puppet">LAMP con Puppet</a> (archivo <strong>salt/roots/salt/mysql/client.sls</strong>):</p>
+<pre class="code literal-block"><span class="ss">https</span><span class="p">:</span><span class="sr">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">magmax</span><span class="o">/</span><span class="n">small_php_example</span><span class="o">.</span><span class="n">git</span><span class="p">:</span>
+  <span class="n">git</span><span class="o">.</span><span class="n">latest</span><span class="p">:</span>
+    <span class="o">-</span> <span class="ss">target</span><span class="p">:</span> <span class="sr">/var/</span><span class="n">www</span><span class="o">/</span><span class="n">example</span>
+</pre>
+
+
+<p>Debo decir que esto es lo que me parece más impresionante de todo el artículo: la sencillez para trabajar con <a href="http://git-scm.com/">Git</a>. Estas tres líneas se descargan el repositorio y comprueban que esté actualizado. Así, sin más.</p>
+<h2 id="al-lio">Al lío</h2>
+<p>Bien, ahora es cuando lanzamos todo:</p>
+<pre class="code literal-block"><span class="nv">$ </span>vagrant up example
+</pre>
+
+
+<p>Y de nuevo podéis conectaros a <a href="http://localhost:10080/example">http://localhost:10080/example</a>, donde os está esperando la lista de tablas de la base de datos <em>mysql</em>, servida con PHP.</p>
+<h3 id="bug-bug">¡Bug! ¡Bug!</h3>
+<p>Supongo que lo corregirán, pero debo advertiros de un bug actual: El provisionamiento <a href="http://www.saltstack.com/">Salt</a> en <a href="http://www.vagrantup.com/" title="Web oficial de Vagrant">Vagrant</a> está un poco verde, y no os mostrará el resultado, ni cuando sea un error. Esto me trajo de cabeza bastante tiempo. La solución es provisionar desde la propia máquina:</p>
+<pre class="code literal-block">salt-example# salt-call --local state.highstate -l info
+</pre>
+
+
+<h2 id="conclusiones">Conclusiones</h2>
+<p>No puedo evitar comparar <a href="http://www.saltstack.com/">Salt</a> con <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a>. Al fin y al cabo he estado usando <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a> desde hace más de dos años. La evolución que he visto en <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a> ha sido desde módulos totalmente específicos de nuestra empresa a módulos genéricos que se pueden cargar con <a href="https://github.com/rodjek/librarian-puppet" title="Proyecto Librarian-Puppet">librarian-puppet</a>, posibilitando configurar <a href="https://projects.puppetlabs.com/projects/hiera">hiera</a> y, así, configurarlo todo mediante <a href="http://www.yaml.org/">Yaml</a> (¿os suena?).</p>
+<p>Hay un montón de módulos para <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a>. De hecho, hay proyectos para crear módulos para <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a>, como <a href="https://github.com/example42">example42</a>. En <a href="http://www.saltstack.com/">Salt</a> hay muchísimos menos, pero la verdad es que no le hacen falta. Se han centrado en lo importante, aunque sí hecho de menos algunas cosas, como configurar <strong>vhosts</strong> de <a href="http://httpd.apache.org/" title="Apache HTTP server">Apache</a> directamente por configuración, en lugar de tener que proporcionar archivos. Pero supongo que estos detalles ya se irán completando.</p>
+<p>También hay que ver otra diferencia: <a href="https://www.ruby-lang.org">Ruby</a> vs <a href="http://python.org">Python</a>. Como bien saben todos los lectores del blog, yo soy más de <a href="http://python.org">Python</a>. De todas maneras, en <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a> se utiliza un DSL bastante interesante, y se ofrece la posibilidad de crear los módulos en <a href="https://www.ruby-lang.org">Ruby</a>. En <a href="http://www.saltstack.com/">Salt</a>, que yo sepa, se crean en <a href="http://python.org">Python</a>. Pero me gustaría que juzgáseis vosotros mismos, comparando dos módulos similares: el <a href="https://github.com/example42/puppet-git/tree/master/manifests">módulo de Git para Puppet</a> y el <a href="https://github.com/saltstack/salt/blob/develop/salt/modules/git.py">módulo de Git para Salt</a>. He elegido éste porque es bastante similar.</p>
+<p>Hay otra diferencia más. Quizá la más importante.</p>
+<p>En <a href="http://www.saltstack.com/">Salt</a> construyeron un sistema para comunicar máquinas y ejecutar comandos simultáneamente en todas ellas. Una especie de <strong>shell</strong> múltiple remota. Sobre esta arquitectura construyeron el equivalente a <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a> que permite hacer lo que se cuenta en este artículo. Esto permite algo que en <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a> han tenido que implementar aparte, que sería <a href="http://puppetlabs.com/mcollective">MCollective</a>.</p>
+<p>Siento no poder comparar cosas como la velocidad, eficiencia, memoria, seguridad, ... En mi opinión no hay una gran diferencia en nada de todo esto, pero no tengo datos. Sinceramente creo que no es lo más importante, ya que ambos necesitarán realizar muchas operaciones de disco para comprobar el estado actual de la máquina, y probablemente esta operación sea similar y se lleve la mayor parte del tiempo y eficiencia.</p>
+<p>Personalmente he decidido usarlo para mis máquinas en casa. La decisión viene por dos razones: porque en la empresa ya estoy usando <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a> y así aprendo algo nuevo, y porque es <a href="http://python.org">Python</a>. Espero no equivocarme.</p>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2014-01-22T00:00:00+00:00" title="2014-01-22">2014-01-22</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/lamp/" rel="tag">lamp</a>
+                <a class="label label-primary p-category" href="/categories/salt/" rel="tag">salt</a>
+                <a class="label label-primary p-category" href="/categories/saltstack/" rel="tag">saltstack</a>
+                <a class="label label-primary p-category" href="/categories/vagrant/" rel="tag">vagrant</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/primeros-pasos-en-angularjs/" rel="prev" title="Primeros pasos en AngularJS">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/fracasos/" rel="next" title="Fracasos">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/lamp-con-salt/",
+        disqus_title="LAMP con Salt",
+        disqus_identifier="cache/posts/lamp-con-salt.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

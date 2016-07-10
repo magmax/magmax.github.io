@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Buenas prácticas en Ansi C (2) | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/buenas-practicas-c-2/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/buenas-practicas-c-1/" title="Buenas prácticas en Ansi C (1)" type="text/html">
+<link rel="next" href="/blog/migrando/" title="Migrando el site: lecciones aprendidas" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Buenas prácticas en Ansi C (2)">
+<meta property="og:url" content="http://magmax.org/blog/buenas-practicas-c-2/">
+<meta property="og:description" content='Tras comentar las "buenas prácticas más básicas en Ansi C":link://slug/buenas-practicas-c-1, veamos ahora las buenas prácticas cuando estamos haciendo una librería, ya sea estática o dinámica.
+En conc'>
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2011-06-18T00:00:00+00:00">
+<meta property="article:updated" content="2011-06-18T00:00:00">
+<meta property="article:tag" content="ansi c">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/buenas-practicas-c-2/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/buenas-practicas-c-2/" class="u-url">Buenas prácticas en Ansi C (2)</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2011-06-18T00:00:00+00:00" title="2011-06-18">2011-06-18</time>
+                // <time class="updated dt-updated" datetime="2011-06-18T00:00:00" title="2011-06-18">2011-06-18</time></p>
+              <p class="commentline">            <a href="/blog/buenas-practicas-c-2/#disqus_thread" data-disqus-identifier="cache/posts/buenas-practicas-c-2.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Tras comentar las "buenas prácticas más básicas en Ansi C":link://slug/buenas-practicas-c-1, veamos ahora las buenas prácticas cuando estamos haciendo una librería, ya sea estática o dinámica.</p>
+<p>En concreto, me centraré en la librería estática y luego pasaré a dar algunas pautas para las dinámicas.</p>
+<!-- TEASER_END -->
+<div class="section" id="encapsulacion">
+<h2>Encapsulación</h2>
+<p>El objetivo de lo que voy a exponer consiste en aislar en la medida de lo posible nuestra librería con el fin de que sea lo más reutilizable posible.</p>
+<p>Veremos cómo proteger a nuestra librería del mal programador, así como al mal programador de nuestra librería :D</p>
+<p>Hay que diferenciar aquí dos tipos de archivos de cabecera: los internos, utilizados por nuestros archivos <tt class="docutils literal">.c</tt>, y los externos, que será la forma que tengan otros programas de utilizar nuestra librería.</p>
+</div>
+<div class="section" id="macros">
+<h2>Macros</h2>
+<p>Quedan completamente prohibidas las macros en los archivos de cabecera externos.</p>
+<p>Hay distintas razones para esto: no forman parte como tales de nuestra librería, no son fácilmente mantenibles, y son más difíciles de depurar.</p>
+</div>
+<div class="section" id="enumerados">
+<h2>Enumerados</h2>
+<p>No es buena idea utilizar enumerados en los archivos de cabecera externos. Sinceramente, me gustaría decir lo contrario, pero dependiendo de las opciones de compilación podemos conseguir verdaderos poltergeist por culpa de los enumerados.</p>
+<p>Por lo tanto, para las constantes es mejor utilizar <tt class="docutils literal">#define</tt>.</p>
+<p>En los internos dará igual, porque para cuando lleguen al usuario de nuestra librería ya están compilados.</p>
+</div>
+<div class="section" id="solo-lo-indispensable">
+<h2>Sólo lo indispensable</h2>
+<p>En los archivos de cabecera externos se pondrá exclusivamente lo indispensable:</p>
+<ul class="simple">
+<li>Cuanta más funcionalidad exportemos, más tendremos que mantener.</li>
+<li>Cuanto más complejo sea, más preguntas recibiremos.</li>
+<li>Cuanto más sencillo sea, más feliz el usuario de la libreria.</li>
+</ul>
+</div>
+<div class="section" id="estructuras">
+<h2>Estructuras</h2>
+<p>Nunca deis la oportunidad al programador de poder acceder a una estructura de vuestra librería.</p>
+<p>Para ello yo suelo utilizar la siguiente técnica: en las cabeceras externas no hay ninguna estructura, pero sí punteros a void; en las funciones que exporto, lo primero que hago es transformar los punteros a void a estructuras internas (que pueden estar en archivos de cabecera internos).</p>
+<p>Veamos un ejemplo.</p>
+<pre class="code c"><a name="rest_code_412824aa1c7f4287a9c829b74c5f5da4-1"></a><span class="c1">// archivo de cabecera externo "ejemplo.h"</span>
+<a name="rest_code_412824aa1c7f4287a9c829b74c5f5da4-2"></a>
+<a name="rest_code_412824aa1c7f4287a9c829b74c5f5da4-3"></a><span class="k">typedef</span> <span class="kt">ejemplo_t</span> <span class="kt">void</span><span class="p">;</span>
+<a name="rest_code_412824aa1c7f4287a9c829b74c5f5da4-4"></a>
+<a name="rest_code_412824aa1c7f4287a9c829b74c5f5da4-5"></a><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="nf">ejemplo_new</span> <span class="p">();</span>
+<a name="rest_code_412824aa1c7f4287a9c829b74c5f5da4-6"></a><span class="kt">void</span>       <span class="nf">ejemplo_destroy</span><span class="p">(</span><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">);</span>
+</pre>
+<pre class="code c"><a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-1"></a><span class="cp">#include "ejemplo.h"</span>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-2"></a>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-3"></a><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-4"></a>  <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-5"></a>  <span class="kt">char</span><span class="o">*</span> <span class="n">b</span><span class="p">;</span>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-6"></a><span class="p">}</span> <span class="n">ejemplo_tp</span><span class="p">;</span>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-7"></a>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-8"></a><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="nf">ejemplo_new</span> <span class="p">()</span> <span class="p">{</span>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-9"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">result</span><span class="p">;</span>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-10"></a>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-11"></a>  <span class="n">result</span> <span class="o">=</span> <span class="n">calloc</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">ejemplo_tp</span><span class="p">));</span>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-12"></a>  <span class="c1">// inicializar result</span>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-13"></a>  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-14"></a><span class="p">}</span>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-15"></a>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-16"></a><span class="kt">void</span> <span class="nf">ejemplo_destroy</span><span class="p">(</span><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="n">vejemplo</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-17"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">ejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-18"></a>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-19"></a>  <span class="c1">// liberar variables internas de "ejemplo"</span>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-20"></a>  <span class="n">free</span> <span class="p">(</span><span class="n">ejemplo</span><span class="p">);</span>
+<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-21"></a><span class="p">}</span>
+</pre>
+<p>Aquí hay algunas convenciones de nombrado que yo suelo utilizar, aunque seguro que podéis encontrar otras mejores.</p>
+<p>Lo primero, es decir que el <tt class="docutils literal">_t</tt> de la estructura me hace referencia a "tipo", con el fin de diferenciar lo que es un tipo de lo que es una variable. Se me hace muy raro ver cosas como:</p>
+<pre class="code c"><a name="rest_code_17fdabd80e03416a9ace7ea34f083524-1"></a><span class="n">ejemplo</span> <span class="n">data</span><span class="p">;</span> <span class="c1">// raro. Además, ¿cómo llamas a la variable?</span>
+<a name="rest_code_17fdabd80e03416a9ace7ea34f083524-2"></a><span class="kt">ejemplo_t</span> <span class="n">ejemplo</span><span class="p">;</span> <span class="c1">// se diferencia claramente el tipo de la variable.</span>
+<a name="rest_code_17fdabd80e03416a9ace7ea34f083524-3"></a><span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">ejemplo</span><span class="p">)(</span><span class="n">data</span><span class="p">);</span> <span class="c1">// ¿Estamos multiplicando variables o haciendo un cast?</span>
+</pre>
+<p>Después vemos un <tt class="docutils literal">_tp</tt> que yo utilizo para nombrar mis <em>tipos privados</em>, para diferenciarlos de los que estarán en las cabeceras externas.</p>
+<p>Para terminar, en mis métodos suelo llamar a las variables de los tipos públicos con una uve (<tt class="docutils literal">v</tt>) delante, con el fin de avisarme que ése es el <tt class="docutils literal">void</tt>.</p>
+</div>
+<div class="section" id="getters-y-setters">
+<h2>Getters y setters</h2>
+<p>Como no dejamos al usuario acceder a nuestra estructura a mano, no podrá realizar modificaciones sobre las variables. Por lo tanto, será necesario utilizar getters y setters para este fin.</p>
+<p>Y una vez dicho eso... No debería ser lo habitual utilizar estos getters y setters, ya que la librería no debe ser un almacén de datos, sino una unidad de proceso. Es decir: lo normal no debe ser modificar valores desde fuera, sino desde dentro, como resultado de operaciones. Es evidente que, aun así, siempre necesitaremos algún getter y setter, aunque trataremos de evitarlos.</p>
+<p>Es bastante común tener que enviar mucha información de configuración. Ésta puede encapsularse en una estructura pública y recibirla en el constructor.</p>
+</div>
+<div class="section" id="orientacion-a-objetos-tads">
+<h2>Orientación a objetos/TADs</h2>
+<p>En C no tenemos Orientación a objetos, pero sí tenemos TADs (Tipos Abstractos de Datos). Toda librería debería ser un TAD.</p>
+<p>Por esta razón, será normal encontrar en nuestras librerías un <em>constructor</em> y un <em>destructor</em>. Antes ya puse un ejemplo de esto.</p>
+<p>Si dejamos al usuario acceder a nuestras variables, tarde o temprano tendremos un alto acoplamiento.</p>
+</div>
+<div class="section" id="creciendo">
+<h2>Creciendo</h2>
+<p>Si necesitamos ampliar nuestras estructuras públicas, siempre deberían hacerlo por debajo. De esta manera se seguirá manteniendo compatibilidad hacia atrás.</p>
+<p>A menudo suele ser buena idea utilizar un número de versión o el tamaño de la estructura en uno de sus propios campos, con el fin de determinar que estamos utilizando ésa versión. El problema de estas aproximaciones es que dependemos del buen uso que le dé el programador.</p>
+<p>Una solución mejor es transformar esa estructura pública en un nuevo TAD que ya manejaremos nosotros, evitando cualquier tipo de imprudencia o descuido.</p>
+<p>De todas maneras... ¡¡ya dije que no usárais estructuras públicas!! :P</p>
+</div>
+<div class="section" id="librerias-dinamicas">
+<h2>Librerías dinámicas</h2>
+<p>Es importante que nuestra librería dinámica mantenga en su archivo de cabecera público tipos de datos con forma de puntero a función para facilitar la vida a quien vaya a usarla, ya que no se puede acceder directamente a las funciones, pero siempre habrá que cargarlas.</p>
+<p>En el ejemplo anterior:</p>
+<pre class="code c"><a name="rest_code_f0baa76226e34331883b572338b013c4-1"></a><span class="c1">// archivo de cabecera externo "ejemplodll.h"</span>
+<a name="rest_code_f0baa76226e34331883b572338b013c4-2"></a>
+<a name="rest_code_f0baa76226e34331883b572338b013c4-3"></a><span class="k">typedef</span> <span class="kt">ejemplo_t</span> <span class="kt">void</span><span class="p">;</span>
+<a name="rest_code_f0baa76226e34331883b572338b013c4-4"></a>
+<a name="rest_code_f0baa76226e34331883b572338b013c4-5"></a><span class="k">typedef</span> <span class="kt">ejemplo_t</span><span class="o">*</span> <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_new</span><span class="p">)</span> <span class="p">();</span>
+<a name="rest_code_f0baa76226e34331883b572338b013c4-6"></a><span class="k">typedef</span> <span class="nf">void</span>       <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_destroy</span><span class="p">)</span> <span class="p">();</span>
+</pre>
+</div>
+<div class="section" id="fachadas">
+<h2>Fachadas</h2>
+<p>La creación de una librería dinámica es una invitación a la duplicación de código. Todos los programas que quieran utilizarla tendrán que cargar la librería, cargar sus funciones en variables/estructuras internas, realizar casts complejos, gestionar errores, etc.</p>
+<p>Por lo tanto, es buena idea proporcionar una librería estática cuya función consista en acceder a la librería dinámica. Es el resultado de aplicar el <a class="reference external" href="http://en.wikipedia.org/wiki/Facade_pattern">patrón fachada</a>  (<em>facade</em>).</p>
+<p>Esto facilitará mucho la vida al usuario. Veamos un ejemplo (continuando con el ejemplo de más arriba, que amplío un poco):</p>
+<div class="section" id="dll">
+<h3>DLL</h3>
+<pre class="code c"><a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-1"></a><span class="c1">// archivo de cabecera externo "ejemplo.h"</span>
+<a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-2"></a>
+<a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-3"></a><span class="k">typedef</span> <span class="kt">ejemplo_t</span> <span class="kt">void</span><span class="p">;</span>
+<a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-4"></a>
+<a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-5"></a><span class="k">typedef</span> <span class="kt">ejemplo_t</span><span class="o">*</span> <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_new</span><span class="p">)</span> <span class="p">();</span>
+<a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-6"></a><span class="k">typedef</span> <span class="nf">void</span>       <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_destroy</span><span class="p">)</span> <span class="p">();</span>
+<a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-7"></a>
+<a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-8"></a><span class="k">typedef</span> <span class="nf">void</span>       <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_operacion1</span><span class="p">)</span> <span class="p">(</span><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">);</span>
+<a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-9"></a><span class="k">typedef</span> <span class="nf">void</span>       <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_operacion2</span><span class="p">)</span> <span class="p">(</span><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">);</span>
+</pre>
+<pre class="code c"><a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-1"></a><span class="cp">#include "ejemplo.h"</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-2"></a>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-3"></a><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-4"></a>  <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-5"></a>  <span class="kt">char</span><span class="o">*</span> <span class="n">b</span><span class="p">;</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-6"></a><span class="p">}</span> <span class="n">ejemplo_tp</span><span class="p">;</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-7"></a>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-8"></a><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="nf">ejemplo_new</span> <span class="p">()</span> <span class="p">{</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-9"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">result</span><span class="p">;</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-10"></a>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-11"></a>  <span class="n">result</span> <span class="o">=</span> <span class="n">calloc</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">ejemplo_tp</span><span class="p">));</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-12"></a>  <span class="c1">// inicializar result</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-13"></a>  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-14"></a><span class="p">}</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-15"></a>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-16"></a><span class="kt">void</span> <span class="nf">ejemplo_destroy</span><span class="p">(</span><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="n">vejemplo</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-17"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">ejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-18"></a>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-19"></a>  <span class="c1">// liberar variables internas de "ejemplo"</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-20"></a>  <span class="n">free</span> <span class="p">(</span><span class="n">ejemplo</span><span class="p">);</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-21"></a><span class="p">}</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-22"></a>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-23"></a><span class="kt">void</span> <span class="nf">ejemplo_operacion1</span><span class="p">(</span><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="n">vejemplo</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-24"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">ejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-25"></a>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-26"></a>  <span class="c1">// operar</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-27"></a><span class="p">}</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-28"></a>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-29"></a><span class="kt">void</span> <span class="nf">ejemplo_operacion2</span><span class="p">(</span><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="n">vejemplo</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-30"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">ejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-31"></a>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-32"></a>  <span class="c1">// operar</span>
+<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-33"></a><span class="p">}</span>
+</pre>
+</div>
+<div class="section" id="lib">
+<h3>Lib</h3>
+<pre class="code c"><a name="rest_code_f9fa8592a94449e595c19d8bce2e736f-1"></a><span class="c1">// archivo de cabecera "lejemplo.h"</span>
+<a name="rest_code_f9fa8592a94449e595c19d8bce2e736f-2"></a><span class="k">typedef</span>    <span class="kt">lejemplo_t</span> <span class="kt">void</span><span class="p">;</span>
+<a name="rest_code_f9fa8592a94449e595c19d8bce2e736f-3"></a>
+<a name="rest_code_f9fa8592a94449e595c19d8bce2e736f-4"></a><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="nf">lejemplo_new</span> <span class="p">();</span>
+<a name="rest_code_f9fa8592a94449e595c19d8bce2e736f-5"></a><span class="kt">void</span>       <span class="nf">ljemplo_destroy</span><span class="p">(</span><span class="kt">lejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">);</span>
+<a name="rest_code_f9fa8592a94449e595c19d8bce2e736f-6"></a>
+<a name="rest_code_f9fa8592a94449e595c19d8bce2e736f-7"></a><span class="kt">void</span>       <span class="nf">lejemplo_operacion1</span> <span class="p">(</span><span class="kt">lejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">);</span>
+<a name="rest_code_f9fa8592a94449e595c19d8bce2e736f-8"></a><span class="kt">void</span>       <span class="nf">lejemplo_operacion2</span> <span class="p">(</span><span class="kt">lejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">);</span>
+</pre>
+<pre class="code c"><a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-1"></a><span class="c1">// archivo de implementación, "lejemplo.c"</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-2"></a><span class="cp">#import "ejemplo.h"</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-3"></a><span class="cp">#import "lejemplo.h"</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-4"></a>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-5"></a><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-6"></a>  <span class="n">PF_ejemplo_new</span> <span class="n">new</span><span class="p">;</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-7"></a>  <span class="n">PF_ejemplo_destroy</span> <span class="n">destroy</span><span class="p">;</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-8"></a>  <span class="n">PF_ejemplo_operacion1</span> <span class="n">operacion1</span><span class="p">;</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-9"></a>  <span class="n">PF_ejemplo_operacion2</span> <span class="n">operacion2</span><span class="p">;</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-10"></a><span class="p">}</span> <span class="n">functions_tp</span><span class="p">;</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-11"></a>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-12"></a><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-13"></a>  <span class="kt">void</span><span class="o">*</span> <span class="n">dllhandle</span><span class="p">;</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-14"></a>  <span class="kt">ejemplo_t</span><span class="o">*</span> <span class="n">internal</span><span class="p">;</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-15"></a>  <span class="n">functions_tp</span> <span class="n">functions</span><span class="p">;</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-16"></a><span class="p">}</span> <span class="n">lejemplo_tp</span><span class="p">;</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-17"></a>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-18"></a><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="nf">lejemplo_new</span> <span class="p">()</span> <span class="p">{</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-19"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">result</span> <span class="o">=</span> <span class="n">calloc</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">lejemplo_tp</span><span class="p">));</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-20"></a>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-21"></a>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-22"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">dllhandle</span> <span class="o">=</span> <span class="n">dlopen</span> <span class="p">(</span><span class="s">"ejemplo.so"</span><span class="p">,</span> <span class="n">RT_LAZY</span><span class="p">);</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-23"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">new</span> <span class="o">=</span> <span class="p">(</span><span class="n">PF_ejemplo_new</span><span class="p">)</span> <span class="n">dlsym</span> <span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">dllhandle</span><span class="p">,</span> <span class="s">"ejemplo_new"</span><span class="p">);</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-24"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">destroy</span> <span class="o">=</span> <span class="p">(</span><span class="n">PF_ejemplo_destroy</span><span class="p">)</span> <span class="n">dlsym</span> <span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">dllhandle</span><span class="p">,</span> <span class="s">"ejemplo_destroy"</span><span class="p">);</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-25"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">operacion1</span> <span class="o">=</span> <span class="p">(</span><span class="n">PF_ejemplo_operacion1</span><span class="p">)</span> <span class="n">dlsym</span> <span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">dllhandle</span><span class="p">,</span> <span class="s">"ejemplo_operacion1"</span><span class="p">);</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-26"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">operacion2</span> <span class="o">=</span> <span class="p">(</span><span class="n">PF_ejemplo_operacion2</span><span class="p">)</span> <span class="n">dlsym</span> <span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">dllhandle</span><span class="p">,</span> <span class="s">"ejemplo_operacion2"</span><span class="p">);</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-27"></a>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-28"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">internal</span> <span class="o">=</span> <span class="n">result</span><span class="o">-&gt;</span><span class="n">funcitons</span><span class="p">.</span><span class="n">new</span> <span class="p">();</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-29"></a>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-30"></a>  <span class="c1">// añadir control de errores allá donde haga falta</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-31"></a>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-32"></a>  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-33"></a><span class="p">}</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-34"></a>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-35"></a><span class="kt">void</span> <span class="nf">lejemplo_destroy</span><span class="p">(</span><span class="kt">lejemplo_t</span><span class="o">*</span> <span class="n">vejemplo</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-36"></a>  <span class="n">lejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">lejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-37"></a>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-38"></a>  <span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">destroy</span><span class="p">(</span><span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">internal</span><span class="p">);</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-39"></a>  <span class="n">dlclose</span> <span class="p">(</span><span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">dllhandle</span><span class="p">);</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-40"></a>  <span class="n">free</span> <span class="p">(</span><span class="n">ejemplo</span><span class="p">);</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-41"></a>  <span class="c1">// Añadir comprobaciones de nulos y demás.</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-42"></a><span class="p">}</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-43"></a>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-44"></a><span class="kt">void</span> <span class="nf">lejemplo_operacion1</span> <span class="p">(</span><span class="kt">lejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-45"></a>  <span class="n">lejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">lejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-46"></a>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-47"></a>  <span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">operacion1</span> <span class="p">(</span><span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">internal</span><span class="p">);</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-48"></a><span class="p">}</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-49"></a>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-50"></a><span class="kt">void</span> <span class="nf">lejemplo_operacion2</span> <span class="p">(</span><span class="kt">lejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-51"></a>  <span class="n">lejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">lejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-52"></a>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-53"></a>  <span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">operacion2</span> <span class="p">(</span><span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">internal</span><span class="p">,</span> <span class="n">a</span><span class="p">);</span>
+<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-54"></a><span class="p">}</span>
+</pre>
+<p>Se podría hacer hasta una carga "<em>lazy</em>", esperando a cargar las funciones en el momento de su utilización, pero eso puede implicar una gestión de errores más compleja (con lo indicado, la gestión de errores está centralizada al inicializar).</p>
+<p>Utilizando esta librería, al usuario se le quitan muchos dolores de cabeza, ya que tendría que realizar eso mismo de todas maneras.</p>
+</div>
+</div>
+<div class="section" id="olvidos-descuidos-etc">
+<h2>Olvidos, descuidos, etc.</h2>
+<p>Seguramente he olvidado comentar muchísimas cosas, pero creo que ya me he extendido lo suficiente.</p>
+<p>Se aceptan sugerencias para completar todos estos consejos.</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2011-06-18T00:00:00+00:00" title="2011-06-18">2011-06-18</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/ansi-c/" rel="tag">ansi c</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/buenas-practicas-c-1/" rel="prev" title="Buenas prácticas en Ansi C (1)">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/migrando/" rel="next" title="Migrando el site: lecciones aprendidas">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/buenas-practicas-c-2/",
+        disqus_title="Buenas pr\u00e1cticas en Ansi C (2)",
+        disqus_identifier="cache/posts/buenas-practicas-c-2.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

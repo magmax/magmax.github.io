@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Creación de un entorno LAMP (Linux + Apache + MySQL + Php) con puppet en una máquina virtual Vagrant">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>LAMP con Puppet | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/lamp-con-puppet/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Creación de un entorno LAMP (Linux + Apache + MySQL + Php) con puppet en una máquina virtual Vagrant">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/usando-git2/" title="Usando Git(2): varios working copies" type="text/html">
+<link rel="next" href="/blog/webdriver-practico/" title="Webdriver: crackeando la web de Renfe" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="LAMP con Puppet">
+<meta property="og:url" content="http://magmax.org/blog/lamp-con-puppet/">
+<meta property="og:description" content="Creación de un entorno LAMP (Linux + Apache + MySQL + Php) con puppet en una máquina virtual Vagrant">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2013-11-01T00:00:00+00:00">
+<meta property="article:updated" content="2013-11-01T00:00:00">
+<meta property="article:tag" content="lamp">
+<meta property="article:tag" content="puppet">
+<meta property="article:tag" content="vagrant">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Creación de un entorno LAMP (Linux + Apache + MySQL + Php) con puppet en una máquina virtual Vagrant">
+<meta name="twitter:url" content="http://magmax.org//blog/lamp-con-puppet/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/lamp-con-puppet/" class="u-url">LAMP con Puppet</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2013-11-01T00:00:00+00:00" title="2013-11-01">2013-11-01</time>
+                // <time class="updated dt-updated" datetime="2013-11-01T00:00:00" title="2013-11-01">2013-11-01</time></p>
+              <p class="commentline">            <a href="/blog/lamp-con-puppet/#disqus_thread" data-disqus-identifier="cache/posts/lamp-con-puppet.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>En esta ocasión se me ha ido la pelota. En un solo artículo vamos a:</p>
+<ul>
+<li>crear una máquina virtual con <a href="http://www.vagrantup.com/" title="Web oficial de Vagrant">Vagrant</a>
+</li>
+<li>configurar <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a>
+</li>
+<li>configurar <a href="https://github.com/rodjek/librarian-puppet" title="Proyecto Librarian-Puppet">librarian-puppet</a>
+</li>
+<li>instalar todo un entorno <a href="http://es.wikipedia.org/wiki/LAMP">LAMP</a> (Linux + Apache + MySQL + Php)</li>
+<li>descargarnos la web de un repositorio remoto <a href="http://git-scm.com/">Git</a>
+</li>
+<li>servir su contenido desde el servidor Apache.</li>
+</ul>
+<p>Y sabéis que mis artículos se leen en unos 10 minutos.</p>
+<!-- TEASER_END -->
+
+<h2 id="jerarquia">Jerarquía</h2>
+<p>Ésta es la jerarquía de archivos que se van a emplear. Así no tendréis que romperos la cabeza más adelante:</p>
+<pre class="code literal-block">.
+├── bootstrap.sh
+├── manifests/
+│   └── site.pp
+├── modules/
+├── puppet.conf
+├── Puppetfile
+├── Puppetfile.lock
+└── Vagrantfile
+</pre>
+
+
+<p>Los directorios son los que tienen la barra al final. Creadlos para evitar problemas posteriores.</p>
+<h2 id="vagrant">Vagrant</h2>
+<p>Lo primero es que no queremos romper nuestra máquina. Así que vamos a usar una máquina virtual. En esta ocasión será una <a href="http://www.debian.org/releases/stable/" title="Debian 7.2 'Wheezy' es la versión estable a día de hoy">Debian Wheezy</a> de 64 bytes. Pero no os aburriré con tonterías:</p>
+<pre class="code literal-block"><span class="c1"># -*- coding:utf-8; tab-width:4; mode:ruby -*-</span>
+<span class="c1"># vi: set ft=ruby :</span>
+<span class="c1"># filename: Vagrantfile</span>
+
+<span class="no">Vagrant</span><span class="o">::</span><span class="no">Config</span><span class="o">.</span><span class="n">run</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+
+  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">define</span> <span class="ss">:example</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
+    <span class="c1"># VM creation</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s1">'wheeze64'</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box_url</span> <span class="o">=</span>  <span class="s1">'http://puppet-vagrant-boxes.puppetlabs.com/debian-70rc1-x64-vbox4210.box'</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">host_name</span> <span class="o">=</span> <span class="s1">'vagrant-example'</span>
+
+    <span class="c1"># Manual provisioning</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="ss">:shell</span><span class="p">,</span> <span class="ss">:path</span> <span class="o">=&gt;</span> <span class="s1">'bootstrap.sh'</span>
+
+    <span class="c1"># Port forwarding</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">forward_port</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">9090</span>
+
+    <span class="c1"># Puppet configuration</span>
+    <span class="n">c</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="ss">:puppet</span> <span class="k">do</span> <span class="o">|</span><span class="n">puppet</span><span class="o">|</span>
+      <span class="n">puppet</span><span class="o">.</span><span class="n">manifests_path</span> <span class="o">=</span> <span class="s1">'manifests'</span>
+      <span class="n">puppet</span><span class="o">.</span><span class="n">module_path</span> <span class="o">=</span> <span class="o">[</span><span class="s1">'modules'</span><span class="o">]</span>
+      <span class="n">puppet</span><span class="o">.</span><span class="n">manifest_file</span> <span class="o">=</span> <span class="s1">'site.pp'</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</pre>
+
+
+<p>Hay mucho que explicar aquí, pero voy a ser rápido. A parte de toda la parafernalia Ruby que requiere este archivo de configuración, vemos que estoy creando una máquina virtual llamada <em>"wheeze64"</em> y que me la voy a descargar de esa URL. Espero que siga siendo válida, y si no, podéis usar cualquier otra <a href="http://www.vagrantbox.es/" title="Lista de Boxes para Vagrant">máquina virtual de la lista</a>. Además la he bautizado como <em>"vagrant-example"</em>.</p>
+<p>Lo primero que hago es un provisionamiento inicial mediante un script mío que luego veremos. Después me aseguro de que voy a poder acceder a mi servidor web, que estará escuchando en el puerto 80 de la VM, y que estará mapeado con el puerto 9090 de la máquina host.</p>
+<p>Finalmente rollos de configuración típicos de <a href="http://www.vagrantup.com/" title="Web oficial de Vagrant">Vagrant</a> para que funcione bien con <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a>.</p>
+<h3 id="bootstrap">Bootstrap</h3>
+<p>Mi pequeño script de provisionamiento inicial:</p>
+<pre class="code literal-block"><span class="c">#!/bin/bash</span>
+<span class="c"># filename: bootstrap.sh</span>
+
+<span class="k">function</span> install <span class="o">{</span>
+        <span class="nv">package</span><span class="o">=</span><span class="nv">$1</span>
+        <span class="nv">min_version</span><span class="o">=</span><span class="nv">$2</span>
+        <span class="nv">version</span><span class="o">=</span><span class="k">$(</span>apt-cache policy <span class="nv">$package</span> <span class="p">|</span> grep <span class="s1">'\*\*\*'</span> <span class="p">|</span> cut -f3 -d<span class="s1">' '</span><span class="k">)</span>
+
+        dpkg -l <span class="nv">$package</span> &gt; /dev/null
+        <span class="nv">installed</span><span class="o">=</span><span class="nv">$?</span>
+        dpkg --compare-versions <span class="nv">$min_version</span> lt <span class="nv">$version</span>
+        <span class="nv">updated</span><span class="o">=</span><span class="nv">$?</span>
+
+        <span class="nb">echo</span> <span class="s2">"</span><span class="nv">$package</span><span class="s2"> version: </span><span class="nv">$version</span><span class="s2">"</span>
+        <span class="k">if</span> <span class="o">[</span> <span class="nv">$installed</span> !<span class="o">=</span> <span class="m">0</span> <span class="o">]</span> <span class="o">||</span> <span class="o">[</span> <span class="nv">$updated</span> !<span class="o">=</span> <span class="m">0</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+                apt-get install -y <span class="nv">$package</span>
+        <span class="k">fi</span>
+<span class="o">}</span>
+
+<span class="k">if</span> <span class="o">[[</span> ! <span class="k">$(</span>grep <span class="s2">"deb http://ftp.es.debian.org/debian unstable main contrib non-free"</span> /etc/apt/sources.list<span class="k">)</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+        <span class="o">(</span>
+                <span class="nb">echo </span>deb http://ftp.es.debian.org/debian unstable main contrib non-free
+                <span class="nb">echo </span>deb http://ftp.es.debian.org/debian testing main contrib non-free
+        <span class="o">)</span> &gt; /etc/apt/sources.list
+
+        apt-get update
+<span class="k">fi</span>
+
+install facter 1.6
+install puppet 3.3
+</pre>
+
+
+<p>Básicamente: le meto una configuración de APT fija (así dará igual qué VM hayais elegido) y me aseguro de tener dos cosas instaladas: facter y puppet (en una versión superior a la 3.3). Todo esto ocurrirá en la VM, por lo que no tenéis que temer por vuestras máquinas reales. Estos paquetes me hacen falta para poder ejecutar <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a>, así que en una máquina real tendría que instalarlos a mano.</p>
+<h2 id="puppet">Puppet</h2>
+<p>Vamos con puppet, aunque no estoy seguro de que este archivo haga falta:</p>
+<pre class="code literal-block"><span class="err">#</span><span class="x"> filename: puppet.conf</span>
+<span class="x">[main]</span>
+<span class="x">logdir=/var/log/puppet</span>
+<span class="x">vardir=/var/lib/puppet</span>
+<span class="x">ssldir=/var/lib/puppet/ssl</span>
+<span class="x">rundir=/var/run/puppet</span>
+<span class="x">factpath=</span><span class="p">$</span><span class="nv">vardir</span><span class="x">/lib/facter</span>
+<span class="x">templatedir=</span><span class="p">$</span><span class="nv">confdir</span><span class="x">/templates</span>
+<span class="x">prerun_command=/etc/puppet/etckeeper-commit-pre</span>
+<span class="x">postrun_command=/etc/puppet/etckeeper-commit-post</span>
+<span class="x">modulepath = /etc/puppet/modules:/usr/share/puppet/modules:modules</span>
+<span class="x">storeconfigs = true</span>
+
+<span class="x">dbadapter = sqlite3</span>
+<span class="x">dblocation = storeconfigs.sqlite</span>
+</pre>
+
+
+<p>Y ahora lo que sí hace falta, la configuración de los nodos:</p>
+<pre class="code literal-block"><span class="c1"># filename: site.pp</span>
+
+<span class="no">File</span> <span class="p">{</span>
+  <span class="n">owner</span> <span class="o">=&gt;</span> <span class="n">root</span><span class="p">,</span>
+  <span class="n">group</span> <span class="o">=&gt;</span> <span class="n">root</span><span class="p">,</span>
+  <span class="n">mode</span> <span class="o">=&gt;</span> <span class="mi">644</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">node</span> <span class="s1">'example'</span><span class="p">,</span> <span class="s1">'vagrant-example'</span> <span class="p">{</span>
+  <span class="kp">include</span> <span class="s1">'ntp'</span>
+  <span class="kp">include</span> <span class="s1">'logrotate'</span>
+  <span class="kp">include</span> <span class="s1">'apache'</span>
+  <span class="k">class</span> <span class="p">{</span> <span class="s2">"mysql"</span><span class="p">:</span>
+    <span class="n">root_password</span> <span class="o">=&gt;</span> <span class="s1">'secret'</span><span class="p">,</span>
+  <span class="p">}</span>
+  <span class="kp">include</span> <span class="s1">'php'</span>
+  <span class="kp">include</span> <span class="s1">'git'</span>
+
+  <span class="n">logrotate</span><span class="o">::</span><span class="n">rule</span> <span class="p">{</span> <span class="s1">'messages'</span><span class="p">:</span>
+    <span class="n">path</span>         <span class="o">=&gt;</span> <span class="s1">'/var/log/messages'</span><span class="p">,</span>
+    <span class="n">copytruncate</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span>
+    <span class="n">missingok</span>    <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span>
+    <span class="n">rotate_every</span> <span class="o">=&gt;</span> <span class="s1">'day'</span><span class="p">,</span>
+    <span class="n">rotate</span>       <span class="o">=&gt;</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="n">compress</span>     <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span>
+    <span class="n">ifempty</span>      <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span>
+  <span class="p">}</span>
+  <span class="n">php</span><span class="o">::</span><span class="n">module</span> <span class="p">{</span> <span class="s2">"mysql"</span><span class="p">:</span> <span class="p">}</span>
+
+  <span class="n">git</span><span class="o">::</span><span class="n">reposync</span> <span class="p">{</span><span class="s1">'web'</span><span class="p">:</span> <span class="n">source_url</span> <span class="o">=&gt;</span> <span class="s1">'https://github.com/magmax/small_php_example.git'</span><span class="p">,</span>
+                        <span class="n">destination_dir</span> <span class="o">=&gt;</span> <span class="s1">'/var/www/example'</span><span class="p">}</span>
+
+  <span class="n">apache</span><span class="o">::</span><span class="n">vhost</span> <span class="p">{</span> <span class="s1">'default'</span><span class="p">:</span>
+    <span class="n">docroot</span>  <span class="o">=&gt;</span> <span class="s1">'/var/www/example'</span><span class="p">,</span>
+    <span class="n">priority</span> <span class="o">=&gt;</span> <span class="s1">'000'</span><span class="p">,</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+
+
+<p>Aquí sí que hay telita. Primero establezco la configuración por defecto para los archivos. No es necesario, pero lo he puesto porque siempre lo hago. Luego configuro dos nodos: <em>'example'</em> y <em>'vagrant-example'</em>. Eso es porque hay dos máquinas que tendrán esta configuración: la real y la que vamos a usar nosotros, que sería la de <a href="http://www.vagrantup.com/" title="Web oficial de Vagrant">Vagrant</a>. Así la misma configuración de <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a> os vale para ambas y podéis guarrear en la VM sin romper el servidor.</p>
+<p>Luego viene todo lo que instalo: [ntp], <a href="http://linuxcommand.org/man_pages/logrotate8.html" title="Man page de logrotate">logrotate</a>, <a href="http://httpd.apache.org/" title="Apache HTTP server">Apache</a>, <a href="http://www.mysql.com/" title="Web de MySQL">MySQL</a> (con la contraseña 'secret'), <a href="http://php.net/" title="Página de PHP">Php</a> y <a href="http://git-scm.com/">Git</a>.</p>
+<p>Finalmente un poco de configuración básica para <a href="http://linuxcommand.org/man_pages/logrotate8.html" title="Man page de logrotate">logrotate</a> a modo de ejemplo, indico que quiero usar el módulo de <a href="http://php.net/" title="Página de PHP">Php</a> para <a href="http://www.mysql.com/" title="Web de MySQL">MySQL</a>, llamo a una macro para instalar una pequeña página de ejemplo que mostrará todas las tablas de la base de datos <em>"mysql"</em> desde PHP y configuro <a href="http://httpd.apache.org/" title="Apache HTTP server">Apache</a> para que sirva esa configuración. <strong>Todo esto en menos de 20 líneas de código</strong>.</p>
+<h3 id="librarian">Librarian</h3>
+<p>Bueno, pero... ¿de dónde saco los módulos de puppet que necesito?</p>
+<p>Para eso está <a href="https://github.com/rodjek/librarian-puppet" title="Proyecto Librarian-Puppet">librarian-puppet</a>, y aquí está su configuración:</p>
+<pre class="code literal-block"># filename: Puppetfile
+
+forge "http://forge.puppetlabs.com"
+
+mod 'example42/puppi'
+mod 'example42/ntp'
+mod 'example42/git'
+mod 'example42/mysql'
+mod 'example42/apache'
+mod 'example42/logrotate'
+mod 'example42/php'
+</pre>
+
+
+<p>En dos palabras: configuro la fuente de módulos y los que quiero seleccionar.</p>
+<p>También se habrá creado el archivo <em>Puppetfile.lock</em>, que contiene las versiones de los módulos que se instalaron. Si metéis esta configuración en un repositorio (cosa que deberíais hacer si lo vais a usar de verdad), recomiendo subirlo también junto con <em>Puppetfile</em> a pesar de ser generado, para evitar disgustos si éstas cambian. Si os cargáis el directorio <em>modules</em>, <a href="https://github.com/rodjek/librarian-puppet" title="Proyecto Librarian-Puppet">librarian-puppet</a> tratará de reinstalar las versiones que tiene ese archivo.</p>
+<h2 id="al-lio">Al lío</h2>
+<p>Pues ya lo tenemos todo. Ahora viene lo mejor. Queremos lanzar la máquina virtual y que se configure sola, pero no tenemos los módulos de <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a>. Así que lo primero es traérselos:</p>
+<pre class="code literal-block"><span class="nv">$ </span>librarian-puppet install
+</pre>
+
+
+<p>Y con eso ya está todo. Podréis verlos en el directorio <em>modules</em>. Y ahora la magia: Descargamos, instalamos, proveemos y levantamos la máquina virtual:</p>
+<pre class="code literal-block"><span class="nv">$ </span>vagrant up example
+</pre>
+
+
+<p>Y podéis conectaros a <a href="http://localhost:9090/example">http://localhost:9090/example</a>, donde os está esperando la lista de tablas de la base de datos <em>mysql</em>, servida con PHP.</p>
+<p>También podéis entrar en vuestra VM con:</p>
+<pre class="code literal-block"><span class="nv">$ </span>vagrant ssh example
+example <span class="nv">$ </span>sudo su
+example <span class="c">#</span>
+</pre>
+
+
+<p>Simplemente <strong>Acojonante</strong>.</p>
+<h2 id="mas-ventajas">Más ventajas</h2>
+<p>Bueno, pues eso no es todo. Aún hay más.</p>
+<p>Si la rama principal del repositorio cambiara, la siguiente ejecución de <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a> la actualizaría. Eso facilita bastante el despliegue y la gestión de un sistema de <a href="http://es.wikipedia.org/wiki/Integraci%C3%B3n_continua">integración contínua</a>, ¿verdad?</p>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2013-11-01T00:00:00+00:00" title="2013-11-01">2013-11-01</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/lamp/" rel="tag">lamp</a>
+                <a class="label label-primary p-category" href="/categories/puppet/" rel="tag">puppet</a>
+                <a class="label label-primary p-category" href="/categories/vagrant/" rel="tag">vagrant</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/usando-git2/" rel="prev" title="Usando Git(2): varios working copies">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/webdriver-practico/" rel="next" title="Webdriver: crackeando la web de Renfe">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/lamp-con-puppet/",
+        disqus_title="LAMP con Puppet",
+        disqus_identifier="cache/posts/lamp-con-puppet.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

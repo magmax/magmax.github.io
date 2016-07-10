@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Cómo hacer que Django sirva estáticos en producción">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Django no encuentra las CSS del módulo Admin | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/django-no-encuentra-las-css-del-modulo-admin/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Cómo hacer que Django sirva estáticos en producción">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/magmaxblog-newsletter/" title="MagMaxBlog Newsletter" type="text/html">
+<link rel="next" href="/blog/dominios-con-aws-route-53/" title="Dominios con AWS Route 53" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Django no encuentra las CSS del módulo Admin">
+<meta property="og:url" content="http://magmax.org/blog/django-no-encuentra-las-css-del-modulo-admin/">
+<meta property="og:description" content="Cómo hacer que Django sirva estáticos en producción">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2015-12-07T00:00:00+00:00">
+<meta property="article:updated" content="2015-12-07T00:00:00+00:00">
+<meta property="article:tag" content="django admin static css">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Cómo hacer que Django sirva estáticos en producción">
+<meta name="twitter:url" content="http://magmax.org//blog/django-no-encuentra-las-css-del-modulo-admin/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/django-no-encuentra-las-css-del-modulo-admin/" class="u-url">Django no encuentra las CSS del módulo Admin</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published updated dt-updated" datetime="2015-12-07T00:00:00+00:00" title="2015-12-07">2015-12-07</time></p>
+              <p class="commentline">            <a href="/blog/django-no-encuentra-las-css-del-modulo-admin/#disqus_thread" data-disqus-identifier="cache/posts/django-no-encuentra-las-css-del-modulo-admin.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>No es la primera vez que pierdo un montón de tiempo para conseguir que <a class="reference external" href="https://www.djangoproject.com/">Django</a> me sirva los estáticos en producción, aunque sólo sea los del <a class="reference external" href="https://docs.djangoproject.com/en/stable/ref/contrib/admin/">módulo Admin</a>, así que he decidido escribir un post para no olvidarme.</p>
+<p>Aunque servir estáticos con <a class="reference external" href="https://www.djangoproject.com/">Django</a> está desaconsejado por la propia documentación, ya que puede ser inseguro e ineficiente, yo lo encuentro muy útil para servir los estáticos del <a class="reference external" href="https://docs.djangoproject.com/en/stable/ref/contrib/admin/">módulo Admin</a>.</p>
+<!-- TEASER_END -->
+<div class="section" id="el-problema">
+<h2>El problema</h2>
+<p>El principal problema es que <a class="reference external" href="https://www.djangoproject.com/">Django</a> no sirve los estáticos cuando se tiene <tt class="docutils literal">DEBUG = False</tt>. Claro está, no nos interesa que cualquier problema con la web muestre todas las variables de entorno (incluyendo contraseñas en algunos servidores).</p>
+<p>Así que se trata de conseguir servir estáticos cuando <tt class="docutils literal">DEBUG = True</tt>.</p>
+</div>
+<div class="section" id="cambios-en-archivos">
+<h2>Cambios en archivos</h2>
+<p>Si no indico lo contrario, habrá que modificar el archivo <tt class="docutils literal">settings.py</tt>.</p>
+<div class="section" id="indicar-donde-estan-los-estaticos">
+<h3>Indicar dónde están los estáticos</h3>
+<p>Lo primero es indicar dónde están los estáticos. Para ello tendremos que incluir la applicación <tt class="docutils literal">django.contrib.staticfiles</tt>:</p>
+<pre class="code python"><a name="rest_code_74de23522d8d427f8185b7fe696d6360-1"></a><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">(</span>
+<a name="rest_code_74de23522d8d427f8185b7fe696d6360-2"></a>    <span class="c"># ...</span>
+<a name="rest_code_74de23522d8d427f8185b7fe696d6360-3"></a>    <span class="s">'django.contrib.staticfiles'</span><span class="p">,</span>
+<a name="rest_code_74de23522d8d427f8185b7fe696d6360-4"></a>    <span class="c"># ...</span>
+<a name="rest_code_74de23522d8d427f8185b7fe696d6360-5"></a><span class="p">)</span>
+</pre>
+<p>Si hemos sobreescrito la variable <tt class="docutils literal">STATICFILES_FINDERS</tt>, será importante añadir el <strong>finder</strong> <tt class="docutils literal">AppDirectoriesFinder</tt>, con el fin de que se sirvan los estáticos de las aplicaciones:</p>
+<pre class="code python"><a name="rest_code_5fb82ceec77f4f2784702357f7f8e9ca-1"></a><span class="n">STATICFILES_FINDERS</span> <span class="o">=</span> <span class="p">[</span>
+<a name="rest_code_5fb82ceec77f4f2784702357f7f8e9ca-2"></a>    <span class="c"># ...</span>
+<a name="rest_code_5fb82ceec77f4f2784702357f7f8e9ca-3"></a>    <span class="s">"django.contrib.staticfiles.finders.AppDirectoriesFinder"</span><span class="p">,</span>
+<a name="rest_code_5fb82ceec77f4f2784702357f7f8e9ca-4"></a>    <span class="c"># ...</span>
+<a name="rest_code_5fb82ceec77f4f2784702357f7f8e9ca-5"></a><span class="p">]</span>
+</pre>
+</div>
+<div class="section" id="permisos">
+<h3>Permisos</h3>
+<p>Ahora debemos dar permiso de acceso a los estáticos. Bueno... Estáticos y no estáticos, ya que cuando <tt class="docutils literal">DEBUG</tt> vale <tt class="docutils literal">True</tt> podemos acceder a todo, pero cuando vale <tt class="docutils literal">False</tt> no nos dejará acceder a nada:</p>
+<pre class="code python"><a name="rest_code_402b01d1a7274881bc1e7e2f273d6511-1"></a><span class="kn">import</span> <span class="nn">os</span>
+<a name="rest_code_402b01d1a7274881bc1e7e2f273d6511-2"></a><span class="kn">from</span> <span class="nn">socket</span> <span class="kn">import</span> <span class="n">gethostname</span>
+<a name="rest_code_402b01d1a7274881bc1e7e2f273d6511-3"></a>
+<a name="rest_code_402b01d1a7274881bc1e7e2f273d6511-4"></a><span class="n">ALLOWED_HOSTS</span> <span class="o">=</span> <span class="p">[</span>
+<a name="rest_code_402b01d1a7274881bc1e7e2f273d6511-5"></a>    <span class="n">gethostname</span><span class="p">(),</span>
+<a name="rest_code_402b01d1a7274881bc1e7e2f273d6511-6"></a>    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'OPENSHIFT_APP_DNS'</span><span class="p">,</span> <span class="s">'localhost'</span><span class="p">),</span>
+<a name="rest_code_402b01d1a7274881bc1e7e2f273d6511-7"></a><span class="p">]</span>
+</pre>
+<p>Como veis, aquí permito acceder mediante el nombre de la máquina, o desde el DNS de <a href="/blog/django-no-encuentra-las-css-del-modulo-admin/#id1"><span class="problematic" id="id2">OpenShift_</span></a>, si lo estamos usando. Si no estamos en <a href="/blog/django-no-encuentra-las-css-del-modulo-admin/#id3"><span class="problematic" id="id4">OpenShift_</span></a>, entonces usa <tt class="docutils literal">localhost</tt>.</p>
+</div>
+<div class="section" id="rutas">
+<h3>Rutas</h3>
+<p>Por último, hay que modificar las rutas de acceso. Eso está en el archivo <tt class="docutils literal">urls.py</tt>, donde tendremos que incluir a mano los estáticos:</p>
+<pre class="code python"><a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-1"></a><span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-2"></a><span class="kn">from</span> <span class="nn">django.conf.urls</span> <span class="kn">import</span> <span class="n">url</span>
+<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-3"></a>
+<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-4"></a><span class="n">urlpatterns</span> <span class="o">+=</span> <span class="p">[</span>
+<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-5"></a>    <span class="n">url</span><span class="p">(</span>
+<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-6"></a>        <span class="s">r'^static/(?P&lt;path&gt;.*)$'</span><span class="p">,</span>
+<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-7"></a>        <span class="s">'django.views.static.serve'</span><span class="p">,</span>
+<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-8"></a>        <span class="p">{</span>
+<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-9"></a>            <span class="s">'document_root'</span><span class="p">:</span> <span class="n">settings</span><span class="o">.</span><span class="n">STATIC_ROOT</span><span class="p">,</span>
+<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-10"></a>            <span class="s">'show_indexes'</span><span class="p">:</span> <span class="n">settings</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-11"></a>        <span class="p">}</span>
+<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-12"></a>    <span class="p">),</span>
+<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-13"></a><span class="p">]</span>
+</pre>
+</div>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusión</h2>
+<p>Y eso es todo. No sé ni cuántas horas he perdido con esta tontería, sobre todo hasta descubrir el párrafo:</p>
+<blockquote>
+During development, if you use <tt class="docutils literal">django.contrib.staticfiles</tt>, this will be done automatically by <tt class="docutils literal">runserver</tt> when <tt class="docutils literal">DEBUG</tt> is set to <tt class="docutils literal">True</tt> (see <a class="reference external" href="https://docs.djangoproject.com/en/1.9/ref/contrib/staticfiles/#django.contrib.staticfiles.views.serve">django.contrib.staticfiles.views.serve()</a>).</blockquote>
+<p>Es horrible que se comporte de forma distinta en modo <tt class="docutils literal">DEBUG</tt> del modo producción, y que sea tan complejo imitar el comportamiento. A pesar de lo mucho que me gusta <a class="reference external" href="https://www.djangoproject.com/">Django</a>... :)</p>
+<p>Tenéis más información en <a class="reference external" href="https://docs.djangoproject.com/en/stable/howto/static-files/">Managing static files (e.g. images, JavaScript, CSS)</a> y <a class="reference external" href="https://docs.djangoproject.com/en/stable/howto/static-files/deployment/">Deploying static files</a>.</p>
+</div>
+<div class="system-messages section">
+<h2>Docutils System Messages</h2>
+<div class="system-message" id="id1">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">&lt;string&gt;</tt>, line 62); <em><a href="/blog/django-no-encuentra-las-css-del-modulo-admin/#id2">backlink</a></em></p>
+Unknown target name: "openshift".</div>
+<div class="system-message" id="id3">
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">&lt;string&gt;</tt>, line 62); <em><a href="/blog/django-no-encuentra-las-css-del-modulo-admin/#id4">backlink</a></em></p>
+Unknown target name: "openshift".</div>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2015-12-07T00:00:00+00:00" title="2015-12-07">2015-12-07</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/django-admin-static-css/" rel="tag">django admin static css</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/magmaxblog-newsletter/" rel="prev" title="MagMaxBlog Newsletter">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/dominios-con-aws-route-53/" rel="next" title="Dominios con AWS Route 53">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/django-no-encuentra-las-css-del-modulo-admin/",
+        disqus_title="Django no encuentra las CSS del m\u00f3dulo Admin",
+        disqus_identifier="cache/posts/django-no-encuentra-las-css-del-modulo-admin.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

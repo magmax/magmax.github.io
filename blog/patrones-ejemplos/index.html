@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Patrones de diseño mediante ejemplos | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/patrones-ejemplos/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/mocks-y-stubs/" title="Pruebas unitarias: Mocks y Stubs" type="text/html">
+<link rel="next" href="/blog/critica-drupal/" title="Crítica a Drupal" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Patrones de diseño mediante ejemplos">
+<meta property="og:url" content="http://magmax.org/blog/patrones-ejemplos/">
+<meta property="og:description" content='¿No os ha pasado nunca que encontráis un artículo tan bueno que decís "éste me lo guardo"? ¿Y qué ocurre cuando lo que os ha gustado tanto es un comentario?
+No he podido resistirme a hacerme eco de es'>
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2010-12-02T00:00:00+00:00">
+<meta property="article:updated" content="2010-12-02T00:00:00">
+<meta property="article:tag" content="patterns">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/patrones-ejemplos/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/patrones-ejemplos/" class="u-url">Patrones de diseño mediante ejemplos</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2010-12-02T00:00:00+00:00" title="2010-12-02">2010-12-02</time>
+                // <time class="updated dt-updated" datetime="2010-12-02T00:00:00" title="2010-12-02">2010-12-02</time></p>
+              <p class="commentline">            <a href="/blog/patrones-ejemplos/#disqus_thread" data-disqus-identifier="cache/posts/patrones-ejemplos.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>¿No os ha pasado nunca que encontráis un artículo tan bueno que decís "éste me lo guardo"? ¿Y qué ocurre cuando lo que os ha gustado tanto es un comentario?</p>
+<p>No he podido resistirme a hacerme eco de <a class="reference external" href="http://stackoverflow.com/questions/1673841/examples-of-gof-design-patterns/2707195#2707195">este comentario, encontrado en stackoverflow</a> , de <a class="reference external" href="http://balusc.blogspot.com/:">BalusC</a></p>
+<!-- TEASER_END -->
+<hr class="docutils">
+<p>You can find an overview of a lot design patterns in <a class="reference external" href="http://en.wikipedia.org/wiki/Design_pattern_%28computer_science%29#Classification_and_list">Wikipedia</a> . It also mentions which patterns are mentioned by GoF. I'll sum them up here and try to assign as much as possible pattern implementations found in both the Java SE and Java EE API's.</p>
+<hr class="docutils">
+<div class="section" id="creational-patterns">
+<h2><a class="reference external" href="http://en.wikipedia.org/wiki/Creational_pattern">Creational patterns</a></h2>
+<div class="section" id="abstract-factory">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Abstract_factory_pattern">Abstract factory</a></h3>
+<p>Recognizeable by creational methods returning an abstract/interface type</p>
+<ul class="simple">
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Calendar.html#getInstance%28%29">java.util.Calendar#getInstance()</a></li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Arrays.html#asList%28T...%29">java.util.Arrays#asList()</a></li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/ResourceBundle.html#getBundle%28java.lang.String%29">java.util.ResourceBundle#getBundle()</a></li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/net/URL.html#openConnection%28%29">java.net.URL#openConnection()</a></li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/sql/DriverManager.html#getConnection%28java.lang.String%29">java.sql.DriverManager#getConnection()</a></li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/sql/Connection.html#createStatement%28%29">java.sql.Connection#createStatement()</a></li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/sql/Statement.html#executeQuery%28java.lang.String%29">java.sql.Statement#executeQuery()</a></li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/text/NumberFormat.html#getInstance%28%29">java.text.NumberFormat#getInstance()</a></li>
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/management/ManagementFactory.html">java.lang.management.ManagementFactory</a>  (all <tt class="docutils literal">getXXX()</tt> methods)</li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/nio/charset/Charset.html#forName%28java.lang.String%29">java.nio.charset.Charset#forName()</a></li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/javax/xml/parsers/DocumentBuilderFactory.html#newInstance%28%29">javax.xml.parsers.DocumentBuilderFactory#newInstance()</a></li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/javax/xml/transform/TransformerFactory.html#newInstance%28%29">javax.xml.transform.TransformerFactory#newInstance()</a></li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/javax/xml/xpath/XPathFactory.html#newInstance%28%29">javax.xml.xpath.XPathFactory#newInstance()</a></li>
+</ul>
+</div>
+<div class="section" id="builder">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Builder_pattern">Builder</a></h3>
+<p>Recognizeable by creational methods returning the instance itself</p>
+<ul class="simple">
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/StringBuilder.html#append%28boolean%29">java.lang.StringBuilder#append()</a>  (unsynchronized)</li>
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/StringBuffer.html#append%28boolean%29">java.lang.StringBuffer#append()</a>  (synchronized)</li>
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/nio/ByteBuffer.html#put%28byte%29">java.nio.ByteBuffer#put()</a>  (also on <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/nio/CharBuffer.html#put%28char%29">CharBuffer</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/nio/ShortBuffer.html#put%28java.nio.ShortBuffer%29">ShortBuffer</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/nio/IntBuffer.html#put%28int%29">IntBuffer</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/nio/LongBuffer.html#put%28java.nio.LongBuffer%29">LongBuffer</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/nio/FloatBuffer.html#put%28float%29">FloatBuffer</a>  and <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/nio/DoubleBuffer.html#put%28double%29">DoubleBuffer</a> )</li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/javax/swing/GroupLayout.Group.html#addComponent%28java.awt.Component%29">javax.swing.GroupLayout.Group#addComponent()</a></li>
+<li>All implementations of <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Appendable.html">java.lang.Appendable</a>
+</li>
+</ul>
+</div>
+<div class="section" id="factory-method">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Factory_method_pattern">Factory method</a></h3>
+<p>Recognizeable by creational methods returning a concrete type</p>
+<ul class="simple">
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Object.html#toString%28%29">java.lang.Object#toString()</a>  (overrideable in all subclasses)</li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Class.html#newInstance%28%29">java.lang.Class#newInstance()</a></li>
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Integer.html#valueOf%28java.lang.String%29">java.lang.Integer#valueOf(String)</a>  (also on <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Boolean.html#valueOf%28boolean%29">Boolean</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Byte.html#valueOf%28byte%29">Byte</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Character.html#valueOf%28char%29">Character</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Short.html#valueOf%28java.lang.String%29">Short</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Long.html#valueOf%28java.lang.String%29">Long</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Float.html#valueOf%28float%29">Float</a>  and <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Double.html#valueOf%28double%29">Double</a> )</li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Class.html#forName%28java.lang.String%29">java.lang.Class#forName()</a></li>
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/reflect/Array.html#newInstance%28java.lang.Class">java.lang.reflect.Array#newInstance()</a> ,%20int%29</li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/reflect/Constructor.html#newInstance%28java.lang.Object...%29">java.lang.reflect.Constructor#newInstance()</a></li>
+</ul>
+</div>
+<div class="section" id="prototype">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Prototype_pattern">Prototype</a></h3>
+<p>Recognizeable by creational methods returning a _different_ instance of itself with the same properties</p>
+<ul class="simple">
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Object.html#clone%28%29">java.lang.Object#clone()</a>  (the class has to implement <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Cloneable.html">java.lang.Cloneable</a> )</li>
+</ul>
+</div>
+<div class="section" id="singleton">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Singleton_pattern">Singleton</a></h3>
+<p>Recognizeable by creational methods returning the <em>same</em> instance (usually of itself) everytime</p>
+<ul class="simple">
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Runtime.html#getRuntime%28%29">java.lang.Runtime#getRuntime()</a></li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/awt/Desktop.html#getDesktop%28%29">java.awt.Desktop#getDesktop()</a></li>
+</ul>
+</div>
+</div>
+<hr class="docutils">
+<div class="section" id="structural-patterns">
+<h2><a class="reference external" href="http://en.wikipedia.org/wiki/Structural_pattern">Structural patterns</a></h2>
+<div class="section" id="adapter">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Adapter_pattern">Adapter</a></h3>
+<p>Recognizeable by creational methods taking an instance of <em>different</em> abstract/interface type and returning an implementation of own/another abstract/interface type which <strong>decorates/overrides</strong> the given instance</p>
+<ul class="simple">
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/io/InputStreamReader.html#InputStreamReader%28java.io.InputStream%29">java.io.InputStreamReader(InputStream)</a>  (returns a <tt class="docutils literal">Reader</tt>)</li>
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/io/OutputStreamWriter.html#OutputStreamWriter%28java.io.OutputStream%29">java.io.OutputStreamWriter(OutputStream)</a>  (returns a <tt class="docutils literal">Writer</tt>)</li>
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/javax/xml/bind/annotation/adapters/XmlAdapter.html#marshal%28BoundType%29">javax.xml.bind.annotation.adapters.XmlAdapter#marshal()</a>  and <a class="reference external" href="http://java.sun.com/javase/6/docs/api/javax/xml/bind/annotation/adapters/XmlAdapter.html#unmarshal%28ValueType%29">#unmarshal()</a>
+</li>
+</ul>
+</div>
+<div class="section" id="bridge">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Bridge_pattern">Bridge</a></h3>
+<p>Recognizeable by creational methods taking an instance of <em>different</em> abstract/interface type and returning an implementation of own abstract/interface type which <em>delegates/uses</em> the given instance</p>
+<ul class="simple">
+<li>None comes to mind yet. A fictive example would be <tt class="docutils literal">new LinkedHashMap(LinkedHashSet&lt;K&gt;, List&lt;V&gt;)</tt> which returns an unmodifiable linked map which doesn't clone the items, but _uses_ them. The <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Collections.html#newSetFromMap%28java.util.Map%29">java.util.Collections#newSetFromMap()</a>  and <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Collections.html#singleton%28T%29">singletonXXX()</a>  methods however comes close.</li>
+</ul>
+</div>
+<div class="section" id="composite">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Composite_pattern">Composite</a></h3>
+<p>Recognizeable by behavioral methods taking an instance of <em>same</em> abstract/interface type</p>
+<ul class="simple">
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Map.html#putAll%28java.util.Map%29">java.util.Map#putAll(Map)</a></li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/List.html#addAll%28java.util.Collection%29">java.util.List#addAll(Collection)</a></li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Set.html#addAll%28java.util.Collection%29">java.util.Set#addAll(Collection)</a></li>
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/nio/ByteBuffer.html#put%28java.nio.ByteBuffer%29">java.nio.ByteBuffer#put(ByteBuffer)</a>  (also on <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/nio/CharBuffer.html#put%28char%29">CharBuffer</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/nio/ShortBuffer.html#put%28java.nio.ShortBuffer%29">ShortBuffer</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/nio/IntBuffer.html#put%28int%29">IntBuffer</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/nio/LongBuffer.html#put%28java.nio.LongBuffer%29">LongBuffer</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/nio/FloatBuffer.html#put%28float%29">FloatBuffer</a>  and <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/nio/DoubleBuffer.html#put%28double%29">DoubleBuffer</a> )</li>
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/awt/Container.html#add%28java.awt.Component%29">java.awt.Container#add(Component)</a>  (practically all over Swing thus)</li>
+</ul>
+</div>
+<div class="section" id="decorator">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Decorator_pattern">Decorator</a></h3>
+<p>Recognizeable by creational methods taking an instance of <em>same</em> abstract/interface type</p>
+<ul class="simple">
+<li>All subclasses of <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/io/InputStream.html">java.io.InputStream</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/io/OutputStream.html">OutputStream</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/io/Reader.html">Reader</a>  and <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/io/Writer.html">Writer</a>  have a constructor taking an instance of same type.</li>
+<li>Almost all implementations of <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/List.html">java.util.List</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Set.html">Set</a>  and <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Map.html">Map</a>  have a constructor taking an instance of same type.</li>
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Collections.html">java.util.Collections</a> , the <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Collections.html#checkedCollection%28java.util.Collection">checkedXXX()</a> ,%20java.lang.Class%29, <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Collections.html#synchronizedCollection%28java.util.Collection%29">synchronizedXXX()</a>  and <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Collections.html#unmodifiableCollection%28java.util.Collection%29">unmodifiableXXX()</a>  methods.</li>
+<li>
+<a class="reference external" href="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServletRequestWrapper.html">javax.servlet.http.HttpServletRequestWrapper</a>  and <a class="reference external" href="http://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServletResponseWrapper.html">HttpServletResponseWrapper</a>
+</li>
+</ul>
+</div>
+<div class="section" id="facade">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Facade_pattern">Facade</a></h3>
+<p>Recognizeable by behavioral methods which internally uses instances of <em>different</em> independent abstract/interface types</p>
+<ul class="simple">
+<li>
+<a class="reference external" href="http://java.sun.com/javaee/6/docs/api/javax/faces/webapp/FacesServlet.html">javax.faces.webapp.FacesServlet</a> , it internally uses under each the abstract/interface types <a class="reference external" href="http://java.sun.com/javaee/6/docs/api/javax/servlet/ServletContext.html">ServletContext</a> , <a class="reference external" href="http://java.sun.com/javaee/6/docs/api/javax/faces/lifecycle/Lifecycle.html">LifeCycle</a> , <a class="reference external" href="http://java.sun.com/javaee/6/docs/api/javax/faces/application/ViewHandler.html">ViewHandler</a> , <a class="reference external" href="http://java.sun.com/javaee/6/docs/api/javax/faces/application/NavigationHandler.html">NavigationHandler</a>  and many more without that the enduser has to worry about it (which are however overrideable by injection).</li>
+</ul>
+</div>
+<div class="section" id="flyweight">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Flyweight_pattern">Flyweight</a></h3>
+<p>Recognizeable by creational methods returning a cached instance, a bit the "multiton" idea</p>
+<ul class="simple">
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Integer.html#valueOf%28int%29">java.lang.Integer#valueOf(int)</a>  (also on <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Boolean.html#valueOf%28boolean%29">Boolean</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Byte.html#valueOf%28byte%29">Byte</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Character.html#valueOf%28char%29">Character</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Short.html#valueOf%28java.lang.String%29">Short</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Long.html#valueOf%28java.lang.String%29">Long</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Float.html#valueOf%28float%29">Float</a>  and <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Double.html#valueOf%28double%29">Double</a> )</li>
+</ul>
+</div>
+<div class="section" id="proxy">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Proxy_pattern">Proxy</a></h3>
+<p>Recognizeable by creational methods which returns an implementation of given abstract/interface type which in turn <em>delegates/uses</em> a <em>different</em> implementation of given abstract/interface type</p>
+<ul class="simple">
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/reflect/Proxy.html">java.lang.reflect.Proxy</a></li>
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/rmi/package-summary.html">java.rmi.*</a> , the whole API actually.</li>
+</ul>
+<p>The Wikipedia example is IMHO a bit poor, lazy loading has actually completely nothing to do with the proxy pattern at all</p>
+</div>
+</div>
+<hr class="docutils">
+<div class="section" id="behavioral-patterns">
+<h2><a class="reference external" href="http://en.wikipedia.org/wiki/Behavioral_pattern">Behavioral patterns</a></h2>
+<div class="section" id="chain-of-responsibility">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Chain_of_responsibility_pattern">Chain of responsibility</a></h3>
+<p>Recognizeable by behavioral methods which (indirectly) invokes the same method in <em>another</em> implementation of <em>same</em> abstract/interface type in a queue</p>
+<ul class="simple">
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/logging/Logger.html#log%28java.util.logging.Level">java.util.logging.Logger#log()</a></li>
+<li><a class="reference external" href="http://java.sun.com/javaee/6/docs/api/javax/servlet/Filter.html#doFilter%28javax.servlet.ServletRequest">javax.servlet.Filter#doFilter()</a></li>
+</ul>
+</div>
+<div class="section" id="command">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Command_pattern">Command</a></h3>
+<p>Recognizeable by behavioral methods in an abstract/interface type which invokes a method in an implementation of a <em>different</em> abstract/interface type which has been <em>encapsulated</em> by the command implementation during its creation</p>
+<ul class="simple">
+<li>All implementations of <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/Runnable.html">java.lang.Runnable</a>
+</li>
+<li>All implementations of <a class="reference external" href="http://java.sun.com/javase/6/docs/api/javax/swing/Action.html">javax.swing.Action</a>
+</li>
+</ul>
+</div>
+<div class="section" id="interpreter">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Interpreter_pattern">Interpreter</a></h3>
+<p>Recognizeable by behavioral methods returning a <em>structurally</em> different instance/type of the given instance/type; note that parsing/formatting is not part of the pattern, determining the pattern and how to apply it is</p>
+<ul class="simple">
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/regex/Pattern.html">java.util.Pattern</a></li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/text/Normalizer.html">java.text.Normalizer</a></li>
+<li>All subclasses of <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/text/Format.html">java.text.Format</a>
+</li>
+<li>All subclasses of <a class="reference external" href="http://java.sun.com/javaee/6/docs/api/javax/el/ELResolver.html">javax.el.ELResolver</a>
+</li>
+</ul>
+</div>
+<div class="section" id="iterator">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Iterator_pattern">Iterator</a></h3>
+<p>Recognizeable by behavioral methods sequentially returning instances of a <em>different</em> type from a queue</p>
+<ul class="simple">
+<li>All implementations of <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Iterator.html">java.util.Iterator</a>  (thus under each also <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Scanner.html!">java.util.Scanner</a> ).</li>
+<li>All implementations of <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Enumeration.html">java.util.Enumeration</a>
+</li>
+</ul>
+</div>
+<div class="section" id="mediator">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Mediator_pattern">Mediator</a></h3>
+<p>Recognizeable by behavioral methods taking an instance of different abstract/interface type (usually using the command pattern) which delegates/uses the given instance</p>
+<ul class="simple">
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Timer.html">java.util.Timer</a>  (all <tt class="docutils literal">scheduleXXX()</tt> methods)</li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/concurrent/Executor.html#execute%28java.lang.Runnable%29">java.util.concurrent.Executor#execute()</a></li>
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/concurrent/ExecutorService.html">java.util.concurrent.ExecutorService</a>  (the <tt class="docutils literal">invokeXXX()</tt> and <tt class="docutils literal">submit()</tt> methods)</li>
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/concurrent/ScheduledExecutorService.html">java.util.concurrent.ScheduledExecutorService</a>  (all <tt class="docutils literal">scheduleXXX()</tt> methods)</li>
+<li><a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/lang/reflect/Method.html#invoke%28java.lang.Object">java.lang.reflect.Method#invoke()</a></li>
+</ul>
+</div>
+<div class="section" id="memento">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Memento_pattern">Memento</a></h3>
+<p>Recognizeable by behavioral methods which internally changes the state of the <em>whole</em> instance</p>
+<ul class="simple">
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Date.html">java.util.Date</a>  (the setter methods do that, <tt class="docutils literal">Date</tt> is internally represented by a <tt class="docutils literal">long</tt> value)</li>
+<li>All implementations of <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/io/Serializable.html">java.io.Serializable</a>
+</li>
+<li>All implementations of <a class="reference external" href="http://java.sun.com/javaee/6/docs/api/javax/faces/component/StateHolder.html">javax.faces.component.StateHolder</a>
+</li>
+</ul>
+</div>
+<div class="section" id="observer-or-publish-subscribe">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Observer_pattern">Observer (or Publish/Subscribe)</a></h3>
+<p>Recognizeable by behavioral methods which invokes a method on an instance of <em>another</em> abstract/interface type, depending on own state</p>
+<ul class="simple">
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Observer.html/%22java.util.Observable%22:http://java.sun.com/javase/6/docs/api/java/util/Observable.html">java.util.Observer</a>  (rarely used in real world though)</li>
+<li>All implementations of <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/EventListener.html">java.util.EventListener</a>  (practically all over Swing thus)</li>
+<li><a class="reference external" href="http://java.sun.com/javaee/6/docs/api/javax/servlet/http/HttpSessionBindingListener.html">javax.servlet.http.HttpSessionBindingListener</a></li>
+<li><a class="reference external" href="http://java.sun.com/javaee/6/docs/api/javax/servlet/http/HttpSessionAttributeListener.html">javax.servlet.http.HttpSessionAttributeListener</a></li>
+<li><a class="reference external" href="http://java.sun.com/javaee/6/docs/api/javax/faces/event/PhaseListener.html">javax.faces.event.PhaseListener</a></li>
+</ul>
+</div>
+<div class="section" id="state">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/State_pattern">State</a></h3>
+<p>Recognizeable by behavioral methods which changes its behaviour depending on the instance's state which can be controlled externally</p>
+<ul class="simple">
+<li>All implementations of <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Iterator.html">java.util.Iterator</a>
+</li>
+<li>
+<a class="reference external" href="http://java.sun.com/javaee/6/docs/api/javax/faces/lifecycle/Lifecycle.html#execute%28javax.faces.context.FacesContext%29">javax.faces.lifecycle.LifeCycle#execute()</a>  (controlled by <a class="reference external" href="http://java.sun.com/javaee/6/docs/api/javax/faces/webapp/FacesServlet.html">FacesServlet</a> , the behaviour is dependent on current phase (state) of JSF lifecycle)</li>
+</ul>
+</div>
+<div class="section" id="strategy">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Strategy_pattern">Strategy</a></h3>
+<p>Recognizeable by behavioral methods in an abstract/interface type which invokes a method in an implementation of a <em>different</em> abstract/interface type which has been <em>passed-in</em> as method argument into the strategy implementation</p>
+<ul class="simple">
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/Comparator.html#compare%28T">java.util.Comparator#compare()</a> , executed by under each <tt class="docutils literal">Collections#sort()</tt>.</li>
+<li>
+<a class="reference external" href="http://java.sun.com/javaee/6/docs/api/javax/servlet/http/HttpServlet.html">javax.servlet.http.HttpServlet</a> , the <tt class="docutils literal">service()</tt> and all <tt class="docutils literal">doXXX()</tt> methods take <tt class="docutils literal">HttpServletRequest</tt> and <tt class="docutils literal">HttpServletResponse</tt> and the implementor has to process them (and not to get hold of them as instance variables!).</li>
+<li><a class="reference external" href="http://java.sun.com/javaee/6/docs/api/javax/servlet/Filter.html#doFilter%28javax.servlet.ServletRequest">javax.servlet.Filter#doFilter()</a></li>
+</ul>
+</div>
+<div class="section" id="template-method">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Template_method_pattern">Template method</a></h3>
+<p>Recognizeable by behavioral methods which already have a "default" behaviour definied by an abstract type</p>
+<ul class="simple">
+<li>All non-abstract methods of <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/io/InputStream.html">java.io.InputStream</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/io/OutputStream.html">java.io.OutputStream</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/io/Reader.html">java.io.Reader</a>  and <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/io/Writer.html">java.io.Writer</a> .</li>
+<li>All non-abstract methods of <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/AbstractList.html">java.util.AbstractList</a> , <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/AbstractSet.html">java.util.AbstractSet</a>  and <a class="reference external" href="http://java.sun.com/javase/6/docs/api/java/util/AbstractMap.html">java.util.AbstractMap</a> .</li>
+<li>
+<a class="reference external" href="http://java.sun.com/javaee/6/docs/api/javax/servlet/http/HttpServlet.html">javax.servlet.http.HttpServlet</a> , all the <tt class="docutils literal">doXXX()</tt> methods by default sends a HTTP 405 "Method Not Allowed" error to the response. You're free to implement none or any of them.</li>
+</ul>
+</div>
+<div class="section" id="visitor">
+<h3><a class="reference external" href="http://en.wikipedia.org/wiki/Visitor_pattern">Visitor</a></h3>
+<p>Recognizeable by two <em>different</em> abstract/interface types which has methods definied which takes each the <em>other</em> abstract/interface type; the one actually calls the method of the other and the other executes the desired strategy on it</p>
+<ul class="simple">
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/javax/lang/model/element/AnnotationValue.html">javax.lang.model.element.AnnotationValue</a>  and <a class="reference external" href="http://java.sun.com/javase/6/docs/api/javax/lang/model/element/AnnotationValueVisitor.html">javax.lang.model.element.AnnotationValueVisitor</a>
+</li>
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/javax/lang/model/element/Element.html">javax.lang.model.element.Element</a>  and <a class="reference external" href="http://java.sun.com/javase/6/docs/api/javax/lang/model/element/ElementVisitor.html">javax.lang.model.element.ElementVisitor</a>
+</li>
+<li>
+<a class="reference external" href="http://java.sun.com/javase/6/docs/api/javax/lang/model/type/TypeMirror.html">javax.lang.model.type.TypeMirror</a>  and <a class="reference external" href="http://java.sun.com/javase/6/docs/api/javax/lang/model/type/TypeVisitor.html">javax.lang.model.type.TypeVisitor</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2010-12-02T00:00:00+00:00" title="2010-12-02">2010-12-02</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/patterns/" rel="tag">patterns</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/mocks-y-stubs/" rel="prev" title="Pruebas unitarias: Mocks y Stubs">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/critica-drupal/" rel="next" title="Crítica a Drupal">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/patrones-ejemplos/",
+        disqus_title="Patrones de dise\u00f1o mediante ejemplos",
+        disqus_identifier="cache/posts/patrones-ejemplos.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

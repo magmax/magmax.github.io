@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="tasks.py">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>tasks.py | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/listings/python-celery/007/tasks.py.html">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+<nav class="breadcrumbs"><ul class="breadcrumb">
+<li><a href="/listings/">listings</a></li>
+                <li><a href="/listings/python-celery/">python-celery</a></li>
+                <li><a href="/listings/python-celery/007/">007</a></li>
+                <li>tasks.py</li>
+</ul></nav><table class="codetable"><tr>
+<td class="linenos"><div class="linenodiv"><pre><a href="#listingspython-celery007taskspy-1"> 1</a>
+<a href="#listingspython-celery007taskspy-2"> 2</a>
+<a href="#listingspython-celery007taskspy-3"> 3</a>
+<a href="#listingspython-celery007taskspy-4"> 4</a>
+<a href="#listingspython-celery007taskspy-5"> 5</a>
+<a href="#listingspython-celery007taskspy-6"> 6</a>
+<a href="#listingspython-celery007taskspy-7"> 7</a>
+<a href="#listingspython-celery007taskspy-8"> 8</a>
+<a href="#listingspython-celery007taskspy-9"> 9</a>
+<a href="#listingspython-celery007taskspy-10">10</a>
+<a href="#listingspython-celery007taskspy-11">11</a>
+<a href="#listingspython-celery007taskspy-12">12</a>
+<a href="#listingspython-celery007taskspy-13">13</a>
+<a href="#listingspython-celery007taskspy-14">14</a>
+<a href="#listingspython-celery007taskspy-15">15</a>
+<a href="#listingspython-celery007taskspy-16">16</a>
+<a href="#listingspython-celery007taskspy-17">17</a>
+<a href="#listingspython-celery007taskspy-18">18</a>
+<a href="#listingspython-celery007taskspy-19">19</a>
+<a href="#listingspython-celery007taskspy-20">20</a>
+<a href="#listingspython-celery007taskspy-21">21</a>
+<a href="#listingspython-celery007taskspy-22">22</a>
+<a href="#listingspython-celery007taskspy-23">23</a></pre></div></td>
+<td class="code"><pre class="code literal-block"><a name="listingspython-celery007taskspy-1"></a><span class="c"># Celery beat example: periodic date operation</span>
+<a name="listingspython-celery007taskspy-2"></a><span class="kn">import</span> <span class="nn">datetime</span>
+<a name="listingspython-celery007taskspy-3"></a><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
+<a name="listingspython-celery007taskspy-4"></a><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">group</span>
+<a name="listingspython-celery007taskspy-5"></a>
+<a name="listingspython-celery007taskspy-6"></a><span class="c"># RabbitMQ</span>
+<a name="listingspython-celery007taskspy-7"></a><span class="c">#app = Celery('tasks', broker='amqp://guest@localhost//', backend='amqp')</span>
+<a name="listingspython-celery007taskspy-8"></a><span class="c"># Redis</span>
+<a name="listingspython-celery007taskspy-9"></a><span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s">'tasks'</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s">'redis://localhost:6379/0'</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s">'redis://localhost:6379/0'</span><span class="p">)</span>
+<a name="listingspython-celery007taskspy-10"></a>
+<a name="listingspython-celery007taskspy-11"></a><span class="nd">@app.task</span>
+<a name="listingspython-celery007taskspy-12"></a><span class="k">def</span> <span class="nf">add_days</span><span class="p">(</span><span class="n">days</span><span class="p">):</span>
+<a name="listingspython-celery007taskspy-13"></a>    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">)</span>
+<a name="listingspython-celery007taskspy-14"></a>
+<a name="listingspython-celery007taskspy-15"></a><span class="n">app</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+<a name="listingspython-celery007taskspy-16"></a>    <span class="n">CELERYBEAT_SCHEDULE</span><span class="o">=</span><span class="p">{</span>
+<a name="listingspython-celery007taskspy-17"></a>        <span class="s">'multiply-each-10-seconds'</span><span class="p">:</span> <span class="p">{</span>
+<a name="listingspython-celery007taskspy-18"></a>            <span class="s">'task'</span><span class="p">:</span> <span class="s">'tasks.add_days'</span><span class="p">,</span>
+<a name="listingspython-celery007taskspy-19"></a>            <span class="s">'schedule'</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+<a name="listingspython-celery007taskspy-20"></a>            <span class="s">'args'</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">)</span>
+<a name="listingspython-celery007taskspy-21"></a>        <span class="p">},</span>
+<a name="listingspython-celery007taskspy-22"></a>    <span class="p">},</span>
+<a name="listingspython-celery007taskspy-23"></a><span class="p">)</span>
+</pre></td>
+</tr></table>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

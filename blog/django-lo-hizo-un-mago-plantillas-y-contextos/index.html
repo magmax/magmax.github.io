@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Tutorial para usar plantillas y contextos con Django">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Django lo hizo un mago: plantillas y contextos | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/django-lo-hizo-un-mago-plantillas-y-contextos/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Tutorial para usar plantillas y contextos con Django">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/javascript-limpio/" title="JavaScript limpio" type="text/html">
+<link rel="next" href="/blog/python-distribuido-celery/" title="Python distribuido: Celery" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Django lo hizo un mago: plantillas y contextos">
+<meta property="og:url" content="http://magmax.org/blog/django-lo-hizo-un-mago-plantillas-y-contextos/">
+<meta property="og:description" content="Tutorial para usar plantillas y contextos con Django">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2015-03-12T00:00:00+00:00">
+<meta property="article:updated" content="2015-04-02T00:00:00+00:00">
+<meta property="article:tag" content="django">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Tutorial para usar plantillas y contextos con Django">
+<meta name="twitter:url" content="http://magmax.org//blog/django-lo-hizo-un-mago-plantillas-y-contextos/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/" class="u-url">Django lo hizo un mago: plantillas y contextos</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2015-03-12T00:00:00+00:00" title="2015-03-12">2015-03-12</time>
+                // <time class="updated dt-updated" datetime="2015-04-02T00:00:00+00:00" title="2015-03-12">2015-03-12</time></p>
+              <p class="commentline">            <a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#disqus_thread" data-disqus-identifier="cache/posts/django-lo-hizo-un-mago-estaticos-plantillas-y-contextos.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>En el tutorial <a class="reference external" href="/blog/django-lo-hizo-un-mago">Django lo hizo un mago</a> expliqué los conceptos básicos de <a class="reference external" href="https://www.djangoproject.com/">Django</a>. En <a class="reference external" href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle">Django lo hizo un mago: paginación y detalle</a> añadimos paginación y la ventana de detalle. En esta ocasión vamos a ponerlo bonito mediante plantillas, y crearemos cierto estilo añadiendo también contextos.</p>
+<p>Para los que sepan algo de <a class="reference external" href="https://www.djangoproject.com/">Django</a>, no es necesario seguir los tutoriales anteriores, aunque sí es recomendable para los más novatos :D</p>
+<!-- TEASER_END -->
+<div class="section" id="como-leer-este-articulo">
+<h2>Cómo leer este artículo</h2>
+<p>Nuevamente, hay tres maneras de leer este artículo.</p>
+<ol class="arabic simple">
+<li>Continuando tras la lectura de <a class="reference external" href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle">Django lo hizo un mago: paginación y detalle</a>
+</li>
+<li>Descargándose el tag 0.2.0 del <a class="reference external" href="https://github.com/magmax/django-blog/">repositorio GitHub</a>  <cite>git@github.com:magmax/django-blog.git</cite>
+</li>
+<li>Viendo los resultados descargándose el tag 0.3.0 del <a class="reference external" href="https://github.com/magmax/django-blog/">repositorio GitHub</a> <cite>git@github.com:magmax/django-blog.git</cite>
+</li>
+</ol>
+<p>Seguiremos usando el entorno <a class="reference external" href="https://virtualenv.pypa.io/en/latest/">Virtualenv</a> que creamos en <a class="reference external" href="/blog/django-lo-hizo-un-mago">Django lo hizo un mago</a>.</p>
+</div>
+<div class="section" id="plantillas-templates">
+<h2>Plantillas (Templates)</h2>
+<p>Vamos a ahondar en el uso de plantillas, también conocidas como <em>templates</em>. Ya hemos visto lo básico: Las variables se rodean con doble llave <tt class="docutils literal">{{ variable }}</tt> y los <em>tags</em> con llave porcentaje: <tt class="docutils literal">{% tag [arguments] %}</tt>. Algunos tags tienen que cerrarse con <tt class="docutils literal">{% endTAG %}</tt>. Finalmente, hay filtros (en inglés <em>filters</em>) que permiten modificar variables.</p>
+<p>Los <em>tags</em> más importantes son <tt class="docutils literal">if/else/endif</tt> y <tt class="docutils literal">for/endfor</tt>. El primero nos permite añadir condiciones y el segundo, bucles. Tenéis ejemplos de ambos en el archivo <strong>templates/blog/post_list.html</strong>.</p>
+<p>Pero no me voy a centrar en los <em>tags</em> o <em>filters</em>: Veamos la herencia.</p>
+<p>Una plantilla puede heredar de otra. De esta manera, la plantilla padre define una estructura y la hija sobreescribe bloques. Es importante que definamos bien los bloques para que quede una buena estructura.</p>
+<p>Veamos un ejemplo que hace uso de <a class="reference external" href="http://getbootstrap.com/">Bootstrap</a> usando el CDN (archivo <strong>templates/base.html</strong>):</p>
+<pre class="code html"><a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-1"></a><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-2"></a><span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-3"></a>  <span class="nt">&lt;head&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-4"></a>    {% load static %}
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-5"></a>    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"utf-8"</span> <span class="nt">/&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-6"></a>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-7"></a>    <span class="c">&lt;!-- Always force latest IE rendering engine (even in intranet) &amp; Chrome Frame</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-8"></a><span class="c">         Remove this if you use the .htaccess --&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-9"></a>    <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">"X-UA-Compatible"</span> <span class="na">content=</span><span class="s">"IE=edge,chrome=1"</span> <span class="nt">/&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-10"></a>    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">href=</span><span class="s">"https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"</span><span class="nt">&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-11"></a>    <span class="nt">&lt;title&gt;</span>{% block title %}{% endblock %}<span class="nt">&lt;/title&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-12"></a>    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">href=</span><span class="s">"/static/css/bootstrap.min.css"</span> <span class="na">type=</span><span class="s">"text/css"</span> <span class="na">media=</span><span class="s">"screen"</span> <span class="nt">/&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-13"></a>    <span class="nt">&lt;style&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-14"></a>      <span class="nt">body</span> <span class="p">{</span> <span class="k">padding-top</span><span class="o">:</span> <span class="m">70px</span><span class="p">;</span> <span class="k">padding-bottom</span><span class="o">:</span> <span class="m">70px</span><span class="p">;</span> <span class="p">}</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-15"></a>      <span class="p">{</span><span class="o">%</span> <span class="k">block</span> <span class="n">css</span> <span class="o">%</span><span class="p">}{</span><span class="o">%</span> <span class="n">endblock</span> <span class="o">%</span><span class="p">}</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-16"></a>    <span class="nt">&lt;/style&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-17"></a>  <span class="nt">&lt;/head&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-18"></a>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-19"></a>  <span class="nt">&lt;body&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-20"></a>    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"container"</span><span class="nt">&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-21"></a>      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"row"</span><span class="nt">&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-22"></a>        {% block head %}{% endblock %}
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-23"></a>      <span class="nt">&lt;/div&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-24"></a>      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"row"</span><span class="nt">&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-25"></a>        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"col-sm-8"</span><span class="nt">&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-26"></a>          {% block content %}{% endblock %}
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-27"></a>        <span class="nt">&lt;/div&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-28"></a>      <span class="nt">&lt;/div&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-29"></a>    <span class="nt">&lt;/div&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-30"></a>    <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-31"></a>      <span class="p">{</span><span class="o">%</span> <span class="nx">block</span> <span class="nx">javascript</span> <span class="o">%</span><span class="p">}{</span><span class="o">%</span> <span class="nx">endblock</span> <span class="o">%</span><span class="p">}</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-32"></a>    <span class="nt">&lt;/script&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-33"></a>  <span class="nt">&lt;/body&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-34"></a>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-35"></a>  <span class="nt">&lt;foot&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-36"></a>    {% block foot %}{% endblock %}
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-37"></a>  <span class="nt">&lt;/foot&gt;</span>
+<a name="rest_code_333ce2983ddd4c979ab19fff06b2b592-38"></a><span class="nt">&lt;/html&gt;</span>
+</pre>
+<p>Como se puede observar, hemos creado los bloques <tt class="docutils literal">title</tt>, <tt class="docutils literal">css</tt>, <tt class="docutils literal">head</tt>, <tt class="docutils literal">content</tt>, <tt class="docutils literal"><span class="pre">javascript-load</span></tt>, <tt class="docutils literal">javascript</tt> y <tt class="docutils literal">foot</tt>.</p>
+<p>Ahora vamos a realizar unas pequeñas modificaciones en <strong>templates/blog/post_list.html</strong>:</p>
+<pre class="code html"><a name="rest_code_f97f20d303ad471fb66014722ad10aa7-1"></a>{% extends "base.html"%}
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-2"></a>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-3"></a>{% block content %}
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-4"></a><span class="nt">&lt;ul&gt;</span>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-5"></a>  {% for post in post_list %}
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-6"></a>  <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'post_detail' post.id %}"</span><span class="nt">&gt;</span>{{ post.title }}<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-7"></a>  {% endfor %}
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-8"></a><span class="nt">&lt;/ul&gt;</span>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-9"></a>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-10"></a><span class="nt">&lt;div&gt;</span>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-11"></a>    {% if page_obj.has_previous %}
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-12"></a>      <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'home' %}?page={{ page_obj.previous_page_number }}"</span><span class="nt">&gt;</span>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-13"></a>        <span class="nt">&lt;span&gt;</span><span class="ni">&amp;laquo;</span> Previous<span class="nt">&lt;/span&gt;</span>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-14"></a>      <span class="nt">&lt;/a&gt;</span>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-15"></a>    {% else %}
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-16"></a>      <span class="nt">&lt;span&gt;</span><span class="ni">&amp;laquo;</span> Previous<span class="nt">&lt;/span&gt;</span>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-17"></a>    {% endif %}
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-18"></a>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-19"></a>      <span class="nt">&lt;span&gt;</span> | <span class="nt">&lt;span&gt;</span>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-20"></a>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-21"></a>    {% if page_obj.has_next %}
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-22"></a>      <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'home' %}?page={{ page_obj.next_page_number }}"</span><span class="nt">&gt;</span>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-23"></a>        <span class="nt">&lt;span&gt;</span>Next <span class="ni">&amp;raquo;</span><span class="nt">&lt;/span&gt;</span>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-24"></a>      <span class="nt">&lt;/a&gt;</span>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-25"></a>    {% else %}
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-26"></a>      <span class="nt">&lt;span&gt;</span>Next <span class="ni">&amp;raquo;</span><span class="nt">&lt;/span&gt;</span>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-27"></a>    {% endif %}
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-28"></a><span class="nt">&lt;/div&gt;</span>
+<a name="rest_code_f97f20d303ad471fb66014722ad10aa7-29"></a>{% endblock %}
+</pre>
+<p>Básicamente, indicamos que la plantilla extiende de <strong>base.html</strong> y metemos lo que ya teníamos en el bloque <tt class="docutils literal">content</tt>. Esto reemplazará al bloque <tt class="docutils literal">content</tt> de la plantilla <strong>base.html</strong>.</p>
+<p>Y con estas pequeñas modificaciones, veremos el cambio producido en la visualización de la página. Vamos a darle un poco más de estilo (<strong>templates/blog/post_list.html</strong> de nuevo):</p>
+<p><a class="reference external" href="/listings/python-django/003/app/templates/blog/post_list.html.html">python-django/003/app/templates/blog/post_list.html</a></p>
+<pre class="code html"><a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-1"></a>{% extends "base.html"%}
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-2"></a>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-3"></a>{% block content %}
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-4"></a><span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"list-unstyled"</span><span class="nt">&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-5"></a>  {% for post in post_list %}
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-6"></a>  <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'post_detail' post.id %}"</span><span class="nt">&gt;</span>{{ post.title }}<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-7"></a>  {% endfor %}
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-8"></a><span class="nt">&lt;/ul&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-9"></a>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-10"></a><span class="nt">&lt;div&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-11"></a>  <span class="nt">&lt;nav&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-12"></a>    <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"pager"</span><span class="nt">&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-13"></a>      <span class="nt">&lt;li&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-14"></a>        {% if page_obj.has_previous %}
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-15"></a>        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'home' %}?page={{ page_obj.previous_page_number }}"</span><span class="nt">&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-16"></a>          <span class="nt">&lt;span&gt;</span><span class="ni">&amp;laquo;</span> Previous<span class="nt">&lt;/span&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-17"></a>        <span class="nt">&lt;/a&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-18"></a>        {% else %}
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-19"></a>        <span class="nt">&lt;span&gt;</span><span class="ni">&amp;laquo;</span> Previous<span class="nt">&lt;/span&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-20"></a>        {% endif %}
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-21"></a>      <span class="nt">&lt;/li&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-22"></a>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-23"></a>      <span class="nt">&lt;li&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-24"></a>        {% if page_obj.has_next %}
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-25"></a>        <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'home' %}?page={{ page_obj.next_page_number }}"</span><span class="nt">&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-26"></a>          <span class="nt">&lt;span&gt;</span>Next <span class="ni">&amp;raquo;</span><span class="nt">&lt;/span&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-27"></a>        <span class="nt">&lt;/a&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-28"></a>        {% else %}
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-29"></a>        <span class="nt">&lt;span&gt;</span>Next <span class="ni">&amp;raquo;</span><span class="nt">&lt;/span&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-30"></a>        {% endif %}
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-31"></a>      <span class="nt">&lt;/li&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-32"></a>    <span class="nt">&lt;/ul&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-33"></a>  <span class="nt">&lt;/nav&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-34"></a><span class="nt">&lt;/div&gt;</span>
+<a name="rest_code_4b3f12c280d34c59b1fa5cafc1d79a79-35"></a>{% endblock %}
+</pre>
+<p>Y ya que nos ponemos, hacemos lo mismo en <strong>templates/blog/post_detail.html</strong>:</p>
+<p><a class="reference external" href="/listings/python-django/003/app/templates/blog/post_detail.html.html">python-django/003/app/templates/blog/post_detail.html</a></p>
+<pre class="code html"><a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-1"></a>{% extends "base.html"%}
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-2"></a>
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-3"></a>{% block content %}
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-4"></a><span class="nt">&lt;ol</span> <span class="na">class=</span><span class="s">"breadcrumb"</span><span class="nt">&gt;</span>
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-5"></a>  <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'home' %}"</span><span class="nt">&gt;</span>Posts<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-6"></a>  <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">"active"</span><span class="nt">&gt;</span>{{ post.title }}<span class="nt">&lt;/li&gt;</span>
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-7"></a><span class="nt">&lt;/ol&gt;</span>
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-8"></a>
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-9"></a><span class="nt">&lt;h1&gt;</span>{{ post.title }}<span class="nt">&lt;/h1&gt;</span>
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-10"></a>
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-11"></a><span class="nt">&lt;div&gt;</span>
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-12"></a>  {{ post.teaser }}
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-13"></a><span class="nt">&lt;/div&gt;</span>
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-14"></a>
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-15"></a><span class="nt">&lt;hr</span> <span class="nt">/&gt;</span>
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-16"></a>
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-17"></a><span class="nt">&lt;div&gt;</span>
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-18"></a>  {{ post.body }}
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-19"></a><span class="nt">&lt;/div&gt;</span>
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-20"></a>
+<a name="rest_code_59abd9e6dbfd43ee820050fe13edfa37-21"></a>{% endblock %}
+</pre>
+<p>Esto ya va pareciendo un blog en condiciones :D Si queréis podéis darle un estilo mejor, añadir una barra de navegación, etc. De la <em>sidebar</em> nos ocuparemos a continuación.</p>
+</div>
+<div class="section" id="context-processors">
+<h2>Context Processors</h2>
+<p>Según la documentación:</p>
+<blockquote>
+Un <em>context processor</em> tiene una interfaz muy simple: Es tan sólo una función que toma un argumento, un objecto <tt class="docutils literal">HttpRequest</tt>, y devuelve un diccionario que se añade al contexto de plantillas. Cada <em>context processor</em> debe devolver un diccionario.</blockquote>
+<p>Pero... ¿Qué es el contexto? El contexto es el ámbito donde se resuelven las variables. El contexto sea el conjunto de variables que podemos usar desde las plantillas sin definirlas en la misma.</p>
+<p>Dicho de otro modo: Los <em>context processors</em> nos permiten definir variables que después podremos usar desde cualquier plantilla.</p>
+<p>Y cómo no, vamos a verlo con un ejemplo.</p>
+<p>Vamos a crear el archivo <strong>blog/context_processors.py</strong> con el siguiente contenido:</p>
+<p><a class="reference external" href="/listings/python-django/003/app/blog/context_processors.py.html">python-django/003/app/blog/context_processors.py</a></p>
+<pre class="code python"><a name="rest_code_584b9a12954a4c01abd2d1b1a7b107e6-1"></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">models</span>
+<a name="rest_code_584b9a12954a4c01abd2d1b1a7b107e6-2"></a>
+<a name="rest_code_584b9a12954a4c01abd2d1b1a7b107e6-3"></a>
+<a name="rest_code_584b9a12954a4c01abd2d1b1a7b107e6-4"></a><span class="k">def</span> <span class="nf">tags</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<a name="rest_code_584b9a12954a4c01abd2d1b1a7b107e6-5"></a>    <span class="k">return</span> <span class="p">{</span>
+<a name="rest_code_584b9a12954a4c01abd2d1b1a7b107e6-6"></a>        <span class="s">'tags'</span><span class="p">:</span> <span class="n">models</span><span class="o">.</span><span class="n">Tag</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">'name'</span><span class="p">)</span>
+<a name="rest_code_584b9a12954a4c01abd2d1b1a7b107e6-7"></a>    <span class="p">}</span>
+</pre>
+<p>Añadimos nuestro nuevo <em>context_processor</em> a la lista de <em>context processors</em> a cargar en el archivo <strong>app/settings.py</strong> (como estamos usando el módulo <tt class="docutils literal">auth</tt>, hay que cargar sus <em>context processors</em> también):</p>
+<p><a class="reference external" href="/listings/python-django/003/app/app/settings.py.html">python-django/003/app/app/settings.py</a></p>
+<table class="codetable"><tr>
+<td class="linenos"><div class="linenodiv"><pre><a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_8f1924917ce942848a6dfd4994358870-95">95</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_8f1924917ce942848a6dfd4994358870-96">96</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_8f1924917ce942848a6dfd4994358870-97">97</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_8f1924917ce942848a6dfd4994358870-98">98</a></pre></div></td>
+<td class="code"><pre class="code python"><a name="rest_code_8f1924917ce942848a6dfd4994358870-95"></a><span class="n">TEMPLATE_CONTEXT_PROCESSORS</span> <span class="o">=</span> <span class="p">(</span>
+<a name="rest_code_8f1924917ce942848a6dfd4994358870-96"></a>    <span class="s">'django.contrib.auth.context_processors.auth'</span><span class="p">,</span>
+<a name="rest_code_8f1924917ce942848a6dfd4994358870-97"></a>    <span class="s">'blog.context_processors.tags'</span><span class="p">,</span>
+<a name="rest_code_8f1924917ce942848a6dfd4994358870-98"></a><span class="p">)</span>
+</pre></td>
+</tr></table>
+<p>Y modificamos ligeramente el archivo <strong>templates/base.html</strong>, añadiendo una <em>sidebar</em> con el menú de Tags:</p>
+<p><a class="reference external" href="/listings/python-django/003/app/templates/base.html.html">python-django/003/app/templates/base.html</a></p>
+<table class="codetable"><tr>
+<td class="linenos"><div class="linenodiv"><pre><a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-19">19</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-20">20</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-21">21</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-22">22</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-23">23</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-24">24</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-25">25</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-26">26</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-27">27</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-28">28</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-29">29</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-30">30</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-31">31</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-32">32</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-33">33</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-34">34</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-35">35</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-36">36</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-37">37</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-38">38</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-39">39</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-40">40</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-41">41</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-42">42</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-43">43</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-44">44</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-45">45</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-46">46</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-47">47</a>
+<a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/#rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-48">48</a></pre></div></td>
+<td class="code"><pre class="code html"><a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-19"></a>  <span class="nt">&lt;body&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-20"></a>    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"container"</span><span class="nt">&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-21"></a>      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"row"</span><span class="nt">&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-22"></a>        {% block head %}{% endblock %}
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-23"></a>      <span class="nt">&lt;/div&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-24"></a>      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"row"</span><span class="nt">&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-25"></a>        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"col-sm-8"</span><span class="nt">&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-26"></a>          {% block content %}{% endblock %}
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-27"></a>        <span class="nt">&lt;/div&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-28"></a>        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"col-sm-3 col-sm-offset-1"</span><span class="nt">&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-29"></a>          {% if tags %}
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-30"></a>          <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"sidebar-module"</span><span class="nt">&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-31"></a>            <span class="nt">&lt;h4&gt;</span>Tags<span class="nt">&lt;/h4&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-32"></a>            <span class="nt">&lt;ol</span> <span class="na">class=</span><span class="s">"list-unstyled"</span><span class="nt">&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-33"></a>              {% for tag in tags %}
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-34"></a>              <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">"#"</span><span class="nt">&gt;</span>{{ tag }}<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-35"></a>              {% endfor %}
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-36"></a>            <span class="nt">&lt;/ol&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-37"></a>          <span class="nt">&lt;/div&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-38"></a>          {% endif %}
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-39"></a>        <span class="nt">&lt;/div&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-40"></a>      <span class="nt">&lt;/div&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-41"></a>    <span class="nt">&lt;/div&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-42"></a>    <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"{% static 'jquery.js' %}"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-43"></a>    <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"{% static 'jquery-ui.js' %}"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-44"></a>    <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"{% static 'js/bootstrap.min.js' %}"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-45"></a>    <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span><span class="nt">&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-46"></a>      <span class="p">{</span><span class="o">%</span> <span class="nx">block</span> <span class="nx">javascript</span> <span class="o">%</span><span class="p">}{</span><span class="o">%</span> <span class="nx">endblock</span> <span class="o">%</span><span class="p">}</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-47"></a>    <span class="nt">&lt;/script&gt;</span>
+<a name="rest_code_afbaa00ce71a47f39cd96a26ea9c83b6-48"></a>  <span class="nt">&lt;/body&gt;</span>
+</pre></td>
+</tr></table>
+<p>Y veremos aparecer el menú con todos los tags en todas nuestras páginas.</p>
+<p><strong>EJERCICIO:</strong> Dejo al lector un ejercicio de repaso: añadir una <tt class="docutils literal">DetailView</tt> para los <tt class="docutils literal">blog.models.Tag</tt>, con su plantilla correspondiente, y enlazarlos desde este menú que acabamos de crear. Para que os quede más chulo podéis usar la librería <a class="reference external" href="http://getbootstrap.com/">Bootstrap</a>; Podéis aprender lo asico en <a class="reference external" href="/blog/usando-bootstrap">Bootstrap en 5 minutos</a> ¿La solución? En el <a class="reference external" href="https://github.com/magmax/django-blog/tree/5c8e9d2935429942b2630bf3339f2171ecc3a31f">tag 0.3.0-exercise del repositorio git@github.com:magmax/django-blog.git</a></p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2015-03-12T00:00:00+00:00" title="2015-03-12">2015-03-12</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/django/" rel="tag">django</a>
+                <a class="label label-primary p-category" href="/categories/python/" rel="tag">python</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/javascript-limpio/" rel="prev" title="JavaScript limpio">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/python-distribuido-celery/" rel="next" title="Python distribuido: Celery">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/django-lo-hizo-un-mago-plantillas-y-contextos/",
+        disqus_title="Django lo hizo un mago: plantillas y contextos",
+        disqus_identifier="cache/posts/django-lo-hizo-un-mago-estaticos-plantillas-y-contextos.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

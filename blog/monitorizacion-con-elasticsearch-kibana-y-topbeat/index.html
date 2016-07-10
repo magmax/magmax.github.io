@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Configurar la monitorización completa basada en ElasticSearch.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Monitorización con ElasticSearch, Kibana y TopBeat | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/monitorizacion-con-elasticsearch-kibana-y-topbeat/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Configurar la monitorización completa basada en ElasticSearch.">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/sistemas-distribuidos-modernos/" title="Sistemas distribuidos modernos" type="text/html">
+<link rel="next" href="/blog/lamp-con-docker/" title="LAMP con Docker" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Monitorización con ElasticSearch, Kibana y TopBeat">
+<meta property="og:url" content="http://magmax.org/blog/monitorizacion-con-elasticsearch-kibana-y-topbeat/">
+<meta property="og:description" content="Configurar la monitorización completa basada en ElasticSearch.">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2016-01-28T00:00:00+00:00">
+<meta property="article:updated" content="2016-01-28T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Configurar la monitorización completa basada en ElasticSearch.">
+<meta name="twitter:url" content="http://magmax.org//blog/monitorizacion-con-elasticsearch-kibana-y-topbeat/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/monitorizacion-con-elasticsearch-kibana-y-topbeat/" class="u-url">Monitorización con ElasticSearch, Kibana y TopBeat</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published updated dt-updated" datetime="2016-01-28T00:00:00+00:00" title="2016-01-28">2016-01-28</time></p>
+              <p class="commentline">            <a href="/blog/monitorizacion-con-elasticsearch-kibana-y-topbeat/#disqus_thread" data-disqus-identifier="cache/posts/monitorizacion-con-elasticsearch-kibana-y-topbeat.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Los que me conocéis sabéis que soy un obseso del control... de mis sistemas. Cuando ocurre algo, me gusta saber por qué ha ocurrido así.</p>
+<p>Por esta razón trato de mejorar los sistemas de monitorización. Me interesa tanto encontrar cosas que sean útiles como rápidas de montar. Y también eficientes.</p>
+<p>Eso me llevó a comenzar a desarrollar mi propio sistema de monitorización y alertado. Pero he conocido <a class="reference external" href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a>, <a class="reference external" href="https://www.elastic.co/products/kibana">Kibana</a> y <a class="reference external" href="https://www.elastic.co/products/beats/topbeat">TopBeat</a></p>
+<!-- TEASER_END -->
+<div class="section" id="lo-que-voy-a-contar">
+<h2>Lo que voy a contar</h2>
+<p>En los 10 breves minutos que se tarda en leer este post vamos a tener montado todo un sistema de monitorización, tanto local como remoto, totalmente escalable y de alta disponibilidad. Los únicos requisitos son tener un servidor con <a class="reference external" href="https://www.java.com/">Java</a> y <a class="reference external" href="http://www.git-scm.com/">Git</a>, y monitorización completa de la máquina. No tendremos monitorización de logs, cosa que podríamos añadir fácilmente con <a class="reference external" href="https://www.elastic.co/products/beats/filebeat">FileBeat</a>.</p>
+<p>Y sin más, comenzamos.</p>
+</div>
+<div class="section" id="tienes-prisa">
+<h2>¿Tienes prisa?</h2>
+<p>Si tenéis prisa y no queréis leer todo el artículo, aquí podéis ver cómo monto todo el sistema, sin editar los archivos de configuración y en modo <em>localhost</em>, en tan solo 4 minutos, pifias incluídas:</p>
+<iframe width="425" height="344" src="//www.youtube.com/embed/y42z9oToi4k?rel=0&amp;hd=1&amp;wmode=transparent"></iframe><p>Aquí tenéis el script del vídeo, aunque no aseguro que siga funcionando:</p>
+<pre class="code text"><a name="rest_code_d4fdbca022b64f76a67df005990b4e5d-1"></a>#!/bin/bash
+<a name="rest_code_d4fdbca022b64f76a67df005990b4e5d-2"></a>
+<a name="rest_code_d4fdbca022b64f76a67df005990b4e5d-3"></a>wget https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/zip/elasticsearch/2.1.1/elasticsearch-2.1.1.zip
+<a name="rest_code_d4fdbca022b64f76a67df005990b4e5d-4"></a>wget https://download.elastic.co/beats/topbeat/topbeat-1.0.1-x86_64.tar.gz
+<a name="rest_code_d4fdbca022b64f76a67df005990b4e5d-5"></a>wget https://download.elastic.co/kibana/kibana/kibana-4.3.1-linux-x64.tar.gz
+<a name="rest_code_d4fdbca022b64f76a67df005990b4e5d-6"></a>
+<a name="rest_code_d4fdbca022b64f76a67df005990b4e5d-7"></a>git clone https://github.com/elastic/beats-dashboards.git
+</pre>
+</div>
+<div class="section" id="elasticsearch">
+<h2>ElasticSearch</h2>
+<p><a class="reference external" href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a> es una base de datos distribuida, escalable y de alta disponibilidad, que permite búsquedas en tiempo real.</p>
+<p>Será el cerebro de nuestra estructura, y por ello irá en el servidor.</p>
+<p>Para desplegarla, basta con descargarnos el <em>zip</em>, editar la configuración y lanzar.</p>
+<p>La configuración básica que necesitaremos será la siguiente (archivo <tt class="docutils literal">config/elasticsearch.yml</tt>):</p>
+<pre class="code yaml"><a name="rest_code_fbfaf6890a024294ab3277ac36f77a76-1"></a><span class="l-Scalar-Plain">network.host</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">123.123.123.123</span>
+</pre>
+<p>Sí, es la IP externa del servidor. Por defecto sólo escucharía en localhost y no podríamos conectar <a class="reference external" href="https://www.elastic.co/products/beats/topbeat">TopBeat</a> externos.
+Si queremos montra varios en <em>cluster</em>, además tendríamos que modificar:</p>
+<pre class="code yaml"><a name="rest_code_21b1f575bb1c4a259ea423a7bdb0430a-1"></a><span class="l-Scalar-Plain">discovery.zen.ping.unicast.hosts</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">"host1"</span><span class="p-Indicator">,</span> <span class="s">"host2"</span><span class="p-Indicator">]</span>
+</pre>
+<p>Evidentemente, con la lista de hosts que forman el <em>cluster</em>.</p>
+<p>Echad un ojo al resto de la configuración si queréis añadir seguridad o algo.</p>
+<p>A continuación lo lanzamos:</p>
+<pre class="code text"><a name="rest_code_4e6cb5e167d544dea795c7264989cea7-1"></a>$ bin/elasticsearch
+</pre>
+<p>Y se quedará ejecutando en esa ventana. Elegirá un nombre aleatorio de algún villano de Marvel y escuchará en el puerto 9200.</p>
+</div>
+<div class="section" id="topbeat">
+<h2>TopBeat</h2>
+<p>La idea es empezar a obtener métricas lo antes posible, así que vamos con los agentes: <a class="reference external" href="https://www.elastic.co/products/beats/topbeat">TopBeat</a>.</p>
+<p>Si <a class="reference external" href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a> es el cerebro, <a class="reference external" href="https://www.elastic.co/products/beats/topbeat">TopBeat</a> son los nervios. <a class="reference external" href="https://www.elastic.co/products/beats/topbeat">TopBeat</a> es un programa que consume muy pocos recursos, pensado para alterar lo mínimo posible la máquina en la que se ejecuta.</p>
+<p>El procedimiento de instalación es similar: descargar el zip, configurar y lanzar. En este caso, instalaremos en la máquina remota que queremos monitorizar.</p>
+<p>La configuración es un archivo <strong>yaml</strong> que se suele encontrar en <tt class="docutils literal">/etc/topbeat/topbeat.yml</tt>, aunque podemos cambiar la ubicación, como haremos. Dejad la configuración como está y cambiad sólo lo siguiente:</p>
+<pre class="code yaml"><a name="rest_code_dba32f1c178c44c4a43e9d19f95a311d-1"></a><span class="l-Scalar-Plain">output</span><span class="p-Indicator">:</span>
+<a name="rest_code_dba32f1c178c44c4a43e9d19f95a311d-2"></a>    <span class="l-Scalar-Plain">elasticsearch</span><span class="p-Indicator">:</span>
+<a name="rest_code_dba32f1c178c44c4a43e9d19f95a311d-3"></a>        <span class="l-Scalar-Plain">hosts</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">"whatever:9200"</span><span class="p-Indicator">]</span>
+</pre>
+<p>Evidentemente, la variable <tt class="docutils literal">output.elasticsearch.hosts</tt> contiene la lista de nodos que forman el <em>cluster</em>. Si estáis usando sólo uno, pues ponded ése (si usasteis la IP externa, debeis usar la misma; si elegisteis <tt class="docutils literal">localhost</tt>, pues <tt class="docutils literal">localhost</tt>).</p>
+<p>Y lanzar:</p>
+<pre class="code text"><a name="rest_code_49530b86aa0944fba838f04f7ca9acaf-1"></a>$ ./topbeat -c topbeat.yml # usando el archivo de configuración local
+<a name="rest_code_49530b86aa0944fba838f04f7ca9acaf-2"></a>$ ./topbeat   # usando el archivo de configuración por defecto
+</pre>
+<p>Y nuestro sistema de monitorización está terminado. Repetid la instalación de <a class="reference external" href="https://www.elastic.co/products/beats/topbeat">TopBeat</a> en todos los nodos que queráis.</p>
+<div class="section" id="que-estamos-monitorizando">
+<h3>¿Qué estamos monitorizando?</h3>
+<p><a class="reference external" href="https://www.elastic.co/products/beats/topbeat">TopBeat</a> es muy configurable, pero por defecto monitoriza:</p>
+<ul class="simple">
+<li>CPU</li>
+<li>RAM</li>
+<li>Espacio en disco</li>
+<li>CPU y RAM de todos los procesos en ejecución (aunque puede cambiarse por configuración).</li>
+</ul>
+</div>
+</div>
+<div class="section" id="kibana">
+<h2>Kibana</h2>
+<p>Lo único que nos queda es visualizar los resultados.</p>
+<p>Podríamos decir que <a class="reference external" href="https://www.elastic.co/products/kibana">Kibana</a> es la piel de nuestro sistema.</p>
+<p>El procedimiento es el mismo: descargar, configurar y lanzar.</p>
+<p>La configuración mínima vuelve a ser indicar el host en el que está <a class="reference external" href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a>, y se encuentra en el directorio relativo <tt class="docutils literal">config/kibana.yml</tt>:</p>
+<pre class="code yaml"><a name="rest_code_a25c70b655664412923a45ecb6c297d4-1"></a><span class="l-Scalar-Plain">server.host</span><span class="p-Indicator">:</span> <span class="s">"0.0.0.0"</span>
+<a name="rest_code_a25c70b655664412923a45ecb6c297d4-2"></a><span class="l-Scalar-Plain">elasticsearch.url</span><span class="p-Indicator">:</span> <span class="s">"http://123.123.123.123:9200"</span>
+<a name="rest_code_a25c70b655664412923a45ecb6c297d4-3"></a><span class="l-Scalar-Plain">kibana.index</span><span class="p-Indicator">:</span> <span class="s">".kibana"</span>
+</pre>
+<p>En este caso sólo se atacará una instancia de <a class="reference external" href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a>, y tendremos que indicar también dónde escucha el propio <a class="reference external" href="https://www.elastic.co/products/kibana">Kibana</a>. Además hay que indicar un nombre para sus índices.</p>
+<p>A continuación lanzamos:</p>
+<pre class="code text"><a name="rest_code_c31bc32291e54e5cb45900720b8fa924-1"></a>$ ./bin/kibana
+</pre>
+<p>Y ya tendremos <a class="reference external" href="https://www.elastic.co/products/kibana">Kibana</a> disponible en el puerto 5601. Cuando entréis hará un <strong>auto-check</strong> para comprobar que está todo bien y os preguntará un índice por defecto. Cualquiera está bien, pero yo pondría <tt class="docutils literal"><span class="pre">topbeat-*</span></tt> o simplemente <tt class="docutils literal">*</tt>. Si hacéis esto, al crear el índice veréis que tiene un montón de datos.</p>
+<p>Sin embargo, crear los paneles para <a class="reference external" href="https://www.elastic.co/products/beats/topbeat">TopBeat</a> puede ser insufrible, así que vamos a hacerlo de forma automática:</p>
+<div class="section" id="creando-los-dashboards">
+<h3>Creando los Dashboards</h3>
+<p>Hay un proyecto que guarda los <em>dashboards a mostrar</em>: <a class="reference external" href="https://github.com/elastic/beats-dashboards">Beats Dashboard</a>.</p>
+<p>No tiene pérdida: descargar y ejecutar:</p>
+<pre class="code text"><a name="rest_code_28e2687acb804ae184689a2cde99af75-1"></a>$ git clone https://github.com/elastic/beats-dashboards.git
+<a name="rest_code_28e2687acb804ae184689a2cde99af75-2"></a>$ cd beats-dashboards
+<a name="rest_code_28e2687acb804ae184689a2cde99af75-3"></a>$ ./load.sh -l http://123.123.123.123:9200
+</pre>
+<p>Si no indicáis URL, usará <tt class="docutils literal">localhost</tt>. Ojo, porque es la URL de un nodo del <em>cluster</em> de <a class="reference external" href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a>.</p>
+<p>Ahora podéis pulsar la pestaña <tt class="docutils literal">Dashboard</tt> de la web de <a class="reference external" href="https://www.elastic.co/products/kibana">Kibana</a> y a la derecha, arriba, tendréis un pequeño panel de control. Seleccionad <tt class="docutils literal">Load Saved Dashboard</tt> y a continuación cualquiera de ellos.</p>
+<p>Todos tienen un primer panel de navegación desde el que podéis saltar a otros. Y seguramente todos estén vacíos, salvo el de <a class="reference external" href="https://www.elastic.co/products/beats/topbeat">TopBeat</a>, que mostrará todos los datos.</p>
+</div>
+</div>
+<div class="section" id="elasticsearch-vs-sensu">
+<h2>ElasticSearch vs Sensu</h2>
+<p><a class="reference external" href="https://sensuapp.org/">Sensu</a> es mucho más sencillo de lanzar, pero también mucho más limitado. Además, los agentes son mucho más pesados, ya que por defecto tienen que tener 3 hilos: uno para indicar que están vivos, otro para gestionar los <strong>checks standalone</strong> y finalmente, otro para las subscripciones.</p>
+<p>El agente <a class="reference external" href="https://sensuapp.org/">Sensu</a> por defecto en Windows ocupa 300 Mb de disco (necesita todo <strong>Ruby</strong>) y recursos ilimitados, ya que lanza un proceso por cada <strong>check</strong>, llegando a consumir hasta el 10% de CPU. Usando el <a class="reference external" href="https://github.com/carllindelof/sensu-client">agente Sensu en c#</a> he reducido el <em>footprint</em> a 20 Mb y menos de un 1% de CPU. <a class="reference external" href="https://www.elastic.co/products/beats/topbeat">TopBeat</a> utiliza 8 Mb y apenas se nota el consumo de CPU.</p>
+<p>También hay que decir que utilizar <a class="reference external" href="https://sensuapp.org/">Sensu</a> con <a class="reference external" href="http://graphite.wikidot.com/">Graphite</a> es trivial, y montar un <a class="reference external" href="http://grafana.org/">Grafana</a> por encima también. Pero claro... es que se puede usar <a class="reference external" href="http://grafana.org/">Grafana</a> con <a class="reference external" href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a> también... :)</p>
+<div class="section" id="alertas">
+<h3>Alertas</h3>
+<p>La ventaja de <a class="reference external" href="https://sensuapp.org/">Sensu</a> es que permite alertado. El motor de <a class="reference external" href="https://sensuapp.org/">Sensu</a> de alertado es realmente potente. Sin embargo, requiere bastantes recursos y, desgraciadamente, en momentos de pico podría fallar.</p>
+<p><a class="reference external" href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a> tiene a <a class="reference external" href="https://www.elastic.co/products/watcher">Watcher</a>, el cual, desgraciadamente, no es libre ni gratis. También hay que pensar que la gente de <a class="reference external" href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a> tiene que comer.</p>
+<p>Pero la gente de <a class="reference external" href="http://www.yelp.com/engineering">Yelp</a> se ha currado <a class="reference external" href="https://github.com/Yelp/elastalert">ElastAlert</a> que es un sistema de alertas libre y gratuíto. Aún no me ha dado tiempo a probarlo, y quizá se merezca otro artículo.</p>
+<p>En fin... Para gustos colores :)</p>
+</div>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2016-01-28T00:00:00+00:00" title="2016-01-28">2016-01-28</time></span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/sistemas-distribuidos-modernos/" rel="prev" title="Sistemas distribuidos modernos">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/lamp-con-docker/" rel="next" title="LAMP con Docker">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/monitorizacion-con-elasticsearch-kibana-y-topbeat/",
+        disqus_title="Monitorizaci\u00f3n con ElasticSearch, Kibana y TopBeat",
+        disqus_identifier="cache/posts/monitorizacion-con-elasticsearch-kibana-y-topbeat.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

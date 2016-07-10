@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Cómo programar mal: La API de Windows (I) | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/api-windows/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/netbeans-templates/" title="Netbeans y Templates" type="text/html">
+<link rel="next" href="/blog/hacer-cosas/" title="Hacer cosas" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Cómo programar mal: La API de Windows (I)">
+<meta property="og:url" content="http://magmax.org/blog/api-windows/">
+<meta property="og:description" content="Para mi más completa desgracia, últimamente me he tenido que pelear bastante con la API de Windows. No será la primera vez que digo que esta API tiene tantas cosas mal hechas que darían para escribir ">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2010-08-21T00:00:00+00:00">
+<meta property="article:updated" content="2010-08-21T00:00:00">
+<meta property="article:tag" content="patterns">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/api-windows/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/api-windows/" class="u-url">Cómo programar mal: La API de Windows (I)</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2010-08-21T00:00:00+00:00" title="2010-08-21">2010-08-21</time>
+                // <time class="updated dt-updated" datetime="2010-08-21T00:00:00" title="2010-08-21">2010-08-21</time></p>
+              <p class="commentline">            <a href="/blog/api-windows/#disqus_thread" data-disqus-identifier="cache/posts/api-windows.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Para mi más completa desgracia, últimamente me he tenido que pelear bastante con la API de Windows. No será la primera vez que digo que esta API tiene tantas cosas mal hechas que darían para escribir un libro. Y voy a comenzar por ahí.</p>
+<p>Voy a utilizar la API pública de microsoft para explicar cosas que NUNCA deberían haberse hecho así. Si hay un millón de opciones, se ha elegido la peor.</p>
+<!-- TEASER_END -->
+<p>Hoy tan sólo voy a analizar una función de esta API: <a class="reference external" href="http://msdn.microsoft.com/en-us/library/ms679351%28VS.85%29.aspx">FormatMessage</a> .</p>
+<p>Cuando programo en GNU/Linux y alguna función del sistema da error, lo habitual es que se pueda consultar el error genérico preguntándole a @errno@. En Windows es exactamente igual, solo que hay que llamar a @GetLastError()@.</p>
+<p>Cuando en GNU/Linux queremos obtener una cadena de texto genérica que explique el código de error, basta con llamar a <a class="reference external" href="http://linux.die.net/man/3/strerror">strerror</a> , que devuelve una cadena constante (es decir, que no tenemos que liberar) con el mensaje de error. Si lo preferimos, podemos usar <a class="reference external" href="http://linux.die.net/man/3/strerror">strerror</a> , que nos copia la cadena a un buffer.</p>
+<p>En la API de windows existe una función semejante. O debería decir una "aberración" semejante. El problema es que han juntado las dos funcionalidades en una.</p>
+<div class="section" id="aberracion-1-una-funcion-con-7-parametros">
+<h2>Aberración 1: una función con 7 parámetros</h2>
+<p>Algo tan simple como buscar en un vector de cadenas de texto y devolver una me obliga a llamar a una función con 7 parámetros.</p>
+</div>
+<div class="section" id="aberracion-2-numeros-magicos">
+<h2>Aberración 2: Números mágicos</h2>
+<p>El primer parámetro es una combinación de números mágicos que tengo que conocer y saber cómo mezclar (mediante operaciones OR).</p>
+</div>
+<div class="section" id="aberracion-3-decidir-el-modo-de-funcionamiento-en-funcion-a-un-parametro">
+<h2>Aberración 3: Decidir el modo de funcionamiento en función a un parámetro</h2>
+<p>El primero de los parámetros es un número que va a alterar el comportamiento de toda la función. Una equivocación aquí y podré obtener un bonito <em>Segmentation Fault</em> o me dejaré memoria sin liberar. Ideal para los amantes de los deportes de riesgo.</p>
+</div>
+<div class="section" id="aberracion-4-cambiar-el-tipo-de-un-dato-en-funcion-a-otro-parametro">
+<h2>Aberración 4: Cambiar el tipo de un dato en función a otro parámetro</h2>
+<p>Dependiendo de lo indicado en el primero de los parámetros (flags), se decide si se está utilizando un puntero a caracter o un puntero a puntero a caracter. Vamos, lo mismito.</p>
+</div>
+<div class="section" id="aberracion-5-mezclar-parametros-de-entrada-con-parametros-de-salida">
+<h2>Aberración 5: Mezclar parámetros de entrada con parámetros de salida</h2>
+<p>Es deseable evitar devoler datos mediante los parámetros, aunque en C hay muchas veces que no queda más remedio. Pero lo habitual es poner los de salida al final, de forma que quede una estructura lógica: primero entran datos y luego salen.</p>
+<p>Como somos más chulos que un ocho y queremos amargarle la vida al que venga detrás, mezclamos los parámetros de entrada y los de salida que lo adivine el siguiente.</p>
+</div>
+<div class="section" id="aberracion-6-parametros-opcionales">
+<h2>Aberración 6: Parámetros opcionales</h2>
+<p>Por si resulta fácil usar la función, haremos que algunos de los parámetros sean opcionales. Así ignoraremos lo que pongan aquí si se han equivocado en los "flags" iniciales.</p>
+<div class="section" id="defender-lo-indefendible">
+<h3>Defender lo indefendible</h3>
+<p>¿Cómo puede haber una mente tan retorcida como para engendrar semejante cúmulo de malas prácticas? ¿Cómo puede defenderse que una función con estas características es "usable"?</p>
+<p>Sinceramente, a veces me maravillo a mí mismo de las excusas que damos los programadores. Seguramente fue un intento de evitar tener que escribir diferentes funciones para "hacer lo mismo" (si una función reserva memoria y otra no, ya no hacen lo mismo).</p>
+<p>O una manera de recordar fácilmente qué función hace lo que quiero (claro, con una función ya lo hago todo), frustrada por el hecho de que necesito consultar la ayuda para ver qué "flags" tengo que activar.</p>
+<p>O una manera de poder incrementar la funcionalidad de la función sin tener que escribir funciones nuevas. Parece una gilipollez, pero esto lo he oído mucho más de lo que me gustaría.</p>
+<p>En fin, que cada vez que una función de la API me da un error, me imprimo el código ya buscaré en la ayuda de Microsoft, que por lo menos estaré seguro de que mi programa no va a explotar.</p>
+<p>Próximamente: imprimir un documento con la API de Windows.</p>
+</div>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2010-08-21T00:00:00+00:00" title="2010-08-21">2010-08-21</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/patterns/" rel="tag">patterns</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/netbeans-templates/" rel="prev" title="Netbeans y Templates">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/hacer-cosas/" rel="next" title="Hacer cosas">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/api-windows/",
+        disqus_title="C\u00f3mo programar mal: La API de Windows (I)",
+        disqus_identifier="cache/posts/api-windows.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

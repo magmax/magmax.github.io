@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>JBehave | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/jbehave/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/estatico-vs-dinamico/" title="Estático vs Dinámico" type="text/html">
+<link rel="next" href="/blog/patron-singleton/" title="El patrón Singleton" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="JBehave">
+<meta property="og:url" content="http://magmax.org/blog/jbehave/">
+<meta property="og:description" content="Apesar de mi mal comienzo con JBehave , debo decir que le voy cogiendo el tranquillo.
+JBehave consiste en un sistema para hacer BDD  en Java. En otras palabras: permite definir en un lenguaje no forma">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2012-01-12T00:00:00+00:00">
+<meta property="article:updated" content="2012-01-12T00:00:00">
+<meta property="article:tag" content="java testing">
+<meta property="article:tag" content="jbehave">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/jbehave/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/jbehave/" class="u-url">JBehave</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2012-01-12T00:00:00+00:00" title="2012-01-12">2012-01-12</time>
+                // <time class="updated dt-updated" datetime="2012-01-12T00:00:00" title="2012-01-12">2012-01-12</time></p>
+              <p class="commentline">            <a href="/blog/jbehave/#disqus_thread" data-disqus-identifier="cache/posts/jbehave.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Apesar de mi mal comienzo con <a class="reference external" href="http://jbehave.org/">JBehave</a> , debo decir que le voy cogiendo el tranquillo.</p>
+<p>JBehave consiste en un sistema para hacer <a class="reference external" href="http://en.wikipedia.org/wiki/Behavior_Driven_Development">BDD</a>  en Java. En otras palabras: permite definir en un lenguaje no formal el comportamiento de la aplicación, utilizando expresiones regulares para transformarlo en un lenguaje formal.</p>
+<!-- TEASER_END -->
+<div class="section" id="ejemplo">
+<h2>Ejemplo</h2>
+<p>JBehave tiene cosas que no me gustan nada, pero también tiene otras que me gustan mucho. Veamos primero un ejemplito lo más pequeño que he sido capaz de hacerlo:</p>
+<div class="section" id="pom-xml">
+<h3>pom.xml</h3>
+<p>Comenzaremos con el archivo POM necesario:</p>
+<pre class="code xml"><a name="rest_code_503c96a29424412db3585ea7e4de487a-1"></a><span class="nt">&lt;project</span> <span class="na">xmlns=</span><span class="s">"http://maven.apache.org/POM/4.0.0"</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-2"></a>  <span class="na">xsi:schemaLocation=</span><span class="s">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="nt">&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-3"></a>    <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-4"></a>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-5"></a>    <span class="nt">&lt;groupId&gt;</span>org.magmax<span class="nt">&lt;/groupId&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-6"></a>    <span class="nt">&lt;artifactId&gt;</span>jbehaveexample<span class="nt">&lt;/artifactId&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-7"></a>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-8"></a>    <span class="nt">&lt;version&gt;</span>1.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-9"></a>    <span class="nt">&lt;packaging&gt;</span>jar<span class="nt">&lt;/packaging&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-10"></a>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-11"></a>    <span class="nt">&lt;name&gt;</span>jbehaveexample<span class="nt">&lt;/name&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-12"></a>    <span class="nt">&lt;url&gt;</span>http://maven.apache.org<span class="nt">&lt;/url&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-13"></a>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-14"></a>    <span class="nt">&lt;properties&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-15"></a>        <span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-16"></a>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-17"></a>    <span class="nt">&lt;/properties&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-18"></a>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-19"></a>    <span class="nt">&lt;dependencies&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-20"></a>        <span class="nt">&lt;dependency&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-21"></a>            <span class="nt">&lt;groupId&gt;</span>junit<span class="nt">&lt;/groupId&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-22"></a>            <span class="nt">&lt;artifactId&gt;</span>junit<span class="nt">&lt;/artifactId&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-23"></a>            <span class="nt">&lt;version&gt;</span>4.10<span class="nt">&lt;/version&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-24"></a>            <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-25"></a>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-26"></a>        <span class="nt">&lt;/dependency&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-27"></a>        <span class="nt">&lt;dependency&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-28"></a>            <span class="nt">&lt;groupId&gt;</span>org.jbehave<span class="nt">&lt;/groupId&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-29"></a>            <span class="nt">&lt;artifactId&gt;</span>jbehave-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-30"></a>            <span class="nt">&lt;version&gt;</span>3.5.4<span class="nt">&lt;/version&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-31"></a>        <span class="nt">&lt;/dependency&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-32"></a>    <span class="nt">&lt;/dependencies&gt;</span>
+<a name="rest_code_503c96a29424412db3585ea7e4de487a-33"></a><span class="nt">&lt;/project&gt;</span>
+</pre>
+<p>Como veréis, he añadido la dependencia de JBehave.</p>
+</div>
+<div class="section" id="src-test-resources-org-magmax-jbehaveexample-my-95-example-story">
+<h3>src/test/resources/org/magmax/jbehaveexample/my&amp;#95;example.story</h3>
+<pre class="code cucumber"><a name="rest_code_0b9f0ae2013a4b25a52c78d5913c7273-1"></a><span class="nf">In order to show JBehave behaviour</span>
+<a name="rest_code_0b9f0ae2013a4b25a52c78d5913c7273-2"></a><span class="nf">As a newbie</span>
+<a name="rest_code_0b9f0ae2013a4b25a52c78d5913c7273-3"></a><span class="k">I </span><span class="nf">want to show this example</span>
+<a name="rest_code_0b9f0ae2013a4b25a52c78d5913c7273-4"></a>
+<a name="rest_code_0b9f0ae2013a4b25a52c78d5913c7273-5"></a><span class="k">Given </span><span class="nf">nothing special</span>
+<a name="rest_code_0b9f0ae2013a4b25a52c78d5913c7273-6"></a><span class="k">When </span><span class="nf">field operand</span><span class="s">1</span><span class="nf"> contains </span><span class="s">1</span><span class="nf"></span>
+<a name="rest_code_0b9f0ae2013a4b25a52c78d5913c7273-7"></a><span class="k">And </span><span class="nf">field operand</span><span class="s">2</span><span class="nf"> contains </span><span class="s">2</span><span class="nf"></span>
+<a name="rest_code_0b9f0ae2013a4b25a52c78d5913c7273-8"></a><span class="k">And </span><span class="nf">I press on "</span><span class="s">sum</span><span class="nf">"</span>
+<a name="rest_code_0b9f0ae2013a4b25a52c78d5913c7273-9"></a><span class="k">Then </span><span class="nf">it returns </span><span class="s">3</span><span class="nf"></span>
+</pre>
+<p>Como véis, parece una mini calculadora. Según la descripción, tendremos un campo "operand1" y otro "operand2", que parece que pueden contener enteros. Además, tiene que haber un botón "sum" y, en alguna parte, mostrar un "3". Admito todo tipo de críticas al respecto, pero recordad que se trata de algo sencillito.</p>
+</div>
+<div class="section" id="src-test-java-org-magmax-jbehaveexample-myexample-java">
+<h3>src/test/java/org/magmax/jbehaveexample/MyExample.java</h3>
+<pre class="code java"><a name="rest_code_b88be4ada490487c9198e009b305794b-1"></a><span class="kn">package</span> <span class="nn">org.magmax.jbehaveexample</span><span class="o">;</span>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-2"></a>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-3"></a><span class="kn">import</span> <span class="nn">org.jbehave.core.configuration.Configuration</span><span class="o">;</span>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-4"></a><span class="kn">import</span> <span class="nn">org.jbehave.core.junit.JUnitStory</span><span class="o">;</span>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-5"></a><span class="kn">import</span> <span class="nn">org.jbehave.core.reporters.Format</span><span class="o">;</span>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-6"></a><span class="kn">import</span> <span class="nn">org.jbehave.core.reporters.StoryReporterBuilder</span><span class="o">;</span>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-7"></a>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-8"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyExample</span> <span class="kd">extends</span> <span class="n">JUnitStory</span> <span class="o">{</span>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-9"></a>    <span class="nd">@Override</span>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-10"></a>    <span class="kd">public</span> <span class="n">Configuration</span> <span class="nf">configuration</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-11"></a>        <span class="n">Configuration</span> <span class="n">result</span> <span class="o">=</span> <span class="kd">super</span><span class="o">.</span><span class="na">configuration</span><span class="o">();</span>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-12"></a>        <span class="n">result</span><span class="o">.</span><span class="na">useStoryReporterBuilder</span><span class="o">(</span><span class="n">getStoryReporterBuilder</span><span class="o">());</span>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-13"></a>        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-14"></a>    <span class="o">}</span>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-15"></a>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-16"></a>    <span class="kd">private</span> <span class="n">StoryReporterBuilder</span> <span class="nf">getStoryReporterBuilder</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-17"></a>        <span class="n">StoryReporterBuilder</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StoryReporterBuilder</span><span class="o">();</span>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-18"></a>        <span class="n">result</span><span class="o">.</span><span class="na">withFormats</span><span class="o">(</span><span class="n">Format</span><span class="o">.</span><span class="na">CONSOLE</span><span class="o">,</span> <span class="n">Format</span><span class="o">.</span><span class="na">HTML</span><span class="o">,</span> <span class="n">Format</span><span class="o">.</span><span class="na">STATS</span><span class="o">);</span>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-19"></a>        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-20"></a>    <span class="o">}</span>
+<a name="rest_code_b88be4ada490487c9198e009b305794b-21"></a><span class="o">}</span>
+</pre>
+<p>Éste es el archivo de historia. Será necesario uno por cada historia (aunque hay maneras de necesitar menos). Lo que se hace es indicar la configuración necesaria para probar la historia de forma correcta. Como véis, lo único que hago es establecer la configuración por defecto, indicando que quiero las salidas de Consola, Html y estadísticas. Realmente nos bastaba con Consola, pero así véis más cosas.</p>
+</div>
+<div class="section" id="primera-ejecucion">
+<h3>Primera ejecución</h3>
+<p>Con esto ya podemos ejecutar el ejemplo. Evidentemente fallará, pero debe dar un resultado similar al siguiente:</p>
+<pre class="code cucumber"><a name="rest_code_731d372e97764afb90cd78d727f7df99-1"></a><span class="nf">Processing system properties {}</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-2"></a><span class="nf">Using controls EmbedderControls[batch=false,skip=false,generateViewAfterStories=true,ignoreFailureInStories=false,ignoreFailureInView=false,storyTimeoutInSecs=</span><span class="s">300</span><span class="nf">,threads=</span><span class="s">1</span><span class="nf">]</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-3"></a>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-4"></a><span class="nf">(BeforeStories)</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-5"></a>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-6"></a><span class="nf">Using </span><span class="s">1</span><span class="nf"> threads</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-7"></a><span class="nf">Using executor service java.util.concurrent.ThreadPoolExecutor</span><span class="nt">@64883c</span><span class="nf"></span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-8"></a><span class="nf">Running story org/magmax/jbehaveexample/my_example.story</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-9"></a>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-10"></a><span class="nf">(org/magmax/jbehaveexample/my_example.story)</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-11"></a><span class="k">Scenario:</span><span class="nf"> In order to show JBehave behaviour</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-12"></a><span class="nf">As a newbie</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-13"></a><span class="k">I </span><span class="nf">want to show this example</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-14"></a><span class="k">Given </span><span class="nf">nothing special (PENDING)</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-15"></a><span class="k">When </span><span class="nf">field operand</span><span class="s">1</span><span class="nf"> contains </span><span class="s">1</span><span class="nf"> (PENDING)</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-16"></a><span class="k">And </span><span class="nf">field operand</span><span class="s">2</span><span class="nf"> contains </span><span class="s">2</span><span class="nf"> (PENDING)</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-17"></a><span class="k">And </span><span class="nf">I press on "</span><span class="s">sum</span><span class="nf">" (PENDING)</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-18"></a><span class="k">Then </span><span class="nf">it returns </span><span class="s">3</span><span class="nf"> (PENDING)</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-19"></a><span class="nt">@Given("nothing</span><span class="nf"> special"</span><span class="s">)</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-20"></a><span class="s">@Pending</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-21"></a><span class="s">public void givenNothingSpecial(){</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-22"></a><span class="s">  // PENDING</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-23"></a><span class="s">}</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-24"></a>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-25"></a><span class="s">@When(</span><span class="nf">"field operand</span><span class="s">1</span><span class="nf"> contains </span><span class="s">1</span><span class="nf">"</span><span class="s">)</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-26"></a><span class="s">@Pending</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-27"></a><span class="s">public void whenFieldOperand1Contains1(){</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-28"></a><span class="s">  // PENDING</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-29"></a><span class="s">}</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-30"></a>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-31"></a><span class="s">@When(</span><span class="nf">"field operand</span><span class="s">2</span><span class="nf"> contains </span><span class="s">2</span><span class="nf">"</span><span class="s">)</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-32"></a><span class="s">@Pending</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-33"></a><span class="s">public void whenFieldOperand2Contains2(){</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-34"></a><span class="s">  // PENDING</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-35"></a><span class="s">}</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-36"></a>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-37"></a><span class="s">@When(</span><span class="nf">"I press on \"</span><span class="s">sum\</span><span class="nf">""</span><span class="s">)</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-38"></a><span class="s">@Pending</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-39"></a><span class="s">public void whenIPressOnsum(){</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-40"></a><span class="s">  // PENDING</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-41"></a><span class="s">}</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-42"></a>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-43"></a><span class="s">@Then(</span><span class="nf">"it returns </span><span class="s">3</span><span class="nf">"</span><span class="s">)</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-44"></a><span class="s">@Pending</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-45"></a><span class="s">public void thenItReturns3(){</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-46"></a><span class="s">  // PENDING</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-47"></a><span class="s">}</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-48"></a>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-49"></a>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-50"></a><span class="s">(AfterStories)</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-51"></a>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-52"></a><span class="s">Generating reports view to 'jbehaveexample/target/jbehave' using formats '[console, html, stats]' and view properties '{defaultFormats=stats, decorateNonHtml=true, viewDirectory=view, decorated=ftl/jbehave-report-decorated.ftl, reports=ftl/jbehave-reports-with-totals.ftl, maps=ftl/jbehave-maps.ftl, navigator=ftl/jbehave-navigator.ftl, views=ftl/jbehave-views.ftl, nonDecorated=ftl/jbehave-report-non-decorated.ftl}'</span>
+<a name="rest_code_731d372e97764afb90cd78d727f7df99-53"></a><span class="s">Reports view generated with 3 stories (of which 1 pending) containing 1 scenarios (of which 0 failed and 1 pending)</span>
+</pre>
+<p>Lo más importante es fijarse en la parte que nos muestra el código java que necesitamos para nuestros "<em>steps</em>". Así que lo copiamos y lo pegamos en el siguiente archivo (rellenándolo y quitando los &lt;tt&gt;@Pending&lt;/tt&gt;):</p>
+<pre class="code java"><a name="rest_code_0913d9556854427690bb5c0af94cc09f-1"></a><span class="kn">package</span> <span class="nn">org.magmax.jbehaveexample</span><span class="o">;</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-2"></a>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-3"></a><span class="kn">import</span> <span class="nn">org.jbehave.core.annotations.Given</span><span class="o">;</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-4"></a><span class="kn">import</span> <span class="nn">org.jbehave.core.annotations.Then</span><span class="o">;</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-5"></a><span class="kn">import</span> <span class="nn">org.jbehave.core.annotations.When</span><span class="o">;</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-6"></a><span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">junit</span><span class="o">.</span><span class="na">Assert</span><span class="o">.*;</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-7"></a>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-8"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyExampleSteps</span> <span class="o">{</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-9"></a>    <span class="kt">int</span> <span class="n">operand1</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-10"></a>    <span class="kt">int</span> <span class="n">operand2</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-11"></a>    <span class="kt">int</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-12"></a>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-13"></a>    <span class="nd">@Given</span><span class="o">(</span><span class="s">"nothing special"</span><span class="o">)</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-14"></a>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">givenNothingSpecial</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-15"></a>    <span class="o">}</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-16"></a>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-17"></a>    <span class="nd">@When</span><span class="o">(</span><span class="s">"field operand1 contains $value"</span><span class="o">)</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-18"></a>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">whenFieldOperand1ContainsAValue</span><span class="o">(</span><span class="kt">int</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-19"></a>        <span class="n">operand1</span> <span class="o">=</span> <span class="n">value</span><span class="o">;</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-20"></a>    <span class="o">}</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-21"></a>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-22"></a>    <span class="nd">@When</span><span class="o">(</span><span class="s">"field operand2 contains $value"</span><span class="o">)</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-23"></a>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">whenFieldOperand2ContainsAValue</span><span class="o">(</span><span class="kt">int</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-24"></a>        <span class="n">operand2</span> <span class="o">=</span> <span class="n">value</span><span class="o">;</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-25"></a>    <span class="o">}</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-26"></a>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-27"></a>    <span class="nd">@When</span><span class="o">(</span><span class="s">"I press on \"sum\""</span><span class="o">)</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-28"></a>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">whenIPressOnsum</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-29"></a>        <span class="c1">// Llamar a la calculadora real</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-30"></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">operand1</span> <span class="o">+</span> <span class="n">operand2</span><span class="o">;</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-31"></a>    <span class="o">}</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-32"></a>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-33"></a>    <span class="nd">@Then</span><span class="o">(</span><span class="s">"it returns $value"</span><span class="o">)</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-34"></a>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">thenItReturns3</span><span class="o">(</span><span class="kt">int</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-35"></a>        <span class="n">assertEquals</span><span class="o">(</span><span class="n">value</span><span class="o">,</span> <span class="n">result</span><span class="o">);</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-36"></a>    <span class="o">}</span>
+<a name="rest_code_0913d9556854427690bb5c0af94cc09f-37"></a><span class="o">}</span>
+</pre>
+<p>Fijáos también que he realizado algunas modificaciones a la plantilla que me daba <em>JBehave</em>: he sustituido los valores por variables y he añadido parámetros en mis funciones. Las variables y los parámetros siempre coinciden en nombre, aunque las variables comienzan por el símbolo del dólar.</p>
+<p>Fijáos también en el método <em>whenIPressOnsum</em>; aquí es donde iría la llamada a mi clase real, pero por abreviar, he puesto ahí mismo el código.</p>
+<p>El caso es que esto no me funciona. No sé si es un problema de nomenclatura (asumo que sí), pero sé cómo arreglarlo: modificando nuestra clase que hereda de <em>JUnitStory</em>, de manera que sepa encontrar este archivo. Finalmente, quedaría así:</p>
+<pre class="code java"><a name="rest_code_52e8c3af678b4482994818358068f3b9-1"></a><span class="kn">package</span> <span class="nn">org.magmax.jbehaveexample</span><span class="o">;</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-2"></a>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-3"></a><span class="kn">import</span> <span class="nn">java.util.List</span><span class="o">;</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-4"></a><span class="kn">import</span> <span class="nn">org.jbehave.core.configuration.Configuration</span><span class="o">;</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-5"></a><span class="kn">import</span> <span class="nn">org.jbehave.core.junit.JUnitStory</span><span class="o">;</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-6"></a><span class="kn">import</span> <span class="nn">org.jbehave.core.reporters.Format</span><span class="o">;</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-7"></a><span class="kn">import</span> <span class="nn">org.jbehave.core.reporters.StoryReporterBuilder</span><span class="o">;</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-8"></a><span class="kn">import</span> <span class="nn">org.jbehave.core.steps.CandidateSteps</span><span class="o">;</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-9"></a><span class="kn">import</span> <span class="nn">org.jbehave.core.steps.InstanceStepsFactory</span><span class="o">;</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-10"></a>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-11"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyExample</span> <span class="kd">extends</span> <span class="n">JUnitStory</span> <span class="o">{</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-12"></a>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-13"></a>    <span class="nd">@Override</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-14"></a>    <span class="kd">public</span> <span class="n">List</span> <span class="nf">candidateSteps</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-15"></a>        <span class="n">InstanceStepsFactory</span> <span class="n">stepsFactory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">InstanceStepsFactory</span><span class="o">(</span><span class="n">configuration</span><span class="o">(),</span> <span class="k">new</span> <span class="n">MyExampleSteps</span><span class="o">());</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-16"></a>        <span class="k">return</span> <span class="n">stepsFactory</span><span class="o">.</span><span class="na">createCandidateSteps</span><span class="o">();</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-17"></a>    <span class="o">}</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-18"></a>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-19"></a>    <span class="nd">@Override</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-20"></a>    <span class="kd">public</span> <span class="n">Configuration</span> <span class="nf">configuration</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-21"></a>        <span class="n">Configuration</span> <span class="n">result</span> <span class="o">=</span> <span class="kd">super</span><span class="o">.</span><span class="na">configuration</span><span class="o">();</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-22"></a>        <span class="n">result</span><span class="o">.</span><span class="na">useStoryReporterBuilder</span><span class="o">(</span><span class="n">getStoryReporterBuilder</span><span class="o">());</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-23"></a>        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-24"></a>    <span class="o">}</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-25"></a>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-26"></a>    <span class="kd">private</span> <span class="n">StoryReporterBuilder</span> <span class="nf">getStoryReporterBuilder</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-27"></a>        <span class="n">StoryReporterBuilder</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StoryReporterBuilder</span><span class="o">();</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-28"></a>        <span class="n">result</span><span class="o">.</span><span class="na">withFormats</span><span class="o">(</span><span class="n">Format</span><span class="o">.</span><span class="na">CONSOLE</span><span class="o">,</span> <span class="n">Format</span><span class="o">.</span><span class="na">HTML</span><span class="o">,</span> <span class="n">Format</span><span class="o">.</span><span class="na">STATS</span><span class="o">);</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-29"></a>        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-30"></a>    <span class="o">}</span>
+<a name="rest_code_52e8c3af678b4482994818358068f3b9-31"></a><span class="o">}</span>
+</pre>
+<p>Y, con este cambio, comienza a andar.</p>
+</div>
+</div>
+<div class="section" id="aciertos-y-errores">
+<h2>Aciertos y errores</h2>
+<p>Como bien dije, hay cosas que me gustan mucho y otras que nada. Para empezar, está el objeto <em>MostUsefulConfiguration</em>. Se supone que es la configuración más útil, pero... ¿qué es lo más útil? Puede que sea la más común, pero lo cierto es que no incluye el formato "<em>Console</em>" y, como consecuencia, no imprime nada por pantalla. Eso me obliga a tener que sobreescribir el método de Configuración, como en el ejemplo.</p>
+<p>Un acierto son las variables en las expresiones regulares, ya que JBehave es suficientemente listo como para resolverlas él solo. Quizá sea un poco peligroso en algún caso darle tanta inteligencia, pero en la mayoría de ellos viene muy bien.</p>
+<p>Otra cosa que no me gusta es tener que indicarle el objeto que implementan los pasos a seguir. Debería encontrarse este objeto, basándose en la nomenclatura, de la misma manera que se ha encontrado el archivo <em>.story</em>.</p>
+<p>Y otra cosa que no me gusta es tener que estar creando los archivos de historia, aunque siempre se puede crear uno genérico que permita encontrar todas las historias, aunque eso me ha dado no pocos dolores de cabeza.</p>
+</div>
+<div class="section" id="disculpas">
+<h2>Disculpas</h2>
+<p>En previsión de que me digáis que no tengo razón, abro ya este apartado. A penas he hecho 2 ejercicios con <em>JBehave</em>, así que es normal que me falten conocimientos y es posible que los problemas que he encontrado se puedan arreglar fácilmente. Me encantaría que me dijerais cómo :D</p>
+</div>
+<div class="section" id="mas-informacion">
+<h2>Más información</h2>
+<p>La mayor parte de la información la podéis obtener en la propia página de <a class="reference external" href="http://jbehave.org/reference/">JBehave reference</a>, aunque el <em>JavaDoc</em> está a medias aún.</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2012-01-12T00:00:00+00:00" title="2012-01-12">2012-01-12</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/java-testing/" rel="tag">java testing</a>
+                <a class="label label-primary p-category" href="/categories/jbehave/" rel="tag">jbehave</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/estatico-vs-dinamico/" rel="prev" title="Estático vs Dinámico">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/patron-singleton/" rel="next" title="El patrón Singleton">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/jbehave/",
+        disqus_title="JBehave",
+        disqus_identifier="cache/posts/jbehave.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

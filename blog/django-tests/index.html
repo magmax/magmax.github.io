@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Django: Test del modelo y Fixtures | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/django-tests/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/django-sitio-basico/" title="Django: Creación de un sitio básico con Admin" type="text/html">
+<link rel="next" href="/blog/ajax-principios-basicos/" title="Ajax, principios básicos" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Django: Test del modelo y Fixtures">
+<meta property="og:url" content="http://magmax.org/blog/django-tests/">
+<meta property="og:description" content="Una de las herramientas más potentes para la creación de pruebas en Django son las fixtures.
+Las fixtures consisten en datos que se cargan en la base de datos para poder realizar pruebas.
+Para mostrar">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2011-08-21T00:00:00+00:00">
+<meta property="article:updated" content="2011-08-21T00:00:00">
+<meta property="article:tag" content="django">
+<meta property="article:tag" content="django testing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/django-tests/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/django-tests/" class="u-url">Django: Test del modelo y Fixtures</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2011-08-21T00:00:00+00:00" title="2011-08-21">2011-08-21</time>
+                // <time class="updated dt-updated" datetime="2011-08-21T00:00:00" title="2011-08-21">2011-08-21</time></p>
+              <p class="commentline">            <a href="/blog/django-tests/#disqus_thread" data-disqus-identifier="cache/posts/django-tests.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Una de las herramientas más potentes para la creación de pruebas en Django son las <em>fixtures</em>.</p>
+<p>Las <em>fixtures</em> consisten en datos que se cargan en la base de datos para poder realizar pruebas.</p>
+<p>Para mostrarlo, continuaré con el post de "creación de un sitio básico con django":link://slug/django-sitio-basico, donde construimos un blog básico.</p>
+<!-- TEASER_END -->
+<div class="section" id="requisitos">
+<h2>Requisitos</h2>
+<p>En principio, con el blog básico ya construido es suficiente. Nos vendrá bien la herramienta de administración, con el fin de automatizar un poco el proceso.</p>
+<p>Si queremos utilizar <a class="reference external" href="http://yaml.org/">YAML</a>  para los datos, es muy probable que necesitemos tener instalado el módulo de YAML para Python (en Debian, <tt class="docutils literal"><span class="pre">python-yaml</span></tt>).</p>
+<p>En principio nos conformaremos con XML y JSON.</p>
+</div>
+<div class="section" id="metiendo-datos">
+<h2>Metiendo datos</h2>
+<p>Voy a suponer que tenemos una base de datos limpia. Si no es así, no os preocupéis: la única diferencia es que vosotros tendréis más datos.</p>
+<p>Arrancamos el servicio:</p>
+<pre class="code python"><a name="rest_code_b13dbc5ded274597b5a99bc615b19ce5-1"></a><span class="err">$</span> <span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">runserver</span>
+<a name="rest_code_b13dbc5ded274597b5a99bc615b19ce5-2"></a><span class="n">Validating</span> <span class="n">models</span><span class="o">...</span>
+<a name="rest_code_b13dbc5ded274597b5a99bc615b19ce5-3"></a>
+<a name="rest_code_b13dbc5ded274597b5a99bc615b19ce5-4"></a><span class="mi">0</span> <span class="n">errors</span> <span class="n">found</span>
+<a name="rest_code_b13dbc5ded274597b5a99bc615b19ce5-5"></a><span class="n">Django</span> <span class="n">version</span> <span class="mf">1.3</span><span class="p">,</span> <span class="n">using</span> <span class="n">settings</span> <span class="s">'myblog.settings'</span>
+<a name="rest_code_b13dbc5ded274597b5a99bc615b19ce5-6"></a><span class="n">Development</span> <span class="n">server</span> <span class="ow">is</span> <span class="n">running</span> <span class="n">at</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span><span class="p">:</span><span class="mi">8000</span><span class="o">/</span>
+<a name="rest_code_b13dbc5ded274597b5a99bc615b19ce5-7"></a><span class="n">Quit</span> <span class="n">the</span> <span class="n">server</span> <span class="k">with</span> <span class="n">CONTROL</span><span class="o">-</span><span class="n">C</span><span class="o">.</span>
+</pre>
+<p>Nos vamos a la interfaz de administración: <a class="reference external" href="http://localhost:8000/admin/blog/post/">http://localhost:8000/admin/blog/post/</a>  e insertamos dos <em>Posts</em>. Los míos tienen lo siguiente:</p>
+<pre class="code python"><a name="rest_code_346d742ecafc401c83777f88b8b065a1-1"></a><span class="n">post1</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">primer</span> <span class="n">post</span>
+<a name="rest_code_346d742ecafc401c83777f88b8b065a1-2"></a><span class="n">post1</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="err">É</span><span class="n">ste</span> <span class="n">es</span> <span class="n">el</span> <span class="n">cuerpo</span> <span class="n">de</span> <span class="n">mi</span> <span class="n">primer</span> <span class="n">post</span>
+<a name="rest_code_346d742ecafc401c83777f88b8b065a1-3"></a>
+<a name="rest_code_346d742ecafc401c83777f88b8b065a1-4"></a><span class="n">post2</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">Segundo</span> <span class="n">Post</span>
+<a name="rest_code_346d742ecafc401c83777f88b8b065a1-5"></a><span class="n">post2</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="err">É</span><span class="n">ste</span> <span class="n">es</span> <span class="n">el</span> <span class="n">cuerpo</span> <span class="n">de</span> <span class="n">mi</span> <span class="n">segundo</span> <span class="n">post</span>
+</pre>
+</div>
+<div class="section" id="inciso-una-mejora-a-la-interfaz">
+<h2>Inciso: una mejora a la interfaz</h2>
+<p>Gracias a esto me acabo de dar cuenta de un error en nuestro modelo. En la ventana de <em>Posts</em> aparecerá algo como "Post object", imposibilitando la identificación de nuestros posts. Esto se debe a que <em>Django</em> no sabe cómo representar nuestros objetos "<em>Post</em>". Así que vamos a decírselo.</p>
+<p>Abrimos nuestro <tt class="docutils literal">blog/models.py</tt> y, en la clase <em>Post</em>, añadimos los métodos <tt class="docutils literal">__unicode__</tt> y <tt class="docutils literal">__str__</tt>. Como es poquito, os lo pongo todo junto:</p>
+<pre class="code python"><a name="rest_code_071e7c124fcc4e028719ae868377db3b-1"></a><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<a name="rest_code_071e7c124fcc4e028719ae868377db3b-2"></a>
+<a name="rest_code_071e7c124fcc4e028719ae868377db3b-3"></a><span class="k">class</span> <span class="nc">Post</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<a name="rest_code_071e7c124fcc4e028719ae868377db3b-4"></a>    <span class="n">title</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<a name="rest_code_071e7c124fcc4e028719ae868377db3b-5"></a>    <span class="n">body</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+<a name="rest_code_071e7c124fcc4e028719ae868377db3b-6"></a>
+<a name="rest_code_071e7c124fcc4e028719ae868377db3b-7"></a>    <span class="k">def</span> <span class="nf">__unicode___</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_071e7c124fcc4e028719ae868377db3b-8"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+<a name="rest_code_071e7c124fcc4e028719ae868377db3b-9"></a>
+<a name="rest_code_071e7c124fcc4e028719ae868377db3b-10"></a>    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_071e7c124fcc4e028719ae868377db3b-11"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span>
+</pre>
+<p>Una vez hecho esto, si refrescamos, deberían aparecernos los títulos de los posts en lugar de las cadenas genéricas.</p>
+</div>
+<div class="section" id="tests">
+<h2>Tests</h2>
+<p>Podemos ejecutar los tests de nuestra aplicación:</p>
+<pre class="code bash"><a name="rest_code_e88bcb937ac0420e85ea4d07126aaea2-1"></a><span class="nv">$ </span>python manage.py <span class="nb">test</span>
+<a name="rest_code_e88bcb937ac0420e85ea4d07126aaea2-2"></a>Creating <span class="nb">test </span>database <span class="k">for</span> <span class="nb">alias</span> <span class="s1">'default'</span>...
+<a name="rest_code_e88bcb937ac0420e85ea4d07126aaea2-3"></a>...................................................................................................................................................................................................................................................................................................................................
+<a name="rest_code_e88bcb937ac0420e85ea4d07126aaea2-4"></a>----------------------------------------------------------------------
+<a name="rest_code_e88bcb937ac0420e85ea4d07126aaea2-5"></a>Ran <span class="m">323</span> tests in 3.125s
+<a name="rest_code_e88bcb937ac0420e85ea4d07126aaea2-6"></a>
+<a name="rest_code_e88bcb937ac0420e85ea4d07126aaea2-7"></a>OK
+<a name="rest_code_e88bcb937ac0420e85ea4d07126aaea2-8"></a>Destroying <span class="nb">test </span>database <span class="k">for</span> <span class="nb">alias</span> <span class="s1">'default'</span>...
+</pre>
+<p>Pero... ¡¡ si aún no los hemos escrito !!</p>
+<p>Eso no es del todo cierto. Como dependemos del módulo <em>django-admin</em>, se han lanzado los tests de este módulo. Además, se ha comprobado que se puede crear la BBDD. Y, por si fuera poco, Django ya nos creó un archivo "<tt class="docutils literal">blog/tests.py</tt>" con una prueba (aunque sólo es una plantilla para nuestros tests).</p>
+<p>Pero añadamos algo más. Vamos a crear el archivo "<tt class="docutils literal">blog/tests.py</tt>":</p>
+</div>
+<div class="section" id="fixtures-por-defecto">
+<h2>Fixtures por defecto</h2>
+<p>Cuando sincronizamos la base de datos de la aplicación, siempre se tratan de cargar los <em>fixtures</em> iniciales. Por eso nos aparece la frase: <tt class="docutils literal">No fixtures found.</tt>. Si queremos que se cargen cosas, basta con crear la carpeta <tt class="docutils literal">blog/fixtures</tt> y, dentro de ésta, el archivo <tt class="docutils literal">blog/fixtures/initial_data.json</tt>.</p>
+<p>Este archivo es peligroso, ya que se tratará de cargar SIEMPRE que sincronicemos, lo que puede producir duplicación en los datos.</p>
+</div>
+<div class="section" id="creando-nuestras-fixtures">
+<h2>Creando nuestras fixtures</h2>
+<p>Como no es lo que queremos, obtener un archivo de <tt class="docutils literal">fixtures</tt> sólo para las pruebas. Django nos deja hacerlo fácilmente:</p>
+<pre class="code bash"><a name="rest_code_e98eab25a3ba432383039dd6b87d7e3b-1"></a><span class="nv">$ </span>python manage.py dumpdata blog &gt; blog/fixtures/posts.json
+</pre>
+<p>Si miramos nuestro archivo <tt class="docutils literal">blog/fixtures/posts.json</tt>, veremos que contiene los datos de los blogs que creamos, en formato <a class="reference external" href="http://www.json.org/">JSON</a> . Si queremos usar el formato XML, basta con decirlo:</p>
+<pre class="code bash"><a name="rest_code_c281fb904f524be7a18619833a134a59-1"></a><span class="nv">$ </span>python manage.py dumpdata --format<span class="o">=</span>xml blog &gt; blog/fixtures/posts.xml
+</pre>
+</div>
+<div class="section" id="anadiendo-las-fixtures-a-los-tests">
+<h2>Añadiendo las fixtures a los tests</h2>
+<p>Ya tenemos el modelo, una plantilla para los tests y los datos en formato json. ¡¡Automaticemos el proceso!! (archivo <tt class="docutils literal">blog/tests.py</tt>):</p>
+<pre class="code python"><a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-1"></a><span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">TestCase</span>
+<a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-2"></a><span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">Post</span>
+<a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-3"></a>
+<a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-4"></a><span class="k">class</span> <span class="nc">Post1Test</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+<a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-5"></a>    <span class="k">def</span> <span class="nf">test_numero_elementos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-6"></a>        <span class="sd">"""</span>
+<a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-7"></a><span class="sd">        Comprobamos que NO se han cargado las fixtures</span>
+<a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-8"></a><span class="sd">        """</span>
+<a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-9"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Post</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()))</span>
+<a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-10"></a>
+<a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-11"></a><span class="k">class</span> <span class="nc">Post2Test</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+<a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-12"></a>    <span class="n">fixtures</span> <span class="o">=</span> <span class="p">[</span><span class="s">'posts.json'</span><span class="p">]</span>
+<a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-13"></a>
+<a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-14"></a>    <span class="k">def</span> <span class="nf">test_numero_elementos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-15"></a>        <span class="sd">"""</span>
+<a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-16"></a><span class="sd">        Comprobamos que se han cargado las fixtures</span>
+<a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-17"></a><span class="sd">        """</span>
+<a name="rest_code_63c92ee72708479e874fd8ecf3e5b361-18"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">Post</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()))</span>
+</pre>
+<p>Como véis, he creado dos clases. En la segunda he añadido el atributo de clase "fixtures", que es un iterable con el nombre de nuestro archivo (sin ruta). La primera clase no tiene ésto.</p>
+<p>Por esa razón, django no carga ningún dato en la primera clase pero sí en la segunda; esto se debe a que la base de datos se resetea para cada <em>TestCase</em>.</p>
+<div class="section" id="si-pero-yo-prefiero-xml">
+<h3>Sí, pero... yo prefiero XML</h3>
+<p>Basta con que el archivo tenga extensión <tt class="docutils literal">.xml</tt> y django ya sabe lo que tiene que hacer.</p>
+<p>Teóricamente se puede usar YAML, pero no lo he conseguido.</p>
+</div>
+</div>
+<div class="section" id="mi-archivo-json">
+<h2>Mi archivo JSON</h2>
+<p>Aquí tenéis mi archivo json, algo formateado para que quede más bonito (<tt class="docutils literal">blog/fixtures/posts.json</tt>):</p>
+<pre class="code python"><a name="rest_code_3322b4d5e8c143069306e8e6762e26a1-1"></a><span class="p">[</span>
+<a name="rest_code_3322b4d5e8c143069306e8e6762e26a1-2"></a>  <span class="p">{</span><span class="s">"pk"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+<a name="rest_code_3322b4d5e8c143069306e8e6762e26a1-3"></a>   <span class="s">"model"</span><span class="p">:</span> <span class="s">"blog.post"</span><span class="p">,</span>
+<a name="rest_code_3322b4d5e8c143069306e8e6762e26a1-4"></a>   <span class="s">"fields"</span><span class="p">:</span> <span class="p">{</span><span class="s">"body"</span><span class="p">:</span> <span class="s">"</span><span class="se">\u00c9</span><span class="s">ste es el cuerpo de mi primer post"</span><span class="p">,</span>
+<a name="rest_code_3322b4d5e8c143069306e8e6762e26a1-5"></a>              <span class="s">"title"</span><span class="p">:</span> <span class="s">"primer post"</span><span class="p">}},</span>
+<a name="rest_code_3322b4d5e8c143069306e8e6762e26a1-6"></a>  <span class="p">{</span><span class="s">"pk"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">"model"</span><span class="p">:</span>
+<a name="rest_code_3322b4d5e8c143069306e8e6762e26a1-7"></a>   <span class="s">"blog.post"</span><span class="p">,</span>
+<a name="rest_code_3322b4d5e8c143069306e8e6762e26a1-8"></a>   <span class="s">"fields"</span><span class="p">:</span> <span class="p">{</span><span class="s">"body"</span><span class="p">:</span> <span class="s">"</span><span class="se">\u00c9</span><span class="s">ste es el cuerpo de mi segundo post"</span><span class="p">,</span>
+<a name="rest_code_3322b4d5e8c143069306e8e6762e26a1-9"></a>              <span class="s">"title"</span><span class="p">:</span> <span class="s">"Segundo Post"</span><span class="p">}}</span>
+<a name="rest_code_3322b4d5e8c143069306e8e6762e26a1-10"></a><span class="p">]</span>
+</pre>
+</div>
+<div class="section" id="mas-informacion">
+<h2>Más información</h2>
+<p>Pues la verdad es que he encontrado muy poco. Referiros a la <a class="reference external" href="https://docs.djangoproject.com/en/1.3/topics/testing/">propia documentación de Django</a> .</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2011-08-21T00:00:00+00:00" title="2011-08-21">2011-08-21</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/django/" rel="tag">django</a>
+                <a class="label label-primary p-category" href="/categories/django-testing/" rel="tag">django testing</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/django-sitio-basico/" rel="prev" title="Django: Creación de un sitio básico con Admin">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/ajax-principios-basicos/" rel="next" title="Ajax, principios básicos">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/django-tests/",
+        disqus_title="Django: Test del modelo y Fixtures",
+        disqus_identifier="cache/posts/django-tests.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

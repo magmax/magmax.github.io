@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Sistemas de Control de Versiones (Subversion y Mercurial) | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/mercurial-subversion/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/constructores-simples/" title="Constructores simples" type="text/html">
+<link rel="next" href="/blog/bloquear-paquete-debian/" title="Bloquear un paquete en Debian" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Sistemas de Control de Versiones (Subversion y Mercurial)">
+<meta property="og:url" content="http://magmax.org/blog/mercurial-subversion/">
+<meta property="og:description" content="En esta ocasión vamos a ver qué es un Sistema de Control de Versiones y cómo se utiliza.
+Voy a dividir la entrada en 4 partes bien diferenciadas. Primero una breve introducción, explicando qué son y q">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2012-01-30T00:00:00+00:00">
+<meta property="article:updated" content="2012-01-30T00:00:00">
+<meta property="article:tag" content="agile">
+<meta property="article:tag" content="dvcs">
+<meta property="article:tag" content="engineering">
+<meta property="article:tag" content="mercurial">
+<meta property="article:tag" content="subversion">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/mercurial-subversion/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/mercurial-subversion/" class="u-url">Sistemas de Control de Versiones (Subversion y Mercurial)</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2012-01-30T00:00:00+00:00" title="2012-01-30">2012-01-30</time>
+                // <time class="updated dt-updated" datetime="2012-01-30T00:00:00" title="2012-01-30">2012-01-30</time></p>
+              <p class="commentline">            <a href="/blog/mercurial-subversion/#disqus_thread" data-disqus-identifier="cache/posts/mercurial-subversion.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>En esta ocasión vamos a ver qué es un Sistema de Control de Versiones y cómo se utiliza.</p>
+<p>Voy a dividir la entrada en 4 partes bien diferenciadas. Primero una breve introducción, explicando qué son y qué tipos hay. A continuación, una descripción del uso de VCS, seguida por una descripción de DVCS. Finalmente, una entrada avanzada de cómo utilizar DVCS. Si ya eres un usuario de DVCS, a lo mejor te interesa saltarte las dos primeras partes.</p>
+<!-- TEASER_END -->
+<div class="section" id="introduccion">
+<h2>Introducción</h2>
+<p>Un <em>Sistema de Control de Versiones</em> (SCV o, en inglés, VCS o "Version Control System") tiene una estructura similar a un sistema de archivos. La diferencia está en que se puede acceder a distintas versiones de los archivos y operar con estas versiones. Es decir: <em>Es un sistema de ficheros con versionado</em>.</p>
+<p>Hay distintos tipos. Los más sencillos son los sistemas locales, útiles para un único usuario. En la era de la nube, no tiene sentido en pensar en sistemas de este tipo y ya no se mantiene ninguno de éstos. Hace tiempo trabajé con PVCS y era un verdadero infierno (una persona estaba encargada del PVCS y era la única que accedía al mismo). Los ignoraremos.</p>
+<p>Un poco más complejos son los denominados VCS ("Version Control System"). Éstos diferencian entre el sistema central y la copia local (<em>working copy</em>).</p>
+<p>Los más utilizados actualmente son los DVCS ("<em>Distributed Version Control System</em>"), en los que puede haber más de una copia remota y éstas se pueden sincronizar entre ellas.</p>
+<p>Echémosle un vistazo rápido a todos ellos.</p>
+</div>
+<div class="section" id="vcs">
+<h2>VCS</h2>
+<p>Aunque las empresas están abandonándolos, aún siguen siendo muy utilizados.</p>
+<p>El sistema consiste, básicamente, en una copia local y un servidor remoto. Las modificaciones se realizan sobre la copia local y luego se envían al servidor. Cada máquina que tiene una copia local se sincroniza bajo demanda con el servidor remoto.</p>
+<p><a class="reference external" href="http://subversion.tigris.org/">Subversion</a> , <a class="reference external" href="http://cvs.nongnu.org/">CVS</a> , ... Han sido los más utilizados. Vamos a ver un poquito de <em>Subversion</em>:</p>
+<ul class="simple">
+<li>
+<em>init</em>: permite inicializar un repositorio.</li>
+<li>
+<em>checkout</em>: descarga un repositorio remoto en una carpeta local (<em>working copy</em>), desde la que podemos manipular los archivos.</li>
+<li>
+<em>update</em>: comprueba si hay actualizaciones en el servidor y se las descarga a la copia local. Si hay conflictos (hemos tocado un archivo que alguien ya ha modificado en el servidor), tratará de resolverlos. Si no puede, dejará los archivos marcados como "conflicto".</li>
+<li>
+<em>add</em>: mientras que no hagamos <em>add</em> a un archivo, éste será ignorado.</li>
+<li>
+<em>commit</em>: crea una nueva versión, enviando al servidor las modificaciones desde la última vez que se utilizó esta orden.</li>
+<li>
+<em>remove</em>: el archivo deja de estar gestionado. Hay que tener en cuenta que las versiones que subimos con el archivo seguirán estando ahí, pero a partir de ese momento, las nuevas versiones no lo mostrarán.</li>
+<li>
+<em>diff</em>: permite ver las diferencias existentes entre las distintas versiones de un mismo fichero.</li>
+<li>
+<em>log</em>: muestra los cambios ocurridos en el repositorio.</li>
+</ul>
+<p>El uso típico de este tipo de repositorios es:</p>
+<p># El administrador crea el repositorio (<em>init</em>) y publica la dirección en la que se encuentra (https, ssh, ...).
+# El usuario se descarga el repositorio a su copia local (<em>checkout</em>).
+# El usuario comienza un ciclo de iteraciones sucesivas de las órdenes siguientes, aunque usará el resto de forma ocasional:
+## Modificar el código
+## Subir cambios (<em>commit</em>). En este punto se realiza un <em>update</em> automático y, si hay conflictos, se exige su resolución antes de permitir el <em>commit</em>.</p>
+<p>Los sistemas de este tipo tienen un problema: si no hay conexión, no se puede hacer nada con el repositorio, ya que la mayor parte de la lógica está en el servidor.</p>
+</div>
+<div class="section" id="dvcs">
+<h2>DVCS</h2>
+<p>En este caso entra en juego un componente más: un servidor local. Este servidor local puede ser una copia local del servidor remoto. Esta característica permite trabajar con el servidor aunque no exista conexión a la red. Cuando se desee, se puede sincronizar el servidor local con el servidor remoto.</p>
+<p>La manera de trabajar con el servidor local es muy similar a la utilizada por los <em>VCS</em>, aunque pueden cambiar los nombres de las órdenes. Por ejemplo, la orden "<em>clone</em>" de <em>Mercurial</em> equivaldría al "<em>checkout</em>" de subversion.</p>
+<p>Evidentemente, hay una serie de instrucciones adicionales que nos permiten trabajar con el servidor remoto. Dado que esto no es un tutorial de <em>mercurial</em>, obviaré estas órdenes comunes y me centraré en las nuevas operaciones:</p>
+<ul class="simple">
+<li>
+<em>pull</em>: permite traerse los cambios del repositorio remoto al repositorio local.</li>
+<li>
+<em>push</em>: Envía los cambios del repositorio local (ojo, no la copia de trabajo) al repositorio remoto.</li>
+<li>
+<em>branch</em>: Permite crear ramas nuevas. De esto hablaremos en el siguiente punto.</li>
+<li>
+<em>branches</em>: Muestra la lista de ramas existentes.</li>
+<li>
+<em>merge</em>: Mezcla dos colas.</li>
+<li>
+<em>out</em>: Muestra la lista de <em>changesets</em> (commits) que están en el servidor local pero no en el servidor remoto.</li>
+</ul>
+<p>No hay un ciclo habitual con los DVCS. Sin embargo, podríamos poner como "ciclo sencillo" la intercalación entre:</p>
+<p># pull
+# Ciclos de tipo VCS
+# push</p>
+<p>Algunos ejemplos de DVCS son <a class="reference external" href="http://mercurial.selenic.com/">Mercurial</a> , <a class="reference external" href="http://git-scm.com/">Git</a> , <a class="reference external" href="http://bazaar.canonical.com/en/">Bazaar</a> , <a class="reference external" href="http://veracity-scm.com/">Veracity</a>  o <a class="reference external" href="http://www.plasticscm.com/">Plastic SCM</a> .</p>
+</div>
+<div class="section" id="dvcs-avanzado">
+<h2>DVCS Avanzado</h2>
+<p>Vamos a ver aquí tres niveles. El primero se tratará del manejo de ramas ("branches"); el segundo, de <em>hooks</em> y el tercer, del manejo de repositorios remotos.</p>
+<div class="section" id="branches">
+<h3>Branches</h3>
+<p>El manejo de ramas permite realizar un trabajo paralelo sin afectar a la rama principal. Las ramas principales suelen llamarse algo como "<em>trunk</em>", "<em>default</em>", ... y suelen ser las más importantes.</p>
+<p>Existe una corriente que defiende el "<em>Un cambio, una rama</em>", de manera que antes de comenzar a hacer cambios, debes crearte una rama y, posteriormente, mezclar con la rama principal. Este planteamiento permite pasar varios días trabajando en la rama sin afectar al trabajo de los demás. No es necesario esperar al último momento para aplicar todos los cambios, ya que se puede mezclar una rama con la rama principal en cualquier momento, facilitando así el poder actualizarse o reduciendo los posibles conflictos.</p>
+<p>Existe también la posibilidad de crear ramas de ramas o de mezclarlas entre ellas, complicando así el grafo generado.</p>
+<p>Hay que tener en cuenta que, durante la mezcla de código, es posible que el algoritmo de mezclado falle, así que es buena idea combinar estas técnicas con robustas baterías de pruebas.</p>
+</div>
+<div class="section" id="hooks">
+<h3>Hooks</h3>
+<p>Los repositorios pueden lanzar acciones automáticas cuando se producen ciertos eventos. Por ejemplo, podrían enviarnos un e-mail cuando una rama se mezcla con la rama principal, o comprobar que el código cumple ciertos criterios de calidad.</p>
+<p>Este tipo de técnicas pueden ser muy provechosas, aunque puede requerir tanto mantenimiento como para dedicar parte del personal a manejarlas.</p>
+</div>
+<div class="section" id="multiples-repositorios">
+<h3>Múltiples repositorios</h3>
+<p>Finalmente, llegamos a los múltiples repositorios. Existe la opción de tener repositorios remotos réplica. Esto significa que podemos sincronizar nuestros cambios contra una de estas réplicas y ésta se sincronizará tarde o temprano con otra de las réplicas.</p>
+<p>La sincronización entre repositorios puede ser manual o automática, y puede dar lugar a un <em>flujo de trabajo</em> distinto según se necesite. Por ejemplo, puede utilizarse esta técnica para mantener repositorios remotos, de manera que se incremente la velocidad entre los <em>working copies</em> y el servidor central o, lo que puede resultar más provechoso, definir unas calidades para cada uno de los repositorios.</p>
+<p>Veamos un ejemplo... Podemos tener el repositorio de uso habitual, donde "cabe todo", llamándole "<em>Development</em>"; otro repositorio del que se realizan pruebas unitarias automáticas, llamado "<em>testing</em>"; si las pruebas automáticas pasan, podríamos tener otro con las pruebas de integración "<em>integration</em>"; si estas pasan, otro con las pruebas de calidad "<em>QA</em>" y, si estas pasan, otro con el código definitivo "<em>Release</em>". Cuando hay una nueva rama en este repositorio, podríamos sincronizarlo con "<em>Development</em>" y, así, cerramos el círculo.</p>
+<p>No he leído nada aún al respecto, pero supongo que a esto es a lo que hace referencia la "<em>Integración contínua</em>".</p>
+<p>Con el fin de no hacer crecer disparatadamente todos los repositorios, se pueden mezclar sólo ciertas ramas de un repositorio a otro, simplificando las mezclas y reduciendo la historia.</p>
+</div>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusión</h2>
+<p>El uso de todas las técnicas avanzadas puede provocar flujos de trabajo muy diferentes, pero todos ellos útiles para el desarrollo de software. Cualquier empresa de más de 5 desarrolladores que trate de hacer software sin utilizar un VCS o un DVCS está destinada al fracaso; no podrá obtener una calidad competitiva ni unos plazos aceptables.</p>
+</div>
+<div class="section" id="mas-informacion">
+<h2>Más información</h2>
+<p>Hoy día es raro no haber oído hablar de los sistemas de control de versiones. De todas maneras, os recomiendo apuntaros al blog de mis amigos de <a class="reference external" href="http://codicesoftware.blogspot.com/">Codice Software</a>  donde, entre muchas cosas interesantes, explican más a fondo <a class="reference external" href="http://www.plasticscm.com/infocenter/quick-start/task-cycle-in-plastic-scm.aspx">un flujo de trabajo</a>  con su propia herramienta.</p>
+<p>En breve voy a comenzar la lectura de un libro que promete ser interesante, <a class="reference external" href="http://www.ericsink.com/">Version Control by Example", propuesto por "Eric Sink</a> , que os podéis descargar gratuítamente o, si tenéis suerte como yo, <a class="reference external" href="http://www.ericsink.com/entries/vcbe_print_edition_free.html">conseguirlo de forma gratuita en papel</a> .</p>
+<p>También os propongo echar un ojo a la <a class="reference external" href="http://en.wikipedia.org/wiki/Revision_control">Wikipedia</a> .</p>
+<p>Y, por si fuera poco, existe la posibilidad de utilizar algunos de ellos de forma remota, utilizando <a class="reference external" href="https://github.com/">Github</a> , <a class="reference external" href="https://bitbucket.org/">Bitbucket</a> , <a class="reference external" href="https://launchpad.net/">Launchpad</a> , <a class="reference external" href="http://savannah.gnu.org/">Savannah</a> , <a class="reference external" href="http://gna.org/">Gna!</a> , ... Para gustos, los -colores- sistemas de control de versiones :D</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2012-01-30T00:00:00+00:00" title="2012-01-30">2012-01-30</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/agile/" rel="tag">agile</a>
+                <a class="label label-primary p-category" href="/categories/dvcs/" rel="tag">dvcs</a>
+                <a class="label label-primary p-category" href="/categories/engineering/" rel="tag">engineering</a>
+                <a class="label label-primary p-category" href="/categories/mercurial/" rel="tag">mercurial</a>
+                <a class="label label-primary p-category" href="/categories/subversion/" rel="tag">subversion</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/constructores-simples/" rel="prev" title="Constructores simples">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/bloquear-paquete-debian/" rel="next" title="Bloquear un paquete en Debian">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/mercurial-subversion/",
+        disqus_title="Sistemas de Control de Versiones (Subversion y Mercurial)",
+        disqus_identifier="cache/posts/mercurial-subversion.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

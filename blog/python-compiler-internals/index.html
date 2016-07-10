@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>El compilador de Python desde dentro | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/python-compiler-internals/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/vagrant-puppet/" title="Vagrant y Puppet" type="text/html">
+<link rel="next" href="/blog/como-funcionan-las-cosas/" title="Cómo funcionan las cosas" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="El compilador de Python desde dentro">
+<meta property="og:url" content="http://magmax.org/blog/python-compiler-internals/">
+<meta property="og:description" content="Los viernes hay formación en la oficina. El viernes pasado le tocó dar una charla a Goran, y nos estuvo contando cómo funciona PHP por dentro.
+No he podido quitarme la charla de la cabeza en todo el f">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2012-05-20T00:00:00+00:00">
+<meta property="article:updated" content="2012-05-20T00:00:00">
+<meta property="article:tag" content="compilers">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/python-compiler-internals/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/python-compiler-internals/" class="u-url">El compilador de Python desde dentro</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2012-05-20T00:00:00+00:00" title="2012-05-20">2012-05-20</time>
+                // <time class="updated dt-updated" datetime="2012-05-20T00:00:00" title="2012-05-20">2012-05-20</time></p>
+              <p class="commentline">            <a href="/blog/python-compiler-internals/#disqus_thread" data-disqus-identifier="cache/posts/python-compiler-internals.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Los viernes hay formación en la oficina. El viernes pasado le tocó dar una charla a Goran, y nos estuvo contando cómo funciona PHP por dentro.</p>
+<p>No he podido quitarme la charla de la cabeza en todo el fin de semana, y he investigado cómo funciona Python por dentro. Goran se quejaba de que hay muy poca información sobre PHP, y tampoco hay tanta sobre Python. Pero encontré este artículo, me gustó y he tenido que traducirlo. Lo mejor es que todos los lenguajes que están de moda (PHP, Python, Ruby, Java, ...) se basan en los mismos principios, aunque algunos de ellos tienen mayor acierto que otros, y la implementación, que es completamente diferente.</p>
+<p>El artículo original, <a class="reference external" href="http://tomlee.co/wp-content/uploads/2008/12/python-language-internals.pdf">'Python Compiler Internals'</a>  lo escribió <a class="reference external" href="http://tomlee.co">Thomas Lee</a>  (<a class="reference external" href="https://twitter.com/#!/tglee">@tglee</a> ) en el 2008, pero es perfectamente válido hoy en día. Me gustó por lo sencillo y por lo acertado del ejemplo.</p>
+<p>Espero que también os guste:</p>
+<!-- TEASER_END -->
+<hr class="docutils">
+<div class="section" id="resumen">
+<h2>Resumen</h2>
+<p>En este artículo se introduce una nueva instrucción del lenguaje para demostrar cómo se puede comenzar a modificar el compilador del lenguaje Python. El lenguaje Python en sí mismo es un lenguaje potente, dinámicamente tipado que corre en gran variedad de sistemas operativos y plataformas. Los entresijos del propio compilador siguen un patrón común en las implementaciones de muchos lenguajes, con fases de análisis léxico, sintáctico y generación de código. Esto hace del código fuente de Python un buen lugar para aprender cómo deberían implementarse los lenguajes en su sentido más general. Tras leer el artículo, se espera que el lector vea que contribuir al núcleo del lenguaje Python no es tan complejo como puede parecer.</p>
+</div>
+<div class="section" id="vista-general">
+<h2>1. Vista general</h2>
+<p>Aquéllos que ven a Python como un lenguaje de <em>scripting</em> pueden sorprenderse al descubrir que el núcleo del intérprete Python realmente tiene la estructura de un compilador clásico. Cuando se invoca la orden "python", el código fuente se escanea buscando <em>tokens</em>, estos <em>tokens</em> se procesan en una representación arbórea de la estructura lógica del programa, que finalmente se transforma en <em>bytecode</em>. Finalmente, este <em>bytecode</em> se procesa por la máquina virtual.</p>
+<p>Con el fin de demostrar cómo encajan entre sí los distintos componentes del compilador de Python, usaremos como base el código de Python 2.6 caminando hacia la agregación de una nueva estructura del lenguaje: la instrucción <em>"unless"</em>, mostrada en el listado siguiente:</p>
+<pre class="code python"><a name="rest_code_4723fe9016974dd9ac6b813f466a8b1e-1"></a><span class="kn">import</span> <span class="nn">sys</span>
+<a name="rest_code_4723fe9016974dd9ac6b813f466a8b1e-2"></a>
+<a name="rest_code_4723fe9016974dd9ac6b813f466a8b1e-3"></a><span class="n">passwd</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<a name="rest_code_4723fe9016974dd9ac6b813f466a8b1e-4"></a><span class="n">unless</span> <span class="n">passwd</span> <span class="o">==</span> <span class="s">'tehsecret'</span><span class="p">:</span>
+<a name="rest_code_4723fe9016974dd9ac6b813f466a8b1e-5"></a>       <span class="k">print</span> <span class="s">'Password do not match. Exiting!'</span>
+<a name="rest_code_4723fe9016974dd9ac6b813f466a8b1e-6"></a>       <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre>
+<p>Todo el código de este artículo se ha escrito y probado con Python 2.6 beta 3, cuyo repositorio Subversion puede encontrarse aquí: <a class="reference external" href="http://svn.python.org/projects/python/tags/r26b3/">http://svn.python.org/projects/python/tags/r26b3/</a> . La única cosa que debería cambiar en la versión 2.6 final son los números de línea referenciados en los listados de fuentes aquí presentes.</p>
+</div>
+<div class="section" id="analisis-lexico">
+<h2>2. Análisis léxico</h2>
+<p>En lugar de tratar de procesar un flujo de texto directamente, a menudo es más sencillo -- y rápido -- desglosar la entrada de texto en una serie de "tokens", que deberían incluir palabras reservadas, literales, operadores y/o identificadores. Estos <em>tokens</em> pueden inspeccionarse por el procesador de forma más eficiente que un flujo de texto plano. El proceso de transformar la entra de texto en <em>tokens</em> se conoce como "análisis léxico", "tokenizado" (<tt class="docutils literal">tokenizing</tt>) o, simplemente, "escaneo" (<tt class="docutils literal">scanning</tt>).</p>
+<p>El punto de entrada del analizador léxico es la función <tt class="docutils literal">PyTokenizer_Get</tt> en <a class="reference external" href="http://svn.python.org/projects/python/tags/r26b3/Parser/tokenizer.c">Parser/tokenizer.c</a> . Esta función se llama repetidamente desde la función principal de procesado, <tt class="docutils literal">parsetok</tt> en <a class="reference external" href="http://svn.python.org/projects/python/tags/r26b3/Parser/parsetok.c">Parser/parsetok.c</a> , que a su vez se utiliza por por alguna de las distintas funciones de proceso de más alto nivel.</p>
+<p>Para implementar nuestra instrucción "unless", no es necesario realizar nada explícito en el código del <tt class="docutils literal">tokenizer</tt> -- sólo es necesario modificar la descripción de la gramática, como se verá en la siguiente sección.</p>
+</div>
+<div class="section" id="analisis-sintactico">
+<h2>3. Análisis sintáctico</h2>
+<p>Para que el compilador obtenga algún significado del programa fuente, el flujo de tokens emitido por el analizador léxico debe estar organizado en algún tipo de estructura. Éste es el trabajo del analizador sintáctico de Python, que toma como entrada un flujo de tokens y -- basado en las reglas declaradas en la gramática de Python -- produce un Árbol Sintáctico Abstracto (AST, <em>"Abstract Syntax Tree"</em>).</p>
+<p>Python utiliza un generador de análisis sintáctico a medida que genera automáticamente su analizador sintáctico a partir de una descripción gramatical. La salida del análisis sintáctico es el árbol sintáctico, que puede verse como una representación de bajo nivel del programa analizado en la estructura definida por la descripción gramatical.</p>
+<p>En Python 2.5, se añade un paso adicional a la fase de análisis sintáctico: la construcción de un Árbol Sintáctico Abstracto (AST) del árbol analizado. El AST, como el árbol analizado, es una representación en memoria del programa que se está procesando, aunque de una forma de más alto nivel y por tanto más sencilla de manipular.</p>
+<p>Ahora, para añadir nuestra nueva instrucción <tt class="docutils literal">unless</tt> al lenguaje Python, primero tenemos que modificar el archivo de gramática (<a class="reference external" href="http://svn.python.org/projects/python/tags/r26b3/Grammar/Grammar">Grammar/Grammar</a>)  para describir la sintaxis de esta característica, como en el listado siguiente:</p>
+<pre class="code cpp"><a name="rest_code_247433d0c8ec42758d392b6b84a372c9-1"></a><span class="cm">/* Grammar/Grammar:78 */</span>
+<a name="rest_code_247433d0c8ec42758d392b6b84a372c9-2"></a><span class="nl">if_stmt</span><span class="p">:</span> <span class="err">'</span><span class="k">if</span><span class="err">'</span> <span class="n">test</span> <span class="sc">':'</span> <span class="n">suite</span> <span class="p">(</span><span class="err">'</span><span class="n">elif</span><span class="err">'</span> <span class="n">test</span> <span class="sc">':'</span> <span class="n">suite</span><span class="p">)</span><span class="o">*</span> <span class="p">[</span><span class="err">'</span><span class="k">else</span><span class="sc">' '</span><span class="o">:</span><span class="err">'</span> <span class="n">suite</span><span class="p">]</span>
+<a name="rest_code_247433d0c8ec42758d392b6b84a372c9-3"></a><span class="nl">while_stmt</span><span class="p">:</span> <span class="err">'</span><span class="k">while</span><span class="err">'</span> <span class="n">test</span> <span class="sc">':'</span> <span class="n">suite</span> <span class="p">[</span><span class="err">'</span><span class="k">else</span><span class="sc">' '</span><span class="o">:</span><span class="err">'</span> <span class="n">suite</span><span class="p">]</span>
+<a name="rest_code_247433d0c8ec42758d392b6b84a372c9-4"></a><span class="nl">unless_stmt</span><span class="p">:</span> <span class="err">'</span><span class="n">unless</span><span class="err">'</span> <span class="n">test</span> <span class="sc">':'</span> <span class="n">suite</span>
+<a name="rest_code_247433d0c8ec42758d392b6b84a372c9-5"></a><span class="nl">for_stmt</span><span class="p">:</span> <span class="err">'</span><span class="k">for</span><span class="err">'</span> <span class="n">exprlist</span> <span class="err">'</span><span class="n">in</span><span class="err">'</span> <span class="n">testlist</span> <span class="sc">':'</span> <span class="n">suite</span> <span class="p">[</span><span class="err">'</span><span class="k">else</span><span class="sc">' '</span><span class="o">:</span><span class="err">'</span> <span class="n">suite</span><span class="p">]</span>
+</pre>
+<p>Dado que nuesta instrucción <tt class="docutils literal">unless</tt> es realmente una instrucción "if" con la lógica invertida, para implementarlo <em>podríamos</em> utilizar los nodos AST del "if" y el "Not" existentes. De hecho, así es como se introdujo la sintaxis el try...except...finally en Python 2.5. De todas formas, para los propósitos de este artículo se modificará la estructura AST para poder demostrar cómo generar <em>bytecode</em> para nuestra nueva construcción. Con tal fin, se modifica <a class="reference external" href="http://svn.python.org/projects/python/tags/r26b3/Parser/Python.asdl">Parser/Python.asdl</a>  -- que contiene la definición del AST -- como en el listado siguiente:</p>
+<pre class="code cpp"><a name="rest_code_88601f9a69d243bfbd97a3000f5dd39f-1"></a><span class="cm">/* Parser/Python.asdl:25 */</span>
+<a name="rest_code_88601f9a69d243bfbd97a3000f5dd39f-2"></a>    <span class="o">|</span> <span class="n">For</span><span class="p">(</span><span class="n">expr</span> <span class="n">target</span><span class="p">,</span> <span class="n">expr</span> <span class="n">iter</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">orelse</span><span class="p">)</span>
+<a name="rest_code_88601f9a69d243bfbd97a3000f5dd39f-3"></a>    <span class="o">|</span> <span class="n">While</span><span class="p">(</span><span class="n">expr</span> <span class="n">test</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">orelse</span><span class="p">)</span>
+<a name="rest_code_88601f9a69d243bfbd97a3000f5dd39f-4"></a>    <span class="o">|</span> <span class="n">Unless</span><span class="p">(</span><span class="n">expr</span> <span class="n">test</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">)</span>
+<a name="rest_code_88601f9a69d243bfbd97a3000f5dd39f-5"></a>    <span class="o">|</span> <span class="n">If</span><span class="p">(</span><span class="n">expr</span> <span class="n">test</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">orelse</span><span class="p">)</span>
+</pre>
+<p>Finalmente, necesitamos añadir algo de código para manejar la transformación de la gramática al AST en <a class="reference external" href="http://svn.python.org/projects/python/tags/r26b3/Python/ast.c">Python/ast.c</a> . Aquí añadimos <tt class="docutils literal">ast_for_unless_stmt</tt>, como se muestra a continuación:</p>
+<pre class="code cpp"><a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-1"></a><span class="cm">/* Python/ast.c:2805 */</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-2"></a><span class="k">static</span> <span class="n">stmt_ty</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-3"></a><span class="nf">ast_for_unless_stmt</span><span class="p">(</span><span class="k">struct</span> <span class="n">compiling</span><span class="o">*</span> <span class="n">c</span><span class="p">,</span> <span class="k">const</span> <span class="n">node</span> <span class="o">*</span><span class="n">n</span><span class="p">)</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-4"></a><span class="p">{</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-5"></a>    <span class="n">expr_ty</span> <span class="n">test_expr</span><span class="p">;</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-6"></a>    <span class="n">asdl_seq</span> <span class="o">*</span><span class="n">suite_seq</span><span class="p">;</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-7"></a>    <span class="cm">/* unless_stmt: 'unless' test ':' suite */</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-8"></a>    <span class="n">REQ</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">unless_stmt</span><span class="p">);</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-9"></a>    <span class="n">test_expr</span> <span class="o">=</span> <span class="n">ast_for_expr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">CHILD</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">));</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-10"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">test_expr</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-11"></a>        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-12"></a>    <span class="n">suite_seq</span> <span class="o">=</span> <span class="n">ast_for_suite</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">CHILD</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-13"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">suite_seq</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-14"></a>        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-15"></a>    <span class="k">return</span> <span class="n">Unless</span><span class="p">(</span><span class="n">test_expr</span><span class="p">,</span> <span class="n">suite_seq</span><span class="p">,</span> <span class="n">LINENO</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">n</span><span class="o">-&gt;</span><span class="n">n_col_offset</span><span class="p">,</span> <span class="n">c</span><span class="o">-&gt;</span><span class="n">c_arena</span><span class="p">);</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-16"></a><span class="p">}</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-17"></a><span class="cm">/* ... &lt;snip&gt; ... */</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-18"></a><span class="cm">/* Python/ast.c:3125 */</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-19"></a>    <span class="k">case</span> <span class="nl">while_stmt</span><span class="p">:</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-20"></a>        <span class="k">return</span> <span class="n">ast_for_while_stmt</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">ch</span><span class="p">);</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-21"></a>    <span class="k">case</span> <span class="nl">unless_stmt</span><span class="p">:</span>
+<a name="rest_code_5150f111b50a4e43bb5d6dc27c1b2e4b-22"></a>        <span class="k">return</span> <span class="n">ast_for_unless_stmt</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">ch</span><span class="p">);</span>
+</pre>
+<p>El código de transformación del árbol sintáctico al AST sigue un popular patrón Visitor. En la línea 3123, se añade un <em>hook</em> para llamar al código de transformación apropiado si se encuentra un nodo <tt class="docutils literal">unless_stmt</tt> en el árbol sintáctico. Una vez dentro de la función de transformación, se construye un nodo Unless analizando recursivamente la condición y el cuerpo.</p>
+<p>Note que puede necesitar regenerar explícitamente algunos ficheros tras realizar estos cambios:</p>
+<pre class="code bash"><a name="rest_code_29468ccad5534e509a404ed553521045-1"></a><span class="nv">$ </span>rm -f Python/graminit.c <span class="o">&amp;&amp;</span> make Python/graminit.c
+<a name="rest_code_29468ccad5534e509a404ed553521045-2"></a><span class="nv">$ </span>rm -f Python/Python-ast.c <span class="o">&amp;&amp;</span> make Python/Python-ast.c
+</pre>
+<p>En este punto, el compilador podrá escanear y analizar nuestra nueva instrucción "unless". Lo único que falta es añadir código para generar el <em>bytecode</em> para nuestro nuevo nodo AST.</p>
+</div>
+<div class="section" id="generacion-de-codigo">
+<h2>4. Generación de código</h2>
+<p>La siguiente fase de compilación -- generación de código -- toma el AST construído en la fase anterior y produce un PyCodeObject como salida. Un PyCodeObject es una unidad independiente de código ejecutable, que contiene toda la información y código para la ejecución independiente por parte del intérprete de <em>bytecode</em> de Python.</p>
+<p>Antes de ver más código fuente, es importante comprender que el intérprete de <em>bytecode</em> de Python es una máquina virtual basada en pila. Esto significa que el proceso de ejecutar <em>bytecode</em> manipula una pila de datos, con instrucciones que añaden, eliminan y operan sobre el par de elementos de la cima de la pila. Con esto en mente, veamos cómo generar <em>bytecode</em> desde nuestro nuevo nodo AST Unless en el listado siguiente (veremos lo que hace realmente el <em>bytecode</em> en la sección siguiente):</p>
+<pre class="code cpp"><a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-1"></a><span class="cm">/* Python/compile.c:1623 */</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-2"></a><span class="k">static</span> <span class="kt">int</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-3"></a><span class="nf">compiler_unless</span><span class="p">(</span><span class="k">struct</span> <span class="n">compiler</span> <span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="n">stmt_ty</span> <span class="n">s</span><span class="p">)</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-4"></a><span class="p">{</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-5"></a>    <span class="n">basicblock</span> <span class="o">*</span><span class="n">end</span><span class="p">;</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-6"></a>    <span class="n">basicblock</span> <span class="o">*</span><span class="n">next</span><span class="p">;</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-7"></a>    <span class="n">assert</span><span class="p">(</span><span class="n">s</span><span class="o">-&gt;</span><span class="n">kind</span> <span class="o">==</span> <span class="n">Unless_kind</span><span class="p">);</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-8"></a>    <span class="n">end</span> <span class="o">=</span> <span class="n">compiler_new_block</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-9"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">end</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-10"></a>        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-11"></a>    <span class="n">next</span> <span class="o">=</span> <span class="n">compiler_new_block</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-12"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">next</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-13"></a>        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-14"></a>    <span class="n">VISIT</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">s</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">.</span><span class="n">Unless</span><span class="p">.</span><span class="n">test</span><span class="p">);</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-15"></a>    <span class="n">ADDOP_JREL</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">JUMP_IF_TRUE</span><span class="p">,</span> <span class="n">next</span><span class="p">);</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-16"></a>    <span class="n">ADDOP</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">POP_TOP</span><span class="p">);</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-17"></a>    <span class="n">VISIT_SEQ</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">stmt</span><span class="p">,</span> <span class="n">s</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">.</span><span class="n">Unless</span><span class="p">.</span><span class="n">body</span><span class="p">);</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-18"></a>    <span class="n">ADDOP_JREL</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">JUMP_FORWARD</span><span class="p">,</span> <span class="n">end</span><span class="p">);</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-19"></a>    <span class="n">compiler_use_next_block</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">next</span><span class="p">);</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-20"></a>    <span class="n">ADDOP</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">POP_TOP</span><span class="p">);</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-21"></a>    <span class="n">compiler_use_next_block</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">end</span><span class="p">);</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-22"></a>    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-23"></a><span class="p">}</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-24"></a><span class="cm">/* ... &lt;snip&gt; ... */</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-25"></a><span class="cm">/* Python/compile.c:2167 */</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-26"></a><span class="k">case</span> <span class="nl">If_kind</span><span class="p">:</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-27"></a>    <span class="k">return</span> <span class="n">compiler_if</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-28"></a><span class="k">case</span> <span class="nl">Unless_kind</span><span class="p">:</span>
+<a name="rest_code_ef9bfbd7af8a47018f9266cabd9687c1-29"></a>    <span class="k">return</span> <span class="n">compiler_unless</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
+</pre>
+<p>En este punto, nuestra implementación de la instrucción "Unless" está terminada. Recompile Python y pruébelo:</p>
+<pre class="code bash"><a name="rest_code_9d53361943454294898dce2e0d72eff6-1"></a><span class="nv">$ </span>./configure <span class="o">&amp;&amp;</span> make clean <span class="o">&amp;&amp;</span> make
+<a name="rest_code_9d53361943454294898dce2e0d72eff6-2"></a><span class="nv">$ </span>./python <span class="s">&lt;&lt;EOF</span>
+<a name="rest_code_9d53361943454294898dce2e0d72eff6-3"></a><span class="s">&gt; dv = False</span>
+<a name="rest_code_9d53361943454294898dce2e0d72eff6-4"></a><span class="s">&gt; unless v:</span>
+<a name="rest_code_9d53361943454294898dce2e0d72eff6-5"></a><span class="s">&gt;</span>
+<a name="rest_code_9d53361943454294898dce2e0d72eff6-6"></a><span class="s">print 'test'</span>
+<a name="rest_code_9d53361943454294898dce2e0d72eff6-7"></a><span class="s">&gt; EOF</span>
+<a name="rest_code_9d53361943454294898dce2e0d72eff6-8"></a><span class="nb">test</span>
+</pre>
+<p>Vea <a class="reference external" href="http://svn.python.org/projects/python/tags/r26b3/Python/compile.c">Python/compile.c</a>  para más detalles sobre el generador de _bytecode_ de Python.</p>
+</div>
+<div class="section" id="ejecucion-de-codigo">
+<h2>5. Ejecución de código</h2>
+<p>La ejecución del <em>bytecode</em> de Python se maneja por el intérprete de <em>bytecode</em>. Como se mencionó en la sección anterior, el intérprete es una máquina virtual basada en pila que ejecuta las instrucciones <em>bytecode</em> de Python que actúan sobre una única pila de datos. No se requiere realizar ningún cambio adicional al propio intérprete de <em>bytecode</em> para que nuestra instrucción "Unless" funcione, pero veamos con más detenimiento cómo interpreta el <em>bytecode</em> que generamos en la sección anterior.</p>
+<p>Primero se ejecuta la expresión de la condición, y se añade el resultado de la misma a la pila. A continuación, el <em>opcode</em> <tt class="docutils literal">JUMP_IF_TRUE</tt> inspeccionará el valor en la cima de la pila y determinará si contiene un valor que representa la verdad.  Si es así, se salta todo el cuerpo y continúa la ejecución a partir del final de la instrucción "unless". Si la expresión se evalúa como un valor <em>falso</em>, el compilador ejecutará el cuerpo de la instrucción <tt class="docutils literal">unless</tt>.</p>
+<p>Se aprecia que la primera instrucción a ejecutar en cualquiera de las ramas es desapilar el elemento de encima de la pila de datos (POP_TOP). Es así porque la expresión JUMP_IF_TRUE deja la expresión comprobada en la pila. En nuestro caso ya no se necesita el valor de la expresión de comprobación, por lo que simplemente se descarta con la ejecución de la instrucción POP_TOP.</p>
+<p>Si está interesado en los detalles de lo que hacen los <em>bytecodes</em> individuales, puede encontrar información sobre todos los <em>bytecodes</em> en <a class="reference external" href="http://docs.python.org/lib/bytecodes.html">http://docs.python.org/lib/bytecodes.html</a> . También puede ver <tt class="docutils literal">PyEval_CodeEvalEx</tt> y <tt class="docutils literal">PyEval_EvalFrame_ex</tt>  en <a class="reference external" href="http://svn.python.org/projects/python/tags/r26b3/Python/ceval.c">Python/ceval.c</a>  si está interesado en investigar con mayor detalle el intérprete de <em>bytecode</em>.</p>
+</div>
+<div class="section" id="conclusion">
+<h2>6. Conclusión</h2>
+<p>Debería quedar claro que no es necesario ser un científico de la Nasa para contribuir en el núcleo del lenguaje Python. Si le interesan realmente los entresijos del trabajo de un intérprete del mundo real, Python es un buen lugar para comenzar. Si no está seguro de por dónde debe continuar, aquí tiene un par de ideas tanto alcanzables como educativas para el nivel iniciado del <em>hacker</em> de Python:</p>
+<p># Reescriba la instrucción "unless" usando sólo nodos AST ya existentes.
+# Añada un nuevo operador al lenguaje modificando el <tt class="docutils literal">tokenizer</tt>.
+# Investigue cómo funcionan por dentro las funciones embebidas en el lenguaje.
+# Investigue el uso de la tabla de símbolos (symtable).</p>
+<p>Hay mucho que aprender jugando con el código, y aún más realizando contribuciones activas al proyecto mediante el arreglo de errores, contribuyendo a la documentación o respondiendo las preguntas de novatos en la lista de correo de usuarios. Anímese -- y puede que se sorprenda usted mismo.</p>
+<hr class="docutils">
+<p>Artículo original: <a class="reference external" href="http://tomlee.co/wp-content/uploads/2008/12/python-language-internals.pdf">Python Compiler Internals</a>
+Autor original: <a class="reference external" href="http://tomlee.co">Thomas Lee</a> / (<a class="reference external" href="https://twitter.com/#!/tglee">@tglee</a> )
+Traducción: <a class="reference external" href="http://magmax.org">Miguel Ángel García</a>  (<a class="reference external" href="https://twitter.com/#!/magmax9">@magmax9</a> )</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2012-05-20T00:00:00+00:00" title="2012-05-20">2012-05-20</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/compilers/" rel="tag">compilers</a>
+                <a class="label label-primary p-category" href="/categories/python/" rel="tag">python</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/vagrant-puppet/" rel="prev" title="Vagrant y Puppet">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/como-funcionan-las-cosas/" rel="next" title="Cómo funcionan las cosas">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/python-compiler-internals/",
+        disqus_title="El compilador de Python desde dentro",
+        disqus_identifier="cache/posts/python-compiler-internals.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

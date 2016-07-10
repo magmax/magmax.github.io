@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>vnstat: a console-based network traffic monitor | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/vnstat/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/bash-completion/" title="bash-completion: the greatest things since bash completion" type="text/html">
+<link rel="next" href="/blog/drupal-expansors/" title="Drupal: Creando contenido con 'expansors" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="vnstat: a console-based network traffic monitor">
+<meta property="og:url" content="http://magmax.org/blog/vnstat/">
+<meta property="og:description" content='Please, if you have not done it, read the Debaday article. Thank you.
+This article of debaday site, by "András Horváth":http://log69.com/index_en.html, were posted at http://debaday.debian.net/2009/02'>
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2010-05-26T00:00:00+00:00">
+<meta property="article:updated" content="2010-05-26T00:00:00">
+<meta property="article:tag" content="debaday">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/vnstat/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/vnstat/" class="u-url">vnstat: a console-based network traffic monitor</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2010-05-26T00:00:00+00:00" title="2010-05-26">2010-05-26</time>
+                // <time class="updated dt-updated" datetime="2010-05-26T00:00:00" title="2010-05-26">2010-05-26</time></p>
+              <p class="commentline">            <a href="/blog/vnstat/#disqus_thread" data-disqus-identifier="cache/posts/vnstat.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Please, if you have not done it, read the <a class="reference external" href="/blog/debaday">Debaday article</a>. Thank you.</p>
+<p>This article of debaday site, by "András Horváth":<a class="reference external" href="http://log69.com/index_en.html">http://log69.com/index_en.html</a>, were posted at <a class="reference external" href="http://debaday.debian.net/2009/02/08/vnstat-a-console-based-network-traffic-monitor/">http://debaday.debian.net/2009/02/08/vnstat-a-console-based-network-traffic-monitor/</a> on 08/02/2009.</p>
+<!-- TEASER_END -->
+<p>There are many command-line utilities in the Unix / Linux world that collect network traffic statistics for a chosen interface.</p>
+<p>"vnstat":<a class="reference external" href="http://humdi.net/vnstat/">http://humdi.net/vnstat/</a> is different because statistics are collected permanently. It keeps the data in files so traffic monitoring is resumed at reboot. vnstat can be useful in situations when you need to know the exact amount of traffic that goes through the interface for a period longer than the computer is on. For example when you have a mobile 3G internet connection or an xDSL connection that has traffic limit per month, then you can easily check how much traffic you generated.</p>
+<p>vnstat can be run without root privileges because it collects data from the kernel’s proc filesystem. It doesn’t have a daemon service, it is simply run by cron periodically. In Debian, the installation creates a cron job where a vnstat -u command is run every 5 minutes:</p>
+<pre class="code bash"><a name="rest_code_74c99ecc9f7a4652a0bc7e377d686da9-1"></a><span class="c"># /etc/cron.d/vnstat: crontab entries for the vnstat package</span>
+<a name="rest_code_74c99ecc9f7a4652a0bc7e377d686da9-2"></a>
+<a name="rest_code_74c99ecc9f7a4652a0bc7e377d686da9-3"></a>0-55/5 *        * * *   root    <span class="k">if</span> <span class="o">[</span> -x /usr/bin/vnstat <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">[</span> <span class="sb">`</span>ls /var/lib/vnstat/ <span class="p">|</span> wc -l<span class="sb">`</span> -ge <span class="m">1</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span> /usr/bin/vnstat -u<span class="p">;</span> <span class="k">fi</span>
+</pre>
+<p>Initially, you have to create the database with this command:</p>
+<pre class="code bash"><a name="rest_code_72f03f8281994dce93e738f280d687d4-1"></a>vnstat -u -i wlan1
+</pre>
+<p>After creating the database, the statistics can be viewed by running vnstat without any further parameters. Thanks to the cron job, the statistic is updated every 5 minutes. It even remembers the interface name to list:</p>
+<pre class="code bash"><a name="rest_code_64d2f5e2751541fc84bec327ef88c7d6-1"></a><span class="nv">$ </span>vnstat
+<a name="rest_code_64d2f5e2751541fc84bec327ef88c7d6-2"></a>
+<a name="rest_code_64d2f5e2751541fc84bec327ef88c7d6-3"></a>Database updated: Tue Jan <span class="m">27</span> 15:40:01 2009
+<a name="rest_code_64d2f5e2751541fc84bec327ef88c7d6-4"></a>
+<a name="rest_code_64d2f5e2751541fc84bec327ef88c7d6-5"></a>        wlan1
+<a name="rest_code_64d2f5e2751541fc84bec327ef88c7d6-6"></a>
+<a name="rest_code_64d2f5e2751541fc84bec327ef88c7d6-7"></a>           received:       2.18 GB <span class="o">(</span>81.3%<span class="o">)</span>
+<a name="rest_code_64d2f5e2751541fc84bec327ef88c7d6-8"></a>        transmitted:     512.85 MB <span class="o">(</span>18.7%<span class="o">)</span>
+<a name="rest_code_64d2f5e2751541fc84bec327ef88c7d6-9"></a>              total:       2.68 GB
+<a name="rest_code_64d2f5e2751541fc84bec327ef88c7d6-10"></a>
+<a name="rest_code_64d2f5e2751541fc84bec327ef88c7d6-11"></a>                        rx     <span class="p">|</span>     tx     <span class="p">|</span>  total
+<a name="rest_code_64d2f5e2751541fc84bec327ef88c7d6-12"></a>        -----------------------+------------+-----------
+<a name="rest_code_64d2f5e2751541fc84bec327ef88c7d6-13"></a>        yesterday     95.14 MB <span class="p">|</span>   12.19 MB <span class="p">|</span>  107.32 MB
+<a name="rest_code_64d2f5e2751541fc84bec327ef88c7d6-14"></a>            today     11.33 MB <span class="p">|</span>    4.47 MB <span class="p">|</span>   15.80 MB
+<a name="rest_code_64d2f5e2751541fc84bec327ef88c7d6-15"></a>        -----------------------+------------+-----------
+<a name="rest_code_64d2f5e2751541fc84bec327ef88c7d6-16"></a>        estimated        <span class="m">16</span> MB <span class="p">|</span>       <span class="m">6</span> MB <span class="p">|</span>      <span class="m">22</span> MB
+</pre>
+<p>Some command line options allow you to view statistics for specific periods of time. For example:</p>
+<ul class="simple">
+<li>--days</li>
+</ul>
+<pre class="code bash"><a name="rest_code_46dd133b866d4fda93d25735bb05314b-1"></a><span class="nv">$ </span>vnstat --days
+<a name="rest_code_46dd133b866d4fda93d25735bb05314b-2"></a>
+<a name="rest_code_46dd133b866d4fda93d25735bb05314b-3"></a> wlan1  /  daily
+<a name="rest_code_46dd133b866d4fda93d25735bb05314b-4"></a>
+<a name="rest_code_46dd133b866d4fda93d25735bb05314b-5"></a>    day         rx      <span class="p">|</span>     tx      <span class="p">|</span>  total
+<a name="rest_code_46dd133b866d4fda93d25735bb05314b-6"></a>------------------------+-------------+----------------------------------------
+<a name="rest_code_46dd133b866d4fda93d25735bb05314b-7"></a>   18.01.       <span class="m">231</span> kB  <span class="p">|</span>     <span class="m">115</span> kB  <span class="p">|</span>     <span class="m">346</span> kB
+<a name="rest_code_46dd133b866d4fda93d25735bb05314b-8"></a>   19.01.    611.72 MB  <span class="p">|</span>   58.16 MB  <span class="p">|</span>  669.88 MB   %%%%%%%%%%%%%%%%%::
+<a name="rest_code_46dd133b866d4fda93d25735bb05314b-9"></a>   20.01.    400.53 MB  <span class="p">|</span>  200.70 MB  <span class="p">|</span>  601.23 MB   %%%%%%%%%%%%%%:::::
+<a name="rest_code_46dd133b866d4fda93d25735bb05314b-10"></a>   21.01.      5.87 MB  <span class="p">|</span>    1.56 MB  <span class="p">|</span>    7.43 MB
+<a name="rest_code_46dd133b866d4fda93d25735bb05314b-11"></a>   22.01.    417.97 MB  <span class="p">|</span>  108.94 MB  <span class="p">|</span>  526.91 MB   %%%%%%%%%%%%%%::::
+<a name="rest_code_46dd133b866d4fda93d25735bb05314b-12"></a>   23.01.    365.24 MB  <span class="p">|</span>   41.78 MB  <span class="p">|</span>  407.02 MB   %%%%%%%%%%%%::
+<a name="rest_code_46dd133b866d4fda93d25735bb05314b-13"></a>   24.01.    150.00 MB  <span class="p">|</span>   13.42 MB  <span class="p">|</span>  163.43 MB   %%%%%%
+<a name="rest_code_46dd133b866d4fda93d25735bb05314b-14"></a>   25.01.    170.17 MB  <span class="p">|</span>   71.52 MB  <span class="p">|</span>  241.70 MB   %%%%%%:::
+<a name="rest_code_46dd133b866d4fda93d25735bb05314b-15"></a>   26.01.     95.14 MB  <span class="p">|</span>   12.19 MB  <span class="p">|</span>  107.32 MB   %%%%
+<a name="rest_code_46dd133b866d4fda93d25735bb05314b-16"></a>   27.01.     11.36 MB  <span class="p">|</span>    4.51 MB  <span class="p">|</span>   15.87 MB
+<a name="rest_code_46dd133b866d4fda93d25735bb05314b-17"></a>------------------------+-------------+----------------------------------------
+<a name="rest_code_46dd133b866d4fda93d25735bb05314b-18"></a> estimated       <span class="m">16</span> MB  <span class="p">|</span>       <span class="m">6</span> MB  <span class="p">|</span>      <span class="m">22</span> MB
+</pre>
+<ul class="simple">
+<li>--weeks</li>
+</ul>
+<pre class="code bash"><a name="rest_code_e8f6e08607e04920be216688efcaec34-1"></a><span class="nv">$ </span>vnstat --weeks
+<a name="rest_code_e8f6e08607e04920be216688efcaec34-2"></a>
+<a name="rest_code_e8f6e08607e04920be216688efcaec34-3"></a>        wlan1  /  weekly
+<a name="rest_code_e8f6e08607e04920be216688efcaec34-4"></a>
+<a name="rest_code_e8f6e08607e04920be216688efcaec34-5"></a>                            rx      <span class="p">|</span>       tx      <span class="p">|</span>    total
+<a name="rest_code_e8f6e08607e04920be216688efcaec34-6"></a>        ----------------------------+---------------+--------------
+<a name="rest_code_e8f6e08607e04920be216688efcaec34-7"></a>          last <span class="m">7</span> days      1.19 GB  <span class="p">|</span>    253.93 MB  <span class="p">|</span>      1.44 GB
+<a name="rest_code_e8f6e08607e04920be216688efcaec34-8"></a>            last week      2.07 GB  <span class="p">|</span>    496.08 MB  <span class="p">|</span>      2.56 GB
+<a name="rest_code_e8f6e08607e04920be216688efcaec34-9"></a>         current week    106.52 MB  <span class="p">|</span>     16.71 MB  <span class="p">|</span>    123.23 MB
+<a name="rest_code_e8f6e08607e04920be216688efcaec34-10"></a>        ----------------------------+---------------+--------------
+<a name="rest_code_e8f6e08607e04920be216688efcaec34-11"></a>            estimated       <span class="m">456</span> MB  <span class="p">|</span>        <span class="m">68</span> MB  <span class="p">|</span>       <span class="m">524</span> MB
+</pre>
+<ul class="simple">
+<li>--months</li>
+</ul>
+<pre class="code bash"><a name="rest_code_149e0807a0a64b0ea2a90c058929fd80-1"></a><span class="nv">$ </span>vnstat --months
+<a name="rest_code_149e0807a0a64b0ea2a90c058929fd80-2"></a>
+<a name="rest_code_149e0807a0a64b0ea2a90c058929fd80-3"></a> wlan1  /  monthly
+<a name="rest_code_149e0807a0a64b0ea2a90c058929fd80-4"></a>
+<a name="rest_code_149e0807a0a64b0ea2a90c058929fd80-5"></a>   month         rx      <span class="p">|</span>      tx      <span class="p">|</span>   total
+<a name="rest_code_149e0807a0a64b0ea2a90c058929fd80-6"></a>-------------------------+--------------+--------------------------------------
+<a name="rest_code_149e0807a0a64b0ea2a90c058929fd80-7"></a>  Jan <span class="s1">''</span><span class="m">09</span>       2.18 GB  <span class="p">|</span>   512.90 MB  <span class="p">|</span>     2.68 GB   %%%%%%%%%%%%%:::
+<a name="rest_code_149e0807a0a64b0ea2a90c058929fd80-8"></a>-------------------------+--------------+--------------------------------------
+<a name="rest_code_149e0807a0a64b0ea2a90c058929fd80-9"></a> estimated      2.53 GB  <span class="p">|</span>      <span class="m">596</span> MB  <span class="p">|</span>     3.12 GB
+</pre>
+<ul class="simple">
+<li>--top10</li>
+</ul>
+<pre class="code bash"><a name="rest_code_9e039e34372248978c5940eae0c6addc-1"></a><span class="nv">$ </span>vnstat --top10
+<a name="rest_code_9e039e34372248978c5940eae0c6addc-2"></a>
+<a name="rest_code_9e039e34372248978c5940eae0c6addc-3"></a> wlan1  /  top 10
+<a name="rest_code_9e039e34372248978c5940eae0c6addc-4"></a>
+<a name="rest_code_9e039e34372248978c5940eae0c6addc-5"></a>   <span class="c">#       day         rx      |     tx      |  total</span>
+<a name="rest_code_9e039e34372248978c5940eae0c6addc-6"></a>-------------------------------+-------------+---------------------------------
+<a name="rest_code_9e039e34372248978c5940eae0c6addc-7"></a>   <span class="m">1</span>    19.01.09    611.72 MB  <span class="p">|</span>   58.16 MB  <span class="p">|</span>  669.88 MB   %%%%%%%%%%%%%%%%::
+<a name="rest_code_9e039e34372248978c5940eae0c6addc-8"></a>   <span class="m">2</span>    20.01.09    400.53 MB  <span class="p">|</span>  200.70 MB  <span class="p">|</span>  601.23 MB   %%%%%%%%%%%:::::
+<a name="rest_code_9e039e34372248978c5940eae0c6addc-9"></a>   <span class="m">3</span>    22.01.09    417.97 MB  <span class="p">|</span>  108.94 MB  <span class="p">|</span>  526.91 MB   %%%%%%%%%%%:::
+<a name="rest_code_9e039e34372248978c5940eae0c6addc-10"></a>   <span class="m">4</span>    23.01.09    365.24 MB  <span class="p">|</span>   41.78 MB  <span class="p">|</span>  407.02 MB   %%%%%%%%%:
+<a name="rest_code_9e039e34372248978c5940eae0c6addc-11"></a>   <span class="m">5</span>    25.01.09    170.17 MB  <span class="p">|</span>   71.52 MB  <span class="p">|</span>  241.70 MB   %%%%::
+<a name="rest_code_9e039e34372248978c5940eae0c6addc-12"></a>   <span class="m">6</span>    24.01.09    150.00 MB  <span class="p">|</span>   13.42 MB  <span class="p">|</span>  163.43 MB   %%%%
+<a name="rest_code_9e039e34372248978c5940eae0c6addc-13"></a>   <span class="m">7</span>    26.01.09     95.14 MB  <span class="p">|</span>   12.19 MB  <span class="p">|</span>  107.32 MB   %%
+<a name="rest_code_9e039e34372248978c5940eae0c6addc-14"></a>   <span class="m">8</span>    21.01.09      5.87 MB  <span class="p">|</span>    1.56 MB  <span class="p">|</span>    7.43 MB
+<a name="rest_code_9e039e34372248978c5940eae0c6addc-15"></a>   <span class="m">9</span>    18.01.09       <span class="m">231</span> kB  <span class="p">|</span>     <span class="m">115</span> kB  <span class="p">|</span>     <span class="m">346</span> kB
+<a name="rest_code_9e039e34372248978c5940eae0c6addc-16"></a>-------------------------------+-------------+---------------------------------
+</pre>
+<ul class="simple">
+<li>--live gives real-time statistics about the packets currently going through the interface:</li>
+</ul>
+<pre class="code bash"><a name="rest_code_496a86f4e0ee4c40b40ee3a26518eff5-1"></a><span class="nv">$ </span>vnstat --live -i wlan1
+<a name="rest_code_496a86f4e0ee4c40b40ee3a26518eff5-2"></a>Monitoring wlan1...    <span class="o">(</span>press CTRL-C to stop<span class="o">)</span>
+<a name="rest_code_496a86f4e0ee4c40b40ee3a26518eff5-3"></a>
+<a name="rest_code_496a86f4e0ee4c40b40ee3a26518eff5-4"></a>   rx:     113.40 kB/s    <span class="m">99</span> p/s            tx:      28.42 kB/s    <span class="m">96</span> p/s
+</pre>
+<div class="section" id="pros-and-cons">
+<h2>Pros and cons</h2>
+<ul class="simple">
+<li>Pros:<ul>
+<li>Permanent network traffic statistic that is not forgotten.</li>
+<li>Very lightweight solution, no daemon service is running in the background (automatically run from cron periodically).</li>
+<li>Easy to install and use. In vnstat, everything can be done from the command line and it clearly shows how many megabytes have you send/receive in a given day or month.</li>
+</ul>
+</li>
+<li>Cons:<ul>
+<li>Internet or remote traffic cannot be separated from local network traffic if it all goes through the interface being monitored.</li>
+<li>It works for a single host, but it doesn’t scale very well. If you need to monitor a lot of hosts and need detailed graphs, there are better alternatives, such as "munin":<a class="reference external" href="http://munin.projects.linpro.no/">http://munin.projects.linpro.no/</a> or "ganglia":<a class="reference external" href="http://ganglia.info/">http://ganglia.info/</a>.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="availability">
+<h2>Availability</h2>
+<p>There are official packages available in both "Debian":<a class="reference external" href="http://packages.debian.org/vnstat">http://packages.debian.org/vnstat</a> and "Ubuntu (Universe)":<a class="reference external" href="http://packages.ubuntu.com/vnstat">http://packages.ubuntu.com/vnstat</a> for a long time now.</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2010-05-26T00:00:00+00:00" title="2010-05-26">2010-05-26</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/debaday/" rel="tag">debaday</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/bash-completion/" rel="prev" title="bash-completion: the greatest things since bash completion">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/drupal-expansors/" rel="next" title="Drupal: Creando contenido con 'expansors">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/vnstat/",
+        disqus_title="vnstat: a console-based network traffic monitor",
+        disqus_identifier="cache/posts/vnstat.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

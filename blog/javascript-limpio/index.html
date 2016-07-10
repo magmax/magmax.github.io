@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Buenas prácticas escribiendo JavaScript">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>JavaScript limpio | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/javascript-limpio/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Buenas prácticas escribiendo JavaScript">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/git-recuperacion-de-changesets-perdidos/" title="Git: recuperación de changesets perdidos" type="text/html">
+<link rel="next" href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/" title="Django lo hizo un mago: plantillas y contextos" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="JavaScript limpio">
+<meta property="og:url" content="http://magmax.org/blog/javascript-limpio/">
+<meta property="og:description" content="Buenas prácticas escribiendo JavaScript">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2015-03-07T00:00:00+00:00">
+<meta property="article:updated" content="2015-03-07T00:00:00+00:00">
+<meta property="article:tag" content="javascript">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Buenas prácticas escribiendo JavaScript">
+<meta name="twitter:url" content="http://magmax.org//blog/javascript-limpio/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/javascript-limpio/" class="u-url">JavaScript limpio</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published updated dt-updated" datetime="2015-03-07T00:00:00+00:00" title="2015-03-07">2015-03-07</time></p>
+              <p class="commentline">            <a href="/blog/javascript-limpio/#disqus_thread" data-disqus-identifier="cache/posts/javascript-bien-escrito.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>No soy quién para escribir un post sobre <a class="reference external" href="http://es.wikipedia.org/wiki/JavaScript">JavaScript</a>, y menos sobre buenas prácticas. Sin embargo, el otro día mi colega <a class="reference external" href="https://twitter.com/pladaria">@pladaria</a>, que sí que es un crac de <a class="reference external" href="http://es.wikipedia.org/wiki/JavaScript">JavaScript</a>, me dio un curso intensivo de 10 minutos... y le pedí permiso para transcribirlo en mi blog.</p>
+<p>Me gustó todo lo que dijo, así que trataré de ser fiel.</p>
+<!-- TEASER_END -->
+<div class="section" id="creacion-de-objetos">
+<h2>Creación de objetos</h2>
+<p>Hay muchas cosas a evitar en <a class="reference external" href="http://es.wikipedia.org/wiki/JavaScript">JavaScript</a>: <tt class="docutils literal">new</tt> y <tt class="docutils literal">this</tt> son las principales (al menos para cosas que hagas tú). Pero... ¿Cómo se crean objetos entonces? Pues fácil: creando <em>fábricas</em> de objetos.</p>
+<p>Veamos un ejemplo. Vamos a guardar usuarios, por lo que necesitamos una <em>fábrica</em> de usuarios:</p>
+<pre class="code javascript"><a name="rest_code_f709df91b23e4d0d95e95f6029c1b24b-1"></a><span class="kd">var</span> <span class="nx">UserFactory</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">age</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_f709df91b23e4d0d95e95f6029c1b24b-2"></a>    <span class="kd">var</span> <span class="nx">privateAge</span> <span class="o">=</span> <span class="nx">age</span><span class="p">;</span>
+<a name="rest_code_f709df91b23e4d0d95e95f6029c1b24b-3"></a>
+<a name="rest_code_f709df91b23e4d0d95e95f6029c1b24b-4"></a>    <span class="kd">var</span> <span class="nx">exports</span> <span class="o">=</span> <span class="p">{};</span>
+<a name="rest_code_f709df91b23e4d0d95e95f6029c1b24b-5"></a>    <span class="nx">exports</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">name</span><span class="p">;</span>
+<a name="rest_code_f709df91b23e4d0d95e95f6029c1b24b-6"></a>    <span class="nx">exports</span><span class="p">.</span><span class="nx">getAge</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">privateAge</span> <span class="p">};</span>
+<a name="rest_code_f709df91b23e4d0d95e95f6029c1b24b-7"></a>    <span class="k">return</span> <span class="nx">exports</span><span class="p">;</span>
+<a name="rest_code_f709df91b23e4d0d95e95f6029c1b24b-8"></a><span class="p">}</span>
+</pre>
+<p>En este caso tenemos un atributo público (<tt class="docutils literal">name</tt>) y un método público (<tt class="docutils literal">getAge</tt>) que accede a una variable privada (<tt class="docutils literal">age</tt>).</p>
+<p>La manera de crear objetos es sencilla: Basta con invocar el constructor, es decir, la <em>fábrica</em>:</p>
+<pre class="code javascript"><a name="rest_code_6173250db711417788a0cd9cfc467f03-1"></a><span class="kd">var</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">UserFactory</span><span class="p">(</span><span class="s1">'Fulanito'</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
+</pre>
+<div class="section" id="constructores">
+<h3>Constructores</h3>
+<p>En ocasiones no hay más remedio que utilizar constructores. En ese caso se puede hacer algo así:</p>
+<pre class="code javascript"><a name="rest_code_b42e58d6046e47b2832c720030f9b560-1"></a><span class="kd">var</span> <span class="nx">Constructor</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">param1</span><span class="p">,</span> <span class="nx">param2</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_b42e58d6046e47b2832c720030f9b560-2"></a>    <span class="k">if</span> <span class="p">(</span><span class="k">this</span> <span class="nx">instanceOf</span> <span class="nx">Constructor</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_b42e58d6046e47b2832c720030f9b560-3"></a>        <span class="k">this</span><span class="p">.</span><span class="nx">param1</span> <span class="o">=</span> <span class="nx">param1</span><span class="p">;</span>
+<a name="rest_code_b42e58d6046e47b2832c720030f9b560-4"></a>        <span class="k">this</span><span class="p">.</span><span class="nx">param2</span> <span class="o">=</span> <span class="nx">param2</span><span class="p">;</span>
+<a name="rest_code_b42e58d6046e47b2832c720030f9b560-5"></a>        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+<a name="rest_code_b42e58d6046e47b2832c720030f9b560-6"></a>    <span class="p">}</span>
+<a name="rest_code_b42e58d6046e47b2832c720030f9b560-7"></a>    <span class="k">return</span> <span class="k">new</span> <span class="nx">Constructor</span><span class="p">(</span><span class="nx">param2</span><span class="p">,</span> <span class="nx">param2</span><span class="p">);</span>
+<a name="rest_code_b42e58d6046e47b2832c720030f9b560-8"></a><span class="p">}</span>
+</pre>
+<p>Y así se pueden crear instancias con o sin <tt class="docutils literal">new</tt>. De esta forma se evita utilizar <tt class="docutils literal">this</tt> con algo distinto del objeto creado, ya que si en algún momento se crea un objeto sin <tt class="docutils literal">new</tt>, el <tt class="docutils literal">this</tt> del contexto podría ser <tt class="docutils literal">window</tt> u otra cosa, y <a class="reference external" href="http://es.wikipedia.org/wiki/JavaScript">JavaScript</a> no avisará.</p>
+</div>
+<div class="section" id="herencia">
+<h3>Herencia</h3>
+<p>Si ya no tenemos objetos propiamente dichos y creados con <tt class="docutils literal">new</tt>... ¿Cómo establecemos la herencia?</p>
+<p>Pues resulta bastante sencillo, ya que basta crear un objeto "padre" y añadirle los métodos/atributos deseados:</p>
+<pre class="code javascript"><a name="rest_code_d4375d1e23fe4b678f5192fa92757c06-1"></a><span class="kd">var</span> <span class="nx">FlyingUserFactory</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">age</span><span class="p">,</span> <span class="nx">speed</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_d4375d1e23fe4b678f5192fa92757c06-2"></a>    <span class="kd">var</span> <span class="nx">privateSpeed</span> <span class="o">=</span> <span class="nx">speed</span><span class="p">;</span>
+<a name="rest_code_d4375d1e23fe4b678f5192fa92757c06-3"></a>
+<a name="rest_code_d4375d1e23fe4b678f5192fa92757c06-4"></a>    <span class="nx">user</span> <span class="o">=</span> <span class="nx">UserFactory</span><span class="p">(</span><span class="nx">name</span><span class="p">,</span> <span class="nx">age</span><span class="p">);</span>
+<a name="rest_code_d4375d1e23fe4b678f5192fa92757c06-5"></a>    <span class="nx">user</span><span class="p">.</span><span class="nx">getSpeed</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">privateSpeed</span> <span class="p">};</span>
+<a name="rest_code_d4375d1e23fe4b678f5192fa92757c06-6"></a>    <span class="k">return</span> <span class="nx">user</span><span class="p">;</span>
+<a name="rest_code_d4375d1e23fe4b678f5192fa92757c06-7"></a><span class="p">}</span>
+</pre>
+<p>Este método tiene la ventaja adicional de que no tiene que exportar la <em>prototype-chain</em>, por lo que es hasta más eficiente.</p>
+</div>
+</div>
+<div class="section" id="modulos">
+<h2>Módulos</h2>
+<p>Ya tenemos objetos, pero... se puede llegar más lejos. Veamos un módulo que permite la gestión de listas (un poco absurdo, pero interesante como ejemplo):</p>
+<pre class="code javascript"><a name="rest_code_1c99a5f957264cc79edc1be31bc2fc6b-1"></a><span class="kd">var</span> <span class="nx">module</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">clone</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_1c99a5f957264cc79edc1be31bc2fc6b-2"></a>  <span class="kd">var</span> <span class="nx">items</span> <span class="o">=</span> <span class="p">[];</span>
+<a name="rest_code_1c99a5f957264cc79edc1be31bc2fc6b-3"></a>
+<a name="rest_code_1c99a5f957264cc79edc1be31bc2fc6b-4"></a>  <span class="kd">var</span> <span class="nx">exports</span> <span class="o">=</span> <span class="p">{};</span>
+<a name="rest_code_1c99a5f957264cc79edc1be31bc2fc6b-5"></a>  <span class="nx">exports</span><span class="p">.</span><span class="nx">add</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">item</span><span class="p">){</span>
+<a name="rest_code_1c99a5f957264cc79edc1be31bc2fc6b-6"></a>    <span class="nx">items</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">clone</span><span class="p">(</span><span class="nx">item</span><span class="p">));</span>
+<a name="rest_code_1c99a5f957264cc79edc1be31bc2fc6b-7"></a>  <span class="p">}</span>
+<a name="rest_code_1c99a5f957264cc79edc1be31bc2fc6b-8"></a>
+<a name="rest_code_1c99a5f957264cc79edc1be31bc2fc6b-9"></a>  <span class="k">return</span> <span class="nx">exports</span><span class="p">;</span>
+<a name="rest_code_1c99a5f957264cc79edc1be31bc2fc6b-10"></a><span class="p">})(</span><span class="nx">Y</span><span class="p">.</span><span class="nx">clone</span><span class="p">);</span> <span class="c1">// usando el framework Yui; _.clone si preferimos underscore</span>
+</pre>
+<p>Lo primero que salta a la vista es que el módulo es el resultado de invocar a una función. Ésta requiere el argumento <tt class="docutils literal">clone</tt>. Sí, es una inyección de dependencias. De esta manera resulta muy sencillo probar el módulo, saber qué dependencias tiene el módulo y es fácil cambiar de <em>framework</em>. En el ejemplo estamos usando <a class="reference external" href="http://yuilibrary.com/">YUI</a>, pero utilizar <a class="reference external" href="http://underscorejs.org/">Underscore</a> es tan simple como cambiar la llamada. Sería igual de sencillo usar <a class="reference external" href="http://jquery.com/">JQuery</a>.</p>
+<p>La variable <tt class="docutils literal">items</tt> se declaró dentro del módulo, por lo que es privada.</p>
+<p>En la variable <tt class="docutils literal">exports</tt> se van añadiendo las variables y métodos exportados, que son los que definen el módulo. En este caso, se define la función <tt class="docutils literal">add</tt> que permite insertar un elemento.</p>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusión</h2>
+<p>El resultado es un código <a class="reference external" href="http://es.wikipedia.org/wiki/JavaScript">JavaScript</a> limpio, sencillo, modular y fácil de probar. Todo lo contrario a cualquier código <a class="reference external" href="http://es.wikipedia.org/wiki/JavaScript">JavaScript</a> que yo haya escrito hasta ahora. Y en sólo 10 minutos.</p>
+<p>Gracias de nuevo a <a class="reference external" href="https://twitter.com/pladaria">@pladaria</a>, ya que no sólo ha sido el inspirador de este post, sino también su corrector y casi redactor.</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2015-03-07T00:00:00+00:00" title="2015-03-07">2015-03-07</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/javascript/" rel="tag">javascript</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/git-recuperacion-de-changesets-perdidos/" rel="prev" title="Git: recuperación de changesets perdidos">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/" rel="next" title="Django lo hizo un mago: plantillas y contextos">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/javascript-limpio/",
+        disqus_title="JavaScript limpio",
+        disqus_identifier="cache/posts/javascript-bien-escrito.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

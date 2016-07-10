@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Cómo habilitar la carga automática de módulos en ipython.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>ipython autoreload | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/ipython-autoreload/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Cómo habilitar la carga automática de módulos en ipython.">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/limpiando-dockers-antiguos/" title="Limpiando Dockers antiguos" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="ipython autoreload">
+<meta property="og:url" content="http://magmax.org/blog/ipython-autoreload/">
+<meta property="og:description" content="Cómo habilitar la carga automática de módulos en ipython.">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2016-06-10T14:51:27+00:00">
+<meta property="article:updated" content="2016-06-10T14:51:27+00:00">
+<meta property="article:tag" content="python ipython">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Cómo habilitar la carga automática de módulos en ipython.">
+<meta name="twitter:url" content="http://magmax.org//blog/ipython-autoreload/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/ipython-autoreload/" class="u-url">ipython autoreload</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published updated dt-updated" datetime="2016-06-10T14:51:27+00:00" title="2016-06-10">2016-06-10</time></p>
+              <p class="commentline">            <a href="/blog/ipython-autoreload/#disqus_thread" data-disqus-identifier="cache/posts/ipython-autoreload.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Cuando alguien está chalao, escribe un intérprete de su lenguaje favorito.</p>
+<p>Cuando alguien está loco del todo, escribe <a class="reference external" href="https://ipython.org/">ipython</a>.</p>
+<p>Resulta difícil describir <em>qué es</em> <a class="reference external" href="https://ipython.org/">ipython</a>... Ya que resulta difícil saber <em>qué no es</em>. Quedémonos con que es un intérprete de <a class="reference external" href="https://www.python.org/">Python</a> con esteroides.</p>
+<p>Uno de esos esteroides es que nos permite recargar automáticamente los módulos en cuanto cambia algún fichero. Y aquí os explico cómo hacerlo.</p>
+<!-- TEASER_END -->
+<div class="section" id="metodo-manual">
+<h2>Método manual</h2>
+<p>Arrancamos <a class="reference external" href="https://ipython.org/">ipython</a> y cargamos la extensión "autoreload":</p>
+<pre class="code bash"><a name="rest_code_898f9c82af3b48449111f0d7cabe6254-1"></a><span class="nv">$ </span>ipython
+<a name="rest_code_898f9c82af3b48449111f0d7cabe6254-2"></a>In <span class="o">[</span>1<span class="o">]</span>: %load_ext autoreload
+</pre>
+<p>Ya tenemos cargada la extensión, pero no la estamos usando. Vamos a ello:</p>
+<pre class="code bash"><a name="rest_code_c0a945e7ebd04ffea6590e24795a1b1a-1"></a>In <span class="o">[</span>2<span class="o">]</span>: %autoreload 2
+</pre>
+<p>Y ya está :)</p>
+<div class="section" id="otros-modos">
+<h3>Otros modos</h3>
+<p>Los modos son:</p>
+<ul class="simple">
+<li>0: deshabilitado</li>
+<li>1: recarga los módulos importados con %aimport</li>
+<li>2: recarga los módulos importados de forma habitual, pero no con %aimport.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="autoreload-automatico">
+<h2>Autoreload automático</h2>
+<p>Si nos ha gustado el invento, podemos habilitarlo "para siempre". Para ello, basta con crearnos un perfil de configuración de <a class="reference external" href="https://ipython.org/">ipython</a>:</p>
+<pre class="code bash"><a name="rest_code_0c87d29c8740425fb1d6f16e8443d4ee-1"></a><span class="nv">$ </span>ipython profile create
+<a name="rest_code_0c87d29c8740425fb1d6f16e8443d4ee-2"></a><span class="o">[</span>ProfileCreate<span class="o">]</span> Generating default config file: <span class="s1">'/home/whatever/.ipython/profile_default/ipython_config.py'</span>
+<a name="rest_code_0c87d29c8740425fb1d6f16e8443d4ee-3"></a><span class="err">$</span>
+</pre>
+<p>Ahora editamos el archivo que se nos indica, de manera que tenga las siguientes claves:</p>
+<pre class="code python"><a name="rest_code_fe796ab4ecfc4a4ebd2026a06939c2b3-1"></a><span class="n">c</span><span class="o">.</span><span class="n">InteractiveShellApp</span><span class="o">.</span><span class="n">extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s">'autoreload'</span><span class="p">]</span>
+<a name="rest_code_fe796ab4ecfc4a4ebd2026a06939c2b3-2"></a><span class="n">c</span><span class="o">.</span><span class="n">InteractiveShellApp</span><span class="o">.</span><span class="n">exec_lines</span> <span class="o">=</span> <span class="p">[</span>
+<a name="rest_code_fe796ab4ecfc4a4ebd2026a06939c2b3-3"></a>    <span class="s">'%autoreload 2'</span><span class="p">,</span>
+<a name="rest_code_fe796ab4ecfc4a4ebd2026a06939c2b3-4"></a>    <span class="s">'print("Warning: disable autoreload in ipython_config.py to improve performance.")'</span><span class="p">,</span>
+<a name="rest_code_fe796ab4ecfc4a4ebd2026a06939c2b3-5"></a><span class="p">]</span>
+</pre>
+</div>
+<div class="section" id="advertencias">
+<h2>Advertencias</h2>
+<p>Eso de la recarga de módulos automática está muy chulo, pero es difícil de narices. Así que no lo uséis con cosas muy importantes porque es fácil que falle y tengáis que seguir el antiguo método de cerrar la terminal <a class="reference external" href="https://ipython.org/">ipython</a> y abrir otra.</p>
+<p>Además, los objetos ya creados no se actualizarán. Éstos ya tienen sus métodos definidos y no se pueden cambiar "en caliente", ya que no se puede determinar cuáles de ellos son dinámicos y cuáles estáticos.</p>
+<p>Tenéis más información y otras advertencias en <a class="reference external" href="http://ipython.readthedocs.io/en/stable/config/extensions/autoreload.html">la documentación</a></p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2016-06-10T14:51:27+00:00" title="2016-06-10">2016-06-10</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/python-ipython/" rel="tag">python ipython</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/limpiando-dockers-antiguos/" rel="prev" title="Limpiando Dockers antiguos">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/ipython-autoreload/",
+        disqus_title="ipython autoreload",
+        disqus_identifier="cache/posts/ipython-autoreload.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Constructores simples | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/constructores-simples/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/arboles-grafos/" title="Repasando: Árboles y Grafos" type="text/html">
+<link rel="next" href="/blog/mercurial-subversion/" title="Sistemas de Control de Versiones (Subversion y Mercurial)" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Constructores simples">
+<meta property="og:url" content="http://magmax.org/blog/constructores-simples/">
+<meta property="og:description" content="Esta semana me he dado cuenta de la diferencia existente entre un constructor feo y uno bonito. Es curioso lo fácil que es hacerlo bien y lo poquito que cuesta, así que voy a compartir mis apreciacion">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2012-01-23T00:00:00+00:00">
+<meta property="article:updated" content="2012-01-23T00:00:00">
+<meta property="article:tag" content="engineering">
+<meta property="article:tag" content="patterns">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/constructores-simples/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+<link rel="alternate" hreflang="en" href="/en/blog/constructores-simples/">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/constructores-simples/" class="u-url">Constructores simples</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2012-01-23T00:00:00+00:00" title="2012-01-23">2012-01-23</time>
+                // <time class="updated dt-updated" datetime="2012-01-23T00:00:00" title="2012-01-23">2012-01-23</time></p>
+              <p class="commentline">            <a href="/blog/constructores-simples/#disqus_thread" data-disqus-identifier="cache/posts/constructores-simples.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br><div class="metadata posttranslations translations">
+              <h3 class="posttranslations-intro">También disponible en:</h3>
+              <p><a href="/en/blog/constructores-simples/" rel="alternate" hreflang="en"><img src="/images/en.png"> English</a></p>
+            </div>
+          </header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Esta semana me he dado cuenta de la diferencia existente entre un constructor feo y uno bonito. Es curioso lo fácil que es hacerlo bien y lo poquito que cuesta, así que voy a compartir mis apreciaciones con vosotros, a ver qué opináis.</p>
+<p>Durante mi carrera profesional he hecho muchas cosas feas, así que no me echéis en cara si encontráis que he hecho algo diferente de lo que diga :D ¡Esto consiste en ir mejorando día a día!</p>
+<p><em>Actualización 2012/01/24</em>: Por petición de &amp;#95;YeBeNeS&amp;#95;, añado ejemplos en java.</p>
+<!-- TEASER_END -->
+<div class="section" id="lanzando-excepciones">
+<h2>Lanzando excepciones</h2>
+<p>Tener un constructor que lanza excepciones es algo que ya resulta algo feo. Un constructor debería preparar el objeto para ser utilizado, no realizar una tarea. Dado que no realiza tareas, no debería lanzar ninguna excepción.</p>
+<p>Cuando digo que no lanza excepciones no significa que las capture: digo que no las lanza porque no lo necesita. Las actividades que haga serán tan simples que no pueden fallar: inicializaciones y punto. Nada de operaciones. Las cosas complejas las dejamos para los métodos.</p>
+<p>No hay nada más feo que un constructor que lanza excepciones. Es lo último que te esperas y es lo último que deseas que otros se encuentren.</p>
+<p>Cuando el constructor tiene excepciones, éste sería el código mínimo para instanciarlo:</p>
+<pre class="code java"><a name="rest_code_65c54d57d6ae4db7b1e60a9371b430a7-1"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Example</span> <span class="o">{</span>
+<a name="rest_code_65c54d57d6ae4db7b1e60a9371b430a7-2"></a>   <span class="kd">public</span> <span class="nf">Example</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">exception</span> <span class="o">{</span>
+<a name="rest_code_65c54d57d6ae4db7b1e60a9371b430a7-3"></a>   <span class="o">}</span>
+<a name="rest_code_65c54d57d6ae4db7b1e60a9371b430a7-4"></a><span class="o">}</span>
+<a name="rest_code_65c54d57d6ae4db7b1e60a9371b430a7-5"></a><span class="c1">// [...]</span>
+<a name="rest_code_65c54d57d6ae4db7b1e60a9371b430a7-6"></a>
+<a name="rest_code_65c54d57d6ae4db7b1e60a9371b430a7-7"></a><span class="k">try</span> <span class="o">{</span>
+<a name="rest_code_65c54d57d6ae4db7b1e60a9371b430a7-8"></a>    <span class="n">Example</span> <span class="n">example</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Example</span><span class="o">();</span>
+<a name="rest_code_65c54d57d6ae4db7b1e60a9371b430a7-9"></a><span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+<a name="rest_code_65c54d57d6ae4db7b1e60a9371b430a7-10"></a><span class="o">}</span>
+</pre>
+</div>
+<div class="section" id="null-pointer-exception">
+<h2>Null pointer exception</h2>
+<p>Si un constructor no realiza operaciones, no puede darse el caso de acceder a un puntero inválido. El constructor sólo debería hacer asignaciones, nada más.</p>
+</div>
+<div class="section" id="constructores-con-parametros">
+<h2>Constructores con parámetros</h2>
+<p>Hay ocasiones en las que un objeto requiere de un parámetro para poder funcionar. En estos casos, está bien requerirlo en el constructor.</p>
+<p>Cuando el número de parámetros es muy alto (es decir, DOS), entonces deberíamos plantearnos hacerlo de otra manera. Si el constructor requiere tantos parámetros, es posible que esté violando el <a class="reference external" href="http://en.wikipedia.org/wiki/Single_responsibility_principle">principio de única responsabilidad</a> .</p>
+<p>Otra costumbre que tomé y que he visto es la de crear un constructor con N parámetros, de manera que permita inicializar cada uno de sus atributos privados. La experiencia me ha demostrado que es una costumbre bastante mala... en casi todos los casos.</p>
+<p>En el caso de Java, es una mala costumbre lo mires como lo mires. ¿Cuál es el orden de los parámetros? Si tengo 3 parámetros... ¿Tengo que hacer las 3 combinaciones de parámetros únicos, al menos 2 de 2 argumentos y otro de 3? ¿Y si, de pronto, necesito un cuarto atributo privado? ¿Cuántas combinaciones tengo que hacer?</p>
+<p>En otros lenguajes, como Python, en el que los argumentos son nombrados, todo lo dicho no le afecta. Sin embargo, en este caso tendremos otro problema: ¿Y si ya no necesito uno de los argumentos o si necesito cambiarle el nombre?</p>
+<p>A ver... ante el código siguiente:</p>
+<pre class="code java"><a name="rest_code_9d129e2918f046c8b06cc45fd7be4a15-1"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Example</span> <span class="o">{</span>
+<a name="rest_code_9d129e2918f046c8b06cc45fd7be4a15-2"></a>  <span class="kd">private</span> <span class="kt">int</span> <span class="n">value1</span><span class="o">;</span>
+<a name="rest_code_9d129e2918f046c8b06cc45fd7be4a15-3"></a>  <span class="kd">private</span> <span class="kt">int</span> <span class="n">value2</span><span class="o">;</span>
+<a name="rest_code_9d129e2918f046c8b06cc45fd7be4a15-4"></a>  <span class="kd">private</span> <span class="n">String</span> <span class="n">juntaLaTrocola</span><span class="o">;</span>
+<a name="rest_code_9d129e2918f046c8b06cc45fd7be4a15-5"></a>  <span class="kd">private</span> <span class="n">String</span> <span class="n">gamusino</span><span class="o">;</span>
+<a name="rest_code_9d129e2918f046c8b06cc45fd7be4a15-6"></a>
+<a name="rest_code_9d129e2918f046c8b06cc45fd7be4a15-7"></a>  <span class="kd">public</span> <span class="nf">Example</span><span class="o">()</span> <span class="o">{}</span>
+<a name="rest_code_9d129e2918f046c8b06cc45fd7be4a15-8"></a>  <span class="kd">public</span> <span class="nf">Example</span><span class="o">(</span><span class="kt">int</span> <span class="n">value1</span><span class="o">){}</span>
+<a name="rest_code_9d129e2918f046c8b06cc45fd7be4a15-9"></a>  <span class="kd">public</span> <span class="nf">Example</span><span class="o">(</span><span class="kt">int</span> <span class="n">a</span><span class="o">,</span> <span class="kt">int</span> <span class="n">b</span><span class="o">)</span> <span class="o">{}</span>
+<a name="rest_code_9d129e2918f046c8b06cc45fd7be4a15-10"></a>  <span class="kd">public</span> <span class="nf">Example</span><span class="o">(</span><span class="n">String</span> <span class="n">juntaLaTrocola</span><span class="o">)</span> <span class="o">{}</span>
+<a name="rest_code_9d129e2918f046c8b06cc45fd7be4a15-11"></a>  <span class="kd">public</span> <span class="nf">Example</span><span class="o">(</span><span class="n">String</span> <span class="n">gamusino</span><span class="o">,</span> <span class="n">String</span> <span class="nf">juntaLaTrocola</span><span class="o">()</span> <span class="o">{}</span>
+<a name="rest_code_9d129e2918f046c8b06cc45fd7be4a15-12"></a><span class="o">}</span>
+</pre>
+<p>Se me ocurren muchas preguntas:</p>
+<ul class="simple">
+<li>En el tercer constructor, ¿va primero el value1 o el value2?</li>
+<li>¿Por qué no puedo construir un objeto sólo con "<em>gamusino</em>"?</li>
+<li>¿Por qué no puedo combinar valores numéricos y cadenas? ¿Es porque el programador se cansó (como en este caso)? ¿Es porque no debo? ¿Es porque se añadieron después?</li>
+</ul>
+<p>Además, si heredas de la clase, ¡¡¡estás obligado a sobreescribir todos estos métodos!!!</p>
+<p>¿Ejemplos? <a class="reference external" href="http://docs.oracle.com/javase/6/docs/api/index.html">JDialog</a>  tiene 16 constructores distintos.</p>
+</div>
+<div class="section" id="constructores-fatigados">
+<h2>Constructores fatigados</h2>
+<p>No hace mucho que yo mismo implementé un constructor que parseaba un archivo XML. Me pareció algo horrible, pero no encontraba otra manera mejor de hacerlo. ¿Alguien le ve lógica a esto? Yo, ahora, no.</p>
+<p>Si tenemos un constructor que hace tanto trabajo, ¿cómo podemos mejorar nuestro código? No podemos usar el patrón <em>un método a una clase</em>, porque tendremos que el constructor de la nueva clase hará, de nuevo, todo el trabajo. En caso contrario, ¿por qué tenemos dos clases? bastaría con sustituir la primera por la segunda.</p>
+<p>No es algo tan raro de encontrar: la propia API de Java tiene métodos que lanzan excepciones o realizan mucho trabajo (<em>NOTA:</em> buscando ejemplos no he encontrado ninguno que lance excepciones, pero sé que los he visto; ¿habrá sido en clases de terceros?):</p>
+<pre class="code java"><a name="rest_code_ef8e8030afcb4ea7b3e22f21c80c83a0-1"></a><span class="n">RMIConnectorServer</span><span class="o">(</span><span class="n">JMXServiceURL</span> <span class="n">url</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,?&gt;</span> <span class="n">environment</span><span class="o">,</span> <span class="n">RMIServerImpl</span> <span class="n">rmiServerImpl</span><span class="o">,</span> <span class="n">MBeanServer</span> <span class="n">mbeanServer</span><span class="o">);</span>
+<a name="rest_code_ef8e8030afcb4ea7b3e22f21c80c83a0-2"></a><span class="n">JDialog</span><span class="o">(</span><span class="n">Window</span> <span class="n">owner</span><span class="o">,</span> <span class="n">String</span> <span class="n">title</span><span class="o">,</span> <span class="n">Dialog</span><span class="o">.</span><span class="na">ModalityType</span> <span class="n">modalityType</span><span class="o">,</span> <span class="n">GraphicsConfiguration</span> <span class="n">gc</span><span class="o">);</span>
+</pre>
+<div class="section" id="la-solucion-fabricas">
+<h3>La solución: Fábricas</h3>
+<p>En ocasiones necesito dos constructores porque hay distintas maneras de usar el objeto. Veamos un ejemplo: Tengo una clase que se conecta a base de datos y que se puede utilizar de dos maneras diferentes: Con una base de datos real o con una base de datos en memoria.</p>
+<p>Aquí tengo un problema. Uno de los constructores necesitará un argumento y el otro ninguno. No es lógico utilizar otro sistema para construir el objeto... ¿O sí?</p>
+<p>Tras haberlo hecho así numerosas veces, he descubierto que hay otra manera mucho más chula: Utilizando un método que me fabrique el objeto. De esta manera puedo diferenciar entre la forma de construirlo de una manera y la otra. Es decir: tendré el método <em>createInMemory</em> y <em>createInFile</em>. Opcionalmente podré transformar el constructor en privado para evitar su uso de forma indebida (aunque no soy muy partidario de esto).</p>
+<p>Con esta simple transformación consigo que el constructor no lance excepciones y, además, tengo una manera elegante de ir construyendo el objeto con más de una instrucción, mucho más verboso cuando tenga que cambiarlo.</p>
+<p>Otra ventaja: Si necesito añadir nuevos "constructores", como por ejemplo una base de datos remota, bastará con ofrecer más fábricas: <em>createRemote</em>.</p>
+<p>Un ejemplo:</p>
+<pre class="code java"><a name="rest_code_6c5b398c258b4850a533c3e39f62bfd4-1"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DataAccess</span> <span class="o">{</span>
+<a name="rest_code_6c5b398c258b4850a533c3e39f62bfd4-2"></a>  <span class="kd">public</span> <span class="nf">DataAccess</span><span class="o">()</span> <span class="o">{}</span>
+<a name="rest_code_6c5b398c258b4850a533c3e39f62bfd4-3"></a>  <span class="kd">public</span> <span class="kd">static</span> <span class="n">DataAccess</span> <span class="nf">createInMemory</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">SQLException</span><span class="o">{</span>
+<a name="rest_code_6c5b398c258b4850a533c3e39f62bfd4-4"></a>    <span class="n">DataAccess</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DataAccess</span><span class="o">();</span>
+<a name="rest_code_6c5b398c258b4850a533c3e39f62bfd4-5"></a>    <span class="n">result</span><span class="o">.</span><span class="na">setConnectionString</span><span class="o">(</span><span class="s">"in memory"</span><span class="o">);</span>
+<a name="rest_code_6c5b398c258b4850a533c3e39f62bfd4-6"></a>    <span class="n">result</span><span class="o">.</span><span class="na">buildDatabase</span><span class="o">();</span>
+<a name="rest_code_6c5b398c258b4850a533c3e39f62bfd4-7"></a>    <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+<a name="rest_code_6c5b398c258b4850a533c3e39f62bfd4-8"></a>  <span class="o">}</span>
+<a name="rest_code_6c5b398c258b4850a533c3e39f62bfd4-9"></a>  <span class="kd">public</span> <span class="kd">static</span> <span class="n">DataAccess</span> <span class="nf">createMySql</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">SQLException</span><span class="o">{</span>
+<a name="rest_code_6c5b398c258b4850a533c3e39f62bfd4-10"></a>    <span class="n">DataAccess</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DataAccess</span><span class="o">();</span>
+<a name="rest_code_6c5b398c258b4850a533c3e39f62bfd4-11"></a>    <span class="n">result</span><span class="o">.</span><span class="na">setConnectionString</span><span class="o">(</span><span class="s">"mysql"</span><span class="o">);</span>
+<a name="rest_code_6c5b398c258b4850a533c3e39f62bfd4-12"></a>    <span class="k">if</span> <span class="o">(!</span><span class="n">result</span><span class="o">.</span><span class="na">hasDatabase</span><span class="o">())</span>
+<a name="rest_code_6c5b398c258b4850a533c3e39f62bfd4-13"></a>        <span class="n">result</span><span class="o">.</span><span class="na">buildDatabase</span><span class="o">();</span>
+<a name="rest_code_6c5b398c258b4850a533c3e39f62bfd4-14"></a>    <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+<a name="rest_code_6c5b398c258b4850a533c3e39f62bfd4-15"></a>  <span class="o">}</span>
+<a name="rest_code_6c5b398c258b4850a533c3e39f62bfd4-16"></a><span class="o">}</span>
+</pre>
+</div>
+</div>
+<div class="section" id="fabricas-abstractas">
+<h2>Fábricas abstractas</h2>
+<p>Considero de suma importancia hacer nuestro código de manera que pueda crecer, sin limitarlo desde su creación. El uso de estas fábricas permite que en el futuro puedan transformarse fácilmente en <a class="reference external" href="http://es.wikipedia.org/wiki/Abstract_Factory_(patr%C3%B3n_de_dise%C3%B1o)">Fábricas Abstractas</a>, dando mayor funcionalidad con unos cambios muy pequeños.</p>
+</div>
+<div class="section" id="pruebas">
+<h2>Pruebas</h2>
+<p>Cuando se utiliza un constructor complejo, la realización de pruebas se ve obstaculizada. En cambio, cuando el constructor es simple y lo que se complican son las operaciones, resulta más sencillo de probar, ya que puedes construir el objeto en el <em>setUp</em> con la completa seguridad de que no va a fallar. Sin embargo, cuando se utilizan constructores complejos, no hay manera de probarlo.</p>
+<p>Si una operación (un método) lanza una excepción, la operación te está avisando de algo. Si es el constructor el que la lanza, no puedes estar seguro de qué operación se estaba realizando en ese momento. Esto dificulta terriblemente las pruebas y complica cualquier intento de <em>mockear</em> el objeto.</p>
+<div class="section" id="conclusion">
+<h3>Conclusión</h3>
+<p>Ya que nuestras clases tienden a ser complejas, no ensuciemos el código desde el principio y tratemos de usar constructores sencillos. Cuando es el constructor el que hace el trabajo, ¿qué les queda a los métodos? Deleguemos este trabajo.</p>
+</div>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2012-01-23T00:00:00+00:00" title="2012-01-23">2012-01-23</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/engineering/" rel="tag">engineering</a>
+                <a class="label label-primary p-category" href="/categories/patterns/" rel="tag">patterns</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/arboles-grafos/" rel="prev" title="Repasando: Árboles y Grafos">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/mercurial-subversion/" rel="next" title="Sistemas de Control de Versiones (Subversion y Mercurial)">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/constructores-simples/",
+        disqus_title="Constructores simples",
+        disqus_identifier="cache/posts/constructores-simples.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

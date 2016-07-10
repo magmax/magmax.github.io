@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Python: Cómo hacer pruebas 4: pyDoubles | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/python-pruebas-4/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/python-pruebas-3/" title="Python: Cómo hacer pruebas 3: nose y hamcrest" type="text/html">
+<link rel="next" href="/blog/python-tokenizer/" title="Crea tu propio lenguaje de programación con... python" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Python: Cómo hacer pruebas 4: pyDoubles">
+<meta property="og:url" content="http://magmax.org/blog/python-pruebas-4/">
+<meta property="og:description" content='Tras las peticiones populares , no puedo evitar escribir este post antes de lo que esperaba.
+Es la continuación del artículo "Python: Cómo hacer pruebas (3)":link://slug/python-pruebas-3, que parece h'>
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2011-11-09T00:00:00+00:00">
+<meta property="article:updated" content="2011-11-09T00:00:00">
+<meta property="article:tag" content="pydoubles">
+<meta property="article:tag" content="python testing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/python-pruebas-4/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/python-pruebas-4/" class="u-url">Python: Cómo hacer pruebas 4: pyDoubles</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2011-11-09T00:00:00+00:00" title="2011-11-09">2011-11-09</time>
+                // <time class="updated dt-updated" datetime="2011-11-09T00:00:00" title="2011-11-09">2011-11-09</time></p>
+              <p class="commentline">            <a href="/blog/python-pruebas-4/#disqus_thread" data-disqus-identifier="cache/posts/python-pruebas-4.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Tras las <a class="reference external" href="https://twitter.com/#!/programania/status/133533559779635200">peticiones populares</a> , no puedo evitar escribir este post antes de lo que esperaba.</p>
+<p>Es la continuación del artículo "Python: Cómo hacer pruebas (3)":link://slug/python-pruebas-3, que parece haber tenido bastante éxito.</p>
+<p>En este caso vamos a ver los dobles de prueba, y utilizaremos, cómo no, <a class="reference external" href="http://www.pydoubles.org/">pyDoubles</a> , creado principalmente por <a class="reference external" href="http://www.carlosble.com/">Carlos Blé</a>  y disponible en Debian gracias a mi buen amigo <a class="reference external" href="http://arco.esi.uclm.es/~david.villa/">David Villa</a> .</p>
+<p><em>Actualización 2011-11-16</em>: Corrijo el significado de las siglas F.I.R.S.T. (¡Gracias, David!).</p>
+<!-- TEASER_END -->
+<div class="section" id="que-vamos-a-hacer">
+<h2>Qué vamos a hacer</h2>
+<p>En las ocasiones anteriores me he centrado en pruebas unitarias de objetos que no tienen relación con el mundo exterior. Esto está muy bien, pero es una mala programación. En una programación más <em>pythónica</em> utilizaremos objetos. Montones de objetos. Y los objetos hablan entre ellos.</p>
+<p>Una batería de pruebas unitarias que se precie tiene que cumplir las condiciones FIRST, a saber:</p>
+<ul class="simple">
+<li>
+<em>Fast</em>, deben ejecutarse en unos pocos segundos.</li>
+<li>
+<em>Independant</em>, evitando el <em>scripting</em>: una prueba es independiente de todas las anteriores y, por tanto, pueden ejecutarse en cualquier orden.</li>
+<li>
+<em>Repeatable</em>, de manera que podemos ejecutarla dos o más veces seguidas sin que afecte al resultado.</li>
+<li>
+<em>Self-Validating</em>, dando un valor booleano por respuesta, y evitando así buscar esta respuesta en un mar de logs.</li>
+<li>
+<em>Timely</em>, en el momento adecuado; de nada sirve escribir los tests <em>después</em> del código, ya que éste puede resultar difícil de probar.</li>
+</ul>
+<p>Podéis consultar la definición original de estas reglas en el libro "Clean Code", de Robert C. Martin, al final del capítulo 9, "Unit Tests", páginas 130-131.</p>
+<p>Supongamos por un momento que tenemos un objeto que depende de otro. ¿Cómo hacemos que sean las pruebas del primero sean independientes? Lo tenemos complicado. Bueno, pues aquí es donde entran los <em>dobles de pruebas</em>: Creamos un objeto que <em>parece</em> el original, pero que <em>no es</em> el original (bueno, o sí... ya lo veremos).</p>
+<p>Puedo aseguraros que me ha resultado difícil encontrar un ejemplo en el que relacionar dos objetos, con un dominio conocido por todos, pequeño y sencillo, de manera que resulte altamente didáctico... Y resulta que tenía el caso justo enfrente de mí :D. Vamos a implementar un pequeño <em>sistema de ficheros</em> muy muy básico. Vamos a centrarnos en un <em>directorio</em>. Y nos vamos a centrar en dos operaciones: <em>borrar</em> y <em>cambiar permisos</em>. Claro... Tenemos el problema de que un directorio depende fuertemente de otros directorios y de archivos, pero no quiero meterme en la implementación de los archivos... ¿Cómo lo hacemos?</p>
+</div>
+<div class="section" id="archivos">
+<h2>Archivos</h2>
+<p>Como he dicho, no queremos meternos en la implementación de archivos, así que esto es lo que vamos a necesitar (lo copio aquí para no estar repitiéndolo todo el rato):</p>
+<pre class="code python"><a name="rest_code_6d97c94413834c37b440316d5c688bac-1"></a><span class="k">class</span> <span class="nc">Archivo</span><span class="p">:</span>
+<a name="rest_code_6d97c94413834c37b440316d5c688bac-2"></a>    <span class="k">def</span> <span class="nf">borrar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_6d97c94413834c37b440316d5c688bac-3"></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">"no lo vamos a necesitar"</span><span class="p">)</span>
+<a name="rest_code_6d97c94413834c37b440316d5c688bac-4"></a>
+<a name="rest_code_6d97c94413834c37b440316d5c688bac-5"></a>    <span class="k">def</span> <span class="nf">cambiar_permisos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permisos</span><span class="p">):</span>
+<a name="rest_code_6d97c94413834c37b440316d5c688bac-6"></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">"no lo vamos a necesitar"</span><span class="p">)</span>
+</pre>
+<p>Como véis, si llegáramos a entrar en alguna de las funciones, nuestros tests fallarían estrepitosamente. Tenemos que ser capaces de probarlo sin usar el archivo real.</p>
+</div>
+<div class="section" id="las-pruebas">
+<h2>Las Pruebas...</h2>
+<p>Para probarlo voy a usar <a class="reference external" href="http://readthedocs.org/docs/nose/en/latest/">nose</a> , ¡¡que para eso expliqué "en el artículo anterior":link://slug/python-pruebas-3 cómo usarlo!!.</p>
+<p>El problema de <em>nose</em> es que la clase de pruebas debe estar arriba del todo. Tenedlo en cuenta a la hora de ir componiendo los tests...</p>
+</div>
+<div class="section" id="directorios">
+<h2>Directorios</h2>
+<p>Asumamos que nuestro código es <em>legacy</em> y ya teníamos las clases escritas... Así me ahorro bastante tiempo XD. Ahí va la clase Directorio:</p>
+<pre class="code python"><a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-1"></a><span class="k">class</span> <span class="nc">Directorio</span><span class="p">:</span>
+<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-2"></a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-3"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span> <span class="o">=</span> <span class="p">[]</span>
+<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-4"></a>
+<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-5"></a>    <span class="k">def</span> <span class="nf">borrar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-6"></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="p">:</span>
+<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-7"></a>            <span class="n">x</span><span class="o">.</span><span class="n">borrar</span><span class="p">()</span>
+<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-8"></a>
+<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-9"></a>    <span class="k">def</span> <span class="nf">anadir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objeto</span><span class="p">):</span>
+<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-10"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objeto</span><span class="p">)</span>
+<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-11"></a>
+<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-12"></a>    <span class="k">def</span> <span class="nf">cambiar_permisos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permisos</span><span class="p">):</span>
+<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-13"></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="p">:</span>
+<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-14"></a>            <span class="n">x</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="n">permisos</span><span class="p">)</span>
+</pre>
+</div>
+<div class="section" id="probando-que-es-gerundio">
+<h2>Probando, que es gerundio</h2>
+<div class="section" id="anadiendo">
+<h3>Añadiendo</h3>
+<p>Pues ya tenemos nuestros Directorios, (no) tenemos nuestros Archivos... ¡¡Vamos a probarlo!! Voy a necesitar una prueba de la que no os he hablado, y es que para probar que borramos, necesitamos añadir. ¿Estará funcionando correctamente este método? (nuevamente recuerdo que los tests deben ir al principio del archivo para que <em>nose</em> funcione):</p>
+<pre class="code python"><a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-1"></a><span class="kn">import</span> <span class="nn">unittest</span>
+<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-2"></a><span class="kn">from</span> <span class="nn">pyDoubles.framework</span> <span class="kn">import</span> <span class="o">*</span>
+<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-3"></a>
+<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-4"></a>
+<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-5"></a><span class="k">class</span> <span class="nc">testSeBorrarDirectorios</span> <span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-6"></a>    <span class="k">def</span> <span class="nf">test_probamos_que_anadimos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-7"></a>        <span class="n">archivo</span> <span class="o">=</span> <span class="n">stub</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
+<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-8"></a>        <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
+<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-9"></a>
+<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-10"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
+<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-11"></a>
+<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-12"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span> <span class="p">(</span><span class="n">archivo</span> <span class="ow">in</span> <span class="n">sut</span><span class="o">.</span><span class="n">contenido</span><span class="p">)</span>
+</pre>
+<p>¿Qué ha ocurrido aquí? ¿Qué es todo eso?</p>
+<p>Bueno, es más sencillo de lo que parece. Lo que hacemos es usar pyDoubles, y por eso importamos todo lo que hay en el framework. Además, creamos una clase que hereda de <em>TestCase</em> para que se ejecuten las pruebas, y será en esta clase donde meteremos todos los tests.</p>
+<p>El primero de los tests crea un archivo que no es un archivo... Es un "<em>stub</em>". ¿Qué es eso?</p>
+<p>Un <em>STUB</em> es un objeto que se comporta como el original, pero no es el original. Puede reemplazar un único método o un conjunto de ellos.</p>
+<p>Como véis, lo que sea "archivo" no importa, ya que sólo me importa comprobar que, después, puedo recuperarlo. Técnicamente, y aprovechando la potencia de <em>Python</em> podría haber puesto cualquier cosa, pero usar un objeto pseudo-real es más claro. Si no me creéis, podéis comprobar que es un objeto de tipo Archivo.</p>
+<p>Pero veamos el segundo ejemplo, que es más claro.</p>
+</div>
+<div class="section" id="borrando">
+<h3>Borrando</h3>
+<p>En este caso vamos a borrar. Evidentemente, se tratará de un borrado recursivo, ya que si no pierde la gracia.</p>
+<pre class="code python"><a name="rest_code_a671a5f5ad884b24a8bb71f4696cba18-1"></a><span class="k">def</span> <span class="nf">test_probamos_que_borramos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_a671a5f5ad884b24a8bb71f4696cba18-2"></a>    <span class="n">archivo</span> <span class="o">=</span> <span class="n">spy</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
+<a name="rest_code_a671a5f5ad884b24a8bb71f4696cba18-3"></a>    <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
+<a name="rest_code_a671a5f5ad884b24a8bb71f4696cba18-4"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
+<a name="rest_code_a671a5f5ad884b24a8bb71f4696cba18-5"></a>
+<a name="rest_code_a671a5f5ad884b24a8bb71f4696cba18-6"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">borrar</span><span class="p">()</span>
+<a name="rest_code_a671a5f5ad884b24a8bb71f4696cba18-7"></a>
+<a name="rest_code_a671a5f5ad884b24a8bb71f4696cba18-8"></a>    <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">borrar</span><span class="p">)</span><span class="o">.</span><span class="n">was_called</span><span class="p">()</span>
+</pre>
+<p>Aquí no he usado un <em>stub</em>, sino un <em>spy</em>, un espía.</p>
+<p>Los <em>SPY</em> o <em>spies</em> son dobles de prueba como los <em>stub</em>, solo que tienen post-condiciones. Es decir: se crean, se usan y después se comprueba que se usaron correctamente.</p>
+<p>Precisamente por eso está la comprobación final, en la que compruebo que el método "<em>borrar</em>" del objeto "<em>archivo</em>" se llamó. ¿Qué hizo? Pues nada, porque era un objeto de coña :D</p>
+<p>Una de las grandes ventajas de pyDoubles es lo semántico que resulta su uso. ¡¡Casi se puede leer!!</p>
+</div>
+<div class="section" id="cambiando-permisos">
+<h3>Cambiando permisos</h3>
+<p>Ahora vamos con la segunda parte: comprobar que el cambio de permisos es recursivo. Es igual que el borrado, con la diferencia de que tenemos que pasar un parámetro:</p>
+<pre class="code python"><a name="rest_code_76881821e423434f863965a6dd1c7756-1"></a><span class="k">def</span> <span class="nf">test_cambiar_permisos_llama_con_valores_adecuados</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_76881821e423434f863965a6dd1c7756-2"></a>    <span class="n">archivo</span> <span class="o">=</span> <span class="n">spy</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
+<a name="rest_code_76881821e423434f863965a6dd1c7756-3"></a>    <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
+<a name="rest_code_76881821e423434f863965a6dd1c7756-4"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
+<a name="rest_code_76881821e423434f863965a6dd1c7756-5"></a>
+<a name="rest_code_76881821e423434f863965a6dd1c7756-6"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="mo">0777</span><span class="p">)</span>
+<a name="rest_code_76881821e423434f863965a6dd1c7756-7"></a>
+<a name="rest_code_76881821e423434f863965a6dd1c7756-8"></a>    <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">)</span><span class="o">.</span><span class="n">was_called</span><span class="p">()</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="mo">0777</span><span class="p">)</span>
+<a name="rest_code_76881821e423434f863965a6dd1c7756-9"></a>    <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">borrar</span><span class="p">)</span><span class="o">.</span><span class="n">was_never_called</span><span class="p">()</span>
+</pre>
+<p>Como podemos observar, en este caso hemos vuelto a utilizar un espía. Aquí comprobamos que el método se llamó con los permisos indicados, y también que el método borrar no se llamó nunca. Esto no es ni necesario, pero lo he puesto por mostrar más capacidades de pyDoubles.</p>
+<p>Lo mismo se podría hacer de otra manera ligeramente diferente:</p>
+<pre class="code python"><a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-1"></a><span class="k">def</span> <span class="nf">test_cambiar_permisos_con_mock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-2"></a>    <span class="n">archivo</span> <span class="o">=</span> <span class="n">mock</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
+<a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-3"></a>    <span class="n">expect_call</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">)</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="mo">0777</span><span class="p">)</span>
+<a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-4"></a>    <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
+<a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-5"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
+<a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-6"></a>
+<a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-7"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="mo">0777</span><span class="p">)</span>
+<a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-8"></a>
+<a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-9"></a>    <span class="n">archivo</span><span class="o">.</span><span class="n">assert_that_is_satisfied</span><span class="p">()</span>
+</pre>
+<p>Aquí he utilizado un <em>mock</em>. Un <em>mock</em> es un <em>stub</em> con precondiciones. Es decir: primero digo lo que va a pasar, ejecuto, y compruebo que ha pasado.</p>
+<p>Tan solo nos quedaría ver los "<em>proxyspy</em>", que son espías que llaman al objeto real.</p>
+</div>
+<div class="section" id="todo-junto">
+<h3>Todo junto</h3>
+<p>Aquí tenéis todo el código de un tirón:</p>
+<pre class="code python"><a name="rest_code_1bd59454413c4250b69db018133a5a7b-1"></a><span class="kn">import</span> <span class="nn">unittest</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-2"></a><span class="kn">from</span> <span class="nn">pyDoubles.framework</span> <span class="kn">import</span> <span class="o">*</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-3"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-4"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-5"></a><span class="k">class</span> <span class="nc">testSeBorrarDirectorios</span> <span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-6"></a>    <span class="k">def</span> <span class="nf">test_probamos_que_anadimos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-7"></a>        <span class="n">archivo</span> <span class="o">=</span> <span class="n">stub</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-8"></a>        <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-9"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-10"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-11"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-12"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span> <span class="p">(</span><span class="n">archivo</span> <span class="ow">in</span> <span class="n">sut</span><span class="o">.</span><span class="n">contenido</span><span class="p">)</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-13"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-14"></a>    <span class="k">def</span> <span class="nf">test_probamos_que_borramos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-15"></a>        <span class="n">archivo</span> <span class="o">=</span> <span class="n">spy</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-16"></a>        <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-17"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-18"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-19"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">borrar</span><span class="p">()</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-20"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-21"></a>        <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">borrar</span><span class="p">)</span><span class="o">.</span><span class="n">was_called</span><span class="p">()</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-22"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-23"></a>    <span class="k">def</span> <span class="nf">test_cambiar_permisos_llama_con_valores_adecuados</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-24"></a>        <span class="n">archivo</span> <span class="o">=</span> <span class="n">spy</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-25"></a>        <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-26"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-27"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-28"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="mo">0777</span><span class="p">)</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-29"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-30"></a>        <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">)</span><span class="o">.</span><span class="n">was_called</span><span class="p">()</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="mo">0777</span><span class="p">)</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-31"></a>        <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">borrar</span><span class="p">)</span><span class="o">.</span><span class="n">was_never_called</span><span class="p">()</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-32"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-33"></a>    <span class="k">def</span> <span class="nf">test_cambiar_permisos_con_mock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-34"></a>        <span class="n">archivo</span> <span class="o">=</span> <span class="n">mock</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-35"></a>        <span class="n">expect_call</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">)</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="mo">0777</span><span class="p">)</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-36"></a>        <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-37"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-38"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-39"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="mo">0777</span><span class="p">)</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-40"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-41"></a>        <span class="n">archivo</span><span class="o">.</span><span class="n">assert_that_is_satisfied</span><span class="p">()</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-42"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-43"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-44"></a><span class="k">class</span> <span class="nc">Archivo</span><span class="p">:</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-45"></a>    <span class="k">def</span> <span class="nf">borrar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-46"></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">"no lo vamos a necesitar"</span><span class="p">)</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-47"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-48"></a>    <span class="k">def</span> <span class="nf">cambiar_permisos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permisos</span><span class="p">):</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-49"></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">"no lo vamos a necesitar"</span><span class="p">)</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-50"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-51"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-52"></a><span class="k">class</span> <span class="nc">Directorio</span><span class="p">:</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-53"></a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-54"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span> <span class="o">=</span> <span class="p">[]</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-55"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-56"></a>    <span class="k">def</span> <span class="nf">borrar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-57"></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="p">:</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-58"></a>            <span class="n">x</span><span class="o">.</span><span class="n">borrar</span><span class="p">()</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-59"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-60"></a>    <span class="k">def</span> <span class="nf">anadir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objeto</span><span class="p">):</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-61"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objeto</span><span class="p">)</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-62"></a>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-63"></a>    <span class="k">def</span> <span class="nf">cambiar_permisos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permisos</span><span class="p">):</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-64"></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="p">:</span>
+<a name="rest_code_1bd59454413c4250b69db018133a5a7b-65"></a>            <span class="n">x</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="n">permisos</span><span class="p">)</span>
+</pre>
+</div>
+</div>
+<div class="section" id="respuestas-predefinidas">
+<h2>Respuestas predefinidas</h2>
+<p>Habrá casos en los que necesitemos una respuesta determinada cuando se llame a un método, de manera que el algoritmo que estamos probando pueda continuar. Para ello podemos "prediseñar" métodos; ahí van diferentes maneras diferentes de hacerlo:</p>
+<pre class="code python"><a name="rest_code_2d60cda6b6cf46489564e1b9f4979a6f-1"></a><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span> <span class="o">=</span> <span class="n">method_returning</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+<a name="rest_code_2d60cda6b6cf46489564e1b9f4979a6f-2"></a><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span> <span class="o">=</span> <span class="n">method_raising</span><span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">)</span>
+<a name="rest_code_2d60cda6b6cf46489564e1b9f4979a6f-3"></a><span class="n">when</span><span class="p">(</span><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span><span class="p">)</span><span class="o">.</span><span class="n">then_return</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+<a name="rest_code_2d60cda6b6cf46489564e1b9f4979a6f-4"></a><span class="n">when</span><span class="p">(</span><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span><span class="p">)</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">then_return</span><span class="p">(</span><span class="mi">25</span><span class="p">)</span>
+</pre>
+</div>
+<div class="section" id="cuestion-de-nomenclatura">
+<h2>Cuestión de nomenclatura</h2>
+<p>La diferencia entre un <em>stub</em>, <em>mock</em> y <em>spy</em> es puramente teórica. Hay muchos <em>frameworks</em> que los confunden o ignoran. Yo, personalmente, utilizo siempre <em>spies</em>, ya que me parecen más intuitivos, aunque suelo llamarlos <em>mocks</em>, término con el que se suelen denominar globalmente a todos los dobles de prueba.</p>
+<p>Hay más dobles de prueba, como los <em>Fake</em>, que son implementaciones completas de una interfaz pero con funcionalidad simplificada (imaginad una clase de acceso a base de datos que siempre devuelve datos fijos, sin acceder realmente). Si lo pensáis, un <em>stub</em> no es más que un <em>fake</em> automático XD. ¡¡Todos están relacionados!!</p>
+<p>Así que, resumiendo:</p>
+<ul class="simple">
+<li>Es un <em>stub</em> si no se realizan comprobaciones.</li>
+<li>Será un <em>mock</em> si tenemos precondiciones.</li>
+<li>Un <em>spy</em> si tenemos postcondiciones.</li>
+<li>Un <em>fake</em> si usamos un objeto que implementa la funcionalidad simplificada.</li>
+</ul>
+<p>Diré una cosa de corazón: llamadlos como queráis, pero no los mezcléis. La mezcla da lugar a métodos más complejos. Podéis usar distintos tipos en distintas pruebas, pero en una misma prueba, no los mezcléis. Y mucho menos con un único objeto.</p>
+</div>
+<div class="section" id="hamcrest-y-pydoubles">
+<h2>Hamcrest y pyDoubles</h2>
+<p>Resulta que escribí el artículo anterior sabiendo lo que me hacía, y que podemos combinar los <em>matchers</em> de <a class="reference external" href="http://code.google.com/p/hamcrest/">Hamcrest</a>  junto a pyDoubles... ¿Cómo? Pues, por ejemplo, en el método <em>with&amp;#95;args</em>:</p>
+<pre class="code python"><a name="rest_code_4e5a4944e9744e3294ac216dcb2e0e4d-1"></a><span class="n">when</span><span class="p">(</span><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span><span class="p">)</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="n">instance_of</span><span class="p">(</span><span class="n">objeto</span><span class="p">))</span><span class="o">.</span><span class="n">then_return</span><span class="p">(</span><span class="s">'hola, mundo'</span><span class="p">)</span>
+<a name="rest_code_4e5a4944e9744e3294ac216dcb2e0e4d-2"></a><span class="n">when</span><span class="p">(</span><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span><span class="p">)</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="n">any_of</span><span class="p">(</span><span class="n">starts_with</span><span class="p">(</span><span class="s">'hola'</span><span class="p">),</span> <span class="n">ends_with</span><span class="p">(</span><span class="s">'mundo'</span><span class="p">))</span><span class="o">.</span><span class="n">then_return</span><span class="p">(</span><span class="s">'hola, mundo'</span><span class="p">)</span>
+</pre>
+<p>Como véis, hemos usado <tt class="docutils literal">instance_of</tt>, <tt class="docutils literal">any_of</tt>, <tt class="docutils literal">starts_with</tt> y <tt class="docutils literal">ends_with</tt>, que son <em>matchers</em> de <em>Hamcrest</em>.</p>
+</div>
+<div class="section" id="un-gran-poder-conlleva-una-gran-responsabilidad">
+<h2>Un gran poder conlleva una gran responsabilidad</h2>
+<p>... como le dijo el Tío Ben a Peter Parker :D</p>
+<p>Tenemos en nuestras manos una gran herramienta, pero debemos tener en cuenta que debemos usarlo con cuidado, de la misma manera que un mecánico no arregla todas las averías con el mismo martillo.</p>
+<p>Hay ciertas reglas básicas que cumplir, con el fin de evitar terminar con pruebas terriblemente complejas o nos metamos en camisas de once varas.</p>
+<ul class="simple">
+<li>
+<em>Nunca "*mockeéis</em>" un objeto que no sea vuestro.* De esta manera se evitan <em>mocks</em> interminables de todo <em>Hibernate</em> o cosas incluso peores. Es un fallo habitual en todo novato, y yo no fui la excepción.</li>
+<li>
+<em>Realizad *mocks</em> precisos*. Cuantas menos cosas reemplacéis, más estable será el test (en la terminología típica, "los tests serán menos frágiles"). Si estáis reemplazando muchos métodos, a lo mejor necesitáis un <em>fake</em>.</li>
+</ul>
+</div>
+<div class="section" id="para-mas-informacion">
+<h2>Para más información</h2>
+<p>Podéis visitar <a class="reference external" href="http://www.pydoubles.org/">la web de pyDoubles</a> , la de <a class="reference external" href="http://code.google.com/p/hamcrest/">Hamcrest</a> , la de <a class="reference external" href="http://readthedocs.org/docs/nose/en/latest/">nose</a> , ... O releer mis antiguos posts:</p>
+<ul class="simple">
+<li>"Python: Cómo hacer pruebas(1)":link://slug/python-pruebas-1</li>
+<li>"Python: Cómo hacer pruebas(2)":link://slug/python-pruebas-2</li>
+<li>"Python: Cómo hacer pruebas(3)":link://slug/python-pruebas-3</li>
+<li>"No comentes: ¡Asegura!":link://slug/asegura</li>
+<li>"Atheist: No seas crédulo ¡¡Prueba!!":link://slug/atheist-no-seas-credulo</li>
+</ul>
+<p>No sé si me he dejado algo en el tintero. Tengo la sensación de que sí... sobre todo en las reglas a cumplir cuando usamos mocks. Toda contribución será bienvenida.</p>
+<p>Un saludo!!</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2011-11-09T00:00:00+00:00" title="2011-11-09">2011-11-09</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/pydoubles/" rel="tag">pydoubles</a>
+                <a class="label label-primary p-category" href="/categories/python-testing/" rel="tag">python testing</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/python-pruebas-3/" rel="prev" title="Python: Cómo hacer pruebas 3: nose y hamcrest">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/python-tokenizer/" rel="next" title="Crea tu propio lenguaje de programación con... python">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/python-pruebas-4/",
+        disqus_title="Python: C\u00f3mo hacer pruebas 4: pyDoubles",
+        disqus_identifier="cache/posts/python-pruebas-4.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

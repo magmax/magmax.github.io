@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>MongoDB | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/mongodb/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/porque_c_mola/" title="Por qué C mola" type="text/html">
+<link rel="next" href="/blog/porque-ruby-mola/" title="Por qué Ruby mola" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="MongoDB">
+<meta property="og:url" content="http://magmax.org/blog/mongodb/">
+<meta property="og:description" content="En este artículo voy a exponer un problema, como de costumbre, y a resolverlo de la manera más rápida posible. Una vez hecho esto, trataré de cambiarlo para que utilice MongoDB para la persistencia. U">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2012-08-30T00:00:00+00:00">
+<meta property="article:updated" content="2012-08-30T00:00:00">
+<meta property="article:tag" content="mongodb">
+<meta property="article:tag" content="nosql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/mongodb/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/mongodb/" class="u-url">MongoDB</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2012-08-30T00:00:00+00:00" title="2012-08-30">2012-08-30</time>
+                // <time class="updated dt-updated" datetime="2012-08-30T00:00:00" title="2012-08-30">2012-08-30</time></p>
+              <p class="commentline">            <a href="/blog/mongodb/#disqus_thread" data-disqus-identifier="cache/posts/mongodb.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>En este artículo voy a exponer un problema, como de costumbre, y a resolverlo de la manera más rápida posible. Una vez hecho esto, trataré de cambiarlo para que utilice MongoDB para la persistencia. Usaré YAGNI.</p>
+<p>No soy un experto en MongoDB, sino que estoy comenzando mis primeros pinitos. Por eso voy a tratar de explicarlo como yo lo veo.</p>
+<p>El problema es el siguiente: quiero un programa que me permita gestionar mi biblioteca. Algo sencillo: sólo libro y autor. Y quiero poder buscar un libro por el título.</p>
+<p>La idea de este artículo partió del titulado "<a href="http://www.carlosble.com/2012/08/diseno-emergente-tambien-para-la-base-de-datos/">Diseño emergente, también para la base de datos</a>", por <a href="https://twitter.com/carlosble">Carlos Blé</a>.</p>
+<p>Usaré python y freshen.</p>
+<!-- TEASER_END -->
+
+<div class="ui-state-highlight" style="padding:0.3em;">
+<p><span class="ui-icon ui-icon-info" style="float:left;margin-right:.3em;"> </span><strong>Advertencia:</strong> Temo que este artículo es más largo de lo que esperaba... Advierto que puede ser un poquito **heavy**</p>
+</div>
+
+<h2 id="primeros-pasos">Primeros pasos</h2>
+<h3 id="comenzando-definir-lo-que-queremos">Comenzando: definir lo que queremos</h3>
+<p>El primer paso es decidir qué es lo que quiero. Veamos... Lo que quiero es buscar un libro por el título. Eso es lo más importante. Pero no puedo buscar nada si no indico el título o el autor. Así que comenzaré por ahí:</p>
+<p>.. code:: text</p>
+<pre class="code literal-block"># file: ./tests/library.feature
+Feature:
+  In order to store my library reference
+  As a book lover
+  I want to be sure my library works
+
+  Scenario: Author or title is necessary to search a book
+    When I search a book without parameters
+    Then output contains "You should ask for a title or an author"
+</pre>
+
+
+<p>Ahora trato de ejecutarlo:</p>
+<p>.. code:: bash</p>
+<pre class="code literal-block"><span class="nv">$ </span>nosetests --with-freshen tests/library.feature
+</pre>
+
+
+<h3 id="preparando-el-entorno-de-pruebas">Preparando el entorno de pruebas</h3>
+<p>Evidentemente tengo un error. <a href="https://github.com/rlisagor/freshen">Freshen</a> me está diciendo que no encuentra la manera de ejecutar los pasos del escenario. Por eso tengo que escribir el archivo <em>steps.py</em>.</p>
+<p>.. code:: python</p>
+<pre class="code literal-block"><span class="c"># file ./tests/steps.py</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">freshen</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">freshen.checks</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">DATABASE_FILE</span><span class="o">=</span><span class="s">'test_db'</span>
+
+<span class="k">def</span> <span class="nf">before</span><span class="p">(</span><span class="n">sc</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">DATABASE_FILE</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">DATABASE_FILE</span><span class="p">)</span>
+    <span class="n">scc</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">scc</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s">'./library.py'</span><span class="p">,</span> <span class="s">'-d'</span><span class="p">,</span> <span class="n">DATABASE_FILE</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span>
+    <span class="n">output</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">scc</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">scc</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">process</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+
+<span class="nd">@When</span><span class="p">(</span><span class="s">'^I search a book without parameters$'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">exec_search_without_parameters</span><span class="p">():</span>
+    <span class="n">execute</span><span class="p">([</span><span class="s">'--action=show'</span><span class="p">])</span>
+
+<span class="nd">@Then</span><span class="p">(</span><span class="s">'^output contains "(.*)"$'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">check_output_contains</span><span class="p">(</span><span class="n">expected</span><span class="p">):</span>
+    <span class="n">assert_true</span><span class="p">(</span><span class="n">expected</span> <span class="ow">in</span> <span class="n">scc</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s">'Text "{}", was not found in "{}"'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">scc</span><span class="o">.</span><span class="n">output</span><span class="p">))</span>
+</pre>
+
+
+<p>Para leer este archivo es mejor comenzar por las claves básicas: el <em>When</em> y el <em>Then</em>. Está claro que en el <em>"When</em>" lo que quiero es ejecutar mi aplicación; por eso la función comienza por "<strong>exec_</strong>". En el "<em>Then</em>" realizaré las comprobaciones pertinentes, por lo que comienza por "<strong>check_</strong>".</p>
+<p>Llegados a este punto ya he tomado numerosas decisiones:
+<em> he decidido que mi biblioteca se ejecuta desde línea de órdenes. Eso es así porque era lo más sencillo de probar.
+</em> he decidido que tenga un parámetro "<strong>action</strong>" que admita la variable "<strong>show</strong>" que mostrará la información del libro.
+<em> he decidido el nombre del programa principal, "<strong>library.py</strong>"
+</em> he deciddio que, de alguna manera, necesitaré un sitio donde guardar la información; claramente necesitaré limpiar ese sitio entre test y test.</p>
+<p>Todo esto... Y aún no he escrito una línea del programa.</p>
+<h3 id="pasando-los-tests">Pasando los tests</h3>
+<p>Vamos a por él:</p>
+<p>.. code:: python</p>
+<table class="codehilitetable"><tr>
+<td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41</pre></div></td>
+<td class="code">
+<pre class="code literal-block"><span class="c">#!/usr/bin/env python</span>
+<span class="c">#File: ./library.py</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+
+
+<span class="k">class</span> <span class="nc">Library</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_db</span> <span class="o">=</span> <span class="n">db</span>
+
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">author</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">'You should ask for a title or an author'</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">parse_args</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s">'My library!'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'--action'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">'action'</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s">'add'</span><span class="p">,</span> <span class="s">'remove'</span><span class="p">,</span> <span class="s">'show'</span><span class="p">],</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s">'indicates the action to be performed'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'-a'</span><span class="p">,</span> <span class="s">'--author'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">'author'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s">'The author of the book'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'-t'</span><span class="p">,</span> <span class="s">'--title'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">'title'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s">'The title of the book'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'-d'</span><span class="p">,</span> <span class="s">'--database'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">'database'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">'library.db'</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s">'Path to the database file'</span><span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">args</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">database</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">action</span> <span class="o">==</span> <span class="s">'show'</span><span class="p">:</span>
+        <span class="n">library</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">author</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre>
+</td>
+</tr></table>
+<p>Como veréis, he hecho un poco de trampa. He decidido especificar la interfaz más probable que voy a necesitar. Así no me voy a tener que preocupar después por pelearme con el párser. Podría cambiar cualquier cosa, ya que no está comprometida mediante un test.</p>
+<p>Pruebo a volver a ejecutarlo y ahora... pasa. Claro. No hay mucho que hacer de momento.</p>
+<h2 id="avanzando">Avanzando</h2>
+<h3 id="creando-mas-tests-de-aceptacion">Creando más tests de aceptación</h3>
+<p>Con el fin de no alargar mucho el artículo, voy a escribir todo el programa del tirón, aunque en realidad lo he ido escribiendo escenario a escenario.</p>
+<p>.. code:: text</p>
+<pre class="code literal-block"># file: ./tests/library.feature
+Feature:
+  In order to store my library reference
+  As a book lover
+  I want to be sure my library works
+
+  Scenario: Author or title is necessary to search a book
+    When I search a book without parameters
+    Then output contains "You should ask for a title or an author"
+
+  Scenario: Searching an inexistent book
+    When I search the book "inexistent"
+    Then output contains "Book not found"
+    And my library do not contains the title "inexistent"
+
+  Scenario: Adding a title
+    When I add the book "Fundation" written by "Assimov, Isaac"
+    Then output contains "Book added"
+    And my library contains the title "Fundation"
+
+  Scenario: Searching an existent a title
+    Given the book "I, Robot", written by "Assimov, Isaac"
+    When I search the book "I, Robot"
+    Then output contains "Assimov, Isaac"
+
+  Scenario: Removing a title
+    Given the book "I, Robot", written by "Assimov, Isaac"
+    When I remove the book "I, Robot"
+    Then output contains "Book removed"
+    And my library do not contains the title "I, Robot"
+</pre>
+
+
+<p>Lo que fallará estrepitosamente porque <em>freshen</em> no encuentra la mayoría de las frases. Vamos a solucionarlo:</p>
+<p>.. code:: python</p>
+<pre class="code literal-block"><span class="c">#File: ./tests/steps.py</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">freshen</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">freshen.checks</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+
+<span class="n">DATABASE_FILE</span><span class="o">=</span><span class="s">'test.db'</span>
+
+<span class="k">def</span> <span class="nf">before</span><span class="p">(</span><span class="n">sc</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">DATABASE_FILE</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">DATABASE_FILE</span><span class="p">)</span>
+    <span class="n">scc</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">scc</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s">'./library.py'</span><span class="p">,</span> <span class="s">'-d'</span><span class="p">,</span> <span class="n">DATABASE_FILE</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span>
+    <span class="n">output</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">scc</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">scc</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">process</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+
+<span class="nd">@Given</span><span class="p">(</span><span class="s">'^the book "(.*)", written by "(.*)"$'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">initialize_library</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="p">):</span>
+    <span class="n">execute</span><span class="p">([</span><span class="s">'--action=add'</span><span class="p">,</span> <span class="s">'-t'</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="s">'-a'</span><span class="p">,</span> <span class="n">author</span><span class="p">])</span>
+
+<span class="nd">@When</span><span class="p">(</span><span class="s">'^I search the book "(.*)"$'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">exec_search_by_title</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
+    <span class="n">execute</span><span class="p">([</span><span class="s">'--action=show'</span><span class="p">,</span> <span class="s">'--title'</span><span class="p">,</span> <span class="n">title</span><span class="p">])</span>
+
+<span class="nd">@When</span><span class="p">(</span><span class="s">'^I search a book without parameters$'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">exec_search_without_parameters</span><span class="p">():</span>
+    <span class="n">execute</span><span class="p">([</span><span class="s">'--action=show'</span><span class="p">])</span>
+
+<span class="nd">@When</span><span class="p">(</span><span class="s">'I add the book "(.*)" written by "(.*)"'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">exec_add_book</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="p">):</span>
+    <span class="n">execute</span><span class="p">([</span><span class="s">'--action=add'</span><span class="p">,</span> <span class="s">'-t'</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="s">'-a'</span><span class="p">,</span> <span class="n">author</span><span class="p">])</span>
+
+<span class="nd">@When</span><span class="p">(</span><span class="s">'I remove the book "(.*)"'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">exec_remove_book</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
+    <span class="n">execute</span><span class="p">([</span><span class="s">'--action=remove'</span><span class="p">,</span> <span class="s">'-t'</span><span class="p">,</span> <span class="n">title</span><span class="p">])</span>
+
+<span class="nd">@Then</span><span class="p">(</span><span class="s">'^output contains "(.*)"$'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">check_output_contains</span><span class="p">(</span><span class="n">expected</span><span class="p">):</span>
+    <span class="n">assert_true</span><span class="p">(</span><span class="n">expected</span> <span class="ow">in</span> <span class="n">scc</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s">'Text "{}", was not found in "{}"'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">scc</span><span class="o">.</span><span class="n">output</span><span class="p">))</span>
+
+<span class="nd">@Then</span><span class="p">(</span><span class="s">'^my library( do not|) contains the title "(.*)"$'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">check_contains_title</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">run</span><span class="p">([</span><span class="s">'--action=show'</span><span class="p">,</span> <span class="s">'-t'</span><span class="p">,</span> <span class="n">title</span><span class="p">])</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">condition</span><span class="p">:</span>
+        <span class="n">assert_equals</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rc</span><span class="p">,</span> <span class="s">'The book "{}" is not in the collection'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">title</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">assert_equals</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rc</span><span class="p">,</span> <span class="s">'The book "{}" is in the collection but it shouldnot'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">title</span><span class="p">))</span>
+</pre>
+
+
+<p>Lo que provocará que los tests se lancen... pero fallen.</p>
+<h3 id="pasando-los-tests_1">Pasando los tests</h3>
+<p>Primero el código y luego lo comento.</p>
+<p>.. code:: python</p>
+<table class="codehilitetable"><tr>
+<td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78</pre></div></td>
+<td class="code">
+<pre class="code literal-block"><span class="c">#!/usr/bin/env python</span>
+<span class="c">#File: ./library.py</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">shelve</span>
+
+
+<span class="k">class</span> <span class="nc">Library</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_db</span> <span class="o">=</span> <span class="n">db</span>
+
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">author</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">'You should ask for a title or an author'</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_file</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">db</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
+            <span class="k">print</span> <span class="s">'Book not found'</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">print</span> <span class="s">'{} -&gt; {}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">db</span><span class="p">[</span><span class="n">title</span><span class="p">])</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">author</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">'You should introduce the title and author'</span>
+            <span class="k">return</span>
+
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_file</span><span class="p">()</span>
+        <span class="n">db</span><span class="p">[</span><span class="n">title</span><span class="p">]</span> <span class="o">=</span> <span class="n">author</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">print</span> <span class="s">'Book added'</span>
+
+    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">'You should introduce the title to remove'</span>
+            <span class="k">return</span>
+
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_file</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">db</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
+            <span class="k">del</span> <span class="n">db</span><span class="p">[</span><span class="n">title</span><span class="p">]</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">print</span> <span class="s">'Book removed'</span>
+
+    <span class="k">def</span> <span class="nf">_db_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">parse_args</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s">'My library!'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'--action'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">'action'</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s">'add'</span><span class="p">,</span> <span class="s">'remove'</span><span class="p">,</span> <span class="s">'show'</span><span class="p">],</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s">'indicates the action to be performed'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'-a'</span><span class="p">,</span> <span class="s">'--author'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">'author'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s">'The author of the book'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'-t'</span><span class="p">,</span> <span class="s">'--title'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">'title'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s">'The title of the book'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'-d'</span><span class="p">,</span> <span class="s">'--database'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">'database'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">'library.db'</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s">'Path to the database file'</span><span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">args</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="n">library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">database</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">action</span> <span class="o">==</span> <span class="s">'show'</span><span class="p">:</span>
+        <span class="n">library</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">author</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">action</span> <span class="o">==</span> <span class="s">'add'</span><span class="p">:</span>
+        <span class="n">library</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">author</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">action</span> <span class="o">==</span> <span class="s">'remove'</span><span class="p">:</span>
+        <span class="n">library</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre>
+</td>
+</tr></table>
+<p>Como puede observarse, al utilizar <a href="http://docs.python.org/library/shelve.html">Shelve</a> estoy creando una tabla <em>Hash</em> que me permite enlazar el título con el autor. Mientras busque por título, todo irá bien... cuando intente buscar por autor, sufriré una penalización terrible, ya que tendré que recorrer todos los valores :D</p>
+<p>Como primera aproximación me basta. Así que puedo decir que está terminado.</p>
+<h2 id="conclusiones">Conclusiones</h2>
+<p>Puedo asegurar que hasta el escenario "<em>Searching an existent a title</em>" no decidí qué tipo de persistencia iba a utilizar. Y decidí utilizar <strong>Shelve</strong> porque es muy sencilla y me pareció que se ajustaba a lo que yo necesitaba. Igualmente podría haber utilizado un fichero de texto plano o haber volcado una <em>hash</em> a disco con <em>pickle</em>. No importa. No es nada importante.</p>
+<p>Como veis, me he ajustado al enunciado en todo lo que he podido. Por eso tardé en escribirlo media hora, más o menos. Eso era importante, porque quería algo rápido pero usable. Además, me permite añadir más "columnas", aunque tendría que portar los datos viejos o tirarlos, directamente.</p>
+<h2 id="pasandolo-a-mongodb">Pasándolo a MongoDB</h2>
+<p>Vamos ahora a tratar de aprovechar todo lo aprovechable y a utilizar <a href="http://www.mongodb.org/">MongoDB</a> en su lugar. Para ello utilizaremos la librería <a href="http://api.mongodb.org/python/current/">pymongo</a>.</p>
+<p>.. code:: python</p>
+<table class="codehilitetable"><tr>
+<td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61</pre></div></td>
+<td class="code">
+<pre class="code literal-block"><span class="c">#!/usr/bin/env python</span>
+<span class="c"># file: ./library.py</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">pymongo</span>
+
+
+<span class="k">class</span> <span class="nc">Library</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_db</span> <span class="o">=</span> <span class="n">db</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">author</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">'You should ask for a title or an author'</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_books_collection</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">find_one</span><span class="p">({</span><span class="s">'_id'</span><span class="p">:</span> <span class="n">title</span><span class="p">})</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">'Book not found'</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_disconnect</span><span class="p">()</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">result</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_disconnect</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">author</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">'You should introduce the title and author'</span>
+            <span class="k">return</span>
+
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_books_collection</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">save</span><span class="p">({</span><span class="s">'_id'</span><span class="p">:</span><span class="n">title</span><span class="p">,</span> <span class="s">'author'</span><span class="p">:</span><span class="n">author</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_disconnect</span><span class="p">()</span>
+        <span class="k">print</span> <span class="s">'Book added'</span>
+
+    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">'You should introduce the title to remove'</span>
+            <span class="k">return</span>
+
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_books_collection</span><span class="p">()</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">remove</span><span class="p">({</span><span class="s">'_id'</span><span class="p">:</span> <span class="n">title</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_disconnect</span><span class="p">()</span>
+        <span class="k">print</span> <span class="s">'Book removed'</span>
+
+    <span class="k">def</span> <span class="nf">_db_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_books_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">Connection</span><span class="p">(</span><span class="s">'localhost'</span><span class="p">,</span> <span class="mi">27017</span><span class="p">)</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">db</span><span class="p">[</span><span class="s">'books'</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="c"># ...</span>
+</pre>
+</td>
+</tr></table>
+<p>El resto de ficheros será igual, de la misma forma que no he necesitado tocar el pársing de los parámetros de entrada. Y los tests pasan.</p>
+<h2 id="mongodb">MongoDB</h2>
+<p>¿Cómo funciona MongoDB? Pues exactamente igual que la librería <em>Shelve</em>: como una tabla <em>hash</em>.</p>
+<p>En este caso he utilizado el título del libro como índice, lo que es poco recomendable. Lo he hecho así para que sea lo más parecida posible a la primera implementación y, así, pueda explicarlo más fácilmente.</p>
+<p>Hay algunas diferencias... Para comenzar, en la versión <em>Shelve</em> no se sabe lo que es el contenido. MongoDB sí sabe que es el autor. Eso nos permitirá poder añadir nuevas características sobre la marcha, sin tener que migrar nada. Añadir nuevas columnas es gratis, ya que funcionan como otra hash. Para que la versión <em>Shelve</em> funcione igual, sólo tenéis que guardar el autor como una hash de la forma "<em>{'author': author}</em>".</p>
+<p>Veamos un poco de la organización interna.</p>
+<h3 id="conexiones-bases-de-datos-y-colecciones">Conexiones, bases de datos y colecciones</h3>
+<p>Resulta fácil entender MongoDB como una <strong>hash de hashes</strong>:
+<em> Una <strong>conexión</strong> a MongoDB tiene los nombres de las bases de datos como claves.
+</em> La <strong>base de datos</strong>, tiene los nombres de las colecciones como claves.
+* Una <strong>colección</strong> es el equivalente en una base de datos relacional a una tabla (más o menos). Y tendrá como claves los nombres de las columnas, aunque tiene otra serie de métodos que nos permitirán realizar búsquedas.</p>
+<h3 id="el-lenguaje-javascript">El lenguaje: JavaScript</h3>
+<p>Una vez que hemos obtenido una instancia de la colección que queremos tratar, podemos realizar consultas. El lenguaje interno de mongodb es JavaScript.</p>
+<p>A nivel básico no es necesario conocer este lenguaje para realizar consultas, ya que éstas serán solo <em>hashes</em> o listas. Con un par de ejemplos será suficiente. Sin embargo, a nivel avanzado la cosa cambia, ya que entraremos en el maravilloso mundo del <strong>mapreduce</strong> que... bueno, no termino de entender :D</p>
+<p>Por lo poco que lo he tratado, el <em>mapreduce</em> consiste en dos partes:
+<em> La primera parte, el <strong>map</strong>, consiste en seleccionar, de cada fila, los campos que nos hacen falta.
+</em> La segunda parte, el <strong>reduce</strong>, permite agrupar los datos obtenidos en la primera fase.</p>
+<p>Estas dos etapas se realizan de forma paralela, dando unos rendimientos muy elevados.</p>
+<p>El <em>mapreduce</em> suele utilizarse para obtener estadísticas de la base de datos, tales como contar elementos que cumplen ciertos criterios.</p>
+<p>Pero insisto en que estoy comenzando y, seguramente, diga alguna burrada XD</p>
+<h2 id="conclusion">Conclusión</h2>
+<p>Probablemente existan muchos escenarios en los que una base de datos <a href="http://es.wikipedia.org/wiki/NoSQL">No-SQL</a> no sea la solución, pero creo que existen muchos más escenarios donde son la solución, pero los desarrolladores se empeñan en encajarla en una base de datos relacional. A menudo, con resultados desastrosos.</p>
+<p>Por extraño que parezca, No-SQL es muy intuitivo. No resulta muy diferente de lo que haríamos sin bases de datos convencionales. Sin embargo, utilizar un motor nos ofrece ciertas ventajas que no debemos despreciar.</p>
+<p>Sinceramente, creo que hay todo un mundo a descubrir en este sentido.</p>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2012-08-30T00:00:00+00:00" title="2012-08-30">2012-08-30</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/mongodb/" rel="tag">mongodb</a>
+                <a class="label label-primary p-category" href="/categories/nosql/" rel="tag">nosql</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/porque_c_mola/" rel="prev" title="Por qué C mola">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/porque-ruby-mola/" rel="next" title="Por qué Ruby mola">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/mongodb/",
+        disqus_title="MongoDB",
+        disqus_identifier="cache/posts/mongodb.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

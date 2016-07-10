@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Vagrant y Puppet | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/vagrant-puppet/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/python-curses/" title="Python curses" type="text/html">
+<link rel="next" href="/blog/python-compiler-internals/" title="El compilador de Python desde dentro" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Vagrant y Puppet">
+<meta property="og:url" content="http://magmax.org/blog/vagrant-puppet/">
+<meta property="og:description" content="Hay mucha gente que tiene que trabajar a diario con más de un ordenador. En ocasiones, tienen cientos. Las máquinas se estropean y hay que reemplazarlas, así que se pierde mucho tiempo en reinstalar e">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2012-05-18T00:00:00+00:00">
+<meta property="article:updated" content="2012-05-18T00:00:00">
+<meta property="article:tag" content="devops">
+<meta property="article:tag" content="puppet">
+<meta property="article:tag" content="vagrant">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/vagrant-puppet/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/vagrant-puppet/" class="u-url">Vagrant y Puppet</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2012-05-18T00:00:00+00:00" title="2012-05-18">2012-05-18</time>
+                // <time class="updated dt-updated" datetime="2012-05-18T00:00:00" title="2012-05-18">2012-05-18</time></p>
+              <p class="commentline">            <a href="/blog/vagrant-puppet/#disqus_thread" data-disqus-identifier="cache/posts/vagrant-puppet.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Hay mucha gente que tiene que trabajar a diario con más de un ordenador. En ocasiones, tienen cientos. Las máquinas se estropean y hay que reemplazarlas, así que se pierde mucho tiempo en reinstalar el sistema. Incluso si sólo tienes una máquina, siempre se te olvida instalar algo que necesitarás cuando no tengas red.</p>
+<p>Una solución es clonar discos, pero eso es poco flexible. Resulta complejo cambiar la versión de un programa en todas las máquinas.</p>
+<p>¿Qué sería lo ideal? Pues poder tener la configuración de tu PC en un repositorio Git o Mercurial. Y poder probar la configuración en una máquina virtual.</p>
+<!-- TEASER_END -->
+<div class="section" id="antes-que-nada">
+<h2>Antes que nada...</h2>
+<p>Antes de comenzar, una advertencia: <em>Vamos a hacer cosas peligrosas</em>. Eso significa que puede que se nos reinicie el ordenador o que perdamos datos.</p>
+<p>Tras hacer esa advertencia, también os diré que todo será razonablemente seguro y que vamos a trabajar en máquinas virtuales para que no pase, pero no puedo garantizar nada.</p>
+</div>
+<div class="section" id="vagrant">
+<h2>Vagrant</h2>
+<p>Lo primero que necesitamos es un entorno para gestionar máquinas virtuales. Uno de los más utilizados hoy en día es <a class="reference internal" href="/blog/vagrant-puppet/#virtualbox">VirtualBox</a> . Pero nosotros no vamos a necesitar un entorno gráfico ni nada de eso.</p>
+<p>VirtualBox tiene soporte para máquinas virtuales <em>headless</em>, es decir, máquinas que "están por ahí", pero que no se ven.</p>
+<p><a class="reference internal" href="/blog/vagrant-puppet/#id1">Vagrant</a>  no es más que una interfaz a VirtualBox, pero que nos hace la vida más fácil.</p>
+<p>Así que vamos a usar Vagrant. Llegada a esta conclusión, tendríamos dos opciones: instalar una máquina virtual desde cero o coger una ya instalada y partir de ahí. Si optáramos por la primera opción, tendríamos que ver <a class="reference internal" href="/blog/vagrant-puppet/#veewee">VeeWee</a> ; como este artículo va de Puppet, vamos a optar por la segunda opción.</p>
+<p>Lo primero: vamos a instalarnos Vagrant:</p>
+<pre class="code bash"><a name="rest_code_6c828b13d75e4d3dbc1917a2f604f73d-1"></a><span class="nv">$ </span>sudo gem install vagrant
+</pre>
+<p>Sí, es Ruby.</p>
+<p>Tras pelearme con algunas máquinas virtuales públicas, algunos reinicios y demás, os recomiendo que utilicéis la siguiente:</p>
+<pre class="code text"><a name="rest_code_0e2cc12f684d455aa78ae858ab58490a-1"></a>$ vagrant box add squeeze32 http://mathie-vagrant-boxes.s3.amazonaws.com/debian_squeeze_32.box
+</pre>
+<p>Eso tardará un poco, ya que tiene que descargarse 4Gb. Os recomiendo que <em>no</em> utilicéis la wifi. Básicamente, nos descargamos la imagen y la llamamos <em>squeeze32</em>. Eso es importante para referirnos a ella desde el <em>Vagrantfile</em>.</p>
+<p>Mientras se descarga, vamos a crearnos una carpeta en alguna parte y a ir configurando Vagrant. El archivo de configuración que yo utilizo tiene el siguiente aspecto (debe llamarse <em>Vagrantfile</em>):</p>
+<pre class="code ruby"><a name="rest_code_67d564ff4d8a4626adc506f7d02b199b-1"></a><span class="c1"># file: Vagrantfile</span>
+<a name="rest_code_67d564ff4d8a4626adc506f7d02b199b-2"></a><span class="no">Vagrant</span><span class="o">::</span><span class="no">Config</span><span class="o">.</span><span class="n">run</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+<a name="rest_code_67d564ff4d8a4626adc506f7d02b199b-3"></a>    <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">"squeeze32"</span>
+<a name="rest_code_67d564ff4d8a4626adc506f7d02b199b-4"></a><span class="k">end</span>
+</pre>
+<p>Difícil, ¿eh?</p>
+<p>Vamos con el manejo básico de vagrant:</p>
+<ul class="simple">
+<li>
+<em>up</em> levanta nuestra máquina virtual. Eso implica construirla si no existe y <em>provisionarla</em>.</li>
+<li>
+<em>destroy</em> mata nuestra máquina virtual y la borra.</li>
+<li>
+<em>halt</em> sólo mata nuestra máquina virtual. No lo uséis. Ya se morirá sola y, si vais a apagarla, borradla del todo con <em>destroy</em>. ¡Es más divertido!</li>
+<li>
+<em>provision</em> Hará que se ejecute Puppet (cuando lo tengamos configurado). Esto es lo que se llama "provisionar".</li>
+<li>
+<em>status</em> Muestra las máquinas virtuales existentes y el estado en el que se encuentran.</li>
+<li>
+<em>ssh</em> Os conectará por ssh a la máquina virtual.</li>
+</ul>
+<p>Habría que contar algo sobre usar varias máquinas virtuales y tal, pero esto es un artículo introductorio. Para cosas avanzadas, buscad otra cosa o la propia documentación :D</p>
+<p>Vamos con Puppet.</p>
+</div>
+<div class="section" id="puppet">
+<h2>Puppet</h2>
+<p>Este artículo va a ser introductorio, así que me centraré en la estructura básica, la configuración y la instalación de un único paquete sencillo.</p>
+<div class="section" id="estructura-basica-de-un-proyecto">
+<h3>Estructura básica de un proyecto</h3>
+<p>La estructura básica es:</p>
+<pre class="code bash"><a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-1"></a>.
+<a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-2"></a>├── manifests
+<a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-3"></a>│   └── desktop.pp
+<a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-4"></a>├── modules
+<a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-5"></a>│   └── module
+<a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-6"></a>│       ├── files
+<a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-7"></a>│       ├── templates
+<a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-8"></a>│       └── manifests
+<a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-9"></a>└── Vagrantfile
+</pre>
+<p>El archivo que se encuentra en @manifests/desktop.pp@ va a ser el que defina nuestra máquina. Aquí hacemos un breve paréntesis.</p>
+<p>Puppet está pensado para utilizarse en grandes empresas, con cientos o miles de máquinas. Algunas de estas máquinas serán iguales, pero otras serán distintas. Por eso tiene una estructura cliente-servidor segura, mediante claves ssl.</p>
+<p>Yo lo estoy contando para un entorno casero, así que olvidaos de eso. Vamos a tener un archivo distinto por cada máquina y no voy a contar nada de <em>nodes</em>. Tan sólo nuestra máquinita y ya. Como tengo un ordenador de escritorio y el que utilizo para viajar, tengo un archivito "desktop.pp". Quizá algún día tenga un "laptop.pp" :D</p>
+</div>
+<div class="section" id="configuracion">
+<h3>Configuración</h3>
+<p>La idea es mantener el archivo @desktop.pp@ lo más sencillo posible, de manera que podamos reutilizar su información en otras máquinas. Por eso el mío es así:</p>
+<pre class="code ruby"><a name="rest_code_359a6645d99e491e86f701f1388e8a42-1"></a><span class="c1"># file: manifests/desktop.pp</span>
+<a name="rest_code_359a6645d99e491e86f701f1388e8a42-2"></a><span class="n">stage</span> <span class="p">{</span> <span class="o">[</span><span class="n">apt</span><span class="p">,</span> <span class="n">pre</span><span class="p">,</span> <span class="n">post</span><span class="o">]</span><span class="p">:</span> <span class="p">}</span>
+<a name="rest_code_359a6645d99e491e86f701f1388e8a42-3"></a><span class="no">Stage</span><span class="o">[</span><span class="n">apt</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="no">Stage</span><span class="o">[</span><span class="n">pre</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="no">Stage</span><span class="o">[</span><span class="n">main</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="no">Stage</span><span class="o">[</span><span class="n">post</span><span class="o">]</span>
+<a name="rest_code_359a6645d99e491e86f701f1388e8a42-4"></a>
+<a name="rest_code_359a6645d99e491e86f701f1388e8a42-5"></a><span class="k">class</span> <span class="p">{</span> <span class="s1">'apt'</span><span class="p">:</span> <span class="n">stage</span> <span class="o">=&gt;</span> <span class="n">apt</span> <span class="p">}</span>
+<a name="rest_code_359a6645d99e491e86f701f1388e8a42-6"></a><span class="k">class</span> <span class="p">{</span> <span class="s1">'kernel'</span><span class="p">:</span> <span class="p">}</span>
+</pre>
+<p>Lo que hago es definirme 3 etapas: apt, pre y post; después establezco el orden de las etapas, relativas a <em>main</em>. Puppet no tiene orden de ejecución, pero hay cosas que hay que hacer antes que nada. Yo, por ejemplo, quiero que se me actualice APT antes de comenzar a trabajar.</p>
+<p>A continuación declaro las clases a utilizar. Queda claro que quiero la clase "apt" que se ejecutará en la etapa "apt" (derrocho imaginación).</p>
+<p>Finalmente, incluyo también la clase "kernel", que me instalará el núcleo. Evidentemente, para usarlo tendré que reiniciar, pero me hace ilusión tener instalada la última versión.</p>
+</div>
+<div class="section" id="modulos">
+<h3>Módulos</h3>
+<p>Ahora hay que definir los módulos. Comenzaremos por APT. la definición está en @modules/apt/manifests/init.pp@. Siempre, los manifiestos se llamarán <em>init.pp</em> y estarán en la carpeta <em>manifests</em>, dentro de nuestro módulo. Este archivo contendrá:</p>
+<pre class="code ruby"><a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-1"></a><span class="c1"># file: modules/apt/manifests/init.pp</span>
+<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-2"></a><span class="k">class</span> <span class="n">apt</span> <span class="p">{</span>
+<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-3"></a>  <span class="n">file</span> <span class="p">{</span> <span class="s1">'sources.list'</span><span class="p">:</span>
+<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-4"></a>    <span class="n">path</span> <span class="o">=&gt;</span> <span class="s1">'/etc/apt/sources.list'</span><span class="p">,</span>
+<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-5"></a>    <span class="n">source</span> <span class="o">=&gt;</span> <span class="s1">'puppet:///modules/apt/sources.list'</span><span class="p">,</span>
+<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-6"></a>    <span class="n">owner</span> <span class="o">=&gt;</span> <span class="s1">'root'</span><span class="p">,</span>
+<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-7"></a>    <span class="n">replace</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span>
+<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-8"></a>  <span class="p">}</span>
+<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-9"></a>
+<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-10"></a>  <span class="nb">exec</span> <span class="p">{</span> <span class="s1">'update'</span><span class="p">:</span>
+<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-11"></a>    <span class="n">path</span> <span class="o">=&gt;</span> <span class="s1">'/usr/bin'</span><span class="p">,</span>
+<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-12"></a>    <span class="n">command</span> <span class="o">=&gt;</span> <span class="s1">'apt-get update'</span><span class="p">,</span>
+<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-13"></a>    <span class="nb">require</span> <span class="o">=&gt;</span> <span class="no">File</span><span class="o">[</span><span class="s1">'sources.list'</span><span class="o">]</span><span class="p">,</span>
+<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-14"></a>  <span class="p">}</span>
+<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-15"></a><span class="p">}</span>
+</pre>
+<p>Esto es lo más dificil que vamos a hacer y lo más sencillo de explicar. Como véis, el módulo APT necesita un fichero de configuración y ejecutar una orden. El fichero será el @sources.list@, claro :D</p>
+<p>No hay mucho que contar, tan solo que sobreescribo el @sources.list@ y después lanzo un update. Estos requisitos se ejecutarán sin orden fijo, así que tengo que forzar un orden mediante la orden <em>require</em>.</p>
+<p>Claro, el archivo que quiero instalar tiene que estar en el directorio <em>files</em> (mirad la estructura más arriba). Y tendrá algo como esto:</p>
+<pre class="code text"><a name="rest_code_00c49a1513c347e2a52b2acc9e34157b-1"></a># file: modules/apt/files/sources.list
+<a name="rest_code_00c49a1513c347e2a52b2acc9e34157b-2"></a>deb http://ftp.es.debian.org/debian unstable main contrib non-free
+</pre>
+<p>Ahora vamos a configurar el módulo del <em>kernel</em>:</p>
+<pre class="code ruby"><a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-1"></a><span class="c1"># file: modules/kernel/manifests/init.pp</span>
+<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-2"></a><span class="k">class</span> <span class="n">kernel</span> <span class="p">{</span>
+<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-3"></a>  <span class="n">package</span> <span class="p">{</span> <span class="s1">'linux-image-amd64'</span><span class="p">:</span>
+<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-4"></a>    <span class="k">ensure</span> <span class="o">=&gt;</span> <span class="n">latest</span><span class="p">,</span>
+<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-5"></a>  <span class="p">}</span>
+<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-6"></a>
+<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-7"></a>  <span class="n">package</span> <span class="p">{</span> <span class="s1">'linux-headers-amd64'</span><span class="p">:</span>
+<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-8"></a>    <span class="k">ensure</span> <span class="o">=&gt;</span> <span class="n">latest</span><span class="p">,</span>
+<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-9"></a>  <span class="p">}</span>
+<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-10"></a><span class="p">}</span>
+</pre>
+<p>Como véis, es una clase que necesitará dos paquetes: el kernel y las headers. Y me aseguro de tener instalada la última versión.</p>
+</div>
+</div>
+<div class="section" id="lanzandolo">
+<h2>Lanzándolo</h2>
+<p>Bueno, ya lo tenemos todo configurado, así que hay que decirle a Vagrant que lance a Puppet:</p>
+<pre class="code ruby"><a name="rest_code_b2c787189ae84ad68b38aff6607ee109-1"></a><span class="c1"># file: Vagrantfile</span>
+<a name="rest_code_b2c787189ae84ad68b38aff6607ee109-2"></a><span class="no">Vagrant</span><span class="o">::</span><span class="no">Config</span><span class="o">.</span><span class="n">run</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+<a name="rest_code_b2c787189ae84ad68b38aff6607ee109-3"></a>    <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">"squeeze32"</span>
+<a name="rest_code_b2c787189ae84ad68b38aff6607ee109-4"></a>    <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="ss">:puppet</span> <span class="k">do</span> <span class="o">|</span><span class="n">puppet</span><span class="o">|</span>
+<a name="rest_code_b2c787189ae84ad68b38aff6607ee109-5"></a>            <span class="n">puppet</span><span class="o">.</span><span class="n">manifests_path</span> <span class="o">=</span> <span class="s2">"manifests"</span>
+<a name="rest_code_b2c787189ae84ad68b38aff6607ee109-6"></a>            <span class="n">puppet</span><span class="o">.</span><span class="n">module_path</span> <span class="o">=</span> <span class="s2">"modules"</span>
+<a name="rest_code_b2c787189ae84ad68b38aff6607ee109-7"></a>            <span class="n">puppet</span><span class="o">.</span><span class="n">manifest_file</span> <span class="o">=</span> <span class="s2">"desktop.pp"</span>
+<a name="rest_code_b2c787189ae84ad68b38aff6607ee109-8"></a>    <span class="k">end</span>
+<a name="rest_code_b2c787189ae84ad68b38aff6607ee109-9"></a><span class="k">end</span>
+</pre>
+<p>Bueeeeeeeeeeeno. Pues ya está todo. Vamos con la magia:</p>
+<pre class="code bash"><a name="rest_code_d6d1870483f14b45ac14a09132133d52-1"></a><span class="nv">$ </span>vagrant up
+</pre>
+<p>Y flipad con los mensajes de pantalla. Nos dejará una máquina perfectamente configurada:</p>
+<pre class="code bash"><a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-1"></a><span class="nv">$ </span>vagrant up
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-2"></a><span class="o">[</span>default<span class="o">]</span> Importing base box <span class="s1">'squeeze32'</span>...
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-3"></a><span class="o">[</span>default<span class="o">]</span> The guest additions on this VM <span class="k">do</span> not match the install version of
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-4"></a>VirtualBox! This may cause things such as forwarded ports, shared
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-5"></a>folders, and more to not work properly. If any of those things fail on
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-6"></a>this machine, please update the guest additions and repackage the
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-7"></a>box.
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-8"></a>
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-9"></a>Guest Additions Version: 4.0.4
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-10"></a>VirtualBox Version: 4.1.14
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-11"></a><span class="o">[</span>default<span class="o">]</span> Matching MAC address <span class="k">for</span> NAT networking...
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-12"></a><span class="o">[</span>default<span class="o">]</span> Clearing any previously <span class="nb">set </span>forwarded ports...
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-13"></a><span class="o">[</span>default<span class="o">]</span> Forwarding ports...
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-14"></a><span class="o">[</span>default<span class="o">]</span> -- <span class="nv">22</span> <span class="o">=</span>&gt; <span class="m">2222</span> <span class="o">(</span>adapter 1<span class="o">)</span>
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-15"></a><span class="o">[</span>default<span class="o">]</span> Creating shared folders metadata...
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-16"></a><span class="o">[</span>default<span class="o">]</span> Clearing any previously <span class="nb">set </span>network interfaces...
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-17"></a><span class="o">[</span>default<span class="o">]</span> Booting VM...
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-18"></a><span class="o">[</span>default<span class="o">]</span> Waiting <span class="k">for</span> VM to boot. This can take a few minutes.
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-19"></a><span class="o">[</span>default<span class="o">]</span> VM booted and ready <span class="k">for</span> use!
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-20"></a><span class="o">[</span>default<span class="o">]</span> Mounting shared folders...
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-21"></a><span class="o">[</span>default<span class="o">]</span> -- v-root: /vagrant
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-22"></a><span class="o">[</span>default<span class="o">]</span> -- manifests: /tmp/vagrant-puppet/manifests
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-23"></a><span class="o">[</span>default<span class="o">]</span> -- v-pp-m0: /tmp/vagrant-puppet/modules-0
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-24"></a><span class="o">[</span>default<span class="o">]</span> Running provisioner: Vagrant::Provisioners::Puppet...
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-25"></a><span class="o">[</span>default<span class="o">]</span> Running Puppet with /tmp/vagrant-puppet/manifests/desktop.pp...
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-26"></a>stdin: is not a tty
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-27"></a>notice: /Stage<span class="o">[</span>apt<span class="o">]</span>/Apt/File<span class="o">[</span>sources.list<span class="o">]</span>/content: content changed <span class="s1">'{md5}c6f69c7769cbbd3b3c938217487efa02'</span> to <span class="s1">'{md5}509cf608fd519f230246df247418b7b2'</span>
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-28"></a>
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-29"></a>notice: /Stage<span class="o">[</span>apt<span class="o">]</span>/Apt/File<span class="o">[</span>sources.list<span class="o">]</span>/group: group changed <span class="s1">'root'</span> to <span class="s1">'vagrant'</span>
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-30"></a>
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-31"></a>notice: /Stage<span class="o">[</span>apt<span class="o">]</span>/Apt/Exec<span class="o">[</span>update<span class="o">]</span>/returns: executed successfully
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-32"></a>
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-33"></a>notice: /Stage<span class="o">[</span>main<span class="o">]</span>/Kernel/Package<span class="o">[</span>linux-image-amd64<span class="o">]</span>/ensure: ensure changed <span class="s1">'purged'</span> to <span class="s1">'latest'</span>
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-34"></a>
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-35"></a>notice: /Stage<span class="o">[</span>main<span class="o">]</span>/Kernel/Package<span class="o">[</span>linux-headers-amd64<span class="o">]</span>/ensure: ensure changed <span class="s1">'purged'</span> to <span class="s1">'latest'</span>
+<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-36"></a><span class="err">$</span>
+</pre>
+</div>
+<div class="section" id="aplicandolo-a-nuestra-maquina">
+<h2>Aplicándolo a nuestra máquina</h2>
+<p><em>NOTA</em>: Mucho ojo. Si seguís estos pasos, es perfectamente posible que rompáis vuestra máquina. ¡Sobreescribiríais el @sources.list@!</p>
+<p>Como todas las operaciones que realizamos requieren ser root, si lo ejecutamos como usuarios normales no debería ocurrir nada, pero insisto una vez más: <em>si ejecutas esto es bajo tu cuenta y riesgo</em>:</p>
+<pre class="code bash"><a name="rest_code_ed66c3defdcc4d5f9890ff7a36a7aeaf-1"></a><span class="c"># puppet apply manifests/desktop.pp --modulepath=modules/</span>
+</pre>
+<p>Poco que contar: le pedimos a puppet que aplique nuestra configuración y le indicamos dónde están los módulos.</p>
+</div>
+<div class="section" id="ventajas">
+<h2>Ventajas</h2>
+<p>El uso de Vagrant sólo nos da una ventaja: la de poder probar nuestra configuración antes de aplicarla en una máquina real.</p>
+<p>El uso de Puppet es otro cantar:</p>
+<ul class="simple">
+<li>podemos compartir configuraciones entre máquinas,</li>
+<li>podemos replicar configuraciones,</li>
+<li>podemos guardar las configuraciones en un repositorio,</li>
+<li>podemos volver a una configuración determinada,</li>
+<li>si identificamos un nuevo tipo de máquina, podemos basarnos en una ya existente,</li>
+<li>si se rompe una máquina, podemos tener otra operativa en poco tiempo,</li>
+<li>no olvidaremos instalar nada,</li>
+<li>...</li>
+</ul>
+<p>Aunque tiene algunos...</p>
+</div>
+<div class="section" id="inconvenientes">
+<h2>Inconvenientes</h2>
+<p>Requiere un poquitín de trabajo extra. Hay que modificar los archivos y después lanzar puppet, en lugar de tocar los archivos originales o ejecutar APT a mano.</p>
+<p>Además, pueden darse situaciones poco agradables, como que un paquete entre en conflicto con otro. Como Puppet no garantiza ningún orden, puede darse que el primero se instale y el segundo desinstale al primero. Como, de forma individual, no hay errores, Puppet no nos informará del problema.</p>
+<p>Hay algunas soluciones, como realizar <em>pruebas</em>. Existen distintos entornos de pruebas, pero se basan en comprobar que la sintaxis es la adecuada y, en mi opinión, es lo mismo que tener redundancia: se especifican las reglas de dos maneras distintas y deben coincidir. Personalmente, no me gusta el sistema y no le veo un beneficio.</p>
+<p>Nuevamente, en mi opinión, lo más útil es definir una nueva etapa de pruebas que <em>realice pruebas por los efectos</em>, no por los requisitos: si queremos que un servidor esté corriendo, comprobamos que el puerto está ocupado. Si hemos modificado un archivo, podemos comprobar su fecha de modificación. Pero no hay ningún framework que nos facilite esta tarea.</p>
+</div>
+<div class="section" id="mas-informacion">
+<h2>Más información</h2>
+<p>Podéis visitar la propia <a class="reference internal" href="/blog/vagrant-puppet/#web-de-puppet">web de Puppet</a> . Está todo muy bien explicadito, salvo la estructura inicial (para lo que ya estoy yo XD).</p>
+<p>En este artículo he introducido los tipos <a class="reference internal" href="/blog/vagrant-puppet/#file-package-y-exec-podeis-visitar-la-lista-completa-de-tipos-puppet">file", "package" y "exec"; podéis visitar la "lista completa de tipos puppet</a>  si queréis.</p>
+<p>Así mismo, he comentado las etapas, pero hay muchos otros <a class="reference internal" href="/blog/vagrant-puppet/#metaparametros">metaparámetros</a> .</p>
+<p>También tenéis <a class="reference internal" href="/blog/vagrant-puppet/#la-pagina-de-vagrant">la página de Vagrant</a> , claro.</p>
+<p>Si os gustan estos temas, os recomiendo que sigáis a <a class="reference internal" href="/blog/vagrant-puppet/#carlos-sanchez">Carlos Sánchez</a> , que presentó en el <a class="reference internal" href="/blog/vagrant-puppet/#codemotion">CodeMotion</a>  la charla <a class="reference internal" href="/blog/vagrant-puppet/#from-dev-to-devops">From Dev to DevOps</a> .</p>
+<p>Podréis encontrar más información si buscáis la palabra "devops" en google :D
+.. <span class="target" id="virtualbox">VirtualBox</span>: <a class="reference external" href="https://www.virtualbox.org/">https://www.virtualbox.org/</a>
+.. <span class="target" id="id1">Vagrant</span>: <a class="reference external" href="http://vagrantup.com/">http://vagrantup.com/</a>
+.. <span class="target" id="veewee">VeeWee</span>: <a class="reference external" href="https://github.com/jedi4ever/veewee">https://github.com/jedi4ever/veewee</a>
+.. <span class="target" id="web-de-puppet">web de Puppet</span>: <a class="reference external" href="http://docs.puppetlabs.com/learning/">http://docs.puppetlabs.com/learning/</a>
+.. <span class="target" id="file-package-y-exec-podeis-visitar-la-lista-completa-de-tipos-puppet">file", "package" y "exec"; podéis visitar la "lista completa de tipos puppet</span>: <a class="reference external" href="http://docs.puppetlabs.com/references/stable/type.html">http://docs.puppetlabs.com/references/stable/type.html</a>
+.. <span class="target" id="metaparametros">metaparámetros</span>: <a class="reference external" href="https://www.puppetlabs.com/references/2.6.8/metaparameter.html">https://www.puppetlabs.com/references/2.6.8/metaparameter.html</a>
+.. <span class="target" id="la-pagina-de-vagrant">la página de Vagrant</span>: <a class="reference external" href="http://vagrantup.com/">http://vagrantup.com/</a>
+.. <span class="target" id="carlos-sanchez">Carlos Sánchez</span>: <a class="reference external" href="http://blog.carlossanchez.eu/">http://blog.carlossanchez.eu/</a>
+.. <span class="target" id="codemotion">CodeMotion</span>: <a class="reference external" href="http://codemotion.es/">http://codemotion.es/</a>
+.. <span class="target" id="from-dev-to-devops">From Dev to DevOps</span>: <a class="reference external" href="http://www.slideshare.net/carlossg/from-dev-to-devops-codemotion-es-2012">http://www.slideshare.net/carlossg/from-dev-to-devops-codemotion-es-2012</a></p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2012-05-18T00:00:00+00:00" title="2012-05-18">2012-05-18</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/devops/" rel="tag">devops</a>
+                <a class="label label-primary p-category" href="/categories/puppet/" rel="tag">puppet</a>
+                <a class="label label-primary p-category" href="/categories/vagrant/" rel="tag">vagrant</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/python-curses/" rel="prev" title="Python curses">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/python-compiler-internals/" rel="next" title="El compilador de Python desde dentro">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/vagrant-puppet/",
+        disqus_title="Vagrant y Puppet",
+        disqus_identifier="cache/posts/vagrant-puppet.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Python: Cómo hacer pruebas 3: nose y hamcrest | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/python-pruebas-3/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/jquery-stilos/" title="jQuery: Usando los estilos" type="text/html">
+<link rel="next" href="/blog/python-pruebas-4/" title="Python: Cómo hacer pruebas 4: pyDoubles" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Python: Cómo hacer pruebas 3: nose y hamcrest">
+<meta property="og:url" content="http://magmax.org/blog/python-pruebas-3/">
+<meta property="og:description" content='Después del artículo "Python: Cómo hacer pruebas (2)":link://slug/python-pruebas-2, viene el (3) :D
+En esta ocasión temo que el tutorial va a ser un poco light, pero ya lo compensaremos con el próximo'>
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2011-11-07T00:00:00+00:00">
+<meta property="article:updated" content="2011-11-07T00:00:00">
+<meta property="article:tag" content="hamcrest">
+<meta property="article:tag" content="nose">
+<meta property="article:tag" content="python testing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/python-pruebas-3/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/python-pruebas-3/" class="u-url">Python: Cómo hacer pruebas 3: nose y hamcrest</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2011-11-07T00:00:00+00:00" title="2011-11-07">2011-11-07</time>
+                // <time class="updated dt-updated" datetime="2011-11-07T00:00:00" title="2011-11-07">2011-11-07</time></p>
+              <p class="commentline">            <a href="/blog/python-pruebas-3/#disqus_thread" data-disqus-identifier="cache/posts/python-pruebas-3.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Después del artículo "Python: Cómo hacer pruebas (2)":link://slug/python-pruebas-2, viene el (3) :D</p>
+<p>En esta ocasión temo que el tutorial va a ser un poco <em>light</em>, pero ya lo compensaremos con el próximo. Nos vamos a centrar en dos herramientas para hacer tests. Estas herramientas son <a class="reference external" href="http://readthedocs.org/docs/nose/en/latest/">nose</a>  y <a class="reference external" href="http://code.google.com/p/hamcrest/">Hamcrest</a> .</p>
+<p>Ambos son paquetes <a class="reference external" href="http://www.debian.org">Debian</a>  y sencillos de instalar.</p>
+<!-- TEASER_END -->
+<div class="section" id="nose">
+<h2>Nose</h2>
+<p><em>Nose</em> es una herramienta que nos permitirá ejecutar nuestros tests de una manera sencilla y cómoda.</p>
+<p>Para ejecutarlo, usaremos la orden <em>nosetests</em>, seguida del archivo o archivos a probar. No es necesario que los archivos tengan nada especial, salvo que éstos deben definir las pruebas en función a <em>unittest</em> o <em>doctest</em>.</p>
+<p>Cuando utilizamos <em>nosetests</em> no son necesarias las líneas:</p>
+<pre class="code python"><a name="rest_code_12c5ef8bf547450e88a6f15948f2e8af-1"></a><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+<a name="rest_code_12c5ef8bf547450e88a6f15948f2e8af-2"></a>    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre>
+<p>De la misma manera, cuando utilizamos <em>doctest</em> no es necesario indicar:</p>
+<pre class="code python"><a name="rest_code_6dbcc93052104612b7e0fac61076288f-1"></a><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+<a name="rest_code_6dbcc93052104612b7e0fac61076288f-2"></a>   <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+</pre>
+<p>Aunque en el caso de <em>doctest</em> tendremos que habilitarlo en <em>nosetests</em> mediante la opción <em>--with-doctests</em>.</p>
+<p>Veremos ejemplos en el apartado de <em>hamcrest</em>.</p>
+<div class="section" id="truco">
+<h3>Truco</h3>
+<p>No sé dónde vi un truco para avisar que los tests deben ejecutarse con <em>nosetests</em>. El truco es muy sencillo, y consiste en escribir las siguientes líneas:</p>
+<pre class="code python"><a name="rest_code_c9583998ad134f509b77c2c03f4b4180-1"></a><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+<a name="rest_code_c9583998ad134f509b77c2c03f4b4180-2"></a>   <span class="k">print</span> <span class="s">'You must run these tests with nose.'</span>
+</pre>
+<p>Fácil y estúpido, pero realmente útil.</p>
+<p>Sin embargo, también tenemos la opción de usar nose directamente, utilizando:</p>
+<pre class="code python"><a name="rest_code_22fb3b80feae439b8c4b8107edb55009-1"></a><span class="kn">import</span> <span class="nn">nose</span>
+<a name="rest_code_22fb3b80feae439b8c4b8107edb55009-2"></a><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+<a name="rest_code_22fb3b80feae439b8c4b8107edb55009-3"></a>   <span class="n">nose</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre>
+<p>O bien, si queremos saber si el resultado es válido o no:</p>
+<pre class="code python"><a name="rest_code_e54f75d826284487a73c48a2db890162-1"></a><span class="kn">import</span> <span class="nn">nose</span>
+<a name="rest_code_e54f75d826284487a73c48a2db890162-2"></a><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+<a name="rest_code_e54f75d826284487a73c48a2db890162-3"></a>   <span class="n">result</span> <span class="o">=</span> <span class="n">nose</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre>
+</div>
+<div class="section" id="ventajas">
+<h3>Ventajas</h3>
+<p>Entre las ventajas de usar <em>nose</em> está que podemos lanzar sólo los tests que fallaron en la última ejecución, seleccionar si queremos las pruebas <em>doctest</em> o <em>unittest</em>, pruebas de covertura (aunque requiere algunos módulos aparte), posibilidad de guardar perfiles para reutilizarlos, ...</p>
+</div>
+</div>
+<div class="section" id="hamcrest">
+<h2>Hamcrest</h2>
+<p>Es una herramienta que nos facilita la comprobación de condiciones. No sólo está en <em>Python</em>, sino que también está disponible en <em>Java</em>, <em>C++</em>, <em>Objetive C</em>, <em>PHP</em> y <em>Erlang</em>.</p>
+<p>Además, provee una sintaxis más semántica que usando el tradicional <em>XUnit</em>. ¿Qué significa esto? Pues que podremos "leer" el código.</p>
+<p>Y como ya he escrito mucho, veamos un ejemplo.</p>
+<div class="section" id="ejemplo-1-fibonacci">
+<h3>Ejemplo 1: Fibonacci</h3>
+<p>Ya sabéis, esa <a class="reference external" href="http://es.wikipedia.org/wiki/Sucesi%C3%B3n_de_Fibonacci">secuencia en la que cada número es la suma de los dos anteriores</a> , comenzando por dos 1 seguidos (1, 1, 2, 3, 5, 8, 13, ...)</p>
+<p>Como son ejemplos sencillos, voy a poner el código de prueba y el código válido en el mismo bloque. Para probarlo, usaremos <em>nose</em></p>
+<pre class="code python"><a name="rest_code_c2cf2190cac84c05888973b7982eeb68-1"></a><span class="kn">import</span> <span class="nn">unittest</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-2"></a><span class="kn">from</span> <span class="nn">hamcrest</span> <span class="kn">import</span> <span class="o">*</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-3"></a>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-4"></a>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-5"></a><span class="k">class</span> <span class="nc">testFibonacci</span> <span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-6"></a>    <span class="k">def</span> <span class="nf">testFirstElementIs1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-7"></a>        <span class="n">assert_that</span><span class="p">(</span><span class="n">fibonacci</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">equal_to</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-8"></a>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-9"></a>    <span class="k">def</span> <span class="nf">testSecondElementIs1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-10"></a>        <span class="n">assert_that</span><span class="p">(</span><span class="n">fibonacci</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">equal_to</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-11"></a>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-12"></a>    <span class="k">def</span> <span class="nf">testThirdElementIs2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-13"></a>        <span class="n">assert_that</span><span class="p">(</span><span class="n">fibonacci</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">equal_to</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-14"></a>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-15"></a>    <span class="k">def</span> <span class="nf">testFourthElementIs3</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-16"></a>        <span class="n">assert_that</span><span class="p">(</span><span class="n">fibonacci</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">equal_to</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-17"></a>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-18"></a>    <span class="k">def</span> <span class="nf">testFifthElementIs5</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-19"></a>        <span class="n">assert_that</span><span class="p">(</span><span class="n">fibonacci</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">equal_to</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-20"></a>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-21"></a><span class="k">def</span> <span class="nf">fibonacci</span> <span class="p">(</span><span class="n">n</span><span class="p">):</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-22"></a>    <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-23"></a>    <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-24"></a>    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">):</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-25"></a>        <span class="n">c</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-26"></a>        <span class="n">a</span> <span class="o">=</span> <span class="n">b</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-27"></a>        <span class="n">b</span> <span class="o">=</span> <span class="n">c</span>
+<a name="rest_code_c2cf2190cac84c05888973b7982eeb68-28"></a>    <span class="k">return</span> <span class="n">b</span>
+</pre>
+<p>Fijaros en un test cualquiera (son todos iguales, a lo mejor deberíamos <em>refactorizar</em>): son bastante verbosos. Comparando:</p>
+<pre class="code python"><a name="rest_code_b61ce876a7474d6ba5cc0e5557d9c2f7-1"></a><span class="n">assert_that</span><span class="p">(</span><span class="n">fibonacci</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">equal_to</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<a name="rest_code_b61ce876a7474d6ba5cc0e5557d9c2f7-2"></a><span class="n">assertEquals</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">fibonacci</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+</pre>
+<p>Vemos que es ligeramente más clara la versión <em>Hamcrest</em> que la habitual.</p>
+</div>
+<div class="section" id="ejemplo-2-fibonacci-como-vector">
+<h3>Ejemplo 2: fibonacci como vector</h3>
+<p>Voy a implementar el mismo algoritmo, pero ahora lo que quiero es que me devuelva un vector con todos los valores anteriores al dado:</p>
+<pre class="code python"><a name="rest_code_317c8ef91569403ca8459206be5c5f01-1"></a><span class="kn">import</span> <span class="nn">unittest</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-2"></a><span class="kn">from</span> <span class="nn">hamcrest</span> <span class="kn">import</span> <span class="o">*</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-3"></a>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-4"></a>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-5"></a><span class="k">class</span> <span class="nc">testFibonacci</span> <span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-6"></a>    <span class="k">def</span> <span class="nf">testVectorForValue1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-7"></a>        <span class="n">assert_that</span><span class="p">(</span><span class="n">fibonacci</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">only_contains</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-8"></a>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-9"></a>    <span class="k">def</span> <span class="nf">testVectorForValue2</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-10"></a>        <span class="n">assert_that</span><span class="p">(</span><span class="n">fibonacci</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">only_contains</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-11"></a>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-12"></a>    <span class="k">def</span> <span class="nf">testVectorForValue3</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-13"></a>        <span class="n">assert_that</span><span class="p">(</span><span class="n">fibonacci</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">only_contains</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-14"></a>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-15"></a>    <span class="k">def</span> <span class="nf">testVectorForValue4</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-16"></a>        <span class="n">assert_that</span><span class="p">(</span><span class="n">fibonacci</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="n">only_contains</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-17"></a>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-18"></a>    <span class="k">def</span> <span class="nf">testVectorForValue5</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-19"></a>        <span class="n">assert_that</span><span class="p">(</span><span class="n">fibonacci</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">only_contains</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-20"></a>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-21"></a><span class="k">def</span> <span class="nf">fibonacci</span> <span class="p">(</span><span class="n">n</span><span class="p">):</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-22"></a>    <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-23"></a>        <span class="k">return</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-24"></a>    <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-25"></a>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-26"></a>    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">):</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-27"></a>        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">result</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+<a name="rest_code_317c8ef91569403ca8459206be5c5f01-28"></a>    <span class="k">return</span> <span class="n">result</span>
+</pre>
+<p>Y comparemos cómo sería el test habitual:</p>
+<pre class="code python"><a name="rest_code_28f46cf185ed432285894afa12ef7b8c-1"></a><span class="n">assert_that</span><span class="p">(</span><span class="n">fibonacci</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">only_contains</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<a name="rest_code_28f46cf185ed432285894afa12ef7b8c-2"></a><span class="n">assertEquals</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">fibonacci</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+</pre>
+<p>Nuevamente es ligeramente más clara la versión <em>Hamcrest</em>.</p>
+<p>La verdad es que como <em>Python</em> es tan sencillo, ¡¡resulta complicadísimo encontrar un ejemplo en el que <em>Hamcrest</em> resulte claramente vencedor!! Con <em>Java</em> es muchísimo más sencillo dar el trofeo a Hamcrest.</p>
+<p>Sin embargo, me guardo un as en la manga. Aunque la comprobación no aporta mucho más, veamos un error provocado:</p>
+<pre class="code bash"><a name="rest_code_7b71195604624c1995575806090cc548-1"></a><span class="nv">$ </span>nosetests fibonacci.py
+<a name="rest_code_7b71195604624c1995575806090cc548-2"></a>...F
+<a name="rest_code_7b71195604624c1995575806090cc548-3"></a><span class="o">======================================================================</span>
+<a name="rest_code_7b71195604624c1995575806090cc548-4"></a>FAIL: testVectorForValue4 <span class="o">(</span>fibonacci.testFibonacci<span class="o">)</span>
+<a name="rest_code_7b71195604624c1995575806090cc548-5"></a>----------------------------------------------------------------------
+<a name="rest_code_7b71195604624c1995575806090cc548-6"></a>Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
+<a name="rest_code_7b71195604624c1995575806090cc548-7"></a>  File <span class="s2">"fibonacci.py"</span>, line 19, in testVectorForValue4
+<a name="rest_code_7b71195604624c1995575806090cc548-8"></a>    assert_that<span class="o">(</span>fibonacci<span class="o">(</span>4<span class="o">)</span>, only_contains<span class="o">(</span>1, 1, 2<span class="o">))</span>
+<a name="rest_code_7b71195604624c1995575806090cc548-9"></a>AssertionError:
+<a name="rest_code_7b71195604624c1995575806090cc548-10"></a>Expected: a sequence containing items matching <span class="o">(</span>&lt;1&gt; or &lt;1&gt; or &lt;2&gt;<span class="o">)</span>
+<a name="rest_code_7b71195604624c1995575806090cc548-11"></a>     but: was &lt;<span class="o">[</span>1, 1, 2, 3<span class="o">]</span>&gt;
+<a name="rest_code_7b71195604624c1995575806090cc548-12"></a>
+<a name="rest_code_7b71195604624c1995575806090cc548-13"></a>
+<a name="rest_code_7b71195604624c1995575806090cc548-14"></a>----------------------------------------------------------------------
+<a name="rest_code_7b71195604624c1995575806090cc548-15"></a>Ran <span class="m">4</span> tests in 0.001s
+<a name="rest_code_7b71195604624c1995575806090cc548-16"></a>
+<a name="rest_code_7b71195604624c1995575806090cc548-17"></a>FAILED <span class="o">(</span><span class="nv">failures</span><span class="o">=</span>1<span class="o">)</span>
+<a name="rest_code_7b71195604624c1995575806090cc548-18"></a><span class="err">$</span>
+</pre>
+<p>¡¡¡Ahá!!! ¿Véis qué claro ha quedado el error?</p>
+</div>
+</div>
+<div class="section" id="mas-informacion">
+<h2>Más información</h2>
+<p>Tenéis toda la información que necesitéis en los sites de <a class="reference external" href="http://readthedocs.org/docs/nose/en/latest/">nose</a>  y <a class="reference external" href="http://code.google.com/p/hamcrest/">Hamcrest</a> .</p>
+<p>Para más información, podéis ver el "siguiente tutorial de python":link://slug/python-pruebas-4, donde hablaremos de los dobles de pruebas.</p>
+<p>Espero que hayáis encontrado útil este tutorial.</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2011-11-07T00:00:00+00:00" title="2011-11-07">2011-11-07</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/hamcrest/" rel="tag">hamcrest</a>
+                <a class="label label-primary p-category" href="/categories/nose/" rel="tag">nose</a>
+                <a class="label label-primary p-category" href="/categories/python-testing/" rel="tag">python testing</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/jquery-stilos/" rel="prev" title="jQuery: Usando los estilos">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/python-pruebas-4/" rel="next" title="Python: Cómo hacer pruebas 4: pyDoubles">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/python-pruebas-3/",
+        disqus_title="Python: C\u00f3mo hacer pruebas 3: nose y hamcrest",
+        disqus_identifier="cache/posts/python-pruebas-3.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

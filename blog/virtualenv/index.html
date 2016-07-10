@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Virtualenv: aislando nuestro entorno python. | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/virtualenv/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/migrando/" title="Migrando el site: lecciones aprendidas" type="text/html">
+<link rel="next" href="/blog/artesania-software/" title="Artesanía de Software: De qué va todo esto" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Virtualenv: aislando nuestro entorno python.">
+<meta property="og:url" content="http://magmax.org/blog/virtualenv/">
+<meta property="og:description" content="Con el fin de facilitarnos el despliegue, siempre resulta interesante crear un entorno aislado para realizar pruebas. Lo ideal sería disponer de un entorno en local lo más parecido posible al entorno ">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2011-08-11T00:00:00+00:00">
+<meta property="article:updated" content="2011-08-11T00:00:00">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="virtualenv">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/virtualenv/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/virtualenv/" class="u-url">Virtualenv: aislando nuestro entorno python.</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2011-08-11T00:00:00+00:00" title="2011-08-11">2011-08-11</time>
+                // <time class="updated dt-updated" datetime="2011-08-11T00:00:00" title="2011-08-11">2011-08-11</time></p>
+              <p class="commentline">            <a href="/blog/virtualenv/#disqus_thread" data-disqus-identifier="cache/posts/virtualenv.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Con el fin de facilitarnos el despliegue, siempre resulta interesante crear un entorno aislado para realizar pruebas. Lo ideal sería disponer de un entorno en local lo más parecido posible al entorno remoto.</p>
+<p>Pues esto es posible gracias a <a class="reference external" href="http://www.virtualenv.org/">VirtualEnv</a> .</p>
+<!-- TEASER_END -->
+<div class="section" id="instalacion">
+<h2>Instalación</h2>
+<p>Podemos disponer de <a class="reference external" href="http://www.virtualenv.org/">VirtualEnv</a>  en Windows, GNU/Linux y Mac, ya que es python y, por tanto, portable.</p>
+<p>Los detalles... se los dejo a la instalación estándar, ya que éstos pueden variar con facilidad. Es paquete Debian oficial, lo que puede facilitar mucho las cosas :D</p>
+</div>
+<div class="section" id="despliegue-del-entorno">
+<h2>Despliegue del entorno</h2>
+<p>Crear un entorno es tan complejo como:</p>
+<pre class="code bash"><a name="rest_code_6b0a10e52a404089bd642d35c9650a06-1"></a><span class="nv">$ </span>virtualenv ENTORNO
+</pre>
+<p>Sustituyendo "ENTORNO" por el nombre del entorno a utilizar.</p>
+<p>Podemos utilizar la opción <em>-p</em> para indicar la versión de python a utilizar:</p>
+<pre class="code bash"><a name="rest_code_136ddcee6d9c4514b3ade5174d9cd32c-1"></a><span class="nv">$ </span>virtualenv ENTORNO -p /usr/bin/python2.7
+</pre>
+<p>También disponemos de la opción "--no-site-packages", que nos aísla aún más del sistema de paquetes del sistema.</p>
+</div>
+<div class="section" id="activandolo">
+<h2>Activándolo</h2>
+<p>Para activar el entorno virtual basta con ejecutar <em>source</em> sobre uno de los archivos de nuestro entorno:</p>
+<pre class="code bash"><a name="rest_code_263ce43dfe5c4f20b7e974889492edf4-1"></a><span class="nv">$ </span><span class="nb">source </span>ENTORNO/bin/activate
+<a name="rest_code_263ce43dfe5c4f20b7e974889492edf4-2"></a><span class="o">(</span>ENTORNO<span class="o">)</span><span class="err">$</span>
+</pre>
+<p>Para desactivarlo, basta ejecutar <em>deactivate</em>, que se encontrará disponible cuando estemos dentro del entorno:</p>
+<pre class="code bash"><a name="rest_code_06d5b6f2611f43748a63bd0ceca9e443-1"></a><span class="o">(</span>ENTORNO<span class="o">)</span><span class="nv">$ </span>deactivate
+<a name="rest_code_06d5b6f2611f43748a63bd0ceca9e443-2"></a><span class="err">$</span>
+</pre>
+</div>
+<div class="section" id="ejemplo-completo">
+<h2>Ejemplo completo</h2>
+<p>Voy a crear un entorno y activarlo, demostrando que no estamos utilizando el entorno habitual en la máquina:</p>
+<pre class="code bash"><a name="rest_code_ad16a50e1cde4dc8a6b6631174d6704f-1"></a><span class="nv">$ </span>python --version
+<a name="rest_code_ad16a50e1cde4dc8a6b6631174d6704f-2"></a>Python 2.6.7
+<a name="rest_code_ad16a50e1cde4dc8a6b6631174d6704f-3"></a><span class="nv">$ </span>virtualenv PYTHON27 -p /usr/bin/python2.7
+<a name="rest_code_ad16a50e1cde4dc8a6b6631174d6704f-4"></a>Running virtualenv with interpreter /usr/bin/python2.7
+<a name="rest_code_ad16a50e1cde4dc8a6b6631174d6704f-5"></a>New python executable in PYTHON27/bin/python2.7
+<a name="rest_code_ad16a50e1cde4dc8a6b6631174d6704f-6"></a>Also creating executable in PYTHON27/bin/python
+<a name="rest_code_ad16a50e1cde4dc8a6b6631174d6704f-7"></a>Installing distribute....................................................................................................................................................................................done.
+<a name="rest_code_ad16a50e1cde4dc8a6b6631174d6704f-8"></a><span class="nv">$ </span><span class="nb">source </span>PYTHON27/bin/activate
+<a name="rest_code_ad16a50e1cde4dc8a6b6631174d6704f-9"></a><span class="o">(</span>PYTHON27<span class="o">)</span><span class="nv">$ </span>python --version
+<a name="rest_code_ad16a50e1cde4dc8a6b6631174d6704f-10"></a>Python 2.7.2+
+<a name="rest_code_ad16a50e1cde4dc8a6b6631174d6704f-11"></a><span class="o">(</span>PYTHON27<span class="o">)</span><span class="nv">$ </span>deactivate
+<a name="rest_code_ad16a50e1cde4dc8a6b6631174d6704f-12"></a><span class="nv">$ </span>python --version
+<a name="rest_code_ad16a50e1cde4dc8a6b6631174d6704f-13"></a>Python 2.6.7
+<a name="rest_code_ad16a50e1cde4dc8a6b6631174d6704f-14"></a><span class="err">$</span>
+</pre>
+</div>
+<div class="section" id="instalando-aplicaciones">
+<h2>Instalando aplicaciones</h2>
+<p>Con el fin de poder instalar aplicaciones, nuestro entorno cuenta con dos potentes programas: <a class="reference external" href="http://python-distribute.org/">distribute</a>  e <a class="reference external" href="http://pypi.python.org/pypi/setuptools">easy_install</a> .</p>
+<p>Tendremos que ejecutar <tt class="docutils literal">easy_install</tt> de dentro de nuestro entorno, aunque podemos hacerlo sin entrar en él. es recomendable haber creado el entorno con la opción <tt class="docutils literal"><span class="pre">--no-site-packages</span></tt>.</p>
+<p>Por ejemplo, para instalar django:</p>
+<pre class="code bash"><a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-1"></a><span class="nv">$ </span>virtualenv ENTORNO --no-site-packages
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-2"></a>New python executable in ENTORNO/bin/python
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-3"></a>Installing distribute....................................................................................................................................................................................done.
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-4"></a><span class="nv">$ </span>./ENTORNO/bin/easy_install django
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-5"></a>Searching <span class="k">for</span> django
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-6"></a>Reading http://pypi.python.org/simple/django/
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-7"></a>Reading http://www.djangoproject.com/
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-8"></a>Best match: Django 1.3
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-9"></a>Downloading http://pypi.python.org/packages/source/D/Django/Django-1.3.tar.gz#md5<span class="o">=</span>1b8f76e91c27564708649671f329551f
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-10"></a>Processing Django-1.3.tar.gz
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-11"></a>Running Django-1.3/setup.py -q bdist_egg --dist-dir /tmp/easy_install-y5FyOE/Django-1.3/egg-dist-tmp-1DI_wu
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-12"></a>zip_safe flag not <span class="nb">set</span><span class="p">;</span> analyzing archive contents...
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-13"></a><span class="o">[</span>...<span class="o">]</span>
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-14"></a>Adding Django 1.3 to easy-install.pth file
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-15"></a>Installing django-admin.py script to ENTORNO/bin
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-16"></a>
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-17"></a>Installed ENTORNO/lib/python2.6/site-packages/Django-1.3-py2.6.egg
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-18"></a>Processing dependencies <span class="k">for</span> django
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-19"></a>Finished processing dependencies <span class="k">for</span> django
+<a name="rest_code_8a45d996bf8d4215ac19b0306a76463f-20"></a><span class="err">$</span>
+</pre>
+</div>
+<div class="section" id="automatizando-el-proceso">
+<h2>Automatizando el proceso</h2>
+<p>Es posible que necesitemos repetir este proceso muy a menudo, incluso en máquinas en las que no tengamos <em>virtualenv</em>.</p>
+<p>Para ello podemos crearnos un pequeño script con las siguientes condiciones:</p>
+<ul class="simple">
+<li>Importaremos <em>virtualenv</em>.</li>
+<li>Crearemos el método "after_install", que admite dos parámetros: <tt class="docutils literal">opciones</tt> y <tt class="docutils literal">Directorio de instalación</tt>.</li>
+<li>El script anterior se embeberá en una llamada a <tt class="docutils literal">virtualenv.create_bootstrap_script</tt>, y guardaremos el resultado en disco.</li>
+</ul>
+<p>De esta manera, nuestro script creará un nuevo script que es el que podemos redistribuir y ejecutar en máquinas en las que <em>virtualenv</em> no está disponible.</p>
+<p>Veamos un ejemplo:</p>
+<pre class="code bash"><a name="rest_code_587376f0d9f84c21a792d51085f9728b-1"></a><span class="c">#!/usr/bin/python</span>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-2"></a><span class="c"># -*- coding:utf-8; tab-width:4; mode:python -*-</span>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-3"></a><span class="c"># Fichero "bootstrap-template.py</span>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-4"></a>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-5"></a>import virtualenv, textwrap
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-6"></a><span class="nv">output</span> <span class="o">=</span> virtualenv.create_bootstrap_script<span class="o">(</span>textwrap.dedent<span class="o">(</span><span class="s2">"""</span>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-7"></a><span class="s2">import os, subprocess</span>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-8"></a>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-9"></a><span class="s2">def after_install(options, homedir):</span>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-10"></a><span class="s2">    packages = ['django', 'django-registration']</span>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-11"></a>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-12"></a><span class="s2">    etc = join(homedir, 'etc')</span>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-13"></a><span class="s2">    if not os.path.exists(etc):</span>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-14"></a><span class="s2">        os.makedirs(etc)</span>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-15"></a>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-16"></a><span class="s2">    bindir = join(homedir, 'bin')</span>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-17"></a><span class="s2">    easyinstallpath = join(bindir, 'easy_install')</span>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-18"></a>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-19"></a><span class="s2">    for each in packages:</span>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-20"></a><span class="s2">        subprocess.call([easyinstallpath, each])</span>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-21"></a><span class="s2">"""</span><span class="o">))</span>
+<a name="rest_code_587376f0d9f84c21a792d51085f9728b-22"></a><span class="nv">f</span> <span class="o">=</span> open<span class="o">(</span><span class="s1">'bootstrap.py'</span>, <span class="s1">'w'</span><span class="o">)</span>.write<span class="o">(</span>output<span class="o">)</span>
+</pre>
+<p>Que no os despiste la instrucción <tt class="docutils literal">textwrap.dedent</tt>, que es para que las triples comillas no nos jueguen malas pasadas en el código subyacente.</p>
+<p>Posiblemente sea buena idea mantener el script en otro fichero y leerlo, con el fin de tener resaltado de sintaxis.</p>
+<p>En este ejemplo comprobaréis que estoy instalando <em>django</em> y <em>django-registration</em>.</p>
+</div>
+<div class="section" id="usos">
+<h2>Usos</h2>
+<p>Habitualmente, se utiliza <a class="reference external" href="http://www.virtualenv.org">virtuelenv</a>  junto con <a class="reference external" href="http://docs.fabfile.org/">fabric</a> , pero dejo este tutorial para otra ocasión.</p>
+<p>Podemos utilizarlo para aislar un sistema, sin necesidad de cargar toda una máquina virtual.</p>
+<p>También podemos usarlo para tener sistemas fácilmente replicables.</p>
+</div>
+<div class="section" id="mas-informacion">
+<h2>Más información</h2>
+<p>Debo advertir que la documentación sobre <em>virtualenv</em> deja bastante que desear :(, pero aquí tenéis algunos enlaces para solucionar este problema:</p>
+<p><a class="reference external" href="http://www.virtualenv.org/&gt;P%C3%A1gina%20oficial%20de%20virtualenv&lt;/a&gt;.&lt;/li&gt;&lt;/p&gt;&lt;p&gt;&lt;li&gt;&lt;a%20href=">Bradley Wright: "Python virtualenv quickstart with Django"</a></p>
+<p><a class="reference external" href="http://www.caktusgroup.com/blog/2010/04/22/basic-django-deployment-with-virtualenv-fabric-pip-and-rsync/">Cactus: "Basic Django deployment with virtualenv, fabric, pip and rsync"</a></p>
+<p><a class="reference external" href="https://github.com/jacobian/django-deployment-workshop/">Jacobian: Django Deployment Workshop</a></p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2011-08-11T00:00:00+00:00" title="2011-08-11">2011-08-11</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/python/" rel="tag">python</a>
+                <a class="label label-primary p-category" href="/categories/virtualenv/" rel="tag">virtualenv</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/migrando/" rel="prev" title="Migrando el site: lecciones aprendidas">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/artesania-software/" rel="next" title="Artesanía de Software: De qué va todo esto">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/virtualenv/",
+        disqus_title="Virtualenv: aislando nuestro entorno python.",
+        disqus_identifier="cache/posts/virtualenv.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

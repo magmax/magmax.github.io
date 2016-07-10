@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Python orientado a servicios mediante colas de mensajes, usando Celery">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Python distribuido: Celery | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/python-distribuido-celery/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Python orientado a servicios mediante colas de mensajes, usando Celery">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/" title="Django lo hizo un mago: plantillas y contextos" type="text/html">
+<link rel="next" href="/blog/como-funciona-internet/" title="Cómo funciona Internet" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Python distribuido: Celery">
+<meta property="og:url" content="http://magmax.org/blog/python-distribuido-celery/">
+<meta property="og:description" content="Python orientado a servicios mediante colas de mensajes, usando Celery">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2015-03-20T00:00:00+00:00">
+<meta property="article:updated" content="2015-03-20T00:00:00+00:00">
+<meta property="article:tag" content="celery">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Python orientado a servicios mediante colas de mensajes, usando Celery">
+<meta name="twitter:url" content="http://magmax.org//blog/python-distribuido-celery/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+<link rel="alternate" hreflang="en" href="/en/blog/python-distribuido-celery/">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/python-distribuido-celery/" class="u-url">Python distribuido: Celery</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published updated dt-updated" datetime="2015-03-20T00:00:00+00:00" title="2015-03-20">2015-03-20</time></p>
+              <p class="commentline">            <a href="/blog/python-distribuido-celery/#disqus_thread" data-disqus-identifier="cache/posts/python-distribuido-celery.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br><div class="metadata posttranslations translations">
+              <h3 class="posttranslations-intro">También disponible en:</h3>
+              <p><a href="/en/blog/python-distribuido-celery/" rel="alternate" hreflang="en"><img src="/images/en.png"> English</a></p>
+            </div>
+          </header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Ahora están de modas las arquitecturas <abbr title="Service Oriented Architectures">SOA</abbr>. Estas arquitecturas consisten en pequeños servicios muy específicos, de manera que interactúan unos con otros.</p>
+<p>En esta ocasión voy a contar cómo utilizar <a class="reference external" href="http://www.celeryproject.org/">Celery</a> para crear una arquitectura SOA.</p>
+<!-- TEASER_END -->
+<div class="section" id="que-es-celery">
+<h2>Qué es Celery</h2>
+<p>No puede decirse que sea un sistema de comunicaciones, ya que el sistema de comunicaciones es <a class="reference external" href="https://www.rabbitmq.com">RabbitMQ</a>, <a class="reference external" href="http://redis.io/">Redis</a>, etc. Como usa uno de ellos, no puede ser un sistema de colas de mensajes. Tampoco es un protocolo, ya que utiliza <a class="reference external" href="https://www.amqp.org/">AMQP</a>. Tampoco es una abstracción sobre éstos, ya que eso es <a class="reference external" href="https://kombu.readthedocs.org/en/latest/">Kombu</a>, la librería de comunicaciones que utiliza.</p>
+<p><a class="reference external" href="http://www.celeryproject.org/">Celery</a> es un conjunto de herramientas que nos permite trabajar fácilmente con múltiples servicios, con algo de azúcar sintáctico. Es una forma de lanzar servicios viéndolos como <strong>tareas</strong>.</p>
+</div>
+<div class="section" id="como-instalarlo">
+<h2>Cómo instalarlo</h2>
+<p>Instalarlo es sencillo; con <cite>pip</cite>:</p>
+<pre class="code bash"><a name="rest_code_8b2263b8888745d78d433a39c3e3dde2-1"></a>pip install celery
+</pre>
+<p>o con <cite>apt</cite>:</p>
+<pre class="code bash"><a name="rest_code_9f8e84bd7fba4c6f9d3c6142f734fa17-1"></a>apt-get install python-celery
+</pre>
+<p>El problema es que necesitamos un <strong>Broker</strong>. El <strong>Broker</strong> es el medio utilizado para transportar los mensajes de un servicio a otro. En este caso, necesitamos una cola de mensajes.</p>
+<p>Para los ejemplos usaremos dos: <a class="reference external" href="https://www.rabbitmq.com">RabbitMQ</a> y <a class="reference external" href="http://redis.io/">Redis</a>. La primera es algo... complicadilla, pero muy visual si ya lo conocéis e instaláis el <a class="reference external" href="https://www.rabbitmq.com/management.html">plugin de gestión</a>. La segunda es más sencilla de instalar, pero más difícil de ver las tripas. Para <a class="reference external" href="http://redis.io/">Redis</a> necesitaréis también la librería; con <cite>pip</cite>:</p>
+<pre class="code bash"><a name="rest_code_9cb63e58da0a47d986e8f74820e87dd9-1"></a>pip install redis
+</pre>
+<p>o con <cite>apt</cite>:</p>
+<pre class="code bash"><a name="rest_code_c04f53acd69847239984296798f188e4-1"></a>apt-get install python-redis
+</pre>
+</div>
+<div class="section" id="ejemplo">
+<h2>Ejemplo</h2>
+<div class="section" id="creando-servicios">
+<h3>Creando servicios</h3>
+<p>Vamos a comenzar con la creación de un pequeño servicio que multiplica dos números:</p>
+<p><a class="reference external" href="/listings/python-celery/001/tasks.py.html">python-celery/001/tasks.py</a></p>
+<pre class="code python"><a name="rest_code_5669bdf9ce264ab29f44d1c96a8b865a-1"></a><span class="c"># Celery service example: task to multiply two numbers</span>
+<a name="rest_code_5669bdf9ce264ab29f44d1c96a8b865a-2"></a><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
+<a name="rest_code_5669bdf9ce264ab29f44d1c96a8b865a-3"></a>
+<a name="rest_code_5669bdf9ce264ab29f44d1c96a8b865a-4"></a><span class="c"># RabbitMQ</span>
+<a name="rest_code_5669bdf9ce264ab29f44d1c96a8b865a-5"></a><span class="c">#app = Celery('tasks', broker='amqp://guest@localhost//', backend='amqp')</span>
+<a name="rest_code_5669bdf9ce264ab29f44d1c96a8b865a-6"></a><span class="c"># Redis</span>
+<a name="rest_code_5669bdf9ce264ab29f44d1c96a8b865a-7"></a><span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s">'tasks'</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s">'redis://localhost:6379/0'</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s">'redis://localhost:6379/0'</span><span class="p">)</span>
+<a name="rest_code_5669bdf9ce264ab29f44d1c96a8b865a-8"></a>
+<a name="rest_code_5669bdf9ce264ab29f44d1c96a8b865a-9"></a><span class="nd">@app.task</span>
+<a name="rest_code_5669bdf9ce264ab29f44d1c96a8b865a-10"></a><span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+<a name="rest_code_5669bdf9ce264ab29f44d1c96a8b865a-11"></a>    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+</pre>
+<p>Como veis, el <em>overhead</em> de añadir <a class="reference external" href="http://www.celeryproject.org/">Celery</a> es mínimo: importar la librería, crear la conexión (<tt class="docutils literal">app</tt>) y añadir un decorador a nuestro servicio.</p>
+<p>Ya es ejecutable:</p>
+<p><a class="reference external" href="/listings/python-celery/001/output.txt.html">python-celery/001/output.txt</a></p>
+<pre class="code bash"><a name="rest_code_c6589864a1c649a3a63796f47de23bae-1"></a><span class="nv">$ </span>celery worker --loglevel<span class="o">=</span>info -A tasks
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-2"></a>
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-3"></a> -------------- celery@nightcrawler v3.1.17 <span class="o">(</span>Cipater<span class="o">)</span>
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-4"></a>---- **** -----
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-5"></a>--- * ***  * -- Linux-3.16.0-4-amd64-x86_64-with-debian-8.0
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-6"></a>-- * - **** ---
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-7"></a>- ** ---------- <span class="o">[</span>config<span class="o">]</span>
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-8"></a>- ** ---------- .&gt; app:         tasks:0x7f3476eb9b90
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-9"></a>- ** ---------- .&gt; transport:   redis://localhost:6379/0
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-10"></a>- ** ---------- .&gt; results:     redis://localhost:6379/0
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-11"></a>- *** --- * --- .&gt; concurrency: <span class="m">4</span> <span class="o">(</span>prefork<span class="o">)</span>
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-12"></a>-- ******* ----
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-13"></a>--- ***** ----- <span class="o">[</span>queues<span class="o">]</span>
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-14"></a> -------------- .&gt; celery           <span class="nv">exchange</span><span class="o">=</span>celery<span class="o">(</span>direct<span class="o">)</span> <span class="nv">key</span><span class="o">=</span>celery
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-15"></a>
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-16"></a>
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-17"></a><span class="o">[</span>tasks<span class="o">]</span>
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-18"></a>  . tasks.multiply
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-19"></a>
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-20"></a><span class="o">[</span>2015-03-20 21:56:16,526: INFO/MainProcess<span class="o">]</span> Connected to redis://localhost:6379/0
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-21"></a><span class="o">[</span>2015-03-20 21:56:16,541: INFO/MainProcess<span class="o">]</span> mingle: searching <span class="k">for</span> neighbors
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-22"></a><span class="o">[</span>2015-03-20 21:56:17,780: INFO/MainProcess<span class="o">]</span> mingle: all alone
+<a name="rest_code_c6589864a1c649a3a63796f47de23bae-23"></a><span class="o">[</span>2015-03-20 21:56:17,791: WARNING/MainProcess<span class="o">]</span> celery@nightcrawler ready.
+</pre>
+<p>Aquí hay mucha información:</p>
+<ul class="simple">
+<li>versiones utilizadas.</li>
+<li>colas creadas.</li>
+<li>
+<em>brokers</em> usados para transporte y para resultados.</li>
+<li>Número de <em>workers</em>, es decir, procesos dispuestos a responder una petición de forma concurrente.</li>
+</ul>
+<p>Y alguna cosa más que podemos ignorar por el momento.</p>
+<p>Dejaremos eso ahí corriendo de momento.</p>
+</div>
+<div class="section" id="lanzando-servicios">
+<h3>Lanzando servicios</h3>
+<p>Ése es el <em>subscriptor</em>. Vamos a crear ahora el <em>publicador</em>.</p>
+<p><a class="reference external" href="/listings/python-celery/001/subscriber.py.html">python-celery/001/subscriber.py</a></p>
+<pre class="code python"><a name="rest_code_322dfb7e8cbe41a49efabc9975729e9f-1"></a><span class="c"># Celery client example: request for two numbers multiplication</span>
+<a name="rest_code_322dfb7e8cbe41a49efabc9975729e9f-2"></a><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
+<a name="rest_code_322dfb7e8cbe41a49efabc9975729e9f-3"></a>
+<a name="rest_code_322dfb7e8cbe41a49efabc9975729e9f-4"></a><span class="c"># RabbitMQ</span>
+<a name="rest_code_322dfb7e8cbe41a49efabc9975729e9f-5"></a><span class="c">#app = Celery('tasks', broker='amqp://guest@localhost//', backend='amqp')</span>
+<a name="rest_code_322dfb7e8cbe41a49efabc9975729e9f-6"></a><span class="c"># Redis</span>
+<a name="rest_code_322dfb7e8cbe41a49efabc9975729e9f-7"></a><span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s">'tasks'</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s">'redis://localhost:6379/0'</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s">'redis://localhost:6379/0'</span><span class="p">)</span>
+<a name="rest_code_322dfb7e8cbe41a49efabc9975729e9f-8"></a>
+<a name="rest_code_322dfb7e8cbe41a49efabc9975729e9f-9"></a><span class="n">promise</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_task</span><span class="p">(</span><span class="s">'tasks.multiply'</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<a name="rest_code_322dfb7e8cbe41a49efabc9975729e9f-10"></a>
+<a name="rest_code_322dfb7e8cbe41a49efabc9975729e9f-11"></a><span class="k">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+</pre>
+<p>Un poco complicado... Pero vamos a verlo rápidamente:</p>
+<ul class="simple">
+<li>La primera parte es igual que en el primer ejemplo, ya que necesitamos conectarnos al mismo sitio.</li>
+<li>La segunda parte ejecuta la tarea por su nombre, pasándole los argumentos. Eso devuelve una <em>promesa</em> (<tt class="docutils literal">promise</tt>). En este punto hemos dejado un mensaje en la cola.</li>
+<li>Finalmente, materializamos la <em>promesa</em> mediante <tt class="docutils literal">promise.get()</tt>. En algún momento el servicio habrá leído el mensaje, lo habrá procesado, habrá dejado el resultado en otra cola y, mediante este método, se lee.</li>
+</ul>
+<p>Así que parece complicado... pero podría serlo aún más.</p>
+<p>De todas maneras, he grabado un vídeo para que veáis cómo se usa todo lo anterior:</p>
+<iframe width="425" height="344" src="//www.youtube.com/embed/Lf4Q7K6Ab_g?rel=0&amp;hd=1&amp;wmode=transparent"></iframe>
+</div>
+<div class="section" id="todo-junto-es-mas-facil">
+<h3>Todo junto es más fácil</h3>
+<p>Existe la opción de ponerlo todo junto en el mismo archivo, y veréis cómo las cosas resultan aún más sencillas. Esto no siempre es posible y puede tener algún problema (como que cada cambio nos obliga a reiniciar también el servicio), pero es muy didáctico:</p>
+<p><a class="reference external" href="/listings/python-celery/002/tasks.py.html">python-celery/002/tasks.py</a></p>
+<pre class="code python"><a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-1"></a><span class="c"># Celery full example: publisher/subscriber to request a multiplication</span>
+<a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-2"></a><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
+<a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-3"></a>
+<a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-4"></a><span class="c"># RabbitMQ</span>
+<a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-5"></a><span class="c">#app = Celery('tasks', broker='amqp://guest@localhost//', backend='amqp')</span>
+<a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-6"></a><span class="c"># Redis</span>
+<a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-7"></a><span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s">'tasks'</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s">'redis://localhost:6379/0'</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s">'redis://localhost:6379/0'</span><span class="p">)</span>
+<a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-8"></a>
+<a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-9"></a><span class="nd">@app.task</span>
+<a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-10"></a><span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+<a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-11"></a>    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+<a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-12"></a>
+<a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-13"></a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-14"></a>    <span class="n">promise</span> <span class="o">=</span> <span class="n">multiply</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-15"></a>    <span class="k">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+<a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-16"></a>
+<a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-17"></a><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+<a name="rest_code_9de0502d6d7a47ca9a8ea81a491fb995-18"></a>    <span class="n">main</span><span class="p">()</span>
+</pre>
+<p>En este caso invocamos a un método de la tarea directamente, y así obtenemos la tarea.</p>
+<p>Ya tenemos una forma muy complicada de multiplicar dos números :D</p>
+</div>
+</div>
+<div class="section" id="herramientas">
+<h2>Herramientas</h2>
+<p>Como dije, <a class="reference external" href="http://www.celeryproject.org/">Celery</a> proporciona herramientas y azúcar sintáctico.</p>
+<p>Lo primero que vamos a ver son las funciones parciales o <em>partials</em>. Simplemente son funciones con algunos parámetros ya resueltos.</p>
+<p>En nuestro caso es fácil crear el <em>partial</em> <tt class="docutils literal">duplicate</tt> forzando el primer parámetro de <tt class="docutils literal">multiply</tt>:</p>
+<p><a class="reference external" href="/listings/python-celery/003/tasks.py.html">python-celery/003/tasks.py</a></p>
+<table class="codetable"><tr>
+<td class="linenos"><div class="linenodiv"><pre><a href="/blog/python-distribuido-celery/#rest_code_a50aa63c566e4bb1b18581cda9ce2eac-13">13</a>
+<a href="/blog/python-distribuido-celery/#rest_code_a50aa63c566e4bb1b18581cda9ce2eac-14">14</a>
+<a href="/blog/python-distribuido-celery/#rest_code_a50aa63c566e4bb1b18581cda9ce2eac-15">15</a>
+<a href="/blog/python-distribuido-celery/#rest_code_a50aa63c566e4bb1b18581cda9ce2eac-16">16</a></pre></div></td>
+<td class="code"><pre class="code python"><a name="rest_code_a50aa63c566e4bb1b18581cda9ce2eac-13"></a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<a name="rest_code_a50aa63c566e4bb1b18581cda9ce2eac-14"></a>    <span class="n">duplicate</span> <span class="o">=</span> <span class="n">multiply</span><span class="o">.</span><span class="n">si</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<a name="rest_code_a50aa63c566e4bb1b18581cda9ce2eac-15"></a>    <span class="n">promise</span> <span class="o">=</span> <span class="n">duplicate</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<a name="rest_code_a50aa63c566e4bb1b18581cda9ce2eac-16"></a>    <span class="k">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+</pre></td>
+</tr></table>
+<p>Sí, los parciales se realizan con el método <tt class="docutils literal">.si</tt>, aunque también podemos utilizar <tt class="docutils literal">.s</tt>. La diferencia entre ambas es que la primera es <em>inmutable</em> (por eso la <tt class="docutils literal">i</tt>). Resulta difícil explicar qué es eso sin contar antes otra herramienta de <a class="reference external" href="http://www.celeryproject.org/">Celery</a>: las cadenas (<tt class="docutils literal">Chain</tt>).</p>
+<p>En <a class="reference external" href="http://www.celeryproject.org/">Celery</a> se pueden concatenar tareas, de manera que el resultado de una de ellas sea el primer parámetro de la siguiente. ¿Por qué el primero? Pues porque sí. Es una putada, pero es así.</p>
+<p>En ocasiones querremos funciones encadenadas tan sólo para que exista un orden, en cuyo caso queremos ignorar el resultado de la función anterior. En estos casos usaremos funciones inmutables, que no usan el parámetro anterior.</p>
+<p>Espero que se haya notado que uso "funciones" o "servicios" indistintamente.</p>
+<p>Pero basta ya de palabrería y concatenemos algo:</p>
+<p><a class="reference external" href="/listings/python-celery/004/tasks.py.html">python-celery/004/tasks.py</a></p>
+<table class="codetable"><tr>
+<td class="linenos"><div class="linenodiv"><pre><a href="/blog/python-distribuido-celery/#rest_code_4a613ee52a2645ae8916069d70b29a4d-13">13</a>
+<a href="/blog/python-distribuido-celery/#rest_code_4a613ee52a2645ae8916069d70b29a4d-14">14</a>
+<a href="/blog/python-distribuido-celery/#rest_code_4a613ee52a2645ae8916069d70b29a4d-15">15</a>
+<a href="/blog/python-distribuido-celery/#rest_code_4a613ee52a2645ae8916069d70b29a4d-16">16</a>
+<a href="/blog/python-distribuido-celery/#rest_code_4a613ee52a2645ae8916069d70b29a4d-17">17</a>
+<a href="/blog/python-distribuido-celery/#rest_code_4a613ee52a2645ae8916069d70b29a4d-18">18</a>
+<a href="/blog/python-distribuido-celery/#rest_code_4a613ee52a2645ae8916069d70b29a4d-19">19</a>
+<a href="/blog/python-distribuido-celery/#rest_code_4a613ee52a2645ae8916069d70b29a4d-20">20</a></pre></div></td>
+<td class="code"><pre class="code python"><a name="rest_code_4a613ee52a2645ae8916069d70b29a4d-13"></a><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">chain</span>
+<a name="rest_code_4a613ee52a2645ae8916069d70b29a4d-14"></a>
+<a name="rest_code_4a613ee52a2645ae8916069d70b29a4d-15"></a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<a name="rest_code_4a613ee52a2645ae8916069d70b29a4d-16"></a>    <span class="n">duplicate</span> <span class="o">=</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<a name="rest_code_4a613ee52a2645ae8916069d70b29a4d-17"></a>
+<a name="rest_code_4a613ee52a2645ae8916069d70b29a4d-18"></a>    <span class="n">task</span> <span class="o">=</span> <span class="n">chain</span><span class="p">(</span><span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<a name="rest_code_4a613ee52a2645ae8916069d70b29a4d-19"></a>    <span class="n">promise</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">delay</span><span class="p">()</span>
+<a name="rest_code_4a613ee52a2645ae8916069d70b29a4d-20"></a>    <span class="k">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+</pre></td>
+</tr></table>
+<p>Como dije antes, <a class="reference external" href="http://www.celeryproject.org/">Celery</a> proporciona azúcar sintáctico, por lo que lo anterior también puede escribirse así:</p>
+<p><a class="reference external" href="/listings/python-celery/005/tasks.py.html">python-celery/005/tasks.py</a></p>
+<table class="codetable"><tr>
+<td class="linenos"><div class="linenodiv"><pre><a href="/blog/python-distribuido-celery/#rest_code_546af64a07974858971478836232416e-13">13</a>
+<a href="/blog/python-distribuido-celery/#rest_code_546af64a07974858971478836232416e-14">14</a>
+<a href="/blog/python-distribuido-celery/#rest_code_546af64a07974858971478836232416e-15">15</a>
+<a href="/blog/python-distribuido-celery/#rest_code_546af64a07974858971478836232416e-16">16</a>
+<a href="/blog/python-distribuido-celery/#rest_code_546af64a07974858971478836232416e-17">17</a>
+<a href="/blog/python-distribuido-celery/#rest_code_546af64a07974858971478836232416e-18">18</a></pre></div></td>
+<td class="code"><pre class="code python"><a name="rest_code_546af64a07974858971478836232416e-13"></a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<a name="rest_code_546af64a07974858971478836232416e-14"></a>    <span class="n">duplicate</span> <span class="o">=</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<a name="rest_code_546af64a07974858971478836232416e-15"></a>
+<a name="rest_code_546af64a07974858971478836232416e-16"></a>    <span class="n">task</span> <span class="o">=</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">|</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<a name="rest_code_546af64a07974858971478836232416e-17"></a>    <span class="n">promise</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">delay</span><span class="p">()</span>
+<a name="rest_code_546af64a07974858971478836232416e-18"></a>    <span class="k">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+</pre></td>
+</tr></table>
+<p>Y aquí es donde comienza la diversión: hemos creado un <strong>canvas</strong>, es decir, un flujo de tareas. Aunque parezca mentira, si lanzáis distintos <em>workers</em> en distintas máquinas y todos se conectan al mismo <em>broker</em>, cada operación podría ejecutarse en uno diferente.</p>
+<p>Pero claro... ¿para qué tanto <em>canvas</em> si las operaciones son secuenciales? Pues aquí viene la gracia: procesarlas de forma concurrente, los <strong>Grupos</strong> o <tt class="docutils literal">group</tt>:</p>
+<p><a class="reference external" href="/listings/python-celery/006/tasks.py.html">python-celery/006/tasks.py</a></p>
+<table class="codetable"><tr>
+<td class="linenos"><div class="linenodiv"><pre><a href="/blog/python-distribuido-celery/#rest_code_2064ca9831ab4b22b8cdafb472ec54c3-13">13</a>
+<a href="/blog/python-distribuido-celery/#rest_code_2064ca9831ab4b22b8cdafb472ec54c3-14">14</a>
+<a href="/blog/python-distribuido-celery/#rest_code_2064ca9831ab4b22b8cdafb472ec54c3-15">15</a>
+<a href="/blog/python-distribuido-celery/#rest_code_2064ca9831ab4b22b8cdafb472ec54c3-16">16</a>
+<a href="/blog/python-distribuido-celery/#rest_code_2064ca9831ab4b22b8cdafb472ec54c3-17">17</a>
+<a href="/blog/python-distribuido-celery/#rest_code_2064ca9831ab4b22b8cdafb472ec54c3-18">18</a>
+<a href="/blog/python-distribuido-celery/#rest_code_2064ca9831ab4b22b8cdafb472ec54c3-19">19</a>
+<a href="/blog/python-distribuido-celery/#rest_code_2064ca9831ab4b22b8cdafb472ec54c3-20">20</a>
+<a href="/blog/python-distribuido-celery/#rest_code_2064ca9831ab4b22b8cdafb472ec54c3-21">21</a>
+<a href="/blog/python-distribuido-celery/#rest_code_2064ca9831ab4b22b8cdafb472ec54c3-22">22</a>
+<a href="/blog/python-distribuido-celery/#rest_code_2064ca9831ab4b22b8cdafb472ec54c3-23">23</a>
+<a href="/blog/python-distribuido-celery/#rest_code_2064ca9831ab4b22b8cdafb472ec54c3-24">24</a></pre></div></td>
+<td class="code"><pre class="code python"><a name="rest_code_2064ca9831ab4b22b8cdafb472ec54c3-13"></a><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">group</span>
+<a name="rest_code_2064ca9831ab4b22b8cdafb472ec54c3-14"></a>
+<a name="rest_code_2064ca9831ab4b22b8cdafb472ec54c3-15"></a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+<a name="rest_code_2064ca9831ab4b22b8cdafb472ec54c3-16"></a>    <span class="n">duplicate</span> <span class="o">=</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<a name="rest_code_2064ca9831ab4b22b8cdafb472ec54c3-17"></a>
+<a name="rest_code_2064ca9831ab4b22b8cdafb472ec54c3-18"></a>    <span class="n">task</span> <span class="o">=</span> <span class="n">group</span><span class="p">(</span>
+<a name="rest_code_2064ca9831ab4b22b8cdafb472ec54c3-19"></a>        <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">|</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
+<a name="rest_code_2064ca9831ab4b22b8cdafb472ec54c3-20"></a>        <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">|</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
+<a name="rest_code_2064ca9831ab4b22b8cdafb472ec54c3-21"></a>        <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span> <span class="o">|</span> <span class="n">duplicate</span><span class="p">,</span>
+<a name="rest_code_2064ca9831ab4b22b8cdafb472ec54c3-22"></a>    <span class="p">)</span>
+<a name="rest_code_2064ca9831ab4b22b8cdafb472ec54c3-23"></a>    <span class="n">promise</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">delay</span><span class="p">()</span>
+<a name="rest_code_2064ca9831ab4b22b8cdafb472ec54c3-24"></a>    <span class="k">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+</pre></td>
+</tr></table>
+<p>Existe aún más azúcar sintáctico, como los <tt class="docutils literal">chords</tt>, <tt class="docutils literal">maps</tt>, <tt class="docutils literal">starmaps</tt> y <tt class="docutils literal">chunks</tt>, pero no los vamos a ver aquí. Este artículo es meramente introductorio. <a class="reference external" href="http://celery.readthedocs.org/en/latest/userguide/canvas.html">Podéis leer más información sobre los Canvas</a>.</p>
+<div class="section" id="el-beat">
+<h3>El Beat</h3>
+<p>Otro aspecto importante de <a class="reference external" href="http://www.celeryproject.org/">Celery</a> es el <strong>Beat</strong>. Consiste en un <em>latido</em> o una señal producida cada cierto tiempo. Podemos activarla en el worker mediante la opción <tt class="docutils literal"><span class="pre">--beat</span></tt>. Mientras no metan <a class="reference external" href="https://github.com/celery/celery/issues/1495">exclusividad en el Beat</a>, es importante lanzar sólo uno o recibiríamos más de un <em>latido</em>.</p>
+<p>Es este <em>beat</em> quien nos permite lanzar tareas periódicas.</p>
+<p>Veamos un ejemplo pequeñito: Cada 10 segundos vamos a multiplicar la hora por dos:</p>
+<p><a class="reference external" href="/listings/python-celery/007/tasks.py.html">python-celery/007/tasks.py</a></p>
+<pre class="code python"><a name="rest_code_7a3c695d17e94f449dc201886a30583b-1"></a><span class="c"># Celery beat example: periodic date operation</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-2"></a><span class="kn">import</span> <span class="nn">datetime</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-3"></a><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-4"></a><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">group</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-5"></a>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-6"></a><span class="c"># RabbitMQ</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-7"></a><span class="c">#app = Celery('tasks', broker='amqp://guest@localhost//', backend='amqp')</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-8"></a><span class="c"># Redis</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-9"></a><span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s">'tasks'</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s">'redis://localhost:6379/0'</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s">'redis://localhost:6379/0'</span><span class="p">)</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-10"></a>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-11"></a><span class="nd">@app.task</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-12"></a><span class="k">def</span> <span class="nf">add_days</span><span class="p">(</span><span class="n">days</span><span class="p">):</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-13"></a>    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">)</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-14"></a>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-15"></a><span class="n">app</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-16"></a>    <span class="n">CELERYBEAT_SCHEDULE</span><span class="o">=</span><span class="p">{</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-17"></a>        <span class="s">'multiply-each-10-seconds'</span><span class="p">:</span> <span class="p">{</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-18"></a>            <span class="s">'task'</span><span class="p">:</span> <span class="s">'tasks.add_days'</span><span class="p">,</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-19"></a>            <span class="s">'schedule'</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-20"></a>            <span class="s">'args'</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">)</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-21"></a>        <span class="p">},</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-22"></a>    <span class="p">},</span>
+<a name="rest_code_7a3c695d17e94f449dc201886a30583b-23"></a><span class="p">)</span>
+</pre>
+<p>Y aquí os dejo un ejemplo de ejecución:</p>
+<iframe width="425" height="344" src="//www.youtube.com/embed/qTXJUnV0oHU?rel=0&amp;hd=1&amp;wmode=transparent"></iframe><p>Nuevamente, no voy a entrar en más detalles aquí; tan sólo pretendo darlo a conocer. Podéis leer más sobre las <a class="reference external" href="http://celery.readthedocs.org/en/latest/userguide/periodic-tasks.html">tareas periódicas</a> si os interesa.</p>
+</div>
+<div class="section" id="warning-pickle">
+<h3>Warning: pickle</h3>
+<p>Es posible que veamos un <em>warning</em> del estilo <tt class="docutils literal">warnings.warn(CDeprecationWarning(W_PICKLE_DEPRECATED))</tt>. Esto se debe a que estamos usando el serializador <a class="reference external" href="https://docs.python.org/3.4/library/pickle.html">pickle</a>, que está obsoleto. Podéis evitarlo añadiendo la línea siguiente:</p>
+<p><a class="reference external" href="/listings/python-celery/008/tasks.py.html">python-celery/008/tasks.py</a></p>
+<table class="codetable"><tr>
+<td class="linenos"><div class="linenodiv"><pre><a href="/blog/python-distribuido-celery/#rest_code_02de943c45ca4214b62c1ceed0e9913b-23">23</a></pre></div></td>
+<td class="code"><pre class="code python"><a name="rest_code_02de943c45ca4214b62c1ceed0e9913b-23"></a>    <span class="n">CELERY_ACCEPT_CONTENT</span> <span class="o">=</span> <span class="p">[</span><span class="s">'json'</span><span class="p">],</span>
+</pre></td>
+</tr></table>
+</div>
+</div>
+<div class="section" id="entornos-complejos">
+<h2>Entornos complejos</h2>
+<p>Evidentemente, todo lo que he contado aquí es lo más básico de <a class="reference external" href="http://www.celeryproject.org/">Celery</a>. Hemos utilizado una única cola para nuestras comunicaciones. Dado que <a class="reference external" href="https://www.rabbitmq.com">RabbitMQ</a> permite operaciones entre colas, <a class="reference external" href="http://www.celeryproject.org/">Celery</a> también.</p>
+<p>Entre otras cosas, se puede:</p>
+<ul class="simple">
+<li>asignar colas diferentes para diferentes tareas, de manera que no todos los <em>workers</em> atiendan todas las peticiones o que haya un número de <em>workers</em> diferente para cada cola.</li>
+<li>
+<em>enrutar</em> mensajes entre colas.</li>
+<li>enviar mensajes a todas las colas (<strong>topic</strong>).</li>
+<li>...</li>
+</ul>
+<p>No me voy a meter aquí en profundidad, pero sí voy a describir cómo funciona la entrega de mensajes. Esta información es necesaria para poder entender los enrutados (obtenido de <a class="reference external" href="http://celery.readthedocs.org/en/latest/userguide/routing.html#exchanges-queues-and-routing-keys">Exchanges, queues and routing keys</a>):</p>
+<ol class="arabic simple">
+<li>Se envía un mensaje. Éste se deposita en un <strong>EXCHANGE</strong>. Si no existía, <a class="reference external" href="http://www.celeryproject.org/">Celery</a> lo crea.</li>
+<li>El <strong>EXCHANGE</strong> enruta el mensaje a una o más colas, dependiendo de su configuración. Si las colas no existen, <a class="reference external" href="http://www.celeryproject.org/">Celery</a> las crea.</li>
+<li>El mensaje queda esperando en la cola hasta que un consumidor lo recoge y procesa. En ese momento el mensaje se bloquea para que ningún otro consumidor lo lea.</li>
+<li>Tras su procesado, el consumidor envía un <strong>ACK</strong> y el mensaje se borra de la cola.</li>
+</ol>
+<p>Por defecto, <a class="reference external" href="http://www.celeryproject.org/">Celery</a> crea colas con el nombre del <em>exchange</em> y las une (<strong>bind</strong>) en modo directo, es decir, que todo lo que llega al <em>exchange</em> se deja en la cola.</p>
+<p>Se puede jugar con los enrutados y crear arquitecturas realmente complejas, de manera que cada mensaje llege a su destino dependiendo de la operación a realizar.</p>
+</div>
+<div class="section" id="mas-informacion">
+<h2>Más información</h2>
+<p>Entre los artículos de nivel básico, me gusta mucho el artículo <a class="reference external" href="http://abhishek-tiwari.com/post/amqp-rabbitmq-and-celery-a-visual-guide-for-dummies">AMQP, RabbitMQ and Celery - A Visual Guide For Dummies</a>, ya que lo explica todo con imágenes. No está mal un artículo publicado en Digitalocean, <a class="reference external" href="https://www.digitalocean.com/community/tutorials/how-to-use-celery-with-rabbitmq-to-queue-tasks-on-an-ubuntu-vps">How To Use Celery with RabbitMQ to Queue Tasks on an Ubuntu VPS</a> o una presentación de la PyCon 2013, titulada <a class="reference external" href="http://www.imankulov.name/posts/celery-for-internal-api.html">Celery for Internal API in SOA infrastructure</a>.</p>
+<p><a class="reference external" href="http://www.caktusgroup.com/blog/2014/06/23/scheduling-tasks-celery/">Getting Started Scheduling Tasks with Celery</a> es un artículo que cuenta más cómo configurar tareas periódicas de forma dinámica con <a class="reference external" href="https://pypi.python.org/pypi/django-celery">DJCelery</a>, bastante interesante aunque no queráis usar <a class="reference external" href="https://www.djangoproject.com/">Django</a>.</p>
+<p>Para entender mejor lo que ocurre a bajo nivel, recomiendo meterse de lleno en <a class="reference external" href="http://www.rabbitmq.com/tutorials/amqp-concepts.html">AMQP 0-9-1 Model Explained</a>, donde se cuenta cómo funciona el protocolo <a class="reference external" href="https://www.amqp.org/">AMQP</a>. Muy interesante antes de entrar en enrutados complejos. En este mismo sentido recomiendo <a class="reference external" href="http://rajith.2rlabs.com/2007/10/13/amqp-in-10-mins-part3-flexible-routing-model/">AMQP in 10 mins : Part3 – Flexible Routing Model</a>, que es más sencillo y sólo explica los conceptos más básicos.</p>
+<p>Si queréis participar en un proyecto que utiliza <a class="reference external" href="http://www.celeryproject.org/">Celery</a>, os puedo animar a que me ayudéis con <a class="reference external" href="https://github.com/djcron-project/">DJCron</a>, que es un wrapper sobre <a class="reference external" href="https://pypi.python.org/pypi/django-celery">DJCelery</a> que permite configurar tareas distribuidas de forma dinámica, añadiendo algunas características extra sobre <a class="reference external" href="https://pypi.python.org/pypi/django-celery">DJCelery</a>.</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2015-03-20T00:00:00+00:00" title="2015-03-20">2015-03-20</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/celery/" rel="tag">celery</a>
+                <a class="label label-primary p-category" href="/categories/python/" rel="tag">python</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos/" rel="prev" title="Django lo hizo un mago: plantillas y contextos">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/como-funciona-internet/" rel="next" title="Cómo funciona Internet">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/python-distribuido-celery/",
+        disqus_title="Python distribuido: Celery",
+        disqus_identifier="cache/posts/python-distribuido-celery.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

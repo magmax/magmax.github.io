@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Segunda parte de este tutorial de git desde el punto de vista del usuario">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Usando Git(2): varios working copies | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/usando-git2/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Segunda parte de este tutorial de git desde el punto de vista del usuario">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/usando-git/" title="Usando Git(1)" type="text/html">
+<link rel="next" href="/blog/lamp-con-puppet/" title="LAMP con Puppet" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Usando Git(2): varios working copies">
+<meta property="og:url" content="http://magmax.org/blog/usando-git2/">
+<meta property="og:description" content="Segunda parte de este tutorial de git desde el punto de vista del usuario">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2013-10-22T00:00:00+00:00">
+<meta property="article:updated" content="2013-10-22T00:00:00">
+<meta property="article:tag" content="dvcs">
+<meta property="article:tag" content="git">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Segunda parte de este tutorial de git desde el punto de vista del usuario">
+<meta name="twitter:url" content="http://magmax.org//blog/usando-git2/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/usando-git2/" class="u-url">Usando Git(2): varios working copies</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2013-10-22T00:00:00+00:00" title="2013-10-22">2013-10-22</time>
+                // <time class="updated dt-updated" datetime="2013-10-22T00:00:00" title="2013-10-22">2013-10-22</time></p>
+              <p class="commentline">            <a href="/blog/usando-git2/#disqus_thread" data-disqus-identifier="cache/posts/usando-git-2.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>El el tutorial anterior, <a href="/blog/usando-git">Usando Git(1)</a>, vimos cómo se inicia un proyecto en Git. En esta ocasión continuaremos con dicho proyecto, haciéndolo crecer hacia nuevos retos.</p>
+<p>En esta ocasión dispondremos de varios <strong>working copies</strong> de la aplicación, lo que provocará que necesitemos más órdenes <a href="http://git-scm.com/" title="Official Git page">Git</a>. Algunas de ellas van siendo algo avanzadas.</p>
+<p>Trataré de introducirlas en un orden lógico, a medida que podemos ir necesitándolas.</p>
+<!-- TEASER_END -->
+
+<h2 id="recordando">Recordando</h2>
+<p>No viene mal repasar el dibujo que derrocha arte:</p>
+<pre class="code literal-block">-----------   1   ---------
+| Working |&lt;-----&gt;| Stash |
+|  copy   |       ---------
+-----------
+     ^
+     |2
+     |
+     v
+----------   3   ---------   4    ----------
+|  Stage |&lt;-----&gt;| Local |&lt;------&gt;| Remote |
+----------       ---------        ----------
+</pre>
+
+
+<p>Ya conocemos las 5 zonas:</p>
+<ul>
+<li>
+<strong>Working copy</strong> con los archivos a modificar.</li>
+<li>
+<strong>Stash</strong> o cajón de sastre que aún no hemos utilizado</li>
+<li>
+<strong>Stage</strong> para preparar nuestros <em>commits</em>
+</li>
+<li>
+<strong>local</strong>, nombre que le dimos a los archivos ocultos de <a href="http://git-scm.com/" title="Official Git page">Git</a> en nuestra máquina</li>
+<li>
+<strong>remote</strong>, con los archivos de <a href="http://git-scm.com/" title="Official Git page">Git</a> remotos.</li>
+</ul>
+<p>Insisto una vez más en no confundier el <strong>Stash</strong> con el <strong>Stage</strong>.</p>
+<p>En esta ocasión, a penas hablaremos del <strong>Stage</strong>, pero sí del <strong>Stash</strong>.</p>
+<h2 id="progresando">Progresando</h2>
+<p>Continuamos con el <em>"Proyecto Fantabuloso"</em> que nos va a hacer millonarios. Los ciclos <code>add</code> y <code>commit</code> dentro de ciclos <code>push</code> nos funcionan bien, pero tenemos que viajar. La máquina de viaje, a la que llamaremos <em>Fog</em> en honor a  <a href="http://es.wikipedia.org/wiki/Phileas_Fogg" title="Phileas Fogg, protagonista de 'la vuelta al mundo en 80 días', en Wikipedia">Phileas Fogg</a>, es un poco pesada pero también un poco lenta. Por eso en casa preferimos utilizar <em>Flash</em>, ya que es más rápida.</p>
+<p>Primero tenemos que realizar la puesta a punto de <em>Fogg</em>, cosa que ya sabemos hacer:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git clone git://example.com/fantabulosum.git
+Cloning into <span class="s1">'fantabulosum'</span>...
+<span class="k">done</span>.
+</pre>
+
+
+<p>Muy bien. ¿Y ahora qué? Si modificamos los archivos de <em>Fogg</em>, <em>Flash</em> estará desactualizada y viceversa. Supongamos que hicimos cambios en <em>Flash</em>, <em>pusheamos</em> y tenemos <em>Fogg</em> desactualizada. Existe una orden para traerse los cambios de <strong>remote</strong> a <strong>local</strong>:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git fetch
+remote: Counting objects: 5, <span class="k">done</span>.
+remote: Total <span class="m">3</span> <span class="o">(</span>delta 0<span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta 0<span class="o">)</span>
+Unpacking objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, <span class="k">done</span>.
+From git://example.com/fantabulosum.git
+   59aff13..8e328dc  master     -&gt; origin/master
+</pre>
+
+
+<p><a href="http://git-scm.com/" title="Official Git page">Git</a> puede parecer demasiado verboso cuando se está comenzando. No hace falta pelearse con toda esa información aún. Simplemente es necesario saber que ya tenemos en <strong>local</strong> todo lo que está en <strong>remote</strong>. El problema es que nuestra <strong>working copy</strong> no tiene todo lo que está en <strong>local</strong>. Podemos verlo fácilmente:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git status
+<span class="c"># On branch master</span>
+<span class="c"># Your branch is behind 'origin/master' by 1 commit, and can be fast-forwarded.</span>
+<span class="c">#</span>
+nothing to commit <span class="o">(</span>working directory clean<span class="o">)</span>
+</pre>
+
+
+<p>Me está diciendo que mi rama está 1 <em>commit</em> por detrás de lo que hay en el <strong>remote</strong>, y que puede ser <em>"fast-forwardeada"</em>. Eso sólo significa que alguien (yo) ha hecho cambios en <strong>remote</strong> y que aún no los tengo en mi <strong>working copy</strong>. Vamos, lo que ya sabíamos.</p>
+<p>Hay distintas maneras de realizar esa operación, el <em>"fast-forward"</em>. <em>"Fast-forward"</em> tan sólo significa que "podemos avanzar sin problemas".</p>
+<pre class="code literal-block"><span class="nv">$ </span>git merge origin/master
+Updating 8e328dc..d7ff170
+Fast-forward
+ README <span class="p">|</span>    <span class="m">2</span> +-
+</pre>
+
+
+<p>Cuando hicimos el <code>status</code> nos dijo que estábamos por detrás de <em>"origin/master"</em>, así que es de suponer que <em>"origin/master"</em> es como se llama al punto en que nos encontramos en <strong>remote</strong>. Y así es.</p>
+<p>Al decir que queremos <em>mezclar</em> la versión que hay en <strong>remote</strong>, <a href="http://git-scm.com/" title="Official Git page">Git</a> se da cuenta de que mezclar los cambios es sencillo y lo hace sin problemas. De esta manera es como si hubiéramos realizado nuestros siempre en <em>Fogg</em>.</p>
+<p>Ya podemos continuar con nuestros ciclos <code>add</code>-<code>commit</code>-<code>push</code> tranquilamente.</p>
+<h2 id="conflictos">Conflictos</h2>
+<p>El escenario es el siguiente: en el tren la cobertura es muy mala y nos hemos visto obligados a continuar trabajando a sabiendas de que hay cambios en <strong>remote</strong>. Hemos realizado distintos ciclos <code>add</code>-<code>commit</code>, de manera que tenemos algo así:</p>
+<pre class="code literal-block">         A---B---C Flash
+        /
+   D---E---F---G Fogg
+</pre>
+
+
+<p>Explico el gráfico: en el punto E pude hacer un <code>fetch</code> y, por tanto, en ese punto <em>Flash</em> y <em>Fogg</em> son iguales. A partir de ahí cada una tiene unos cambios que no tiene la otra.</p>
+<p>En cuanto llegamos a casa queremos arreglar este estropicio... Estamos seguros de que nos llevará horas.</p>
+<p>Primero nos vamos a una máquina y hacemos <em>push</em>. No hay problemas. Ahora nos vamos a la otra y tratamos de hacer lo mismo:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git push
+To fantabulosum
+ ! <span class="o">[</span>rejected<span class="o">]</span>        master -&gt; master <span class="o">(</span>non-fast-forward<span class="o">)</span>
+error: failed to push some refs to <span class="s1">'git://example.com/fantabulosum.git'</span>
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Merge the remote changes <span class="o">(</span>e.g. <span class="s1">'git pull'</span><span class="o">)</span>
+hint: before pushing again.
+hint: See the <span class="s1">'Note about fast-forwards'</span> in <span class="s1">'git push --help'</span> <span class="k">for</span> details.
+</pre>
+
+
+<p>¡Horror! Pero... ¿qué me está diciendo...? Dice que use <code>pull</code>, pero no sé qué es eso. Vamos a hacer lo que hicimos antes, a ver qué ocurre:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git fetch
+remote: Counting objects: 8, <span class="k">done</span>.
+remote: Compressing objects: 100% <span class="o">(</span>2/2<span class="o">)</span>, <span class="k">done</span>.
+remote: Total <span class="m">6</span> <span class="o">(</span>delta 0<span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta 0<span class="o">)</span>
+Unpacking objects: 100% <span class="o">(</span>6/6<span class="o">)</span>, <span class="k">done</span>.
+From git://example.com/fantabulosum.git
+   d7ff170..50ef0c0  master     -&gt; origin/master
+</pre>
+
+
+<p>Hmmm.... parece que no se queja. ¿Y si mezclamos? Bien, en ese caso pueden ocurrir dos cosas:</p>
+<h3 id="el-mundo-es-precioso-y-maravilloso">El mundo es precioso y maravilloso</h3>
+<pre class="code literal-block"><span class="nv">$ </span>git merge origin/master
+<span class="o">[</span>Se nos abre un editor<span class="o">]</span>
+Merge made by the <span class="s1">'recursive'</span> strategy.
+ README <span class="p">|</span>    <span class="m">4</span> ++++
+ <span class="m">1</span> file changed, <span class="m">4</span> insertions<span class="o">(</span>+<span class="o">)</span>
+</pre>
+
+
+<p>Durante la operación se ha abierto un editor para que escribamos un comentario. Eso es porque <a href="http://git-scm.com/" title="Official Git page">Git</a> ha sido capaz de resolver los conflictos y no necesita nuestra ayuda. Durante esta resolución, necesitó hacer un <em>commit</em> con los cambios de los dos sitios.</p>
+<p>Resultado: ya está todo listo para continuar. Hacemos <code>push</code>, nos vamos a la otra máquina, hacemos <code>fetch</code> y <code>status</code> y veremos que está todo preparado para hacer un <em>"fast-forward"</em>, por lo que podemos hacer un <code>merge</code> y seguir trabajando como si nada.</p>
+<h3 id="el-mundo-tiene-caminos-llenos-de-piedras">El mundo tiene caminos llenos de piedras</h3>
+<pre class="code literal-block"><span class="nv">$ </span>git merge origin/master
+Auto-merging README
+CONFLICT <span class="o">(</span>add/add<span class="o">)</span>: Merge conflict in README
+Automatic merge failed<span class="p">;</span> fix conflicts and <span class="k">then</span> commit the result.
+</pre>
+
+
+<p>La mezcla automática ha fallado, lo arreglo y hago <em>commit</em>. Pues muy bien. Vamos a ello.</p>
+<p>Lo primero será editar el archivo del conflicto. Aunque nos lo dice el mensaje, podemos consultarlo:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git status
+<span class="c"># On branch master</span>
+<span class="c"># Unmerged paths:</span>
+<span class="c">#   (use "git add/rm &lt;file&gt;..." as appropriate to mark resolution)</span>
+<span class="c">#</span>
+<span class="c">#   both added:         README</span>
+<span class="c">#</span>
+no changes added to commit <span class="o">(</span>use <span class="s2">"git add"</span> and/or <span class="s2">"git commit -a"</span><span class="o">)</span>
+</pre>
+
+
+<p>veamos lo que contiene el archivo README. Veremos que será algo como esto:</p>
+<pre class="code literal-block">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+B
+B
+B
+=======
+A
+A
+A
+A
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; origin/master
+</pre>
+
+
+<p>¿Qué significa esto? Las líneas de "===" separan dos zonas, la de mis cambios en <strong>local</strong> (HEAD) de los cambios en <strong>remote</strong> (origin/master). Basta con editarlo como me guste a mí y borrar esas marcas. Una vez hecho, realizo el <code>add</code>-<code>commit</code></p>
+<p>Una vez realizado, podemos volver a intentar un <code>merge</code>. Si hay suerte, habremos terminado o <a href="http://git-scm.com/" title="Official Git page">Git</a> será capaz de realizar los cambios por nosotros. Si no hay suerte... Habremos encontrado otra piedra, pero ya sabemos cómo resolver los conflictos.</p>
+<h2 id="continuando">Continuando</h2>
+<p>Hemos resuelto el problema. Ahora sabemos cómo trabajar desde dos máquinas sin importarnos perder la cobertura. <a href="http://git-scm.com/" title="Official Git page">Git</a> comienza a demostrarnos el por qué de su fama.</p>
+<h2 id="alto-un-bug">¡Alto! ¡Un bug!</h2>
+<p>Mierda. Estábamos tan enfrascados en una característica nueva que no nos dimos cuenta y cometimos un error. Tenemos cambios en la <strong>working copy</strong> que no queremos perder, pero tampoco queremos que vayan en esta revisión (y recordemos que aún no sabemos qué coño es eso de las "ramas").</p>
+<p>¿Qué podemos hacer?</p>
+<p>Bien, pues basta con guardarlo en un cajón. Y nuestro cajón se llama <strong>stash</strong></p>
+<pre class="code literal-block"><span class="nv">$ </span>git stash
+Saved working directory and index state WIP on master: 4421e44 merge
+HEAD is now at 4421e44 merge
+</pre>
+
+
+<p>Ahora podemos arreglar el bug, que era cosa de poco. Realizamos nuestro ciclo <code>add</code>-<code>commit</code>-<code>push</code> y... ¿dónde lo habíamos dejado? Ah, sí, en el <strong>stash</strong>:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git stash pop
+<span class="c"># On branch master</span>
+<span class="c"># Changes not staged for commit:</span>
+<span class="c">#   (use "git add &lt;file&gt;..." to update what will be committed)</span>
+<span class="c">#   (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)</span>
+<span class="c">#</span>
+<span class="c">#   modified:   README</span>
+<span class="c">#</span>
+no changes added to commit <span class="o">(</span>use <span class="s2">"git add"</span> and/or <span class="s2">"git commit -a"</span><span class="o">)</span>
+Dropped refs/stash@<span class="o">{</span>0<span class="o">}</span> <span class="o">(</span>38f9609d4842369156d00d3e9632be475e14a2de<span class="o">)</span>
+</pre>
+
+
+<p>¿¿¿Cómo??? ¡¡Nos ha restaurado el espacio de trabajo!!</p>
+<p>Al restaurar, igual que en un <code>merge</code>, puede haber conflictos. Pero eso ya no nos asusta, ¿verdad?</p>
+<p>Hay un par de órdenes muy interesantes, como <code>stash list</code>, para ver qué tenemos en el <strong>stash</strong>:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git stash list
+stash@<span class="o">{</span>0<span class="o">}</span>: WIP on master: 4421e44 merge
+</pre>
+
+
+<p>o <code>stash show</code>, para ver qué está modificado:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git stash show
+ README <span class="p">|</span>    <span class="m">3</span> +++
+ <span class="m">1</span> file changed, <span class="m">3</span> insertions<span class="o">(</span>+<span class="o">)</span>
+</pre>
+
+
+<h2 id="suficiente-por-ahora">Suficiente por ahora</h2>
+<p>Y ya somos capaces de valernos por nosotros mismos. Nuestro <em>"Proyecto Fantabuloso"</em> progresa y no hemos necesitado ramas.</p>
+<p>Veamos lo que hemos aprendido:</p>
+<ul>
+<li>Traer información del repositorio: <code>git fetch</code>
+</li>
+<li>Mezclar la <strong>working copy</strong> y <strong>local</strong>: <code>git merge origin/master</code>
+</li>
+<li>Resolver conflictos</li>
+<li>Meter en el <strong>stash</strong>: <code>git stash</code>
+</li>
+<li>Sacar del <strong>stash</strong>: <code>git stash pop</code>
+</li>
+</ul>
+<h2 id="mas-informacion">Más información</h2>
+<p>De nuevo recomiendo la web de <a href="http://git-scm.com/" title="Official Git page">Git</a> o el libro <a href="http://git-scm.com/book/es" title="Libro gratuíto sobre Git">progit</a>, de <a href="http://scottchacon.com/">Scott Chacon</a>.</p>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2013-10-22T00:00:00+00:00" title="2013-10-22">2013-10-22</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/dvcs/" rel="tag">dvcs</a>
+                <a class="label label-primary p-category" href="/categories/git/" rel="tag">git</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/usando-git/" rel="prev" title="Usando Git(1)">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/lamp-con-puppet/" rel="next" title="LAMP con Puppet">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/usando-git2/",
+        disqus_title="Usando Git(2): varios working copies",
+        disqus_identifier="cache/posts/usando-git-2.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

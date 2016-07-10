@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Creando tu propia Entidad Certificadora SSL (y volcando certificados autofirmados) | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/creando-tu-propia-entidad-certificadora-ssl/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/colas-de-mensajes-rabbitmq/" title="Colas de mensajes: RabbitMQ" type="text/html">
+<link rel="next" href="/blog/graficas-basadas-en-tiempo-graphite/" title="Gráficas basadas en tiempo: Graphite" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Creando tu propia Entidad Certificadora SSL (y volcando certificados a">
+<meta property="og:url" content="http://magmax.org/blog/creando-tu-propia-entidad-certificadora-ssl/">
+<meta property="og:description" content="Otro artículo que no es mío original, pero sinceramente, la idea que tengo de certificados es la justa. Este artículo ma ha parecido que va al grano y que cuenta por qué aparece el incómodo mensaje de">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2015-06-27T05:58:31+00:00">
+<meta property="article:updated" content="2015-06-27T05:58:31+00:00">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/creando-tu-propia-entidad-certificadora-ssl/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/creando-tu-propia-entidad-certificadora-ssl/" class="u-url">Creando tu propia Entidad Certificadora SSL (y volcando certificados autofirmados)</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published updated dt-updated" datetime="2015-06-27T05:58:31+00:00" title="2015-06-27">2015-06-27</time></p>
+              <p class="commentline">            <a href="/blog/creando-tu-propia-entidad-certificadora-ssl/#disqus_thread" data-disqus-identifier="cache/posts/creando-tu-propia-autoridad-certificada-ssl.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Otro artículo que no es mío original, pero sinceramente, la idea que tengo de certificados es la justa. Este artículo ma ha parecido que va al grano y que cuenta por qué aparece el incómodo mensaje de "certificado no confiable" y cómo evitarlo.</p>
+<p>El artículo original es <a class="reference external" href="http://datacenteroverlords.com/2012/03/01/creating-your-own-ssl-certificate-authority/">Creating Your Own SSL Certificate Authority (and Dumping Self Signed Certs)</a>, y creo que el autor es Tony Bourke, mirando los comentarios.</p>
+<p>Espero que os parezca tan interesante como a mí, aunque el último ejemplo lo he añadido sólo por completitud.</p>
+<!-- TEASER_END -->
+<hr class="docutils">
+<p>SSL (o TSL si se quiere ser totalmente correcto) nos ofrece muchas cosas (a pesar de los defectos aparecidos recientemente):</p>
+<ul class="simple">
+<li>Privacidad (deja de mirar mi password)</li>
+<li>Integridad (los datos no se han modificado al vuelo)</li>
+<li>Confianza (eres quien dices ser)</li>
+</ul>
+<p>Se necesitan las tres cuando se construye algo en Amazon (¡maldito seas, Amazon Prime!). Pero también se utiliza SSL para las interfaces de usuario web y otras <abbr title="Graphical User Interface">GUI</abbr> cuando se administras dispositivos bajo nuestro control.</p>
+<p>Cuando un <em>website</em> obtiene un certificado SSL, típicamente lo compra a una de las principales entidades certificadoras como DigiCert, Symantec (compraron la sección de registros de Verisign), o si te gusta el asesino de elefantes y libertad, GoDaddy. Oscilan entre $12 USD a varios cientos al año, dependiendo de la compañía y del nivel de confianza.</p>
+<p>El beneficio que ofrecen estas entidades certificadoras consiste en una cadena de confianza. Tu navegador confía en ellas, ellas confían en un <em>website</em>, por lo que tu navegador confía en el <em>website</em> (se puede revisar su <a class="reference external" href="http://datacenteroverlords.com/2011/09/25/ssl-who-do-you-trust/">artículo sobre confianza SSL</a>, que contiene el mejor diagrama SSL jamás imaginado).</p>
+<img alt="Cadena de confianza" class="align-center" src="/images/ssl-creation/trustchain.png" style="width: 212px; height: 381px;"><p>Nuestros dispositivos, por otra parte, aquéllos que configuras y a los que sólo accede tu organización, no necesitan esa cadena de confianza sobre infrastructuras públicas. Lo primero, puede resultar realmente caro comprar un certificado SSL para cada dispositivo que se controla. Y segundo, fuiste tú quien levantó esos dispositivos, por lo que no necesitas ese nivel de confianza.</p>
+<p>Por eso las interfaces de usuario web (y otras interfaces basadas en SSL) casi siempre se protegen con certificados autofirmados. Son <a class="reference external" href="http://www.madboa.com/geek/openssl/#cert-self">realmente sencillos de crear</a> y gratuítos. También proporcionan toda la seguiridad que implica la encriptación, aunque no hacen nada sobre la confianza. Por esa razón, cuando te conectas a un dispositivo con un certificado autofirmado verás algo como esto:</p>
+<img alt="Alerta de cerficiado en el Internet Explorer" class="align-center" src="/images/ssl-creation/securitywarningie.png" style="width: 300px; height: 133px;"><p>Por lo que tienes la elección, comprar un costoso certificado SSL de una <abbr title="Certified Authority">CA</abbr> (Entidad Certificadora) u obtener esos errores. Bueno, hay una tercera opción, que es crear una entidad certificadora privada y venderlos completamente gratis.</p>
+<div class="section" id="openssl">
+<h2>OpenSSL</h2>
+<p>OpenSSL es una herramienta libre que viene en la mayoría de las instalaciones de MacOS X, Linux, *BSD y Unix. También se puede descargar el <a class="reference external" href="http://www.slproweb.com/products/Win32OpenSSL.html">binario para instalaciones Windows</a>. Y OpenSSL es todo lo que se necesita para crear una entidad certificadora privada.</p>
+<p>El proceso para crear tu propia entidad certificadora es muy simple:</p>
+<ol class="arabic simple">
+<li>Crear una clave privada.</li>
+<li>Autofirmarla</li>
+<li>Instalar la CA raíz en varias máquinas.</li>
+</ol>
+<p>Una vez hecho esto, cada dispositivo que se maneje vía HTTPS sólo necesita tener creado su propio certificado con los pasos siguientes:</p>
+<ol class="arabic simple">
+<li>Crear un CSR por dispositivo.</li>
+<li>Firmar el CSR con la clave CA raíz.</li>
+</ol>
+<p>Puedes tener configurada la CA raíz en menos de una hora. Y aquí viene cómo hacerlo.</p>
+</div>
+<div class="section" id="crear-el-certificado-raiz-se-hace-una-vez">
+<h2>Crear el Certificado Raíz (se hace una vez)</h2>
+<p>Crear el certificado raíz es fácil y se hace rápidamente. Con estos sencillos pasos se obtiene un certificado SSL raíz que se instalará en todos los escritorios, y una clave privada que se utilizará para firmar los certificados que se instalan en varios dispositivos.</p>
+<div class="section" id="crear-la-clave-raiz">
+<h3>Crear la clave raíz</h3>
+<p>El primer paso es crear la <abbr title="private root key">clave raíz privada</abbr> que sólo requiere un paso. En el ejemplo de abajo, estoy creando una clave de 2048 bits:</p>
+<pre class="code text"><a name="rest_code_1c6a11f68d6d4fc8a70b095f4f1237e6-1"></a>openssl genrsa -out rootCA.key 2048
+</pre>
+<p>Los tamaños de clave estándar actuales son 1024, 2048 y, aunque mucho menos extendido, 4096. Yo he elegido 2048, que es el más utilizado hoy en día. 4096 suele ser una exageración (y las claves con longitud 4096 es 5 veces más intensa computacionalmente que 2048), y se está abandonando 1024.</p>
+<p>Nota importante: Mantener esta clave privada <strong>muy privada</strong>. Ésta es la base de toda confianza para tus certificados, y si alguien obtiene una copia, podría generar certificados que acepte el navegador. También se puede crear una clave que esté protegida mediante una contraseña añadiendo <tt class="docutils literal"><span class="pre">-des3</span></tt>:</p>
+<pre class="code text"><a name="rest_code_a309413db53a4bb9a410776d56720188-1"></a>openssl genrsa -out rootCA.key 2048 -des3
+</pre>
+<p>Se pedirá que se introduzca una contraseña, y desde entonces se retará a introducir la contraseña cada vez que se use la clave. Claro, si olvidads la clave tendrás que hacer todo esto de nuevo.</p>
+</div>
+<div class="section" id="el-siguiente-paso-es-autofirmar-este-certificado">
+<h3>El siguiente paso es autofirmar este certificado</h3>
+<pre class="code text"><a name="rest_code_dbfe574287fb49c1b2052d6864e6cf22-1"></a>openssl req -x509 -new -nodes -key rootCA.key -days 1024 -out rootCA.pem
+</pre>
+<p>Lo que comenzará un <em>script</em> interactivo que preguntará varios bits de información. Se rellenarán como vea conveniente:</p>
+<pre class="code text"><a name="rest_code_fa893f3264ab4cf795d1276fb4551231-1"></a>You are about to be asked to enter information that will be incorporated
+<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-2"></a>into your certificate request.
+<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-3"></a>What you are about to enter is what is called a Distinguished Name or a DN.
+<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-4"></a>There are quite a few fields but you can leave some blank
+<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-5"></a>For some fields there will be a default value,
+<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-6"></a>If you enter '.', the field will be left blank.
+<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-7"></a>-----
+<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-8"></a>Country Name (2 letter code) [AU]:US
+<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-9"></a>State or Province Name (full name) [Some-State]:Oregon
+<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-10"></a>Locality Name (eg, city) []:Portland
+<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-11"></a>Organization Name (eg, company) [Internet Widgits Pty Ltd]:Overlords
+<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-12"></a>Organizational Unit Name (eg, section) []:IT
+<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-13"></a>Common Name (eg, YOUR name) []:Data Center Overlords
+<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-14"></a>Email Address []:none@none.com
+</pre>
+<p>Una vez hecho, se creará un certificado SSL llamado <strong>rootCA.pem</strong>, firmado por sí mismo, válido durante 1024 días, y que funcionará como tu certificado raíz. Lo más interesante de las autoridades certificadoras tradicionales es que ese certificado raíz está también autofirmado. Pero antes de comenzar una entidad certificadora propia, recuerde que el truco es mantener estos certificados en <em>cada navegador del mundo</em>.</p>
+</div>
+<div class="section" id="instalar-el-certificado-raiz-en-las-maquinas">
+<h3>Instalar el certificado raíz en las máquinas</h3>
+<p>Para los portátiles/sobremesas/terminales, se necesitará instalar el certificado raíz en los repositorios de certificados confiables. Lo que puede ser un poco difícil.</p>
+<p>Algunos navegadores utilizan el repositorio por defecto del sistema operativo. Por ejemplo, en Windows tanto IE como Chrome usan la gestión por defecto de certificados. Vaya a IE, <strong>Internet Options</strong>, a la pestaña <strong>Contenido/Content</strong>, y pulse el botón <strong>Certificados/Certificates</strong>. En Chrome vaya a <strong>Opciones/Settings</strong>, <strong>Mostrar opciones avanzadas/Show advanced settings</strong> y <strong>Manejar certificados/Manage certificates</strong>. Lo que se pretende es instalar el certificado CA raíz (no la clave) bajo la pestaña <strong>Trusted root Certificate Authorities</strong>.</p>
+<img alt="Configuración en el IE" class="align-center" src="/images/ssl-creation/setuprepo2.png" style="width: 275px; height: 300px;"><p>Por el contrario, en Windows Firefox tiene su propio repositorio de certificados, por lo que si se utiliza IE o Chrome tanto como Firefox, se tendrá que instalar el certificado raíz tanto en el repositorio de Windows como en el de Firefox.</p>
+<p>En Mac, Safari, Firefox y Chrome utilizan el sistema de gestión de certificados del Mac OS X, por lo que sólo se tendrá que instalar una vez. En Linux, creo que se gestiona desde cada navegador.</p>
+</div>
+<div class="section" id="crear-un-certificado-hacer-una-vez-por-dispositivo">
+<h3>Crear un certificado (hacer una vez por dispositivo)</h3>
+<p>Será necesario seguir este proceso para cada dispositivo en el que se desee instalar un certificado confiable. Primero, al igual que con el paso del CA raíz, se necesita una clave privada (diferente de la del CA raíz).</p>
+<pre class="code text"><a name="rest_code_588517883bec4ba097ab8a912436460f-1"></a>openssl genrsa -out device.key 2048
+</pre>
+<p>Una vez creada la clave, se generará la solicitud de firmado de certificado:</p>
+<pre class="code text"><a name="rest_code_5dd196e7f04f4aff873b26e205c4f512-1"></a>openssl req -new -key device.key -out device.csr
+</pre>
+<p>El sistema realizará varias preguntas (País, Región/Provincia, etc.). Responder según corresponda. Sin embargo, la pregunta importante es <strong>common-name</strong>.</p>
+<pre class="code text"><a name="rest_code_f73a3e7502b448a491a26516cb246330-1"></a>Common Name (eg, YOUR name) []: 10.0.0.1
+</pre>
+<p>Lo que se ve en el campo de la dirección del navegador cuando se accede a tu dispositivo <strong>debe</strong> ser lo que se ponga bajo el <strong>common name</strong>, <em>incluso si es una dirección IP</em>. Sí, incluso una dirección IP (IPv4 o IPv6) funciona como <strong>common name</strong>.</p>
+<p>Si no se corresponden, incluso un certificado firmado adecuadamente no se validará adecuadamente, y se obtendrá el error de que "No se puede verificar la autenticidad".</p>
+<p>Una vez hecho esto, se firmará el CSR, lo que requiere la clave CA raíz:</p>
+<pre class="code text"><a name="rest_code_ce480031439d4083957060d0e5987dff-1"></a>openssl x509 -req -in device.csr -CA root.pem -CAkey root.key -CAcreateserial -out device.crt -days 500
+</pre>
+<p>Esto crea un certificado autofirmado llamado <tt class="docutils literal">device.crt</tt> que es válido durante 500 días (se puede ajustar el número de días, claro, pero no tiene sentido que sea mayor que el del certificado raíz).</p>
+<p>El paso siguiente consiste en coger la clave y el certificado e instalarlos en el dispositivo. La mayoría de los dispositivos de red que se controlan mediante HTTPS tienen algún mecanismo para instalarlo. Por ejemplo, tengo un LTM VE (virtual edition) F5 como máquina virtual en mi host ESXi 4.</p>
+<p>Entro en la <abbr title="Graphical User Interface, o Interfaz Gráfica de Usuario">GUI</abbr> web del F5 (y debería ser la última vez que saluda el aviso) y voy a <strong>System</strong>, <strong>Device Certificates</strong>,  y <strong>Device Certificate</strong>:</p>
+<img alt="Configuración del F5" class="align-center" src="/images/ssl-creation/importcert.png" style="width: 630px;"><p>En el desplegable selecciono <strong>Certificate and Key</strong>, y bien puedo pegar el contenido de los ficheros con la clave y el certificado o puedo subirlos desde mi máquina:</p>
+<img alt="Importando el certificado y la clave en el F5" class="align-center" src="/images/ssl-creation/importcertandkeyf5.png" style="width: 326px; height: 274px;"><p>Después, todo lo que necesito hacer es cerrar el navegador y volver a entrar en la web del GUI. Si todo fue bien, no habrá aviso y se obtendrá un precioso verde en la barra de navegación:</p>
+<img alt="Barra de navegación con el certificado correctamente firmado." class="align-center" src="/images/ssl-creation/importedcertkeyf5.png" style="width: 630px;"><p>Y hablando de VMWare, ¿os suena, quizá, el molesto mensaje que se ve cuando se conecta contra un servidor ESXi?</p>
+<p>Se puede eliminar creando una clave y certificado para el servidor ESXi e instalándola en <tt class="docutils literal">/etc/vmware/ssl/rui.crt</tt> y <tt class="docutils literal">/etc/vmware/ssl/rui.key</tt>.</p>
+</div>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2015-06-27T05:58:31+00:00" title="2015-06-27">2015-06-27</time></span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/colas-de-mensajes-rabbitmq/" rel="prev" title="Colas de mensajes: RabbitMQ">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/graficas-basadas-en-tiempo-graphite/" rel="next" title="Gráficas basadas en tiempo: Graphite">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/creando-tu-propia-entidad-certificadora-ssl/",
+        disqus_title="Creando tu propia Entidad Certificadora SSL (y volcando certificados autofirmados)",
+        disqus_identifier="cache/posts/creando-tu-propia-autoridad-certificada-ssl.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Cómo utilizar Selenium/Webdriver en nuestros tests">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Selenium y QA Automation: tests | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/selenium-y-qa-automation-2/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Cómo utilizar Selenium/Webdriver en nuestros tests">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/selenium-y-qa-automation/" title="Selenium y QA Automation" type="text/html">
+<link rel="next" href="/blog/emacs-y-ficheros-basura/" title="Emacs y ficheros basura" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Selenium y QA Automation: tests">
+<meta property="og:url" content="http://magmax.org/blog/selenium-y-qa-automation-2/">
+<meta property="og:description" content="Cómo utilizar Selenium/Webdriver en nuestros tests">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2013-03-13T00:00:00+00:00">
+<meta property="article:updated" content="2013-03-13T00:00:00">
+<meta property="article:tag" content="selenium">
+<meta property="article:tag" content="testing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Cómo utilizar Selenium/Webdriver en nuestros tests">
+<meta name="twitter:url" content="http://magmax.org//blog/selenium-y-qa-automation-2/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/selenium-y-qa-automation-2/" class="u-url">Selenium y QA Automation: tests</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2013-03-13T00:00:00+00:00" title="2013-03-13">2013-03-13</time>
+                // <time class="updated dt-updated" datetime="2013-03-13T00:00:00" title="2013-03-13">2013-03-13</time></p>
+              <p class="commentline">            <a href="/blog/selenium-y-qa-automation-2/#disqus_thread" data-disqus-identifier="cache/posts/selenium-y-qa-automation-2.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>En mi anterior post sobre <a class="reference external" href="/blog/selenium-y-qa-automation">Selenium y QA Automation</a> comenzamos a ver cómo utilizar <a class="reference external" href="http://docs.seleniumhq.org/">Selenium/Webdriver</a> para la automatización de tareas web. En esta ocasión lo adaptaremos para su uso más habitual: la creación de pruebas de aceptación.</p>
+<p>Mediante ejemplos en Python adaptaremos nuestro ejercicio anterior para ejecutarlo como tests. Así mismo, refactorizaremos para obtener un entorno de pruebas sencillo, extensible y fácil de utilizar.</p>
+<p>Tras este artículo, no debería ser difícil utilizar un sistema de integración contínua para la automatización de pruebas de aceptación.</p>
+<!-- TEASER_END -->
+<div class="section" id="testing">
+<h2>Testing</h2>
+<p>Sin pan ni na, ahí va nuestro ejemplo anterior, pero con forma de test:</p>
+<pre class="code python"><a name="rest_code_698c321adf70414d95d64ead689cd267-1"></a><span class="c">#!/usr/bin/env python</span>
+<a name="rest_code_698c321adf70414d95d64ead689cd267-2"></a><span class="c"># FILE: exampleTest.py</span>
+<a name="rest_code_698c321adf70414d95d64ead689cd267-3"></a><span class="kn">import</span> <span class="nn">unittest</span>
+<a name="rest_code_698c321adf70414d95d64ead689cd267-4"></a><span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>
+<a name="rest_code_698c321adf70414d95d64ead689cd267-5"></a><span class="kn">from</span> <span class="nn">selenium.common.exceptions</span> <span class="kn">import</span> <span class="n">NoSuchElementException</span>
+<a name="rest_code_698c321adf70414d95d64ead689cd267-6"></a>
+<a name="rest_code_698c321adf70414d95d64ead689cd267-7"></a><span class="k">class</span> <span class="nc">AutomationTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<a name="rest_code_698c321adf70414d95d64ead689cd267-8"></a>    <span class="k">def</span> <span class="nf">test_the_title_is_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_698c321adf70414d95d64ead689cd267-9"></a>        <span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Remote</span><span class="p">(</span><span class="s">'http://localhost:4444/wd/hub'</span><span class="p">,</span> <span class="n">capabilities</span><span class="o">=</span><span class="p">{</span><span class="s">'browserName'</span><span class="p">:</span> <span class="s">'firefox'</span><span class="p">})</span>
+<a name="rest_code_698c321adf70414d95d64ead689cd267-10"></a>        <span class="k">try</span><span class="p">:</span>
+<a name="rest_code_698c321adf70414d95d64ead689cd267-11"></a>            <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'http://localhost:8000'</span><span class="p">)</span>
+<a name="rest_code_698c321adf70414d95d64ead689cd267-12"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="s">"Directory listing for /"</span><span class="p">,</span> <span class="n">driver</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+<a name="rest_code_698c321adf70414d95d64ead689cd267-13"></a>        <span class="k">finally</span><span class="p">:</span>
+<a name="rest_code_698c321adf70414d95d64ead689cd267-14"></a>            <span class="n">driver</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre>
+<p>Fácil, ¿eh? Y ya podemos ejecutarlo (acordáos del servidor de Selenium y de nuestro servidor web, explicados en el <a class="reference external" href="/blog/selenium-y-qa-automation">artículo anterior</a>):</p>
+<pre class="code bash"><a name="rest_code_d8634dc4d71744aa8fa4103e5aa014ad-1"></a><span class="nv">$ </span>nosetests
+<a name="rest_code_d8634dc4d71744aa8fa4103e5aa014ad-2"></a>.
+<a name="rest_code_d8634dc4d71744aa8fa4103e5aa014ad-3"></a>----------------------------------------------------------------------
+<a name="rest_code_d8634dc4d71744aa8fa4103e5aa014ad-4"></a>Ran <span class="m">1</span> <span class="nb">test </span>in 15.626s
+<a name="rest_code_d8634dc4d71744aa8fa4103e5aa014ad-5"></a>
+<a name="rest_code_d8634dc4d71744aa8fa4103e5aa014ad-6"></a>OK
+</pre>
+</div>
+<div class="section" id="refactorizando">
+<h2>Refactorizando</h2>
+<p>Pero claro... Si tenemos que escribir todo eso en cada test, puede resultar un poco tedioso y difícil de leer. Añadamos un nuevo test y refactoricemos:</p>
+<pre class="code python"><a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-1"></a><span class="c">#!/usr/bin/env python</span>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-2"></a><span class="c"># FILE: exampleTest.py</span>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-3"></a><span class="kn">import</span> <span class="nn">unittest</span>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-4"></a><span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-5"></a><span class="kn">from</span> <span class="nn">selenium.common.exceptions</span> <span class="kn">import</span> <span class="n">NoSuchElementException</span>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-6"></a>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-7"></a><span class="k">class</span> <span class="nc">AutomationTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-8"></a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-9"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Remote</span><span class="p">(</span><span class="s">'http://localhost:4444/wd/hub'</span><span class="p">,</span> <span class="n">capabilities</span><span class="o">=</span><span class="p">{</span><span class="s">'browserName'</span><span class="p">:</span> <span class="s">'firefox'</span><span class="p">})</span>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-10"></a>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-11"></a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-12"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-13"></a>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-14"></a>    <span class="k">def</span> <span class="nf">test_the_title_is_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-15"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'http://localhost:8000'</span><span class="p">)</span>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-16"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="s">"Directory listing for /"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-17"></a>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-18"></a>    <span class="k">def</span> <span class="nf">test_there_are_links</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-19"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'http://localhost:8000'</span><span class="p">)</span>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-20"></a>        <span class="n">links</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">find_elements_by_css_selector</span><span class="p">(</span><span class="s">'a'</span><span class="p">)</span>
+<a name="rest_code_4ae0ae2fa6b84fd0aa97eec6bd87b381-21"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">links</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+</pre>
+<p>¡Ey, eso ya es otra cosa! Ahora sí se queda más limpio.</p>
+<p>Seguramente os preguntaréis: ¿Es necesario obtener una nueva ventana para cada test? La respuesta es bastante compleja. Si queréis aseguraros de que tenéis un entorno limpio, entonces sí, es necesario. Si no lo hacéis así es posible que tengáis efectos secundarios poco recomendables. El problema es que, al tener que estar abriendo y cerrando navegadores, las pruebas son muy lentas.</p>
+<p>Por esa razón conviene usar este tipo de pruebas sólo para lo que no podamos probar de ninguna otra manera ("características" de cada navegador) y para tests de aceptación, que quizá sólo tengamos que ejecutar un par de veces al día.</p>
+<p>Una posible solución es utilizar phantomjs para acelerarlos y así tener, exclusivamente, pruebas de aceptación, ya que no podríamos probar esos <strong>corner-cases</strong> propios de cada navegador. Estos <em>corner-cases</em> pueden leerse, a menudo, como "Internet Explorer".</p>
+<p>Pero podemos dar otra vuelta de tuerca.</p>
+</div>
+<div class="section" id="sacando-factor-comun">
+<h2>Sacando factor común</h2>
+<p>Imagináos que tenemos muchas clases y tenemos que repetirnos muchas veces... A mí no me gusta repetirme. Así que saco de la clase lo que no le pertenece y la mejoro un poquito más:</p>
+<pre class="code python"><a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-1"></a><span class="c">#!/usr/bin/env python</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-2"></a><span class="c"># FILE: exampleTest.py</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-3"></a><span class="kn">import</span> <span class="nn">unittest</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-4"></a><span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-5"></a><span class="kn">from</span> <span class="nn">selenium.common.exceptions</span> <span class="kn">import</span> <span class="n">NoSuchElementException</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-6"></a>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-7"></a><span class="k">class</span> <span class="nc">BrowserTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-8"></a>    <span class="n">BASE_URL</span> <span class="o">=</span> <span class="s">'http://localhost:8000'</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-9"></a>    <span class="n">SELENIUM_URL</span> <span class="o">=</span> <span class="s">'http://localhost:4444/wd/hub'</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-10"></a>    <span class="n">BROWSER_NAME</span> <span class="o">=</span> <span class="s">'firefox'</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-11"></a>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-12"></a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-13"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="bp">None</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-14"></a>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-15"></a>    <span class="k">def</span> <span class="nf">tearDown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-16"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="p">:</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-17"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-18"></a>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-19"></a>    <span class="k">def</span> <span class="nf">getBrowser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">):</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-20"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-21"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Remote</span><span class="p">(</span><span class="n">capabilities</span><span class="o">=</span><span class="p">{</span><span class="s">'browserName'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">BROWSER_NAME</span><span class="p">})</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-22"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">BASE_URL</span> <span class="o">+</span> <span class="n">address</span><span class="p">)</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-23"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_driver</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-24"></a>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-25"></a>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-26"></a><span class="k">class</span> <span class="nc">AutomationTest</span><span class="p">(</span><span class="n">BrowserTest</span><span class="p">):</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-27"></a>    <span class="k">def</span> <span class="nf">test_the_title_is_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-28"></a>        <span class="n">browser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getBrowser</span><span class="p">(</span><span class="s">'/'</span><span class="p">)</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-29"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="s">"Directory listing for /"</span><span class="p">,</span> <span class="n">browser</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-30"></a>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-31"></a>    <span class="k">def</span> <span class="nf">test_there_are_links</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-32"></a>        <span class="n">browser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getBrowser</span><span class="p">(</span><span class="s">'/'</span><span class="p">)</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-33"></a>        <span class="n">links</span> <span class="o">=</span> <span class="n">browser</span><span class="o">.</span><span class="n">find_elements_by_css_selector</span><span class="p">(</span><span class="s">'a'</span><span class="p">)</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-34"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">links</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-35"></a>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-36"></a> <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+<a name="rest_code_e0a56196425d4dc583b58fa443ba26ac-37"></a>    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre>
+<p>Como veréis, no es exactamente lo mismo. En el caso anterior obtenía el driver de Selenium en el <cite>setUp</cite> y ahora lo hago en una función a parte. Esto tiene dos ventajas: por una parte, no se obtendrá para todos los tests, sino sólo allá donde se necesite, y la segunda es que así aprovecho y obtengo el navegador directamente en la página necesitada.</p>
+<p>Además, he aprovechado para sacar las constantes como constantes que son, quedando un código mucho más limpio.</p>
+<p>Aquí os dejo el vídeo de cómo funciona (para que veáis que es muy lento):</p>
+<iframe width="425" height="344" src="//www.youtube.com/embed/Coq6fqson6g?rel=0&amp;hd=1&amp;wmode=transparent"></iframe>
+</div>
+<div class="section" id="ventajas-e-inconvenientes">
+<h2>Ventajas e inconvenientes</h2>
+<p>Y con esto tenemos un pequeño framework de a penas 21 líneas sobre el que comenzar a trabajar. Sin embargo, este framework tiene dos problemas.</p>
+<p>El primero es que, si en nuestra clase de pruebas sobreescribimos los métodos <cite>setUp</cite> o <cite>tearDown</cite>, podemos tener efectos secundarios poco recomendables, como no poder obtener el <em>browser</em> o que éste no se cierre.</p>
+<p>El segundo es una mejora: me gustaría obtener un <em>screenshot</em> cada vez que el test falle. Resulta que no hay manera de saber el estado del test en el método <cite>tearDown</cite>. Eso ha supuesto que me estudie la API de testing de Python y me he quedado muy sorprendido. Tanto como para <a class="reference external" href="https://github.com/magmax/pybrowsertest">crearme mi propio *framework* completo</a>. Sin embargo, temo que eso quedará para la semana que viene, ya que el artículo de hoy ya es un poco largo.</p>
+<p>De todas maneras, todo lo visto hasta aquí, en python, puede replicarse en otros lenguajes orientados a objetos, como Ruby, Java, PHP, etc. No hay nada específico del lenguaje.</p>
+<p>Existe una pequeña mejora, que utiliza una característica propia de la librería de tests de python. Consiste en evitar el método <cite>tearDown</cite>, mediante el uso del método <cite>addCleanup</cite>. Sin embargo, como digo, no es una gran ventaja y no merece la pena ni añadir el código aquí.</p>
+</div>
+<div class="section" id="y-en-el-futuro">
+<h2>Y en el futuro...</h2>
+<p>Aquí hay un framework simple. Es tan simple, que nos podemos permitir el copiarlo de proyecto en proyecto.</p>
+<p>Sin embargo, escribiendo este artículo he descubierto ciertas capacidades de la API de test de python que me han abierto la puerta a crear un framework aún mejor, también muy pequeño, pero no tan obvio.</p>
+<p>Este nuevo framework lo comentaré en un próximo post.</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2013-03-13T00:00:00+00:00" title="2013-03-13">2013-03-13</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/selenium/" rel="tag">selenium</a>
+                <a class="label label-primary p-category" href="/categories/testing/" rel="tag">testing</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/selenium-y-qa-automation/" rel="prev" title="Selenium y QA Automation">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/emacs-y-ficheros-basura/" rel="next" title="Emacs y ficheros basura">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/selenium-y-qa-automation-2/",
+        disqus_title="Selenium y QA Automation: tests",
+        disqus_identifier="cache/posts/selenium-y-qa-automation-2.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

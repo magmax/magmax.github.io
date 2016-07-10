@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Atheist: Probando módulos C | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/atheist-c/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/gnome3-tildes/" title="Mi gnome3 pone cosas raras en lugar de tildes y eñes" type="text/html">
+<link rel="next" href="/blog/selenium-atheist/" title="Pruebas web: selenium + atheist" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Atheist: Probando módulos C">
+<meta property="og:url" content="http://magmax.org/blog/atheist-c/">
+<meta property="og:description" content="Vamos a usar Atheist  con el módulo CxxTest , de manera que podamos probar un programa C.
+Recordemos algo que yo olvidé: Atheist  es una herramienta para pruebas de integración (que tiene como algo ad">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2011-05-09T00:00:00+00:00">
+<meta property="article:updated" content="2011-05-09T00:00:00">
+<meta property="article:tag" content="ansi c">
+<meta property="article:tag" content="ansi c testing">
+<meta property="article:tag" content="atheist">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/atheist-c/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/atheist-c/" class="u-url">Atheist: Probando módulos C</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2011-05-09T00:00:00+00:00" title="2011-05-09">2011-05-09</time>
+                // <time class="updated dt-updated" datetime="2011-05-09T00:00:00" title="2011-05-09">2011-05-09</time></p>
+              <p class="commentline">            <a href="/blog/atheist-c/#disqus_thread" data-disqus-identifier="cache/posts/atheist-c.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Vamos a usar <a class="reference external" href="https://savannah.nongnu.org/projects/atheist/">Atheist</a>  con el módulo <a class="reference external" href="http://cxxtest.tigris.org/">CxxTest</a> , de manera que podamos probar un programa C.</p>
+<p>Recordemos algo que yo olvidé: <a class="reference external" href="https://savannah.nongnu.org/projects/atheist/">Atheist</a>  es una herramienta para pruebas de integración (que tiene como algo adicional la posibilidad de integrarse con python-testunit). Eso quiere decir que nuestras pruebas estarán en C, pero las llamaremos desde Atheist.</p>
+<!-- TEASER_END -->
+<p>Para comenzar, escribimos nuestras pruebas C. Primero sólo vamos a comprobar la interacción entre Atheist y CxxTest (lo saco de los ejemplos de Atheist):</p>
+<pre class="code cpp"><a name="rest_code_9f9de574ff384fc3acc95f655d83dec2-1"></a><span class="c1">// archivo single_ok.cc</span>
+<a name="rest_code_9f9de574ff384fc3acc95f655d83dec2-2"></a><span class="cp">#include &lt;cxxtest/TestSuite.h&gt;</span>
+<a name="rest_code_9f9de574ff384fc3acc95f655d83dec2-3"></a><span class="k">class</span> <span class="nc">MyTestSuite</span> <span class="o">:</span> <span class="k">public</span> <span class="n">CxxTest</span><span class="o">::</span><span class="n">TestSuite</span>
+<a name="rest_code_9f9de574ff384fc3acc95f655d83dec2-4"></a><span class="p">{</span>
+<a name="rest_code_9f9de574ff384fc3acc95f655d83dec2-5"></a><span class="k">public</span><span class="o">:</span>
+<a name="rest_code_9f9de574ff384fc3acc95f655d83dec2-6"></a>   <span class="kt">void</span> <span class="n">testAddition</span><span class="p">(</span> <span class="kt">void</span> <span class="p">)</span>
+<a name="rest_code_9f9de574ff384fc3acc95f655d83dec2-7"></a>   <span class="p">{</span>
+<a name="rest_code_9f9de574ff384fc3acc95f655d83dec2-8"></a>      <span class="n">TS_ASSERT</span><span class="p">(</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="p">);</span>
+<a name="rest_code_9f9de574ff384fc3acc95f655d83dec2-9"></a>      <span class="n">TS_ASSERT_EQUALS</span><span class="p">(</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="p">);</span>
+<a name="rest_code_9f9de574ff384fc3acc95f655d83dec2-10"></a>   <span class="p">}</span>
+<a name="rest_code_9f9de574ff384fc3acc95f655d83dec2-11"></a><span class="p">};</span>
+</pre>
+<p>Ahora creamos el archivo de pruebas atheist:</p>
+<pre class="code cpp"><a name="rest_code_aff82e604d794a94a67794d45682931a-1"></a><span class="cp">#archivo cxxtest.test</span>
+<a name="rest_code_aff82e604d794a94a67794d45682931a-2"></a><span class="n">CxxTest</span><span class="p">(</span><span class="err">''$</span><span class="n">testdir</span><span class="o">/</span><span class="n">single_ok</span><span class="p">.</span><span class="n">cc</span><span class="err">''</span><span class="p">,</span> <span class="p">)</span>
+</pre>
+<p>Y ejecutamos:</p>
+<pre class="code cpp"><a name="rest_code_9be0c05ebf504cc9b641b96fc153c21e-1"></a><span class="err">$</span> <span class="n">atheist</span> <span class="p">.</span>
+<a name="rest_code_9be0c05ebf504cc9b641b96fc153c21e-2"></a><span class="p">[</span> <span class="n">OK</span> <span class="p">]</span> <span class="nl">TaskCase</span><span class="p">:</span> <span class="p">.</span><span class="o">/</span><span class="n">cxxtest</span><span class="p">.</span><span class="n">test</span>
+<a name="rest_code_9be0c05ebf504cc9b641b96fc153c21e-3"></a><span class="p">[</span>  <span class="n">ALL</span> <span class="n">OK</span><span class="o">!</span>  <span class="p">]</span> <span class="o">-</span> <span class="mf">1.28</span><span class="n">s</span> <span class="o">-</span> <span class="mi">1</span> <span class="n">test</span> <span class="o">-</span> <span class="mi">1</span> <span class="n">task</span>
+<a name="rest_code_9be0c05ebf504cc9b641b96fc153c21e-4"></a><span class="err">$</span>
+</pre>
+<div class="section" id="un-ejemplo-mas-real">
+<h2>Un ejemplo más real</h2>
+<p>Ahora voy a probar un ejemplo algo más real. Voy a hacer una pequeña función que calcula el factorial de un número. Para ello, necesitaré un archivo con mi función, un archivo de cabecera con la declaración de mi función, y el archivo de pruebas. Vamos al lío:</p>
+<pre class="code cpp"><a name="rest_code_0dd9cebb40aa4cde8c4bd1c33a832e24-1"></a><span class="c1">// archivo factorial.h</span>
+<a name="rest_code_0dd9cebb40aa4cde8c4bd1c33a832e24-2"></a><span class="cp">#ifndef FACTORIAL_H</span>
+<a name="rest_code_0dd9cebb40aa4cde8c4bd1c33a832e24-3"></a><span class="cp">#define FACTORIAL_H</span>
+<a name="rest_code_0dd9cebb40aa4cde8c4bd1c33a832e24-4"></a>
+<a name="rest_code_0dd9cebb40aa4cde8c4bd1c33a832e24-5"></a><span class="cp">#ifdef  __cplusplus</span>
+<a name="rest_code_0dd9cebb40aa4cde8c4bd1c33a832e24-6"></a><span class="k">extern</span> <span class="s">"C"</span> <span class="p">{</span>
+<a name="rest_code_0dd9cebb40aa4cde8c4bd1c33a832e24-7"></a><span class="cp">#endif</span>
+<a name="rest_code_0dd9cebb40aa4cde8c4bd1c33a832e24-8"></a>
+<a name="rest_code_0dd9cebb40aa4cde8c4bd1c33a832e24-9"></a><span class="kt">int</span> <span class="n">factorial</span> <span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">);</span>
+<a name="rest_code_0dd9cebb40aa4cde8c4bd1c33a832e24-10"></a>
+<a name="rest_code_0dd9cebb40aa4cde8c4bd1c33a832e24-11"></a>
+<a name="rest_code_0dd9cebb40aa4cde8c4bd1c33a832e24-12"></a><span class="cp">#ifdef __cplusplus</span>
+<a name="rest_code_0dd9cebb40aa4cde8c4bd1c33a832e24-13"></a><span class="p">}</span>
+<a name="rest_code_0dd9cebb40aa4cde8c4bd1c33a832e24-14"></a><span class="cp">#endif</span>
+<a name="rest_code_0dd9cebb40aa4cde8c4bd1c33a832e24-15"></a>
+<a name="rest_code_0dd9cebb40aa4cde8c4bd1c33a832e24-16"></a><span class="cp">#endif</span>
+</pre>
+<pre class="code cpp"><a name="rest_code_ab3decbf02bc4258878e91916e2932ff-1"></a><span class="c1">//factorial.c</span>
+<a name="rest_code_ab3decbf02bc4258878e91916e2932ff-2"></a><span class="cp">#include "factorial.h"</span>
+<a name="rest_code_ab3decbf02bc4258878e91916e2932ff-3"></a>
+<a name="rest_code_ab3decbf02bc4258878e91916e2932ff-4"></a><span class="kt">int</span> <span class="nf">factorial</span> <span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_ab3decbf02bc4258878e91916e2932ff-5"></a>  <span class="k">return</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">?</span> <span class="n">n</span> <span class="o">*</span> <span class="n">factorial</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
+<a name="rest_code_ab3decbf02bc4258878e91916e2932ff-6"></a><span class="p">}</span>
+</pre>
+<pre class="code cpp"><a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-1"></a><span class="c1">// archivo test_factorial.cc</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-2"></a><span class="cp">#include &lt;cxxtest/TestSuite.h&gt;</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-3"></a><span class="cp">#include "factorial.h"</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-4"></a><span class="k">class</span> <span class="nc">MyTestSuite</span> <span class="o">:</span> <span class="k">public</span> <span class="n">CxxTest</span><span class="o">::</span><span class="n">TestSuite</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-5"></a><span class="p">{</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-6"></a><span class="k">public</span><span class="o">:</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-7"></a>  <span class="kt">void</span> <span class="n">test_factorial_1</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-8"></a>  <span class="p">{</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-9"></a>    <span class="n">TS_ASSERT_EQUALS</span> <span class="p">(</span> <span class="n">factorial</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">1</span> <span class="p">);</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-10"></a>  <span class="p">}</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-11"></a>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-12"></a>  <span class="kt">void</span> <span class="n">test_factorial_2</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-13"></a>  <span class="p">{</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-14"></a>    <span class="n">TS_ASSERT_EQUALS</span> <span class="p">(</span> <span class="n">factorial</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="mi">2</span> <span class="p">);</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-15"></a>  <span class="p">}</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-16"></a>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-17"></a>  <span class="kt">void</span> <span class="n">test_factorial_3</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-18"></a>  <span class="p">{</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-19"></a>    <span class="n">TS_ASSERT_EQUALS</span> <span class="p">(</span> <span class="n">factorial</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="mi">6</span> <span class="p">);</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-20"></a>  <span class="p">}</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-21"></a>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-22"></a>  <span class="kt">void</span> <span class="n">test_factorial_4</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-23"></a>  <span class="p">{</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-24"></a>    <span class="n">TS_ASSERT_EQUALS</span> <span class="p">(</span> <span class="n">factorial</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="mi">24</span> <span class="p">);</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-25"></a>  <span class="p">}</span>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-26"></a>
+<a name="rest_code_dd80ea6e8ff34b1ea922b55d9cdd39ca-27"></a><span class="p">};</span>
+</pre>
+<pre class="code cpp"><a name="rest_code_35d3e33b9a384c76a3badd7d22de1ed9-1"></a><span class="cp">#archivo cxxtest.test</span>
+<a name="rest_code_35d3e33b9a384c76a3badd7d22de1ed9-2"></a><span class="n">CxxTest</span><span class="p">(</span><span class="err">''$</span><span class="n">testdir</span><span class="o">/</span><span class="n">single_ok</span><span class="p">.</span><span class="n">cc</span><span class="err">''</span><span class="p">,</span> <span class="p">)</span>
+<a name="rest_code_35d3e33b9a384c76a3badd7d22de1ed9-3"></a>
+<a name="rest_code_35d3e33b9a384c76a3badd7d22de1ed9-4"></a>
+<a name="rest_code_35d3e33b9a384c76a3badd7d22de1ed9-5"></a><span class="n">CxxTest</span><span class="p">(</span><span class="err">''$</span><span class="n">testdir</span><span class="o">/</span><span class="n">test_factorial</span><span class="p">.</span><span class="n">cc</span><span class="err">''</span><span class="p">,</span>
+<a name="rest_code_35d3e33b9a384c76a3badd7d22de1ed9-6"></a>        <span class="n">compiling_flags</span><span class="o">=</span><span class="err">''</span><span class="o">-</span><span class="n">I</span><span class="err">$</span><span class="n">testdir</span><span class="err">''</span><span class="p">,</span>
+<a name="rest_code_35d3e33b9a384c76a3badd7d22de1ed9-7"></a>        <span class="n">objs</span><span class="o">=</span><span class="p">{</span><span class="err">''$</span><span class="n">testdir</span><span class="err">''</span><span class="o">:</span> <span class="p">[</span><span class="err">''</span><span class="n">factorial</span><span class="p">.</span><span class="n">o</span><span class="err">''</span><span class="p">]})</span>
+</pre>
+<p>Tened en cuenta que, para ejecutarlo, necesitaremos compilar @factorial.o@, por lo que tendremos:</p>
+<pre class="code bash"><a name="rest_code_a3a95511cde944e5b22e13e267ea3bcc-1"></a><span class="nv">$ </span>gcc -c factorial.c -o factorial.o
+<a name="rest_code_a3a95511cde944e5b22e13e267ea3bcc-2"></a><span class="nv">$ </span>atheist cxxtest.test -e
+<a name="rest_code_a3a95511cde944e5b22e13e267ea3bcc-3"></a><span class="o">[</span> OK <span class="o">]</span> TaskCase: ./cxxtest.test
+<a name="rest_code_a3a95511cde944e5b22e13e267ea3bcc-4"></a><span class="o">[</span>  ALL OK!  <span class="o">]</span> - 2.47s - <span class="m">2</span> tests - <span class="m">2</span> tasks
+<a name="rest_code_a3a95511cde944e5b22e13e267ea3bcc-5"></a><span class="err">$</span>
+</pre>
+<div class="section" id="unas-explicaciones">
+<h3>Unas explicaciones</h3>
+<p>Cuento un poco algunas cosas "raras" que se ven en el código.</p>
+<p>Por un lado, vemos que en el archivo @factorial.h@ Hemos incluido unas marcas extrañas:</p>
+<pre class="code cpp"><a name="rest_code_cd40455645ff45f589fccf81cde1b0e0-1"></a><span class="cp">#ifdef  __cplusplus</span>
+<a name="rest_code_cd40455645ff45f589fccf81cde1b0e0-2"></a><span class="k">extern</span> <span class="s">"C"</span> <span class="p">{</span>
+<a name="rest_code_cd40455645ff45f589fccf81cde1b0e0-3"></a><span class="cp">#endif</span>
+<a name="rest_code_cd40455645ff45f589fccf81cde1b0e0-4"></a>
+<a name="rest_code_cd40455645ff45f589fccf81cde1b0e0-5"></a><span class="p">...</span>
+<a name="rest_code_cd40455645ff45f589fccf81cde1b0e0-6"></a>
+<a name="rest_code_cd40455645ff45f589fccf81cde1b0e0-7"></a><span class="cp">#ifdef __cplusplus</span>
+<a name="rest_code_cd40455645ff45f589fccf81cde1b0e0-8"></a><span class="p">}</span>
+<a name="rest_code_cd40455645ff45f589fccf81cde1b0e0-9"></a><span class="cp">#endif</span>
+</pre>
+<p>Esto se hace así para que C++ "entienda" que lo que se va a definir ahí es C. Cuando compilamos código C++, las funciones se renombran añadiéndoles un prefijo y un sufijo, por lo que hay que indicarle que eso es código C para que el compilador pueda encontrar las funciones.</p>
+<p>Por otra parte, hemos necesitado indicarle a Atheist algunos parámetros extra, como son los flags de compilación (sólo hemos necesitado la ruta de los .h), y qué objetos se han utilizado.</p>
+</div>
+<div class="section" id="transformando-atheist-en-una-herramienta-de-generacion">
+<h3>Transformando Atheist en una herramienta de generación</h3>
+<p>No es lo más recomendable, pero podríamos usar Atheist para compilar:</p>
+<pre class="code cpp"><a name="rest_code_f9c36df0b21a4c539edd48723707539f-1"></a><span class="cp">#archivo cxxtest.test</span>
+<a name="rest_code_f9c36df0b21a4c539edd48723707539f-2"></a><span class="n">CxxTest</span><span class="p">(</span><span class="err">''$</span><span class="n">testdir</span><span class="o">/</span><span class="n">single_ok</span><span class="p">.</span><span class="n">cc</span><span class="err">''</span><span class="p">,</span> <span class="p">)</span>
+<a name="rest_code_f9c36df0b21a4c539edd48723707539f-3"></a>
+<a name="rest_code_f9c36df0b21a4c539edd48723707539f-4"></a>
+<a name="rest_code_f9c36df0b21a4c539edd48723707539f-5"></a><span class="n">Command</span><span class="p">(</span> <span class="err">''</span><span class="n">CC</span><span class="o">=</span><span class="n">g</span><span class="o">++</span> <span class="n">make</span>  <span class="err">$</span><span class="n">testdir</span><span class="o">/</span><span class="n">factorial</span><span class="p">.</span><span class="n">o</span><span class="err">''</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="n">True</span><span class="p">)</span>
+<a name="rest_code_f9c36df0b21a4c539edd48723707539f-6"></a>
+<a name="rest_code_f9c36df0b21a4c539edd48723707539f-7"></a><span class="n">t</span> <span class="o">=</span> <span class="n">CxxTest</span><span class="p">(</span><span class="err">''$</span><span class="n">testdir</span><span class="o">/</span><span class="n">test_factorial</span><span class="p">.</span><span class="n">cc</span><span class="err">''</span><span class="p">,</span>
+<a name="rest_code_f9c36df0b21a4c539edd48723707539f-8"></a>        <span class="n">compiling_flags</span><span class="o">=</span><span class="err">''</span><span class="o">-</span><span class="n">I</span><span class="err">$</span><span class="n">testdir</span><span class="err">''</span><span class="p">,</span>
+<a name="rest_code_f9c36df0b21a4c539edd48723707539f-9"></a>        <span class="n">objs</span><span class="o">=</span><span class="p">{</span><span class="err">''$</span><span class="n">testdir</span><span class="err">''</span><span class="o">:</span> <span class="p">[</span><span class="err">''</span><span class="n">factorial</span><span class="p">.</span><span class="n">o</span><span class="err">''</span><span class="p">]})</span>
+</pre>
+</div>
+</div>
+<div class="section" id="deteccion-de-errores">
+<h2>Detección de errores</h2>
+<p>Es normal que ocurra algún problema en la ejecución de CxxTest, ya que realiza pasos muy complejos. Por ello recomiendo utilizar siempre Atheist con las opciones "-e" (mostrar salida de error) y "-o" (mostrar salida estándar).</p>
+<p>De esta manera será más sencillo descubrir errores de compilación de CxxTest.</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2011-05-09T00:00:00+00:00" title="2011-05-09">2011-05-09</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/ansi-c/" rel="tag">ansi c</a>
+                <a class="label label-primary p-category" href="/categories/ansi-c-testing/" rel="tag">ansi c testing</a>
+                <a class="label label-primary p-category" href="/categories/atheist/" rel="tag">atheist</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/gnome3-tildes/" rel="prev" title="Mi gnome3 pone cosas raras en lugar de tildes y eñes">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/selenium-atheist/" rel="next" title="Pruebas web: selenium + atheist">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/atheist-c/",
+        disqus_title="Atheist: Probando m\u00f3dulos C",
+        disqus_identifier="cache/posts/atheist-c.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

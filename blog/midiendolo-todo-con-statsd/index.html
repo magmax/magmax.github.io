@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Introducción al uso de StatsD">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Midiéndolo todo con StatsD | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/midiendolo-todo-con-statsd/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Introducción al uso de StatsD">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/yapsy-un-sistema-de-plugins-pythonico/" title="Yapsy, un sistema de plugins pythónico" type="text/html">
+<link rel="next" href="/blog/puppet-templates-hint-quitando-espacios/" title="Puppet templates hint: quitando espacios" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Midiéndolo todo con StatsD">
+<meta property="og:url" content="http://magmax.org/blog/midiendolo-todo-con-statsd/">
+<meta property="og:description" content="Introducción al uso de StatsD">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2015-07-12T00:00:00+00:00">
+<meta property="article:updated" content="2015-07-12T00:00:00+00:00">
+<meta property="article:tag" content="monitoring">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Introducción al uso de StatsD">
+<meta name="twitter:url" content="http://magmax.org//blog/midiendolo-todo-con-statsd/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/midiendolo-todo-con-statsd/" class="u-url">Midiéndolo todo con StatsD</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published updated dt-updated" datetime="2015-07-12T00:00:00+00:00" title="2015-07-12">2015-07-12</time></p>
+              <p class="commentline">            <a href="/blog/midiendolo-todo-con-statsd/#disqus_thread" data-disqus-identifier="cache/posts/midiendolo-todo-con-statsd.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Tras el artículo <a class="reference external" href="/blog/graficas-basadas-en-tiempo-graphite">Gráficas basadas en tiempo: Graphite</a> era obligatorio escribir uno sobre <a class="reference external" href="https://github.com/etsy/statsd">StatsD</a>.</p>
+<p>En este artículo voy a contar qué es <a class="reference external" href="https://github.com/etsy/statsd">StatsD</a> y cómo usarlo para extraer estadísticas de uso de nuestro código. Aunque al principio pueda parecer un poco extraño, os aseguro que es realmente interesante, sobre todo cuando se usa junto con <a class="reference external" href="http://graphite.wikidot.com/">Graphite</a>.</p>
+<!-- TEASER_END -->
+<div class="section" id="que-es-statsd">
+<h2>¿Qué es StatsD?</h2>
+<p>Según la propia página de StatsD:</p>
+<blockquote>
+StatsD is a front-end proxy for the Graphite/Carbon metrics server, originally written by Etsy's Erik Kastner. It is based on ideas from Flickr and this post by Cal Henderson: Counting and Timing. The server was written in Node, though there have been implementations in other languages since then.</blockquote>
+<p>Pero debo decir que la definición no me gusta. No, porque <a class="reference external" href="http://graphite.wikidot.com/">Graphite</a> es sólo uno de los posibles backends.</p>
+<p>En lugar de preguntarnos <em>"¿qué es StatsD?"</em> deberíamos preguntarnos <em>"¿Para qué sirve StatsD?"</em>.</p>
+<p>StatsD permite recopilar datos de... cosas, para su posterior uso. Cosas como número de ejecuciones, veces que se pasa por una función, tiempo que tarda en ejecutarse una acción, etc.</p>
+<p>Existen <a class="reference external" href="https://github.com/etsy/statsd/wiki#server-implementations">distintas implementaciones del servidor StatsD</a>, aunque la original es la escrita en <a class="reference external" href="https://nodejs.org/">NodeJS</a>, que va a ser la que voy a comentar, ya que es la más completa. Hay clientes para cualquier lenguaje, ya que basta enviar una trama sencilla por UDP. Veremos esto más adelante.</p>
+</div>
+<div class="section" id="instalando-statsd">
+<h2>Instalando StatsD</h2>
+<p>Como ya he dicho, usaremos <a class="reference external" href="https://github.com/etsy/statsd">la implementación de Etsy</a>, que es la más famosa, y que está implementada en <a class="reference external" href="https://nodejs.org/">NodeJS</a>, por lo que lo primero será instalar <a class="reference external" href="https://nodejs.org/">NodeJS</a> si no lo tenemos ya:</p>
+<pre class="code text"><a name="rest_code_c3164b98217a45239863920f16f7f5ba-1"></a>apt-get install nodejs
+</pre>
+<p>A continuación, la instalación estándar nos sugiere clonar el repositorio:</p>
+<pre class="code text"><a name="rest_code_186467f70a0945009d40f805a2dacac4-1"></a>git clone https://github.com/etsy/statsd.git
+</pre>
+<p>Aunque otro métido alternativo es usar <a class="reference external" href="https://www.npmjs.com/">npm</a>:</p>
+<pre class="code text"><a name="rest_code_451f8ceb54b14a9dbb8b05b44d8f5cab-1"></a>npm install statsd
+</pre>
+<p>El primer metodo nos dejará el código en el directorio <tt class="docutils literal">statsd</tt>, mientras que el segundo lo hará en <tt class="docutils literal">node_modules\statsd</tt>, pero el resultado será muy similar. Yo he usado <a class="reference external" href="https://www.npmjs.com/">npm</a> para este artículo.</p>
+<p>Lo siguiente es configurarlo. Para ello basta copiar el archivo <tt class="docutils literal">node_modules/statsd/exampleConfig.js</tt> al directorio actual y modificarlo. Veréis que el 99% del archivo es ayuda sobre el propio archivo, y que la configuración se reduce a algo como:</p>
+<pre class="code js"><a name="rest_code_6b3864a5727c4627bb773c83ca19c994-1"></a><span class="p">{</span>
+<a name="rest_code_6b3864a5727c4627bb773c83ca19c994-2"></a>  <span class="nx">graphitePort</span><span class="o">:</span> <span class="mi">2003</span>
+<a name="rest_code_6b3864a5727c4627bb773c83ca19c994-3"></a><span class="p">,</span> <span class="nx">graphiteHost</span><span class="o">:</span> <span class="s2">"graphite.example.com"</span>
+<a name="rest_code_6b3864a5727c4627bb773c83ca19c994-4"></a><span class="p">,</span> <span class="nx">port</span><span class="o">:</span> <span class="mi">8125</span>
+<a name="rest_code_6b3864a5727c4627bb773c83ca19c994-5"></a><span class="p">,</span> <span class="nx">backends</span><span class="o">:</span> <span class="p">[</span> <span class="s2">"./backends/graphite"</span> <span class="p">]</span>
+<a name="rest_code_6b3864a5727c4627bb773c83ca19c994-6"></a><span class="p">}</span>
+</pre>
+<p>Podéis cambiar <tt class="docutils literal">graphiteHost</tt> por <tt class="docutils literal">localhost</tt>, y si seguísteis el artículo <a class="reference external" href="/blog/graficas-basadas-en-tiempo-graphite">Gráficas basadas en tiempo: Graphite</a> ya estaría todo funcionando con <a class="reference external" href="http://graphite.wikidot.com/">Graphite</a>. De todas maneras, para comenzar recomiendo cambiar el <strong>backend</strong> por <tt class="docutils literal">console</tt>, y así no es necesario tener <a class="reference external" href="http://graphite.wikidot.com/">Graphite</a> instalado y podremos ver todos los datos en crudo. Por ello usaremos el archivo de configuración:</p>
+<pre class="code js"><a name="rest_code_8390ab2f093e4d8ba5eaf776ca6d8bcb-1"></a><span class="p">{</span>
+<a name="rest_code_8390ab2f093e4d8ba5eaf776ca6d8bcb-2"></a>  <span class="nx">port</span><span class="o">:</span> <span class="mi">8125</span>
+<a name="rest_code_8390ab2f093e4d8ba5eaf776ca6d8bcb-3"></a><span class="p">,</span> <span class="nx">backends</span><span class="o">:</span> <span class="p">[</span> <span class="s2">"./backends/console"</span> <span class="p">]</span>
+<a name="rest_code_8390ab2f093e4d8ba5eaf776ca6d8bcb-4"></a><span class="p">}</span>
+</pre>
+</div>
+<div class="section" id="ejecutando-statsd">
+<h2>Ejecutando StatsD</h2>
+<p>Con esta configuración ya podemos ejecutarlo:</p>
+<pre class="code text"><a name="rest_code_7c4a8e40055a40bf970c8abf2e816a9f-1"></a>node node_modules/statsd/stats.js config.js
+</pre>
+<p>Cada 10 segundos aparecerá un mensaje parecido a éste:</p>
+<pre class="code javascript"><a name="rest_code_4123a15838e745cc9fcde36d21fd4594-1"></a><span class="p">{</span> <span class="nx">counters</span><span class="o">:</span> <span class="p">{</span> <span class="s1">'statsd.bad_lines_seen'</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'statsd.packets_received'</span><span class="o">:</span> <span class="mi">0</span> <span class="p">},</span>
+<a name="rest_code_4123a15838e745cc9fcde36d21fd4594-2"></a>  <span class="nx">timers</span><span class="o">:</span> <span class="p">{},</span>
+<a name="rest_code_4123a15838e745cc9fcde36d21fd4594-3"></a>  <span class="nx">gauges</span><span class="o">:</span> <span class="p">{},</span>
+<a name="rest_code_4123a15838e745cc9fcde36d21fd4594-4"></a>  <span class="nx">timer_data</span><span class="o">:</span> <span class="p">{},</span>
+<a name="rest_code_4123a15838e745cc9fcde36d21fd4594-5"></a>  <span class="nx">counter_rates</span><span class="o">:</span> <span class="p">{</span> <span class="s1">'statsd.bad_lines_seen'</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">'statsd.packets_received'</span><span class="o">:</span> <span class="mi">0</span> <span class="p">},</span>
+<a name="rest_code_4123a15838e745cc9fcde36d21fd4594-6"></a>  <span class="nx">sets</span><span class="o">:</span> <span class="p">{},</span>
+<a name="rest_code_4123a15838e745cc9fcde36d21fd4594-7"></a>  <span class="nx">pctThreshold</span><span class="o">:</span> <span class="p">[</span> <span class="mi">90</span> <span class="p">]</span> <span class="p">}</span>
+</pre>
+<p>Ahí se indica la información recolectada. Hay algunos puntos curiosos:</p>
+<ul class="simple">
+<li>
+<tt class="docutils literal">counters</tt>: Los contadores recibidos. Por defecto ya tiene 2, relacionados con el propio <a class="reference external" href="https://github.com/etsy/statsd">StatsD</a>.</li>
+<li>
+<tt class="docutils literal">timers</tt>: contadores de tipo tiempo recibidos.</li>
+<li>
+<tt class="docutils literal">gauges</tt>: Es un tipo de métrica que mantiene el último valor hasta recibir uno nuevo.</li>
+<li>
+<tt class="docutils literal">timer_data</tt>: Información ya tratada de los <tt class="docutils literal">timers</tt>.</li>
+<li>
+<tt class="docutils literal">counter_rates</tt>: estadísticas de uso de los contadores.</li>
+<li>
+<tt class="docutils literal">sets</tt>: grupos de métricas recibidos.</li>
+<li>
+<tt class="docutils literal">pctThreshold</tt>: o "percentile threshold", que es el percentil calculado para tiempos. Es decir: si en un intervalo se reciben 100 mediciones de tiempo, se cogerá el <a class="reference external" href="https://en.wikipedia.org/wiki/Percentile">percentil 90</a> de éstas, ya que es estadísticamente más representativo.</li>
+</ul>
+<p>Se puede configurar el tiempo del intervalo, pero por defecto son 10 segundos, y eso está bien para nuestro ejemplo.</p>
+</div>
+<div class="section" id="como-enviar-metricas-a-statsd">
+<h2>Cómo enviar métricas a StatsD</h2>
+<p>Bueno, antes deberíamos saber qué tipos de métricas se pueden enviar, aunque ya están mencionadas en el apartado anterior:</p>
+<ul class="simple">
+<li>Contadores, con formato <tt class="docutils literal">métrica:N|c</tt>, siendo <tt class="docutils literal">N</tt> el valor de la métrica.</li>
+<li>Tiempos, con formato <tt class="docutils literal">métrica:N|ms</tt>, siendo <tt class="docutils literal">N</tt> el tiempo a registrar.</li>
+<li>Gauges, con formato <tt class="docutils literal">métrica:N|g</tt>, siendo <tt class="docutils literal">N</tt> el valor de la métrica. Son valores que se mantienen hasta que llegue el siguiente.</li>
+<li>Sets, con formato <tt class="docutils literal">métrica:N|s</tt>, siendo <tt class="docutils literal">N</tt> un número de ocurrencias a registrar.</li>
+</ul>
+<p>El formato, además, permite indicar la agrupación añadiendo <tt class="docutils literal">|@0.1</tt>, donde <tt class="docutils literal">0.1</tt> indica que el valor sólo se está enviando 1/10 del tiempo.
+También se permite el envío de varias métricas en un sólo mensaje, separándolas por <tt class="docutils literal">\n</tt>.</p>
+<p>Como ya se dijo antes, basta con enviar estos datos en una trama UDP. Podemos usar <strong>Bash</strong>, por ejemplo:</p>
+<pre class="code text"><a name="rest_code_f004e80b1e9145d28183b7c8bb8700cb-1"></a>echo "this.is.a.counter:1|c" | nc -u -w1 127.0.0.1 8125
+</pre>
+<p>que provocará un cambio en la salida del servidor, mostrando el mensaje:</p>
+<pre class="code js"><a name="rest_code_d99fee0316254bf3852252c4fd22e2ec-1"></a><span class="p">{</span> <span class="nx">counters</span><span class="o">:</span>
+<a name="rest_code_d99fee0316254bf3852252c4fd22e2ec-2"></a>   <span class="p">{</span> <span class="s1">'statsd.bad_lines_seen'</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+<a name="rest_code_d99fee0316254bf3852252c4fd22e2ec-3"></a>     <span class="s1">'statsd.packets_received'</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+<a name="rest_code_d99fee0316254bf3852252c4fd22e2ec-4"></a>     <span class="s1">'this.is.a.counter'</span><span class="o">:</span> <span class="mi">1</span> <span class="p">},</span>
+<a name="rest_code_d99fee0316254bf3852252c4fd22e2ec-5"></a>  <span class="nx">timers</span><span class="o">:</span> <span class="p">{</span> <span class="nx">glork</span><span class="o">:</span> <span class="p">[]</span> <span class="p">},</span>
+<a name="rest_code_d99fee0316254bf3852252c4fd22e2ec-6"></a>  <span class="nx">gauges</span><span class="o">:</span> <span class="p">{</span> <span class="s1">'statsd.timestamp_lag'</span><span class="o">:</span> <span class="mi">0</span> <span class="p">},</span>
+<a name="rest_code_d99fee0316254bf3852252c4fd22e2ec-7"></a>  <span class="nx">timer_data</span><span class="o">:</span> <span class="p">{},</span>
+<a name="rest_code_d99fee0316254bf3852252c4fd22e2ec-8"></a>  <span class="nx">counter_rates</span><span class="o">:</span>
+<a name="rest_code_d99fee0316254bf3852252c4fd22e2ec-9"></a>   <span class="p">{</span> <span class="s1">'statsd.bad_lines_seen'</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+<a name="rest_code_d99fee0316254bf3852252c4fd22e2ec-10"></a>     <span class="s1">'statsd.packets_received'</span><span class="o">:</span> <span class="mf">0.1</span><span class="p">,</span>
+<a name="rest_code_d99fee0316254bf3852252c4fd22e2ec-11"></a>     <span class="s1">'this.is.a.counter'</span><span class="o">:</span> <span class="mf">0.1</span> <span class="p">},</span>
+<a name="rest_code_d99fee0316254bf3852252c4fd22e2ec-12"></a>  <span class="nx">sets</span><span class="o">:</span> <span class="p">{},</span>
+<a name="rest_code_d99fee0316254bf3852252c4fd22e2ec-13"></a>  <span class="nx">pctThreshold</span><span class="o">:</span> <span class="p">[</span> <span class="mi">90</span> <span class="p">]</span> <span class="p">}</span>
+</pre>
+<p>Como vemos, hay una ocurrencia del contador. A los 10 segundos se volverá a mostrar un 0, ya que en ese intervalo no ha habido ocurrencias.</p>
+<p>Recomendaría jugar aquí con los distintos tipos de métricas, varias métricas en un mensaje, cambiar la agrupación, etc. Incluso intentarlo desde el lenguaje que vayáis a utilizar después.</p>
+</div>
+<div class="section" id="para-que-sive-statsd">
+<h2>¿Para qué sive StatsD?</h2>
+<p>Pero nada de todo esto explica para qué podemos utilizar StatsD. Vamos a verlo con ejemplos. Utilizaré Python, junto con el <a class="reference external" href="https://github.com/etsy/statsd/blob/master/examples/python_example.py">ejemplo de cliente Python proporcionado por Etsy</a></p>
+<p>Tenemos una función muy costosa, que permite multiplicar dos matrices y queremos registrar cuánto tarda en ejecutarse. Aquí está nuestra función original:</p>
+<pre class="code python"><a name="rest_code_284a8b8da13846dab8187ea4acba546f-1"></a><span class="k">def</span> <span class="nf">multiply_matrix</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">acols</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">bcols</span><span class="p">):</span>
+<a name="rest_code_284a8b8da13846dab8187ea4acba546f-2"></a>    <span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">acols</span> <span class="o">*</span> <span class="n">bcols</span><span class="p">)</span>
+<a name="rest_code_284a8b8da13846dab8187ea4acba546f-3"></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">acols</span><span class="p">):</span>
+<a name="rest_code_284a8b8da13846dab8187ea4acba546f-4"></a>        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bcols</span><span class="p">):</span>
+<a name="rest_code_284a8b8da13846dab8187ea4acba546f-5"></a>            <span class="n">partial</span> <span class="o">=</span> <span class="mi">0</span>
+<a name="rest_code_284a8b8da13846dab8187ea4acba546f-6"></a>            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bcols</span><span class="p">):</span>
+<a name="rest_code_284a8b8da13846dab8187ea4acba546f-7"></a>                <span class="n">partial</span> <span class="o">+=</span> <span class="n">a</span><span class="p">[</span><span class="n">pos</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">acols</span><span class="p">)]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="n">pos</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">bcols</span><span class="p">)]</span>
+<a name="rest_code_284a8b8da13846dab8187ea4acba546f-8"></a>            <span class="n">c</span><span class="p">[</span><span class="n">pos</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">acols</span><span class="p">)]</span> <span class="o">=</span> <span class="n">partial</span>
+<a name="rest_code_284a8b8da13846dab8187ea4acba546f-9"></a>    <span class="k">return</span> <span class="n">c</span>
+</pre>
+<p>Dado que el cliente de <a class="reference external" href="https://github.com/etsy/statsd">StatsD</a> no va a cambiar con el tiempo, podemos considerar que todos sus métodos son estáticos y usar una única instancia, ya configurada con el <em>host</em> y <em>port</em> deseados, y guardarlo todo en una variable global (cosa que no debería ser lo habitual, pero en este caso estaría justificado). He marcado las líneas nuevas:</p>
+<pre class="code python"><a name="rest_code_708d111e5ffa41f7a6e774bdf9284843-1"></a><span class="kn">import</span> <span class="nn">time</span>  <span class="c"># +</span>
+<a name="rest_code_708d111e5ffa41f7a6e774bdf9284843-2"></a><span class="kn">from</span> <span class="nn">python_example</span> <span class="kn">import</span> <span class="n">StatsdClient</span>  <span class="c"># +</span>
+<a name="rest_code_708d111e5ffa41f7a6e774bdf9284843-3"></a>
+<a name="rest_code_708d111e5ffa41f7a6e774bdf9284843-4"></a><span class="n">statsd</span> <span class="o">=</span> <span class="n">StatsdClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">'localhost'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8125</span><span class="p">)</span>  <span class="c"># +</span>
+<a name="rest_code_708d111e5ffa41f7a6e774bdf9284843-5"></a>
+<a name="rest_code_708d111e5ffa41f7a6e774bdf9284843-6"></a><span class="k">def</span> <span class="nf">multiply_matrix</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">acols</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">bcols</span><span class="p">):</span>
+<a name="rest_code_708d111e5ffa41f7a6e774bdf9284843-7"></a>    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>  <span class="c"># +</span>
+<a name="rest_code_708d111e5ffa41f7a6e774bdf9284843-8"></a>    <span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">acols</span> <span class="o">*</span> <span class="n">bcols</span><span class="p">)</span>
+<a name="rest_code_708d111e5ffa41f7a6e774bdf9284843-9"></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">acols</span><span class="p">):</span>
+<a name="rest_code_708d111e5ffa41f7a6e774bdf9284843-10"></a>        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bcols</span><span class="p">):</span>
+<a name="rest_code_708d111e5ffa41f7a6e774bdf9284843-11"></a>            <span class="n">partial</span> <span class="o">=</span> <span class="mi">0</span>
+<a name="rest_code_708d111e5ffa41f7a6e774bdf9284843-12"></a>            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bcols</span><span class="p">):</span>
+<a name="rest_code_708d111e5ffa41f7a6e774bdf9284843-13"></a>                <span class="n">partial</span> <span class="o">+=</span> <span class="n">a</span><span class="p">[</span><span class="n">pos</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">acols</span><span class="p">)]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="n">pos</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">bcols</span><span class="p">)]</span>
+<a name="rest_code_708d111e5ffa41f7a6e774bdf9284843-14"></a>            <span class="n">c</span><span class="p">[</span><span class="n">pos</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">acols</span><span class="p">)]</span> <span class="o">=</span> <span class="n">partial</span>
+<a name="rest_code_708d111e5ffa41f7a6e774bdf9284843-15"></a>    <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>  <span class="c"># +</span>
+<a name="rest_code_708d111e5ffa41f7a6e774bdf9284843-16"></a>    <span class="n">statsd</span><span class="o">.</span><span class="n">timing</span><span class="p">(</span><span class="s">'matrix.</span><span class="si">%s</span><span class="s">_colsx</span><span class="si">%s</span><span class="s">_cols.time'</span> <span class="o">%</span> <span class="p">(</span><span class="n">acols</span><span class="p">,</span> <span class="n">bcols</span><span class="p">),</span> <span class="n">elapsed</span><span class="p">)</span>  <span class="c"># +</span>
+<a name="rest_code_708d111e5ffa41f7a6e774bdf9284843-17"></a>    <span class="k">return</span> <span class="n">c</span>
+</pre>
+<p>6 líneas contando <tt class="docutils literal">include</tt> y configuración.</p>
+<p>Además, quiero contar cuántas veces se llama a la función por cada tamaño de matrices:</p>
+<pre class="code python"><a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-1"></a><span class="kn">import</span> <span class="nn">time</span>
+<a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-2"></a><span class="kn">from</span> <span class="nn">python_example</span> <span class="kn">import</span> <span class="n">StatsdClient</span>
+<a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-3"></a>
+<a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-4"></a><span class="n">statsd</span> <span class="o">=</span> <span class="n">StatsdClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s">'localhost'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8125</span><span class="p">)</span>
+<a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-5"></a>
+<a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-6"></a><span class="k">def</span> <span class="nf">multiply_matrix</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">acols</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">bcols</span><span class="p">):</span>
+<a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-7"></a>    <span class="n">statsd</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">'matrix.</span><span class="si">%s</span><span class="s">_colsx</span><span class="si">%s</span><span class="s">_cols.count'</span> <span class="o">%</span> <span class="p">(</span><span class="n">acols</span><span class="p">,</span> <span class="n">bcols</span><span class="p">),</span> <span class="n">elapsed</span><span class="p">)</span>  <span class="c"># +</span>
+<a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-8"></a>    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-9"></a>    <span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">acols</span> <span class="o">*</span> <span class="n">bcols</span><span class="p">)</span>
+<a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-10"></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">acols</span><span class="p">):</span>
+<a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-11"></a>        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bcols</span><span class="p">):</span>
+<a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-12"></a>            <span class="n">partial</span> <span class="o">=</span> <span class="mi">0</span>
+<a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-13"></a>            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">bcols</span><span class="p">):</span>
+<a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-14"></a>                <span class="n">partial</span> <span class="o">+=</span> <span class="n">a</span><span class="p">[</span><span class="n">pos</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">acols</span><span class="p">)]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="n">pos</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">bcols</span><span class="p">)]</span>
+<a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-15"></a>            <span class="n">c</span><span class="p">[</span><span class="n">pos</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">acols</span><span class="p">)]</span> <span class="o">=</span> <span class="n">partial</span>
+<a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-16"></a>    <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+<a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-17"></a>    <span class="n">statsd</span><span class="o">.</span><span class="n">timing</span><span class="p">(</span><span class="s">'matrix.</span><span class="si">%s</span><span class="s">_colsx</span><span class="si">%s</span><span class="s">_cols.time'</span> <span class="o">%</span> <span class="p">(</span><span class="n">acols</span><span class="p">,</span> <span class="n">bcols</span><span class="p">),</span> <span class="n">elapsed</span><span class="p">)</span>
+<a name="rest_code_bc00cc3c8b5d49ec91e19d7797bf7655-18"></a>    <span class="k">return</span> <span class="n">c</span>
+</pre>
+<p>Una línea más.</p>
+<div class="section" id="ventajas">
+<h3>Ventajas</h3>
+<p>Pero... ¿En qué afecta esto al tiempo de ejecución? Bueno, por el principio de Heisenberg, donde el observador siempre altera lo observado, en algo, pero en muy poco, ya que al utilizar el protocolo UDP no hay tiempos de latencia.</p>
+<p>UDP tiene un problema: Es posible que la trama se pierda. Así que estas estadísticas no serán muy exactas, pero pueden darnos una idea muy aproximada de la evolución del sistema. De todas maneras, si el servidor <a class="reference external" href="https://github.com/etsy/statsd">StatsD</a> está en local, es raro que se pierda una trama.</p>
+<p>Si se conectara contra <a class="reference external" href="http://graphite.wikidot.com/">Graphite</a> directamente por TCP entonces sí que habría retrasos: hay que establecer la conexión, enviar la información, esperar <strong>ACK</strong>, etc.</p>
+<p>Otra ventaja es que no puede fallar. Si nuestro servidor TCP está caído, debemos tratar la excepción o el programa fallará. Si usamos UDP, perderemos la métrica, pero seguiremos dando servicio.</p>
+<p>¿Dónde es especialmente útil?</p>
+<ul class="simple">
+<li>Para tiempos de ejecución de <strong>queries</strong>. En pruebas de estrés podría mostrar la evolución del tiempo de ejecución en función de los datos ya existentes.</li>
+<li>Contabilizar <strong>logins en una web</strong> u otras operaciones, así como <em>logins</em> fallidos, permitiendo detectar ataques por fuerza bruta.</li>
+<li>Medir <strong>tiempos de respuesta</strong> en una web.</li>
+</ul>
+<p>En Tuenti nos hicimos un <em>wrapper</em> sobre mercurial, para detectar la evolución del tiempo necesario para ejecutar cada subcomando, para medir la evolución de los más lentos. Gracias a esto, <a class="reference external" href="http://corporate.tuenti.com/es/dev/blog/Mercurial-performance-boost">detectamos un problema grave de rendimiento</a> y pudimos medir su evolución.</p>
+</div>
+</div>
+<div class="section" id="clusters-de-statsd">
+<h2>Clusters de StatsD</h2>
+<p>Todo esto tiene un problema. Si tenemos un balanceador de carga con dos servidores, cada uno con su servidor StatsD, y queremos medir los tiempos de request, el último que mande su valor a <a class="reference external" href="http://graphite.wikidot.com/">Graphite</a> es el que quedará. Por eso debemos configurar los servidores StatsD como <strong>Proxies</strong>, indicando la ubicación del resto de servidores StatsD.</p>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusión</h2>
+<p>Todo se puede medir, y es importante medirlo todo. Desgraciadamente, eso requiere muchos recursos. Pero StatsD es una herramienta muy interesante para medir allá donde no se puede con otras herramientas.</p>
+<p>Finalmente os dejo con un vídeo de cómo hacer todo lo que he contado aquí:</p>
+<iframe width="425" height="344" src="//www.youtube.com/embed/J5CeLI2CiPk?rel=0&amp;hd=1&amp;wmode=transparent"></iframe><p>También os proporciono otro vídeo de cómo instalar <a class="reference external" href="http://graphite.wikidot.com/">Graphite</a> y <a class="reference external" href="https://github.com/etsy/statsd">Statsd</a> en 3 minutos, mostrando los datos. Es importante tener en cuenta que <a class="reference external" href="https://github.com/etsy/statsd">Statsd</a> dejará las métricas en <tt class="docutils literal">stats/gauges/</tt> en lugar de colgar del árbol principal.</p>
+<iframe width="425" height="344" src="//www.youtube.com/embed/ADMPs4FzLDQ?rel=0&amp;hd=1&amp;wmode=transparent"></iframe><p>Quizá os parezca extraño ver cómo se altera la gráfica en parte del vídeo, pero es algo normal: Al llegar varias métricas durante el mismo cupo de tiempo, el último predomina. Para cambiar eso habría que modificar la configuración de Carbon, como se explicó en el artículo <cite>Gráficas basadas en tiempo: Graphite</cite>.</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2015-07-12T00:00:00+00:00" title="2015-07-12">2015-07-12</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/monitoring/" rel="tag">monitoring</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/yapsy-un-sistema-de-plugins-pythonico/" rel="prev" title="Yapsy, un sistema de plugins pythónico">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/puppet-templates-hint-quitando-espacios/" rel="next" title="Puppet templates hint: quitando espacios">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/midiendolo-todo-con-statsd/",
+        disqus_title="Midi\u00e9ndolo todo con StatsD",
+        disqus_identifier="cache/posts/midiendolo-todo-con-statsd.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

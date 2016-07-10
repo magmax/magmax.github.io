@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Cómo realizar paginación básica y generar el detalle de elementos en Django">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Django lo hizo un mago: paginación y detalle | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/django-lo-hizo-un-mago-paginacion-y-detalle/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Cómo realizar paginación básica y generar el detalle de elementos en Django">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/django-lo-hizo-un-mago/" title="Django lo hizo un mago" type="text/html">
+<link rel="next" href="/blog/git-recuperacion-de-changesets-perdidos/" title="Git: recuperación de changesets perdidos" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Django lo hizo un mago: paginación y detalle">
+<meta property="og:url" content="http://magmax.org/blog/django-lo-hizo-un-mago-paginacion-y-detalle/">
+<meta property="og:description" content="Cómo realizar paginación básica y generar el detalle de elementos en Django">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2015-02-26T00:00:00+00:00">
+<meta property="article:updated" content="2015-04-02T00:00:00+00:00">
+<meta property="article:tag" content="django">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Cómo realizar paginación básica y generar el detalle de elementos en Django">
+<meta name="twitter:url" content="http://magmax.org//blog/django-lo-hizo-un-mago-paginacion-y-detalle/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/" class="u-url">Django lo hizo un mago: paginación y detalle</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2015-02-26T00:00:00+00:00" title="2015-02-26">2015-02-26</time>
+                // <time class="updated dt-updated" datetime="2015-04-02T00:00:00+00:00" title="2015-02-26">2015-02-26</time></p>
+              <p class="commentline">            <a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#disqus_thread" data-disqus-identifier="cache/posts/django-lo-hizo-un-mago-paginacion-estaticos-y-contextos.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>En el artículo anterior <a class="reference external" href="/blog/django-lo-hizo-un-mago">Django lo hizo un mago</a> creamos un entorno básico con un listado de <em>posts</em> para un <em>blog</em>. En esta ocasión vamos a añadir más funcionalidad.</p>
+<p>En concreto, veremos cómo visualizar cada <em>post</em> (lo que llamaremos <em>detalle</em>), y añadiremos paginación.</p>
+<p>Pero antes un extra: Añadir elementos aleatorios de pruebas fácilmente con <a class="reference external" href="https://github.com/kaleidos/django-sampledatahelper">sampledatahelper</a></p>
+<!-- TEASER_END -->
+<div class="section" id="como-leer-este-articulo">
+<h2>Cómo leer este artículo</h2>
+<p>Hay tres maneras de leer este artículo.</p>
+<ol class="arabic simple">
+<li>Continuando tras la lectura de <a class="reference external" href="/blog/django-lo-hizo-un-mago">Django lo hizo un mago</a>
+</li>
+<li>Descargándose el tag 0.1.0 del <a class="reference external" href="https://github.com/magmax/django-blog/">repositorio GitHub</a> <cite>git@github.com:magmax/django-blog.git</cite>
+</li>
+<li>Viendo los resultados descargándose el tag 0.2.0 del <a class="reference external" href="https://github.com/magmax/django-blog/">repositorio GitHub</a> <cite>git@github.com:magmax/django-blog.git</cite>
+</li>
+</ol>
+<p>Acordáos de crear el entorno <a class="reference external" href="https://virtualenv.pypa.io">Virtualenv</a> e instalar las dependencias.</p>
+<p>Y dicho esto, vamos al lío.</p>
+</div>
+<div class="section" id="documentos-a-cholon">
+<h2>Documentos a cholón</h2>
+<p>Personalmente encuentro bastante fastidioso tener que escribir muchos artículos, así que vamos a instalarnos una librería llamada <a class="reference external" href="https://github.com/kaleidos/django-sampledatahelper">sampledatahelper</a> y a configurarla para que nos genere documentos aleatorios.</p>
+<p>Instalamos el paquete:</p>
+<pre class="code text"><a name="rest_code_a260f72f73d8442ca438de16444608e7-1"></a>(env)$ pip install django-sampledatahelper==0.2.1
+</pre>
+<p>Instalamos la aplicación, añadiéndola a la variable <tt class="docutils literal">INSTALLED_APPS</tt> del archivo <strong>app/settings.py</strong>:</p>
+<p><a class="reference external" href="/listings/python-django/002/app/app/settings.py.html">python-django/002/app/app/settings.py</a></p>
+<table class="codetable"><tr>
+<td class="linenos"><div class="linenodiv"><pre><a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_9733006d136143da81c8276b66dff7a0-32">32</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_9733006d136143da81c8276b66dff7a0-33">33</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_9733006d136143da81c8276b66dff7a0-34">34</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_9733006d136143da81c8276b66dff7a0-35">35</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_9733006d136143da81c8276b66dff7a0-36">36</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_9733006d136143da81c8276b66dff7a0-37">37</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_9733006d136143da81c8276b66dff7a0-38">38</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_9733006d136143da81c8276b66dff7a0-39">39</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_9733006d136143da81c8276b66dff7a0-40">40</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_9733006d136143da81c8276b66dff7a0-41">41</a></pre></div></td>
+<td class="code"><pre class="code python"><a name="rest_code_9733006d136143da81c8276b66dff7a0-32"></a><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">(</span>
+<a name="rest_code_9733006d136143da81c8276b66dff7a0-33"></a>    <span class="s">'django.contrib.admin'</span><span class="p">,</span>
+<a name="rest_code_9733006d136143da81c8276b66dff7a0-34"></a>    <span class="s">'django.contrib.auth'</span><span class="p">,</span>
+<a name="rest_code_9733006d136143da81c8276b66dff7a0-35"></a>    <span class="s">'django.contrib.contenttypes'</span><span class="p">,</span>
+<a name="rest_code_9733006d136143da81c8276b66dff7a0-36"></a>    <span class="s">'django.contrib.sessions'</span><span class="p">,</span>
+<a name="rest_code_9733006d136143da81c8276b66dff7a0-37"></a>    <span class="s">'django.contrib.messages'</span><span class="p">,</span>
+<a name="rest_code_9733006d136143da81c8276b66dff7a0-38"></a>    <span class="s">'django.contrib.staticfiles'</span><span class="p">,</span>
+<a name="rest_code_9733006d136143da81c8276b66dff7a0-39"></a>    <span class="s">'blog'</span><span class="p">,</span>
+<a name="rest_code_9733006d136143da81c8276b66dff7a0-40"></a>    <span class="s">'sampledatahelper'</span><span class="p">,</span>
+<a name="rest_code_9733006d136143da81c8276b66dff7a0-41"></a><span class="p">)</span>
+</pre></td>
+</tr></table>
+<p>Y en ese mismo archivo añadimos la configuración necesaria:</p>
+<p><a class="reference external" href="/listings/python-django/002/app/app/settings.py.html">python-django/002/app/app/settings.py</a></p>
+<table class="codetable"><tr>
+<td class="linenos"><div class="linenodiv"><pre><a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_0c51b0acc15b4db88f9ae70aa968221e-90">90</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_0c51b0acc15b4db88f9ae70aa968221e-91">91</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_0c51b0acc15b4db88f9ae70aa968221e-92">92</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_0c51b0acc15b4db88f9ae70aa968221e-93">93</a></pre></div></td>
+<td class="code"><pre class="code python"><a name="rest_code_0c51b0acc15b4db88f9ae70aa968221e-90"></a><span class="n">SAMPLEDATAHELPER_MODELS</span>  <span class="o">=</span> <span class="p">[</span>
+<a name="rest_code_0c51b0acc15b4db88f9ae70aa968221e-91"></a>    <span class="p">{</span> <span class="s">'model'</span><span class="p">:</span> <span class="s">'blog.Post'</span><span class="p">,</span> <span class="s">'number'</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="p">},</span>
+<a name="rest_code_0c51b0acc15b4db88f9ae70aa968221e-92"></a>    <span class="p">{</span> <span class="s">'model'</span><span class="p">:</span> <span class="s">'blog.Tag'</span><span class="p">,</span> <span class="s">'number'</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="p">},</span>
+<a name="rest_code_0c51b0acc15b4db88f9ae70aa968221e-93"></a><span class="p">]</span>
+</pre></td>
+</tr></table>
+<p>y ejecutamos:</p>
+<pre class="code bash"><a name="rest_code_e20cee71eab041568fbc33e3b49fc329-1"></a>python manage.py sampledatafiller
+</pre>
+<p>Y tendremos escritos 100 posts pertenecientes a 5 categorías diferentes. Podéis ejecutar varias veces para generar más o jugar con los parámetros :D</p>
+</div>
+<div class="section" id="paginacion">
+<h2>Paginación</h2>
+<p>Con tantos documentos no hay quien lea nada.</p>
+<p>Vamos a paginar. Para ello, editamos nuestro controlador, que en <a class="reference external" href="https://www.djangoproject.com/">Django</a> se llama vista(archivo <strong>blog/views.py</strong>):</p>
+<pre class="code python"><a name="rest_code_a94a422996124241a14b07c053dee022-1"></a><span class="kn">from</span> <span class="nn">django.views.generic.list</span> <span class="kn">import</span> <span class="n">ListView</span>
+<a name="rest_code_a94a422996124241a14b07c053dee022-2"></a>
+<a name="rest_code_a94a422996124241a14b07c053dee022-3"></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">models</span>
+<a name="rest_code_a94a422996124241a14b07c053dee022-4"></a>
+<a name="rest_code_a94a422996124241a14b07c053dee022-5"></a>
+<a name="rest_code_a94a422996124241a14b07c053dee022-6"></a><span class="k">class</span> <span class="nc">PostListView</span><span class="p">(</span><span class="n">ListView</span><span class="p">):</span>
+<a name="rest_code_a94a422996124241a14b07c053dee022-7"></a>    <span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Post</span>
+<a name="rest_code_a94a422996124241a14b07c053dee022-8"></a>    <span class="n">paginate_by</span> <span class="o">=</span> <span class="mi">8</span>
+</pre>
+<p>Y con eso se nos reducirán los documentos a 8. Ahora editamos la plantilla, para saltar al anterior y al siguiente:</p>
+<p><a class="reference external" href="/listings/python-django/002/app/templates/blog/post_list.html.html">python-django/002/app/templates/blog/post_list.html</a></p>
+<table class="codetable"><tr>
+<td class="linenos"><div class="linenodiv"><pre><a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-7"> 7</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-8"> 8</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-9"> 9</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-10">10</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-11">11</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-12">12</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-13">13</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-14">14</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-15">15</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-16">16</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-17">17</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-18">18</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-19">19</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-20">20</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-21">21</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-22">22</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-23">23</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-24">24</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-25">25</a></pre></div></td>
+<td class="code"><pre class="code html"><a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-7"></a><span class="nt">&lt;div&gt;</span>
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-8"></a>    {% if page_obj.has_previous %}
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-9"></a>      <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'home' %}?page={{ page_obj.previous_page_number }}"</span><span class="nt">&gt;</span>
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-10"></a>        <span class="nt">&lt;span&gt;</span><span class="ni">&amp;laquo;</span> Previous<span class="nt">&lt;/span&gt;</span>
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-11"></a>      <span class="nt">&lt;/a&gt;</span>
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-12"></a>    {% else %}
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-13"></a>      <span class="nt">&lt;span&gt;</span><span class="ni">&amp;laquo;</span> Previous<span class="nt">&lt;/span&gt;</span>
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-14"></a>    {% endif %}
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-15"></a>
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-16"></a>      <span class="nt">&lt;span&gt;</span> | <span class="nt">&lt;span&gt;</span>
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-17"></a>
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-18"></a>    {% if page_obj.has_next %}
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-19"></a>      <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'home' %}?page={{ page_obj.next_page_number }}"</span><span class="nt">&gt;</span>
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-20"></a>        <span class="nt">&lt;span&gt;</span>Next <span class="ni">&amp;raquo;</span><span class="nt">&lt;/span&gt;</span>
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-21"></a>      <span class="nt">&lt;/a&gt;</span>
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-22"></a>    {% else %}
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-23"></a>      <span class="nt">&lt;span&gt;</span>Next <span class="ni">&amp;raquo;</span><span class="nt">&lt;/span&gt;</span>
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-24"></a>    {% endif %}
+<a name="rest_code_5b2f2068b2264e67a8cfcca1cf61c26e-25"></a><span class="nt">&lt;/div&gt;</span>
+</pre></td>
+</tr></table>
+<p>No creo que tengáis problemas en entenderlo, más allá de encontrar el truco de magia: <a class="reference external" href="https://www.djangoproject.com/">Django</a> nos ha inyectado una variable llamada <tt class="docutils literal">page_obj</tt>. Esto es lo que se denomina <strong>contexto</strong> y que veremos en mayor detalle en el artículo de plantillas y estáticos.</p>
+<p>Qué difícil ¿no?</p>
+<p>Si os sentís artistas podéis darle un estilillo más chulo. De todas maneras hablaremos más en algún artículo dedicado a las plantillas y estáticos.</p>
+</div>
+<div class="section" id="viendo-los-posts">
+<h2>Viendo los posts</h2>
+<p>Ha llegado el momento de ver el contenido de los posts. Esto tiene bastantes modificaciones. Vayamos por partes:</p>
+<div class="section" id="el-controlador">
+<h3>El controlador</h3>
+<p>No vamos a modificar el modelo, así que vamos directamente con el controlador (archivo <strong>blog/views.py</strong>, acordaos):</p>
+<p><a class="reference external" href="/listings/python-django/002/app/blog/views.py.html">python-django/002/app/blog/views.py</a></p>
+<pre class="code python"><a name="rest_code_ef82d49ad4e24b4b9f204f5e34fc210e-1"></a><span class="kn">from</span> <span class="nn">django.views.generic.list</span> <span class="kn">import</span> <span class="n">ListView</span>
+<a name="rest_code_ef82d49ad4e24b4b9f204f5e34fc210e-2"></a><span class="kn">from</span> <span class="nn">django.views.generic.detail</span> <span class="kn">import</span> <span class="n">DetailView</span>
+<a name="rest_code_ef82d49ad4e24b4b9f204f5e34fc210e-3"></a>
+<a name="rest_code_ef82d49ad4e24b4b9f204f5e34fc210e-4"></a><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">models</span>
+<a name="rest_code_ef82d49ad4e24b4b9f204f5e34fc210e-5"></a>
+<a name="rest_code_ef82d49ad4e24b4b9f204f5e34fc210e-6"></a>
+<a name="rest_code_ef82d49ad4e24b4b9f204f5e34fc210e-7"></a><span class="k">class</span> <span class="nc">PostListView</span><span class="p">(</span><span class="n">ListView</span><span class="p">):</span>
+<a name="rest_code_ef82d49ad4e24b4b9f204f5e34fc210e-8"></a>    <span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Post</span>
+<a name="rest_code_ef82d49ad4e24b4b9f204f5e34fc210e-9"></a>    <span class="n">paginate_by</span> <span class="o">=</span> <span class="mi">8</span>
+<a name="rest_code_ef82d49ad4e24b4b9f204f5e34fc210e-10"></a>
+<a name="rest_code_ef82d49ad4e24b4b9f204f5e34fc210e-11"></a>
+<a name="rest_code_ef82d49ad4e24b4b9f204f5e34fc210e-12"></a><span class="k">class</span> <span class="nc">PostDetailView</span><span class="p">(</span><span class="n">DetailView</span><span class="p">):</span>
+<a name="rest_code_ef82d49ad4e24b4b9f204f5e34fc210e-13"></a>    <span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Post</span>
+</pre>
+<p>Poco que explicar aquí: importamos <tt class="docutils literal">django.views.generic.detail.DetailView</tt> y creamos una clase de ese tipo, asociándola con nuestro modelo <tt class="docutils literal">blog.models.Post</tt>.</p>
+</div>
+<div class="section" id="el-enrutador">
+<h3>El enrutador</h3>
+<p><a class="reference external" href="/listings/python-django/002/app/app/urls.py.html">python-django/002/app/app/urls.py</a></p>
+<pre class="code python"><a name="rest_code_578b235a07e2413ebcba612e16541839-1"></a><span class="kn">from</span> <span class="nn">django.conf.urls</span> <span class="kn">import</span> <span class="n">patterns</span><span class="p">,</span> <span class="n">include</span><span class="p">,</span> <span class="n">url</span>
+<a name="rest_code_578b235a07e2413ebcba612e16541839-2"></a>
+<a name="rest_code_578b235a07e2413ebcba612e16541839-3"></a><span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
+<a name="rest_code_578b235a07e2413ebcba612e16541839-4"></a><span class="n">admin</span><span class="o">.</span><span class="n">autodiscover</span><span class="p">()</span>
+<a name="rest_code_578b235a07e2413ebcba612e16541839-5"></a>
+<a name="rest_code_578b235a07e2413ebcba612e16541839-6"></a><span class="kn">from</span> <span class="nn">blog</span> <span class="kn">import</span> <span class="n">views</span>
+<a name="rest_code_578b235a07e2413ebcba612e16541839-7"></a>
+<a name="rest_code_578b235a07e2413ebcba612e16541839-8"></a>
+<a name="rest_code_578b235a07e2413ebcba612e16541839-9"></a><span class="n">urlpatterns</span> <span class="o">=</span> <span class="n">patterns</span><span class="p">(</span><span class="s">''</span><span class="p">,</span>
+<a name="rest_code_578b235a07e2413ebcba612e16541839-10"></a>    <span class="n">url</span><span class="p">(</span><span class="s">r'^$'</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">PostListView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s">'home'</span><span class="p">),</span>
+<a name="rest_code_578b235a07e2413ebcba612e16541839-11"></a>    <span class="n">url</span><span class="p">(</span><span class="s">r'^post/(?P&lt;pk&gt;\d+)$'</span><span class="p">,</span> <span class="n">views</span><span class="o">.</span><span class="n">PostDetailView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s">'post_detail'</span><span class="p">),</span>
+<a name="rest_code_578b235a07e2413ebcba612e16541839-12"></a>    <span class="n">url</span><span class="p">(</span><span class="s">r'^admin/'</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">)),</span>
+<a name="rest_code_578b235a07e2413ebcba612e16541839-13"></a><span class="p">)</span>
+</pre>
+<p>Sólo he añadido una línea, la segunda <tt class="docutils literal">url</tt>. Aquí estoy usando una expresión regular(<tt class="docutils literal"><span class="pre">(?P&lt;pk&gt;\d+)</span></tt>) que puede parecer compleja, pero no lo es. Tan sólo cojo uno o más números y le doy un nombre: <tt class="docutils literal">pk</tt> (de <em>primary key</em>). Utilizo esta expresión regular para componer las <em>URLs</em> que identificarán el detalle de un <em>post</em>, asociándolo con la clase que creamos en el paso anterior. Además, le doy un nombre.</p>
+</div>
+<div class="section" id="enlazando">
+<h3>Enlazando</h3>
+<p>Ahora podemos enlazar en la lista de <em>posts</em>, <strong>templates/blog/post_list.html</strong>, del que me salto la parte de la paginación:</p>
+<p><a class="reference external" href="/listings/python-django/002/app/templates/blog/post_list.html.html">python-django/002/app/templates/blog/post_list.html</a></p>
+<table class="codetable"><tr>
+<td class="linenos"><div class="linenodiv"><pre><a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_44ec1a58d5634535889ded3254b79204-1">1</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_44ec1a58d5634535889ded3254b79204-2">2</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_44ec1a58d5634535889ded3254b79204-3">3</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_44ec1a58d5634535889ded3254b79204-4">4</a>
+<a href="/blog/django-lo-hizo-un-mago-paginacion-y-detalle/#rest_code_44ec1a58d5634535889ded3254b79204-5">5</a></pre></div></td>
+<td class="code"><pre class="code html"><a name="rest_code_44ec1a58d5634535889ded3254b79204-1"></a><span class="nt">&lt;ul&gt;</span>
+<a name="rest_code_44ec1a58d5634535889ded3254b79204-2"></a>  {% for post in post_list %}
+<a name="rest_code_44ec1a58d5634535889ded3254b79204-3"></a>  <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'post_detail' post.id %}"</span><span class="nt">&gt;</span>{{ post.title }}<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+<a name="rest_code_44ec1a58d5634535889ded3254b79204-4"></a>  {% endfor %}
+<a name="rest_code_44ec1a58d5634535889ded3254b79204-5"></a><span class="nt">&lt;/ul&gt;</span>
+</pre></td>
+</tr></table>
+</div>
+<div class="section" id="la-vista">
+<h3>La vista</h3>
+<p>Si lanzamos el servidor y pulsamos sobre estos enlaces, nos dará un error porque no encuentra el archivo <strong>blog/post_detail.html</strong>. Vamos a crearlo:</p>
+<p><a class="reference external" href="/listings/python-django/002/app/templates/blog/post_detail.html.html">python-django/002/app/templates/blog/post_detail.html</a></p>
+<pre class="code html"><a name="rest_code_f1a5fcf817084a468101f6716edc506e-1"></a><span class="nt">&lt;h1&gt;</span>{{ post.title }}<span class="nt">&lt;/h1&gt;</span>
+<a name="rest_code_f1a5fcf817084a468101f6716edc506e-2"></a>
+<a name="rest_code_f1a5fcf817084a468101f6716edc506e-3"></a><span class="nt">&lt;div&gt;</span>
+<a name="rest_code_f1a5fcf817084a468101f6716edc506e-4"></a>  {{ post.teaser }}
+<a name="rest_code_f1a5fcf817084a468101f6716edc506e-5"></a><span class="nt">&lt;/div&gt;</span>
+<a name="rest_code_f1a5fcf817084a468101f6716edc506e-6"></a>
+<a name="rest_code_f1a5fcf817084a468101f6716edc506e-7"></a><span class="nt">&lt;hr</span> <span class="nt">/&gt;</span>
+<a name="rest_code_f1a5fcf817084a468101f6716edc506e-8"></a>
+<a name="rest_code_f1a5fcf817084a468101f6716edc506e-9"></a><span class="nt">&lt;div&gt;</span>
+<a name="rest_code_f1a5fcf817084a468101f6716edc506e-10"></a>  {{ post.body }}
+<a name="rest_code_f1a5fcf817084a468101f6716edc506e-11"></a><span class="nt">&lt;/div&gt;</span>
+<a name="rest_code_f1a5fcf817084a468101f6716edc506e-12"></a>
+<a name="rest_code_f1a5fcf817084a468101f6716edc506e-13"></a><span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"{% url 'home' %}"</span><span class="nt">&gt;</span>Post list<span class="nt">&lt;/a&gt;</span>
+</pre>
+<p>Y, ahora sí, podemos ver el detalle.</p>
+</div>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusión</h2>
+<p>Si hacéis un <tt class="docutils literal">show</tt> de los cambios de esta versión, descubriréis que los cambios que hemos hecho hoy son muy pequeños:</p>
+<pre class="code text"><a name="rest_code_5359a5f16e0549edbbc6d728b62a6d64-1"></a>6 files changed, 49 insertions(+), 1 deletion(-)
+</pre>
+<p>Creo que esto explica el <em>motto</em> de <a class="reference external" href="https://www.djangoproject.com/">Django</a>:</p>
+<blockquote>
+Django makes it easier to build better Web apps more quickly and with less code.</blockquote>
+<p>Si os ha gustado, podéis continuar con <a class="reference external" href="/blog/django-lo-hizo-un-mago-plantillas-y-contextos">Django lo hizo un mago: plantillas y contextos</a>, donde mejoraremos el aspecto dándole una calidad profesional con muy poco esfuerzo.</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2015-02-26T00:00:00+00:00" title="2015-02-26">2015-02-26</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/django/" rel="tag">django</a>
+                <a class="label label-primary p-category" href="/categories/python/" rel="tag">python</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/django-lo-hizo-un-mago/" rel="prev" title="Django lo hizo un mago">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/git-recuperacion-de-changesets-perdidos/" rel="next" title="Git: recuperación de changesets perdidos">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/django-lo-hizo-un-mago-paginacion-y-detalle/",
+        disqus_title="Django lo hizo un mago: paginaci\u00f3n y detalle",
+        disqus_identifier="cache/posts/django-lo-hizo-un-mago-paginacion-estaticos-y-contextos.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

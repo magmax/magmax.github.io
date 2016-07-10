@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Pruebas con Bases de Datos en memoria: DBUnit + HSQLDB | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/hsqldb-dbunit/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/formatos-simples/" title="Formatos simples: XML, Yaml, Json, Properties e 'Ini" type="text/html">
+<link rel="next" href="/blog/buenas-practicas-c-1/" title="Buenas prácticas en Ansi C (1)" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Pruebas con Bases de Datos en memoria: DBUnit + HSQLDB">
+<meta property="og:url" content="http://magmax.org/blog/hsqldb-dbunit/">
+<meta property="og:description" content="DBUnit es un sistema sencillo que nos permite cargar con datos nuestra base de datos con el fin de realizar tests con estos datos.
+La gran ventaja de DBUnit es poder utilizar un sistema sencillo para ">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2011-06-13T00:00:00+00:00">
+<meta property="article:updated" content="2011-06-13T00:00:00">
+<meta property="article:tag" content="db testing">
+<meta property="article:tag" content="dbunit">
+<meta property="article:tag" content="hsqldb">
+<meta property="article:tag" content="sql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/hsqldb-dbunit/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/hsqldb-dbunit/" class="u-url">Pruebas con Bases de Datos en memoria: DBUnit + HSQLDB</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2011-06-13T00:00:00+00:00" title="2011-06-13">2011-06-13</time>
+                // <time class="updated dt-updated" datetime="2011-06-13T00:00:00" title="2011-06-13">2011-06-13</time></p>
+              <p class="commentline">            <a href="/blog/hsqldb-dbunit/#disqus_thread" data-disqus-identifier="cache/posts/hsqldb-dbunit.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>DBUnit es un sistema sencillo que nos permite cargar con datos nuestra base de datos con el fin de realizar tests con estos datos.</p>
+<p>La gran ventaja de DBUnit es poder utilizar un sistema sencillo para indicar los datos a insertar mediante un XML, así como poder exportar una BBDD existente.</p>
+<p>Sin embargo, DBUnit no permite la creación de la BBDD, lo que puede ser un problema al intentar usar una BBDD en memoria, como pueda ser HyperSQL o Derby.</p>
+<!-- TEASER_END -->
+<div class="section" id="enunciado">
+<h2>Enunciado</h2>
+<p>Como me gusta resolver los problemas concretos y no los abstractos, veamos cómo usar DBUnit con una base de datos en memoria. Para ello utilizaremos un pequeño gestor de libros con una única tabla, que contendrá el id, título y autor.</p>
+</div>
+<div class="section" id="datos">
+<h2>Datos</h2>
+<p>Nuestros datos serán los siguientes:</p>
+<pre class="code xml"><a name="rest_code_2dca96240fcf4eec9a2c4169befe0154-1"></a><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<a name="rest_code_2dca96240fcf4eec9a2c4169befe0154-2"></a><span class="nt">&lt;dataset&gt;</span>
+<a name="rest_code_2dca96240fcf4eec9a2c4169befe0154-3"></a>    <span class="nt">&lt;book</span> <span class="na">id=</span><span class="s">"1"</span> <span class="na">title=</span><span class="s">"Fundación"</span> <span class="na">author=</span><span class="s">"Isaac Asimov"</span><span class="nt">/&gt;</span>
+<a name="rest_code_2dca96240fcf4eec9a2c4169befe0154-4"></a>    <span class="nt">&lt;book</span> <span class="na">id=</span><span class="s">"2"</span> <span class="na">title=</span><span class="s">"Clean Code"</span> <span class="na">author=</span><span class="s">"Robert C. Martin"</span><span class="nt">/&gt;</span>
+<a name="rest_code_2dca96240fcf4eec9a2c4169befe0154-5"></a>    <span class="nt">&lt;book</span> <span class="na">id=</span><span class="s">"3"</span> <span class="na">title=</span><span class="s">"Diseño ágil con TDD"</span> <span class="na">author=</span><span class="s">"Carlos Ble"</span><span class="nt">/&gt;</span>
+<a name="rest_code_2dca96240fcf4eec9a2c4169befe0154-6"></a><span class="nt">&lt;/dataset&gt;</span>
+</pre>
+<p>Aquí ya estamos diseñando. Lo que le estamos diciendo a DBUnit es que vamos a tener una tabla "book" con 3 columnas, que son "id", "title" y "author".</p>
+<p>El archivo anterior se situará en el paquete "tests", de manera que se empaquetará en el JAR con nuestras pruebas.</p>
+</div>
+<div class="section" id="codigo">
+<h2>Código</h2>
+<p>Veamos ahora cómo indicárselo a DBUnit:</p>
+<pre class="code java"><a name="rest_code_24b5dc98669a483ebf567bc93e465be9-1"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">test1</span> <span class="kd">extends</span> <span class="n">DBTestCase</span> <span class="o">{</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-2"></a>    <span class="kd">static</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-3"></a>    <span class="o">{</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-4"></a>        <span class="k">try</span> <span class="o">{</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-5"></a>            <span class="n">String</span> <span class="n">driver</span> <span class="o">=</span> <span class="s">"org.hsqldb.jdbcDriver"</span><span class="o">;</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-6"></a>            <span class="n">String</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"jdbc:hsqldb:mem:sample"</span><span class="o">;</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-7"></a>            <span class="n">String</span> <span class="n">user</span> <span class="o">=</span><span class="s">"sa"</span><span class="o">;</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-8"></a>            <span class="n">String</span> <span class="n">pass</span> <span class="o">=</span> <span class="s">""</span><span class="o">;</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-9"></a>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-10"></a>            <span class="n">System</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="n">PropertiesBasedJdbcDatabaseTester</span><span class="o">.</span><span class="na">DBUNIT_DRIVER_CLASS</span><span class="o">,</span> <span class="n">driver</span><span class="o">);</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-11"></a>            <span class="n">System</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="n">PropertiesBasedJdbcDatabaseTester</span><span class="o">.</span><span class="na">DBUNIT_CONNECTION_URL</span><span class="o">,</span> <span class="n">url</span><span class="o">);</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-12"></a>            <span class="n">System</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="n">PropertiesBasedJdbcDatabaseTester</span><span class="o">.</span><span class="na">DBUNIT_USERNAME</span><span class="o">,</span> <span class="n">user</span><span class="o">);</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-13"></a>            <span class="n">System</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="n">PropertiesBasedJdbcDatabaseTester</span><span class="o">.</span><span class="na">DBUNIT_PASSWORD</span><span class="o">,</span> <span class="n">pass</span><span class="o">);</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-14"></a>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-15"></a>            <span class="n">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="n">driver</span><span class="o">);</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-16"></a>            <span class="n">Connection</span> <span class="n">con</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="o">.</span><span class="na">getConnection</span><span class="o">(</span><span class="n">url</span><span class="o">,</span> <span class="n">user</span><span class="o">,</span> <span class="n">pass</span><span class="o">);</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-17"></a>            <span class="n">Statement</span> <span class="n">st</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="na">createStatement</span><span class="o">();</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-18"></a>            <span class="n">st</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="s">"create table book ("</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-19"></a>                    <span class="o">+</span> <span class="s">"id integer, "</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-20"></a>                    <span class="o">+</span> <span class="s">"title varchar(50), "</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-21"></a>                    <span class="o">+</span> <span class="s">"author varchar(50)"</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-22"></a>                    <span class="o">+</span> <span class="s">")"</span><span class="o">);</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-23"></a>            <span class="n">con</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-24"></a>        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-25"></a>            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-26"></a>        <span class="o">}</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-27"></a>    <span class="o">}</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-28"></a>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-29"></a>    <span class="nd">@Override</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-30"></a>    <span class="kd">protected</span> <span class="n">IDataSet</span> <span class="nf">getDataSet</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-31"></a>        <span class="n">InputStream</span> <span class="n">file</span> <span class="o">=</span> <span class="n">getClass</span><span class="o">().</span><span class="na">getResourceAsStream</span><span class="o">(</span><span class="s">"/tests/test1.xml"</span><span class="o">);</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-32"></a>        <span class="n">IDataSet</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FlatXmlDataSet</span><span class="o">(</span><span class="n">file</span><span class="o">);</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-33"></a>        <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-34"></a>    <span class="o">}</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-35"></a>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-36"></a>    <span class="nd">@Test</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-37"></a>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">test1</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-38"></a>        <span class="n">IDatabaseConnection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">getConnection</span><span class="o">();</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-39"></a>        <span class="n">assertEquals</span><span class="o">(</span><span class="mi">3</span><span class="o">,</span> <span class="n">conn</span><span class="o">.</span><span class="na">getRowCount</span><span class="o">(</span><span class="s">"book"</span><span class="o">));</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-40"></a>        <span class="n">conn</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-41"></a>    <span class="o">}</span>
+<a name="rest_code_24b5dc98669a483ebf567bc93e465be9-42"></a><span class="o">}</span>
+</pre>
+<div class="section" id="desglosando-el-codigo">
+<h3>Desglosando el código</h3>
+<p>Veamos ahora qué es lo que hemos hecho.</p>
+<p>Lo primero es indicar que nuestro código hereda de <em>DBTestCase</em>. Eso nos obliga a implementar el método abstracto <em>getDataSet</em>. Este método le indica a DBUnit los datos con los que rellenar la BBDD antes de cada test.</p>
+<pre class="code java"><a name="rest_code_015ff08981a544e4867a99941b2a20b4-1"></a><span class="nd">@Override</span>
+<a name="rest_code_015ff08981a544e4867a99941b2a20b4-2"></a><span class="kd">protected</span> <span class="n">IDataSet</span> <span class="nf">getDataSet</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+<a name="rest_code_015ff08981a544e4867a99941b2a20b4-3"></a>    <span class="n">InputStream</span> <span class="n">file</span> <span class="o">=</span> <span class="n">getClass</span><span class="o">().</span><span class="na">getResourceAsStream</span><span class="o">(</span><span class="s">"/tests/test1.xml"</span><span class="o">);</span>
+<a name="rest_code_015ff08981a544e4867a99941b2a20b4-4"></a>    <span class="n">IDataSet</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FlatXmlDataSet</span><span class="o">(</span><span class="n">file</span><span class="o">);</span>
+<a name="rest_code_015ff08981a544e4867a99941b2a20b4-5"></a>    <span class="k">return</span> <span class="n">result</span><span class="o">;</span>
+<a name="rest_code_015ff08981a544e4867a99941b2a20b4-6"></a><span class="o">}</span>
+</pre>
+<p>Para ello, cargamos el XML anterior como un "FlatXML". Como se encuentra dentro de nuestro propio jar, utilizamos <em>getResourceAsStream</em>.</p>
+<p>Ahora es necesario inicializar la conexión a BBDD. Como vamos a utilizar todos los argumentos varias veces, los guardamos en variables:</p>
+<pre class="code java"><a name="rest_code_fd6add5e3a94447b93f2a1c4a370bdc6-1"></a><span class="n">String</span> <span class="n">driver</span> <span class="o">=</span> <span class="s">"org.hsqldb.jdbcDriver"</span><span class="o">;</span>
+<a name="rest_code_fd6add5e3a94447b93f2a1c4a370bdc6-2"></a><span class="n">String</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"jdbc:hsqldb:mem:sample"</span><span class="o">;</span>
+<a name="rest_code_fd6add5e3a94447b93f2a1c4a370bdc6-3"></a><span class="n">String</span> <span class="n">user</span> <span class="o">=</span><span class="s">"sa"</span><span class="o">;</span>
+<a name="rest_code_fd6add5e3a94447b93f2a1c4a370bdc6-4"></a><span class="n">String</span> <span class="n">pass</span> <span class="o">=</span> <span class="s">""</span><span class="o">;</span>
+</pre>
+<p>Es importante rellenar el usuario, ya que DBUnit lo requiere. Como véis, utilizamos una base de datos en memoria de tipo <a class="reference external" href="http://hsqldb.org/">HyperSQL</a> .</p>
+<p>Ahora inicializamos DBUnit. Para ello, establecemos variables de entorno:</p>
+<pre class="code java"><a name="rest_code_8d884573b8c349f1b0b62d2a8481036f-1"></a><span class="n">System</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="n">PropertiesBasedJdbcDatabaseTester</span><span class="o">.</span><span class="na">DBUNIT_DRIVER_CLASS</span><span class="o">,</span> <span class="n">driver</span><span class="o">);</span>
+<a name="rest_code_8d884573b8c349f1b0b62d2a8481036f-2"></a><span class="n">System</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="n">PropertiesBasedJdbcDatabaseTester</span><span class="o">.</span><span class="na">DBUNIT_CONNECTION_URL</span><span class="o">,</span> <span class="n">url</span><span class="o">);</span>
+<a name="rest_code_8d884573b8c349f1b0b62d2a8481036f-3"></a><span class="n">System</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="n">PropertiesBasedJdbcDatabaseTester</span><span class="o">.</span><span class="na">DBUNIT_USERNAME</span><span class="o">,</span> <span class="n">user</span><span class="o">);</span>
+<a name="rest_code_8d884573b8c349f1b0b62d2a8481036f-4"></a><span class="n">System</span><span class="o">.</span><span class="na">setProperty</span><span class="o">(</span><span class="n">PropertiesBasedJdbcDatabaseTester</span><span class="o">.</span><span class="na">DBUNIT_PASSWORD</span><span class="o">,</span> <span class="n">pass</span><span class="o">);</span>
+</pre>
+<p>Con esto sería suficiente como para que DBUnit pueda ejecutarse sin problemas, pero la tabla "Book" no existe. Así que lo solucionamos con el acceso estándar a BBDD de Java:</p>
+<pre class="code java"><a name="rest_code_dd3b38772b144434b16946a84639ff61-1"></a><span class="n">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="n">driver</span><span class="o">);</span>
+<a name="rest_code_dd3b38772b144434b16946a84639ff61-2"></a>    <span class="n">Connection</span> <span class="n">con</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="o">.</span><span class="na">getConnection</span><span class="o">(</span><span class="n">url</span><span class="o">,</span> <span class="n">user</span><span class="o">,</span> <span class="n">pass</span><span class="o">);</span>
+<a name="rest_code_dd3b38772b144434b16946a84639ff61-3"></a>    <span class="n">Statement</span> <span class="n">st</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="na">createStatement</span><span class="o">();</span>
+<a name="rest_code_dd3b38772b144434b16946a84639ff61-4"></a>    <span class="n">st</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="s">"create table book ("</span>
+<a name="rest_code_dd3b38772b144434b16946a84639ff61-5"></a>            <span class="o">+</span> <span class="s">"id integer, "</span>
+<a name="rest_code_dd3b38772b144434b16946a84639ff61-6"></a>            <span class="o">+</span> <span class="s">"title varchar(50), "</span>
+<a name="rest_code_dd3b38772b144434b16946a84639ff61-7"></a>            <span class="o">+</span> <span class="s">"author varchar(50)"</span>
+<a name="rest_code_dd3b38772b144434b16946a84639ff61-8"></a>            <span class="o">+</span> <span class="s">")"</span><span class="o">);</span>
+<a name="rest_code_dd3b38772b144434b16946a84639ff61-9"></a>    <span class="n">con</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+</pre>
+<p>Y ya está todo listo para nuestros tests.</p>
+<pre class="code java"><a name="rest_code_417967ba03fe4f6dae5469dff844cf6f-1"></a><span class="nd">@Test</span>
+<a name="rest_code_417967ba03fe4f6dae5469dff844cf6f-2"></a><span class="kd">public</span> <span class="kt">void</span> <span class="nf">test1</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+<a name="rest_code_417967ba03fe4f6dae5469dff844cf6f-3"></a>    <span class="n">IDatabaseConnection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">getConnection</span><span class="o">();</span>
+<a name="rest_code_417967ba03fe4f6dae5469dff844cf6f-4"></a>    <span class="n">assertEquals</span><span class="o">(</span><span class="mi">3</span><span class="o">,</span> <span class="n">conn</span><span class="o">.</span><span class="na">getRowCount</span><span class="o">(</span><span class="s">"book"</span><span class="o">));</span>
+<a name="rest_code_417967ba03fe4f6dae5469dff844cf6f-5"></a>    <span class="n">conn</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+<a name="rest_code_417967ba03fe4f6dae5469dff844cf6f-6"></a><span class="o">}</span>
+</pre>
+<p>En ese caso, obtenemos la conexión (al heredar de <em>DBTestCase</em> tenemos acceso al método <em>getConnection</em>) y comparamos el número de filas en "book" con 3.</p>
+</div>
+</div>
+<div class="section" id="volcado-de-bbdd">
+<h2>Volcado de BBDD</h2>
+<p>Lo normal es crear la BBDD que deseamos probar y volcar los datos. Para ello podemos utilizar lo siguiente:</p>
+<pre class="code java"><a name="rest_code_db85235ec9b542bdb7fe96328ddc846d-1"></a><span class="nd">@Test</span>
+<a name="rest_code_db85235ec9b542bdb7fe96328ddc846d-2"></a><span class="kd">public</span> <span class="kt">void</span> <span class="nf">test_volcar_flatxml</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+<a name="rest_code_db85235ec9b542bdb7fe96328ddc846d-3"></a>    <span class="n">IDatabaseConnection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">getConnection</span><span class="o">();</span>
+<a name="rest_code_db85235ec9b542bdb7fe96328ddc846d-4"></a>    <span class="n">IDataSet</span> <span class="n">dataset</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="na">createDataSet</span><span class="o">();</span>
+<a name="rest_code_db85235ec9b542bdb7fe96328ddc846d-5"></a>    <span class="n">FlatXmlDataSet</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">dataset</span><span class="o">,</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">);</span>
+<a name="rest_code_db85235ec9b542bdb7fe96328ddc846d-6"></a>    <span class="n">conn</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+<a name="rest_code_db85235ec9b542bdb7fe96328ddc846d-7"></a><span class="o">}</span>
+</pre>
+<p>Además, existe otro formato para el XML utilizado, solo que puede resultar demasiado grande (aunque, técnicamente, más correcto):</p>
+<pre class="code java"><a name="rest_code_35cc8680c1b64b4c8fa45e06b297c724-1"></a><span class="nd">@Test</span>
+<a name="rest_code_35cc8680c1b64b4c8fa45e06b297c724-2"></a><span class="kd">public</span> <span class="kt">void</span> <span class="nf">test_volcar_xml</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+<a name="rest_code_35cc8680c1b64b4c8fa45e06b297c724-3"></a>    <span class="n">IDatabaseConnection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">getConnection</span><span class="o">();</span>
+<a name="rest_code_35cc8680c1b64b4c8fa45e06b297c724-4"></a>    <span class="n">IDataSet</span> <span class="n">dataset</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="na">createDataSet</span><span class="o">();</span>
+<a name="rest_code_35cc8680c1b64b4c8fa45e06b297c724-5"></a>    <span class="n">XmlDataSet</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">dataset</span><span class="o">,</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">);</span>
+<a name="rest_code_35cc8680c1b64b4c8fa45e06b297c724-6"></a>    <span class="n">conn</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+<a name="rest_code_35cc8680c1b64b4c8fa45e06b297c724-7"></a><span class="o">}</span>
+</pre>
+<p>Que generará algo como:</p>
+<pre class="code xml"><a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-1"></a><span class="cp">&lt;?xml version=''1.0'' encoding=''UTF-8''?&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-2"></a><span class="nt">&lt;dataset&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-3"></a>  <span class="nt">&lt;table</span> <span class="na">name=</span><span class="s">"BOOK"</span><span class="nt">&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-4"></a>    <span class="nt">&lt;column&gt;</span>ID<span class="nt">&lt;/column&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-5"></a>    <span class="nt">&lt;column&gt;</span>TITLE<span class="nt">&lt;/column&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-6"></a>    <span class="nt">&lt;column&gt;</span>AUTHOR<span class="nt">&lt;/column&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-7"></a>    <span class="nt">&lt;row&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-8"></a>      <span class="nt">&lt;value&gt;</span>1<span class="nt">&lt;/value&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-9"></a>      <span class="nt">&lt;value&gt;</span>Fundación<span class="nt">&lt;/value&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-10"></a>      <span class="nt">&lt;value&gt;</span><span class="cp">&lt;![CDATA[Isaac Asimov]]&gt;</span><span class="nt">&lt;/value&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-11"></a>    <span class="nt">&lt;/row&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-12"></a>    <span class="nt">&lt;row&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-13"></a>      <span class="nt">&lt;value&gt;</span>2<span class="nt">&lt;/value&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-14"></a>      <span class="nt">&lt;value&gt;</span><span class="cp">&lt;![CDATA[Clean Code]]&gt;</span><span class="nt">&lt;/value&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-15"></a>      <span class="nt">&lt;value&gt;</span><span class="cp">&lt;![CDATA[Robert C. Martin]]&gt;</span><span class="nt">&lt;/value&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-16"></a>    <span class="nt">&lt;/row&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-17"></a>    <span class="nt">&lt;row&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-18"></a>      <span class="nt">&lt;value&gt;</span>3<span class="nt">&lt;/value&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-19"></a>      <span class="nt">&lt;value&gt;</span><span class="cp">&lt;![CDATA[Diseño Ágil con TDD]]&gt;</span><span class="nt">&lt;/value&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-20"></a>      <span class="nt">&lt;value&gt;</span><span class="cp">&lt;![CDATA[Carlos Ble]]&gt;</span><span class="nt">&lt;/value&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-21"></a>    <span class="nt">&lt;/row&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-22"></a>  <span class="nt">&lt;/table&gt;</span>
+<a name="rest_code_1fb0b61a5d8d47cc906c741a11167694-23"></a><span class="nt">&lt;/dataset&gt;</span>
+</pre>
+</div>
+<div class="section" id="comparando-tablas">
+<h2>Comparando tablas</h2>
+<p>Todo lo anterior está muy bien, pero lo que de verdad nos interesa es comparar datos. El uso habitual es:</p>
+<p># Se cargan unos datos,
+# se realizan operaciones,
+# se comprueba que los datos son correctos.</p>
+<p>Pues esto resulta una tarea sencilla cuando se utiliza dbunit:</p>
+<pre class="code java"><a name="rest_code_d44f766aa6ed4522952adce4f105727e-1"></a><span class="nd">@Test</span>
+<a name="rest_code_d44f766aa6ed4522952adce4f105727e-2"></a><span class="kd">public</span> <span class="kt">void</span> <span class="nf">test_comparar_tablas</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+<a name="rest_code_d44f766aa6ed4522952adce4f105727e-3"></a>    <span class="n">IDatabaseConnection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">getConnection</span><span class="o">();</span>
+<a name="rest_code_d44f766aa6ed4522952adce4f105727e-4"></a>    <span class="n">InputStream</span> <span class="n">file</span> <span class="o">=</span> <span class="n">getClass</span><span class="o">().</span><span class="na">getResourceAsStream</span><span class="o">(</span><span class="s">"/tests/test2.xml"</span><span class="o">);</span>
+<a name="rest_code_d44f766aa6ed4522952adce4f105727e-5"></a>    <span class="n">IDataSet</span> <span class="n">expected</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FlatXmlDataSet</span><span class="o">(</span><span class="n">file</span><span class="o">);</span>
+<a name="rest_code_d44f766aa6ed4522952adce4f105727e-6"></a>    <span class="n">ITable</span> <span class="n">table</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="na">createQueryTable</span><span class="o">(</span> <span class="s">"books"</span><span class="o">,</span>
+<a name="rest_code_d44f766aa6ed4522952adce4f105727e-7"></a>            <span class="s">"select * from book where author != ''Isaac Asimov''"</span><span class="o">);</span>
+<a name="rest_code_d44f766aa6ed4522952adce4f105727e-8"></a>    <span class="n">Assertion</span><span class="o">.</span><span class="na">assertEquals</span><span class="o">(</span><span class="n">expected</span><span class="o">.</span><span class="na">getTable</span><span class="o">(</span><span class="s">"book"</span><span class="o">),</span> <span class="n">table</span><span class="o">);</span>
+<a name="rest_code_d44f766aa6ed4522952adce4f105727e-9"></a>    <span class="n">conn</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+<a name="rest_code_d44f766aa6ed4522952adce4f105727e-10"></a><span class="o">}</span>
+</pre>
+<p>Como se ve, estamos cargamos un nuevo archivo de datos (<em>test2.xml</em>), realizamos una consulta y comparamos los resultados.</p>
+<p>El archivo de datos cargado tendrá esta forma (en el paquete "tests"):</p>
+<pre class="code java"><a name="rest_code_dbf4937e387943ae9e073998b4ba8b93-1"></a><span class="o">&lt;?</span><span class="n">xml</span> <span class="n">version</span><span class="o">=</span><span class="s">"1.0"</span> <span class="n">encoding</span><span class="o">=</span><span class="s">"UTF-8"</span><span class="o">?&gt;</span>
+<a name="rest_code_dbf4937e387943ae9e073998b4ba8b93-2"></a><span class="o">&lt;</span><span class="n">dataset</span><span class="o">&gt;</span>
+<a name="rest_code_dbf4937e387943ae9e073998b4ba8b93-3"></a>    <span class="o">&lt;</span><span class="n">book</span> <span class="n">id</span><span class="o">=</span><span class="s">"2"</span> <span class="n">title</span><span class="o">=</span><span class="s">"Clean Code"</span> <span class="n">author</span><span class="o">=</span><span class="s">"Robert C. Martin"</span><span class="o">/&gt;</span>
+<a name="rest_code_dbf4937e387943ae9e073998b4ba8b93-4"></a>    <span class="o">&lt;</span><span class="n">book</span> <span class="n">id</span><span class="o">=</span><span class="s">"3"</span> <span class="n">title</span><span class="o">=</span><span class="s">"Diseño Ágil con TDD"</span> <span class="n">author</span><span class="o">=</span><span class="s">"Carlos Ble"</span><span class="o">/&gt;</span>
+<a name="rest_code_dbf4937e387943ae9e073998b4ba8b93-5"></a><span class="o">&lt;/</span><span class="n">dataset</span><span class="o">&gt;</span>
+</pre>
+</div>
+<div class="section" id="a-tener-en-cuenta">
+<h2>A tener en cuenta</h2>
+<p>Hay varios puntos a tener en cuenta:</p>
+<ul class="simple">
+<li>Si nuestros tests no comienzan por <em>test</em>, no se ejecutarán (formato de junit 3).</li>
+<li>Podemos utilizar una BBDD en memoria para probar datos para no modificar la BBDD real. Además, resultará más rápido y cómodo.</li>
+<li>Cuanto más pequeños sean los archivos de pruebas, serán menos propensos a cambios y más rápidos de ejecutar</li>
+</ul>
+</div>
+<div class="section" id="mas-informacion">
+<h2>Más información</h2>
+<p>Tenéis más información en la web de <a class="reference external" href="http://www.dbunit.org/">DBUnit</a> , en la de <a class="reference external" href="http://www.junit.org/">JUnit</a>  y en la de <a class="reference external" href="http://hsqldb.org/">HyperSQL</a> . También podría haberse hecho con <a class="reference external" href="http://db.apache.org/derby/">Derby</a> , como "ya comenté":link://slug/apache-derby</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2011-06-13T00:00:00+00:00" title="2011-06-13">2011-06-13</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/db-testing/" rel="tag">db testing</a>
+                <a class="label label-primary p-category" href="/categories/dbunit/" rel="tag">dbunit</a>
+                <a class="label label-primary p-category" href="/categories/hsqldb/" rel="tag">hsqldb</a>
+                <a class="label label-primary p-category" href="/categories/sql/" rel="tag">sql</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/formatos-simples/" rel="prev" title="Formatos simples: XML, Yaml, Json, Properties e 'Ini">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/buenas-practicas-c-1/" rel="next" title="Buenas prácticas en Ansi C (1)">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/hsqldb-dbunit/",
+        disqus_title="Pruebas con Bases de Datos en memoria: DBUnit + HSQLDB",
+        disqus_identifier="cache/posts/hsqldb-dbunit.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

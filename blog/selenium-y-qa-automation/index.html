@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Veremos cómo utilizar Selenium para automatizar pruebas de calidad, usando Python y Java.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Selenium y QA Automation | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/selenium-y-qa-automation/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Veremos cómo utilizar Selenium para automatizar pruebas de calidad, usando Python y Java.">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/why-python-rocks/" title="Why Python rocks" type="text/html">
+<link rel="next" href="/blog/selenium-y-qa-automation-2/" title="Selenium y QA Automation: tests" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Selenium y QA Automation">
+<meta property="og:url" content="http://magmax.org/blog/selenium-y-qa-automation/">
+<meta property="og:description" content="Veremos cómo utilizar Selenium para automatizar pruebas de calidad, usando Python y Java.">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2013-03-08T00:00:00+00:00">
+<meta property="article:updated" content="2013-03-08T00:00:00">
+<meta property="article:tag" content="automation">
+<meta property="article:tag" content="java">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="selenium">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Veremos cómo utilizar Selenium para automatizar pruebas de calidad, usando Python y Java.">
+<meta name="twitter:url" content="http://magmax.org//blog/selenium-y-qa-automation/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/selenium-y-qa-automation/" class="u-url">Selenium y QA Automation</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2013-03-08T00:00:00+00:00" title="2013-03-08">2013-03-08</time>
+                // <time class="updated dt-updated" datetime="2013-03-08T00:00:00" title="2013-03-08">2013-03-08</time></p>
+              <p class="commentline">            <a href="/blog/selenium-y-qa-automation/#disqus_thread" data-disqus-identifier="cache/posts/selenium-y-qa-automation.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>En el mundo de la automatización de pruebas, <a class="reference external" href="http://docs.seleniumhq.org/">Selenium</a> arrasa. Existen otras alternativas, pero lo cierto es que todo el mundo utiliza <a class="reference external" href="http://docs.seleniumhq.org/">Selenium</a>.</p>
+<p>Hay distintas formas de utilizarlo, y aquí veremos algunas de ellas. He elegido Python porque es mi lenguaje favorito y Java porque es el lenguaje en el que está hecho <a class="reference external" href="http://docs.seleniumhq.org/">Selenium</a>.</p>
+<!-- TEASER_END -->
+<div class="section" id="que-es">
+<h2>¿Qué es?</h2>
+<p><a class="reference external" href="http://docs.seleniumhq.org/">Selenium</a> es un conjunto de herramientas que permiten la automatización de navegaciones Web. En general, esto tiene dos usos:
+- Automatizar pruebas web.
+- Automatizar tareas web muy repetitivas.</p>
+<p>En general, y aunque puede usarse para navegar, llamaremos "Test" a cada uno de los scripts que usemos.</p>
+<p>Probablemente leáis en la web acerca de otra opción, llamada <strong>Webdriver</strong>, pero éste es el nombre que recibe Selenium 2. A veces la información al respecto está un poco confusa.</p>
+</div>
+<div class="section" id="como-funciona">
+<h2>¿Cómo funciona?</h2>
+<p>Existen distintas maneras de usarlo, algunas mejores y otras peores:
+- Mediante el <a class="reference external" href="http://docs.seleniumhq.org/docs/02_selenium_ide.jsp">Selenium IDE</a>.
+- Usando el driver adecuado.
+- Arrancando un servidor y conectándonos a él
+- En modo Hub.</p>
+<p>Veremos cada uno de ellos en las siguientes secciones.</p>
+<div class="section" id="selenium-ide">
+<h3>Selenium IDE</h3>
+<p>Consiste en un plugin para Firefox que nos permitirá guardar las acciones que realicemos para después reproducirlas. Realmente lo que hace es guardar un script que después lanzará contra el servidor (ver siguiente apartado).</p>
+<p><strong>Ventajas</strong>:
+- Es muy fácil para comenzar y realizar algunas pruebas básicas.
+- Todo mediante <em>clicks</em> de ratón.
+- No es necesario un aprendizaje previo.</p>
+<p><strong>Desventajas</strong>:
+- Aunque al principio parece muy interesante, pronto se descubre que realizar las pruebas así es lento.
+- No se puede reutilizar nada. Hay que comenzar desde el principio.
+- No permite ningún tipo de organización, más allá de agrupar en módulos.
+- Es necesario tener el navegador arrancado.
+- Sólo funciona con Firefox.
+- Las pruebas tienen que ser locales; no se pueden lanzar en remoto.</p>
+<p>En general es un modo que puede ser interesante para aprender, para ver cómo hacer algo que no sabemos hacer a mano o para <em>scriptar</em> una navegación frecuente o dos sobre una página.</p>
+</div>
+<div class="section" id="driver-especifico">
+<h3>Driver especifico</h3>
+<p>Esta opción es NO usar <a class="reference external" href="http://docs.seleniumhq.org/">Selenium</a>, sino un driver a medida, como el <a class="reference external" href="https://code.google.com/p/selenium/wiki/ChromeDriver">ChromeDriver</a>. La propia API ya puede utilizar el driver adecuado y así realizar la operación adecuada, sin necesidad de ejecutar servidores.</p>
+<p><strong>Ventajas</strong>:
+- Fácil para comenzar a usar la API.
+- Permite organizar el código.
+- Abrirá el navegador adecuado.
+- Ofrece una API común a todos los navegadores.</p>
+<p><strong>Desventajas</strong>:
+- El código es dependiente del navegador.
+- No se puede ejecutar remotamente.</p>
+<p>Si usamos Chrome, usando el ChromeDriver tendríamos mucha más versatilidad, pero la API no sería común con otros navegadores.</p>
+</div>
+<div class="section" id="servidor">
+<h3>Servidor</h3>
+<p>Al arrancar el servidor y usar una API podremos obtener mayor control y realizar las pruebas en remoto. En estas pruebas podremos indicarle al servidor qué navegador queremos arrancar para ejecutar las pruebas.</p>
+<p>Luego veremos cómo usar esta API.</p>
+<p><strong>Ventajas</strong>:
+- Se puede utilizar de forma remota.
+- El servidor puede estar arrancado y abrirá el navegador adecuado.
+- El código se puede organizar como si fuera de producción. Esto también permite guardarlo en un DVCS.</p>
+<p><strong>Desventajas</strong>:
+- Sólo puede ejecutar un script simultáneamente.
+- Perdemos parte de la potencia de cada API individual, a favor de una API común a todos los navegadores.</p>
+</div>
+<div class="section" id="modo-hub">
+<h3>Modo Hub</h3>
+<p>En este caso lo que tenemos son servidores que se conectan a otro servidor principal, al que llamaremos <strong>Hub</strong>. Este <em>Hub</em> mantiene una lista ("<em>pool</em>") de tests que irá repartiendo entre sus "clientes".</p>
+<p>Esto permite utilizar distintas máquinas para ejecutar los tests de manera simultánea. Por lo demás, funciona igual que el modo servidor, y cualquier script que hayamos creado antes nos valdrá.</p>
+<p><strong>Ventajas</strong>:
+- Todas las del modo servidor
+- Puede ejecutar tantos scripts simultáneos como servidores se conecten a él.</p>
+<p><strong>Desventajas</strong>:
+- Arquitectura un poco más compleja
+- Seguimos perdiendo parte de la potencia de cada API individual.</p>
+<p># Al lío #</p>
+<p>Pues ya sabemos lo que hay, así que vamos a hacer alguna cosa. Crearemos un script que se puede ejecutar en modo <em>Hub</em> o servidor. Por simplicidad, aquí contaremos cómo usar el modo servidor.</p>
+<p>Lo primero es arrancar un servidor de selenium. Para ello, nos bajamos de la web la última versión y ejecutamos:</p>
+<pre class="code bash"><a name="rest_code_0b8fcfe4b48c456680802021914d1682-1"></a><span class="nv">$ </span>java -jar selenium-server-standalone-2.30.0.jar
+<a name="rest_code_0b8fcfe4b48c456680802021914d1682-2"></a><span class="o">[</span>...<span class="o">]</span>
+<a name="rest_code_0b8fcfe4b48c456680802021914d1682-3"></a>08:55:15.446 INFO - Started SocketListener on 0.0.0.0:4444
+<a name="rest_code_0b8fcfe4b48c456680802021914d1682-4"></a><span class="o">[</span>...<span class="o">]</span>
+</pre>
+<p>Y ahí se queda funcionando. He copiado una de las líneas de la salida para que veáis dónde estará escuchando: en <em>localhost</em>, usando el puerto 4444.</p>
+<p>Ahora necesitamos algo que probar... Lo más sencillo es levantar un servidor en nuestra máquina y así podremos navegar por los directorios. Y hacer esto con python es muy sencillo. Los que no tengáis Python instalado, podéis usar cualquier web como ejemplo:</p>
+<pre class="code bash"><a name="rest_code_997dd44c710a47daa13af437eff82bc9-1"></a><span class="nv">$ </span>python -m SimpleHTTPServer
+<a name="rest_code_997dd44c710a47daa13af437eff82bc9-2"></a>Serving HTTP on 0.0.0.0 port <span class="m">8000</span> ...
+</pre>
+<p>Ale, ya tenemos un servidor sirviendo algo que podemos probar. Espero que lo hayáis ejecutado en algún directorio que tenga algún fichero XD</p>
+</div>
+<div class="section" id="nuestro-primer-script">
+<h3>Nuestro primer script</h3>
+<p>Vamos a hacer un script que abra un Chrome y que compruebe algo básico de la página: el título:</p>
+<div class="section" id="java">
+<h4>Java</h4>
+<pre class="code java"><a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-1"></a><span class="kn">package</span> <span class="nn">org.magmax.selenium</span><span class="o">;</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-2"></a>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-3"></a><span class="kn">import</span> <span class="nn">java.net.MalformedURLException</span><span class="o">;</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-4"></a><span class="kn">import</span> <span class="nn">java.net.URL</span><span class="o">;</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-5"></a><span class="kn">import</span> <span class="nn">java.util.HashMap</span><span class="o">;</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-6"></a><span class="kn">import</span> <span class="nn">java.util.Map</span><span class="o">;</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-7"></a>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-8"></a><span class="kn">import</span> <span class="nn">org.openqa.selenium.Capabilities</span><span class="o">;</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-9"></a><span class="kn">import</span> <span class="nn">org.openqa.selenium.firefox.FirefoxDriver</span><span class="o">;</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-10"></a><span class="kn">import</span> <span class="nn">org.openqa.selenium.remote.DesiredCapabilities</span><span class="o">;</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-11"></a><span class="kn">import</span> <span class="nn">org.openqa.selenium.remote.RemoteWebDriver</span><span class="o">;</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-12"></a>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-13"></a>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-14"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">App</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-15"></a><span class="o">{</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-16"></a>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span> <span class="n">String</span><span class="o">[]</span> <span class="n">args</span> <span class="o">)</span> <span class="kd">throws</span> <span class="n">MalformedURLException</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-17"></a>    <span class="o">{</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-18"></a>      <span class="cm">/*</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-19"></a><span class="cm">      URL url = new URL("http://localhost:4444/wd/hub");</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-20"></a><span class="cm">      Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;();</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-21"></a><span class="cm">      map.put("browserName", "firefox");</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-22"></a><span class="cm">      Capabilities capabilities = new DesiredCapabilities(map);</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-23"></a><span class="cm">      RemoteWebDriver driver = new RemoteWebDriver(url, capabilities );</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-24"></a><span class="cm">       */</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-25"></a>      <span class="n">FirefoxDriver</span> <span class="n">driver</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FirefoxDriver</span><span class="o">();</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-26"></a>      <span class="k">try</span> <span class="o">{</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-27"></a>        <span class="n">driver</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"http://localhost:8000"</span><span class="o">);</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-28"></a>        <span class="k">if</span> <span class="o">(!</span><span class="n">driver</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="s">"Directory listing for /"</span><span class="o">))</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-29"></a>          <span class="k">throw</span> <span class="k">new</span> <span class="n">AssertionError</span><span class="o">(</span><span class="s">"The title do not match"</span><span class="o">);</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-30"></a>        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Everything OK"</span><span class="o">);</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-31"></a>      <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-32"></a>        <span class="n">driver</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-33"></a>      <span class="o">}</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-34"></a>    <span class="o">}</span>
+<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-35"></a><span class="o">}</span>
+</pre>
+<p>Y el POM si usáis Maven:</p>
+<pre class="code xml"><a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-1"></a><span class="nt">&lt;project</span> <span class="na">xmlns=</span><span class="s">"http://maven.apache.org/POM/4.0.0"</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-2"></a>  <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-3"></a>  <span class="na">xsi:schemaLocation=</span><span class="s">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="nt">&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-4"></a>  <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-5"></a>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-6"></a>  <span class="nt">&lt;groupId&gt;</span>org.magmax<span class="nt">&lt;/groupId&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-7"></a>  <span class="nt">&lt;artifactId&gt;</span>selenium<span class="nt">&lt;/artifactId&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-8"></a>  <span class="nt">&lt;version&gt;</span>0.0.1-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-9"></a>  <span class="nt">&lt;packaging&gt;</span>jar<span class="nt">&lt;/packaging&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-10"></a>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-11"></a>  <span class="nt">&lt;name&gt;</span>selenium<span class="nt">&lt;/name&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-12"></a>  <span class="nt">&lt;url&gt;</span>http://maven.apache.org<span class="nt">&lt;/url&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-13"></a>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-14"></a>  <span class="nt">&lt;properties&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-15"></a>    <span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-16"></a>  <span class="nt">&lt;/properties&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-17"></a>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-18"></a>  <span class="nt">&lt;build&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-19"></a>    <span class="nt">&lt;plugins&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-20"></a>      <span class="nt">&lt;plugin&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-21"></a>        <span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-22"></a>        <span class="nt">&lt;artifactId&gt;</span>maven-jar-plugin<span class="nt">&lt;/artifactId&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-23"></a>        <span class="nt">&lt;configuration&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-24"></a>          <span class="nt">&lt;archive&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-25"></a>            <span class="nt">&lt;manifest&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-26"></a>              <span class="nt">&lt;mainClass&gt;</span>org.magmax.selenium.Main<span class="nt">&lt;/mainClass&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-27"></a>            <span class="nt">&lt;/manifest&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-28"></a>          <span class="nt">&lt;/archive&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-29"></a>        <span class="nt">&lt;/configuration&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-30"></a>      <span class="nt">&lt;/plugin&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-31"></a>    <span class="nt">&lt;/plugins&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-32"></a>  <span class="nt">&lt;/build&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-33"></a>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-34"></a>  <span class="nt">&lt;dependencies&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-35"></a>    <span class="nt">&lt;dependency&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-36"></a>      <span class="nt">&lt;groupId&gt;</span>junit<span class="nt">&lt;/groupId&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-37"></a>      <span class="nt">&lt;artifactId&gt;</span>junit<span class="nt">&lt;/artifactId&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-38"></a>      <span class="nt">&lt;version&gt;</span>4.11<span class="nt">&lt;/version&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-39"></a>        <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-40"></a>      <span class="nt">&lt;/dependency&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-41"></a>    <span class="nt">&lt;dependency&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-42"></a>        <span class="nt">&lt;groupId&gt;</span>org.seleniumhq.selenium<span class="nt">&lt;/groupId&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-43"></a>        <span class="nt">&lt;artifactId&gt;</span>selenium-java<span class="nt">&lt;/artifactId&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-44"></a>        <span class="nt">&lt;version&gt;</span>2.31.0<span class="nt">&lt;/version&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-45"></a>    <span class="nt">&lt;/dependency&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-46"></a>    <span class="nt">&lt;dependency&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-47"></a>      <span class="nt">&lt;groupId&gt;</span>org.seleniumhq.selenium<span class="nt">&lt;/groupId&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-48"></a>      <span class="nt">&lt;artifactId&gt;</span>selenium-chrome-driver<span class="nt">&lt;/artifactId&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-49"></a>      <span class="nt">&lt;version&gt;</span>2.31.0<span class="nt">&lt;/version&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-50"></a>    <span class="nt">&lt;/dependency&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-51"></a>  <span class="nt">&lt;/dependencies&gt;</span>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-52"></a>
+<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-53"></a><span class="nt">&lt;/project&gt;</span>
+</pre>
+<p><strong>NOTA</strong>: El código que quería mostraros es el comentado. De esa manera sólo dependíamos de una cadena para seleccionar el Browser a utilizar, sin embargo no he conseguido hacer que funcione. Si alguien sabe por qué, le estaría muy agradecido.</p>
+</div>
+<div class="section" id="python">
+<h4>Python</h4>
+<p>En python necesitaremos instalar python-selenium, que es paquete Debian.</p>
+<pre class="code python"><a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-1"></a><span class="c">#!/usr/bin/env python</span>
+<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-2"></a>
+<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-3"></a><span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>
+<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-4"></a><span class="kn">from</span> <span class="nn">selenium.common.exceptions</span> <span class="kn">import</span> <span class="n">NoSuchElementException</span>
+<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-5"></a>
+<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-6"></a><span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Remote</span><span class="p">(</span><span class="s">'http://localhost:4444/wd/hub'</span><span class="p">,</span> <span class="p">{</span><span class="s">'browserName'</span><span class="p">:</span> <span class="s">'firefox'</span><span class="p">})</span>
+<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-7"></a><span class="k">try</span><span class="p">:</span>
+<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-8"></a>    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'http://localhost:8000'</span><span class="p">)</span>
+<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-9"></a>    <span class="k">assert</span> <span class="n">driver</span><span class="o">.</span><span class="n">title</span> <span class="o">==</span> <span class="s">"Directory listing for /"</span>
+<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-10"></a>    <span class="k">print</span> <span class="s">'Everything ok'</span>
+<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-11"></a><span class="k">finally</span><span class="p">:</span>
+<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-12"></a>    <span class="n">driver</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre>
+<p>Y ya está.</p>
+</div>
+<div class="section" id="comentarios">
+<h4>Comentarios</h4>
+<p>Como podréis suponer, si en lugar de "<em>firefox</em>" queremos usar "<em>chrome</em>", basta con cambiar el "<strong>browserName</strong>". Para que funcione con Chrome, tendréis que descargaros el chromeDriver y dejarlo en el mismo directorio que esté el servidor.</p>
+<p>Si no estuviéramos usando el modo servidor, podríamos haber usado "<em>webdriver.Chrome</em>" o "<em>webdriver.Firefox</em>", lo que trataría de acceder directamente, tal y como he terminado haciendo en Java. Me parece que ya es limitar el código, así que he decidido usar la manera genérica, usando "<em>webdriver.Remote</em>".</p>
+<p>Es importante cerrar el driver, ya que si no lo hacemos, el navegador se quedará abierto. Con un único test no es crítico, pero con muchos puede afectar al rendimiento de la máquina.</p>
+<p>Y aquí lo dejo. Ahora viene la tarea de buscar en la API aquello que queramos hacer: pulsar botones, ir a enlaces, acceder al DOM,... Pero eso ya os lo dejo a vosotros.</p>
+</div>
+</div>
+</div>
+<div class="section" id="me-encanta">
+<h2>¡Me encanta!</h2>
+<p>Algunos de vosotros diréis: "¡Esto es la leche! Voy a usarlo para todo"... Pero no es así.</p>
+<p>Aunque el sistema es muy potente y permite probar toda la página en distintos navegadores, la ejecución de pruebas es lenta. Abrir un navegador puede llevar varios segundos, incluso estando en caché, lo que hace que todo el proceso vaya lento.</p>
+<p>Una solución es usar <a class="reference external" href="http://phantomjs.org/">PhantomJS</a>, que no abre navegadores, pero con esta opción no estaremos probando la web en un navegador real. Para nuestra desgracia, habrá muchas funcionalidades JavaScript que funcionarán de forma distinta dependiendo del navegador... y de PhantomJS.</p>
+<p>Así que no es una solución que valga para todo. Sin embargo, sí es interesante para tests de aceptación y para automatizar ciertos procesos. Pero por favor, no lo uséis para probar corner-cases. Para eso existen otro tipo de herramientas más rápidas, como los tests de integración.</p>
+<p>En este artículo he usado Selenium/Webdriver en modo Script. Más adelante trataré de mostrarlo para realizar tests.</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2013-03-08T00:00:00+00:00" title="2013-03-08">2013-03-08</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/automation/" rel="tag">automation</a>
+                <a class="label label-primary p-category" href="/categories/java/" rel="tag">java</a>
+                <a class="label label-primary p-category" href="/categories/python/" rel="tag">python</a>
+                <a class="label label-primary p-category" href="/categories/selenium/" rel="tag">selenium</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/why-python-rocks/" rel="prev" title="Why Python rocks">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/selenium-y-qa-automation-2/" rel="next" title="Selenium y QA Automation: tests">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/selenium-y-qa-automation/",
+        disqus_title="Selenium y QA Automation",
+        disqus_identifier="cache/posts/selenium-y-qa-automation.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Trabajando con Git de forma interna pero con Subversion de forma externa">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Combinando Git y Subversion | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/combinando-git-y-subversion/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Trabajando con Git de forma interna pero con Subversion de forma externa">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/publicando-artefactos-python/" title="Publicando artefactos Python" type="text/html">
+<link rel="next" href="/blog/redondeos-matematicos/" title="Redondeos matemáticos" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Combinando Git y Subversion">
+<meta property="og:url" content="http://magmax.org/blog/combinando-git-y-subversion/">
+<meta property="og:description" content="Trabajando con Git de forma interna pero con Subversion de forma externa">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2014-07-13T10:05:55+02:00">
+<meta property="article:updated" content="2014-07-13T10:05:55+02:00">
+<meta property="article:tag" content="dvcs">
+<meta property="article:tag" content="git">
+<meta property="article:tag" content="subversion">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Trabajando con Git de forma interna pero con Subversion de forma externa">
+<meta name="twitter:url" content="http://magmax.org//blog/combinando-git-y-subversion/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/combinando-git-y-subversion/" class="u-url">Combinando Git y Subversion</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published updated dt-updated" datetime="2014-07-13T10:05:55+02:00" title="2014-07-13">2014-07-13</time></p>
+              <p class="commentline">            <a href="/blog/combinando-git-y-subversion/#disqus_thread" data-disqus-identifier="cache/posts/combinando-git-y-subversion.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>El otro día mi amigo Diego D. me propuso un problema. Él ya tenía una posible solución, pero quería contar también con mi opinión.</p>
+<p>A menudo, cuando tenemos un problema no somos los únicos en enfrentarnos a él. Por eso he decidido publicar aquí mi solución, algo más elaborada de cómo se la conté a él, por supuesto.</p>
+<p>Y éste es el problema: Nuestra empresa utiliza <a href="http://git-scm.com/">Git</a>, y una subcontrata utiliza <a href="http://subversion.apache.org/">Subversion</a>. Cada vez que la subcontrata nos tiene que enviar código, lo hace a través del email (ésto no es tan raro, yo también lo he sufrido). Claro, eso supone perder el tiempo colocando los archivos en su sitio y <em>mergeando</em> a mano, con todos los problemas que esto supone.</p>
+<p>Veamos mi solución. Si alguien tiene otra mejor, por favor, que lo diga.</p>
+<!-- TEASER_END -->
+
+<h3 id="primer-paso-ramas">Primer paso: Ramas</h3>
+<p>Lo primero que tenemos que hacer es crear una rama en nuestro repositorio <a href="http://git-scm.com/">Git</a>. Yo la llamaría con el nombre de la empresa externa, algo como "externa/subversion", por si el día de mañana dejaran la edad de piedra y usaran ellos <a href="http://git-scm.com/">Git</a>.</p>
+<h3 id="segundo-paso-incorporando-sus-cambios">Segundo paso: incorporando sus cambios.</h3>
+<h4 id="si-hay-acceso-a-su-repositorio-subversion">Si hay acceso a su repositorio Subversion</h4>
+<p>Éste es el caso fácil. Basta con seguir este <em>script</em>:</p>
+<pre class="code literal-block">git fetch
+git rebase
+svn checkout
+git add -A
+git commit -am <span class="s2">"Autocommit"</span>
+git push
+</pre>
+
+
+<p>Es decir: traemos lo que haya de <a href="http://subversion.apache.org/">Subversion</a> y lo añadimos a <a href="http://git-scm.com/">Git</a>. Para evitar conflictos, primero actualizamos la copia local. Aún es posible tener conflictos, pero habremos minimizado las posibilidades.</p>
+<h4 id="no-hay-acceso-al-repositorio-subversion">No hay acceso al repositorio Subversion</h4>
+<p>Cada vez que nos manden un archivo, nos cambiamos a esa rama, los colocamos y <em>comiteamos</em>. Este proceso es un auténtico coñazo y nos hará perder mogollón de tiempo.</p>
+<p>El resto de los puntos serán igual. Sólo estamos sustituyendo el paso <code>svn checkout</code>.</p>
+<p>¿Alguien se ha dado cuenta de la gracia del tema? ¡Sí! esto se puede automatizar :D</p>
+<h5 id="automatizando-que-se-jodan-otros">Automatizando: que se jodan otros</h5>
+<p>Yo haría una pequeña interfaz web en la que se soliciten los archivos y un pequeño texto explicando lo que contienen. Por detrás, haría el commit que he propuesto anteriormente XD</p>
+<p>Si nuestra intención es ser eficientes, la única solución es delegar las tareas que nos hacen perder el tiempo. Si ellos quieren hacernos perder el tiempo, le damos la vuelta. Total, será similar enviar un email que rellenar dicho formulario.</p>
+<h5 id="usando-parches">Usando parches</h5>
+<p>Una mejora es usar parches. De esa manera sólo tendrán que enviarnos un único archivo y lo aplicaremos todo de golpe. En la empresa externa tendrán que hacer:</p>
+<pre class="code literal-block">svn diff &gt; changes.patch
+</pre>
+
+
+<p>Y hacernos llegar el archivo <code>changes.patch</code>. Gracias a este cambio, para nosotros será mucho más sencillo aplicar sus cambios (desde el directorio principal del repositorio):</p>
+<pre class="code literal-block">patch -p0 -i /path/al/fichero/changes.patch
+</pre>
+
+
+<p>Podemos incluir eso en nuestros archivos de automatización.</p>
+<h3 id="tercer-paso-incorporando-nuestros-cambios-y-haciendoselos-llegar">Tercer paso: incorporando nuestros cambios y haciéndoselos llegar</h3>
+<h4 id="si-hay-acceso-a-su-repositorio-subversion_1">Si hay acceso a su repositorio Subversion</h4>
+<p>Nada más sencillo:</p>
+<pre class="code literal-block"><span class="c">#!/bin/bash</span>
+<span class="nv">old_commit</span><span class="o">=</span><span class="k">$(</span>git rev-parse HEAD<span class="k">)</span>
+git fetch
+git rebase
+<span class="nv">current_commit</span><span class="o">=</span><span class="k">$(</span>git rev-parse HEAD<span class="k">)</span>
+<span class="k">if</span> <span class="o">[[</span> <span class="s2">"</span><span class="nv">$old_commit</span><span class="s2">"</span> !<span class="o">=</span> <span class="s2">"</span><span class="nv">$current_commit</span><span class="s2">"</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+    <span class="k">for</span> line in <span class="k">$(</span>git diff --name-status <span class="si">${</span><span class="nv">old_commit</span><span class="si">}</span>..<span class="si">${</span><span class="nv">current_commit</span><span class="si">}</span><span class="k">)</span><span class="p">;</span> <span class="k">do</span>
+        <span class="nv">operation</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo </span>line <span class="p">|</span> cut -d<span class="se">\t</span> -f1<span class="k">)</span>
+        <span class="nv">filename</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo </span>line <span class="p">|</span> cut -d<span class="se">\t</span> -f2<span class="k">)</span>
+        <span class="k">if</span> <span class="o">[[</span> <span class="s2">"operation"</span> <span class="o">==</span> <span class="s2">"D"</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+            svn rm <span class="nv">$filename</span>
+        <span class="k">else</span>
+            svn add <span class="nv">$filename</span> <span class="o">||</span> True
+        <span class="k">fi</span>
+    <span class="k">done</span>
+<span class="k">fi</span>
+svn commit <span class="s2">"Automatic push"</span>
+</pre>
+
+
+<p>(No he probado el script... pero creo que os podéis hacer a la idea)</p>
+<h4 id="no-hay-acceso-al-repositorio-subversion_1">No hay acceso al repositorio Subversion</h4>
+<p>Pues igual, pero aún más sencillo para nosotros:</p>
+<pre class="code literal-block"><span class="c">#!/bin/bash</span>
+
+<span class="nv">PREFIX</span><span class="o">=</span><span class="s2">"Please, could you apply these changes?\n"</span>
+<span class="nv">SUFFIX</span><span class="o">=</span><span class="s2">"\n\nThank you."</span>
+
+<span class="nv">old_commit</span><span class="o">=</span><span class="k">$(</span>git rev-parse HEAD<span class="k">)</span>
+git fetch
+git rebase
+<span class="nv">current_commit</span><span class="o">=</span><span class="k">$(</span>git rev-parse HEAD<span class="k">)</span>
+<span class="nb">echo</span> <span class="s2">"</span><span class="nv">$PREFIX</span><span class="s2"> </span><span class="k">$(</span>git diff <span class="si">${</span><span class="nv">old_commit</span><span class="si">}</span>..<span class="si">${</span><span class="nv">current_commit</span><span class="si">}</span><span class="k">)</span><span class="s2"> </span><span class="nv">$SUFFIX</span><span class="s2">"</span> <span class="se">\</span>
+    <span class="p">|</span> mail -s <span class="s2">"Repository changes"</span> empresa@example.org
+</pre>
+
+
+<p>De la misma manera, se les puede mandar el parche para que lo apliquen ellos.</p>
+<h3 id="anadiendo-los-cambios">Añadiendo los cambios</h3>
+<p>Finalmente, será necesario meter los cambios en nuestra rama principal. Para ello yo seguiría el siguiente esquema:</p>
+<ol>
+<li><code>git fetch</code></li>
+<li><code>git checkout -t origin/externa/subversion</code></li>
+<li><code>git rebase rama_principal</code></li>
+<li>Pasar los tests</li>
+<li><code>git checkout master</code></li>
+<li><code>git rebase external/subversion</code></li>
+<li>Volver a pasar los tests. Aunque este paso es opcional, ya que no debería haber problemas.</li>
+<li><code>git push</code></li>
+</ol>
+<p>Alguien podría decirme: "Es que la empresa externa no escribe tests". Los que me seguís habitualmente sabéis lo que voy a contestar: ¿Y qué hacéis trabajando aún con ellos? ¿Y es que no tenéis vuestros propios tests de aceptación? ¿Cómo sabéis que no os han roto nada crítico?</p>
+<h4 id="mejoras">Mejoras</h4>
+<p>Gracias a todo este esquema podéis obtener información extra de forma gratuita: podéis <em>trackear</em> la covertura de los tests, evitando que ésta baje, generar informes, graficar defectos arreglados/producidos por unidad de tiempo, frecuencia de cambios, etc.</p>
+<h3 id="replicabilidad">Replicabilidad</h3>
+<p>Otra de las cosas que suelen preocuparme es la replicabilidad de este sistema. Por ello sugiero los siguientes cambios:</p>
+<ul>
+<li>
+<strong>Añadir archivos subversion</strong>: Yo añadiría los archivos más básicos de <a href="http://subversion.apache.org/">Subversion</a> al repositorio <a href="http://git-scm.com/">Git</a>. De esta manera, cualquier <em>working copy</em> es susceptible de realizar los pasos arriba indicados.</li>
+<li>
+<strong>Scripts en el repositorio</strong>: Igualmente, añadiría los scripts que permiten gestionar el repositorio al propio repositorio. Esto permitirá que cualquiera pueda ejecutarlos desde cualquier sitio. Así no serán necesarios incómodos <em>backups</em> del sistema.</li>
+</ul>
+<h4 id="backups">Backups</h4>
+<p>Los que me conocen saben que soy enemigo de los <em>backups</em>. Si estás usando un repositorio <a href="http://git-scm.com/">Git</a>, todas las <em>working copies</em> son <em>backups</em> potenciales, y restaurar el sistema no debería ser un problema. Bastaría con guardar la configuración del servidor... ¡Que podría estar en otro repositorio! Y si usa <a href="http://puppetlabs.com/">Puppet</a>, <a href="http://www.saltstack.com/">Salt</a> o <a href="http://www.getchef.com/chef/">Chef</a>, mucho mejor.</p>
+<p>Usad los <em>backups</em> para cosas que realmente cambian con frecuencia o no son susceptibles de añadirse a un repositorio (o bien no se va a descargar nadie): Bases de datos, repositorios de archivos (tipo <a href="http://www.sonatype.org/nexus/">Nexus</a>, <a href="http://www.jfrog.com/home/v_artifactory_opensource_overview">Artifactory</a>, ...)</p>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2014-07-13T10:05:55+02:00" title="2014-07-13">2014-07-13</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/dvcs/" rel="tag">dvcs</a>
+                <a class="label label-primary p-category" href="/categories/git/" rel="tag">git</a>
+                <a class="label label-primary p-category" href="/categories/subversion/" rel="tag">subversion</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/publicando-artefactos-python/" rel="prev" title="Publicando artefactos Python">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/redondeos-matematicos/" rel="next" title="Redondeos matemáticos">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/combinando-git-y-subversion/",
+        disqus_title="Combinando Git y Subversion",
+        disqus_identifier="cache/posts/combinando-git-y-subversion.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

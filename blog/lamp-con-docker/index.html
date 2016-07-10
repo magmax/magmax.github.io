@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Cómo usar docker-compose para crear una arquitectura LAMP">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>LAMP con Docker | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/lamp-con-docker/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Cómo usar docker-compose para crear una arquitectura LAMP">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/monitorizacion-con-elasticsearch-kibana-y-topbeat/" title="Monitorización con ElasticSearch, Kibana y TopBeat" type="text/html">
+<link rel="next" href="/blog/limpiando-dockers-antiguos/" title="Limpiando Dockers antiguos" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="LAMP con Docker">
+<meta property="og:url" content="http://magmax.org/blog/lamp-con-docker/">
+<meta property="og:description" content="Cómo usar docker-compose para crear una arquitectura LAMP">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2016-03-28T05:03:05+00:00">
+<meta property="article:updated" content="2016-03-28T05:03:05+00:00">
+<meta property="article:tag" content="docker docker-compose LAMP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Cómo usar docker-compose para crear una arquitectura LAMP">
+<meta name="twitter:url" content="http://magmax.org//blog/lamp-con-docker/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/lamp-con-docker/" class="u-url">LAMP con Docker</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published updated dt-updated" datetime="2016-03-28T05:03:05+00:00" title="2016-03-28">2016-03-28</time></p>
+              <p class="commentline">            <a href="/blog/lamp-con-docker/#disqus_thread" data-disqus-identifier="cache/posts/lamp-con-docker.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Hace algún tiempo que escribí los artículos <a class="reference external" href="/blog/lamp-con-puppet">LAMP con Puppet</a> y <a class="reference external" href="/blog/lamp-con-salt">LAMP con Salt</a>. Desde entonces ha llovido mucho y... bueno, creo que los sistemas tipo <a class="reference external" href="http://www.saltstack.com/">Salt</a> y <a class="reference external" href="http://puppetlabs.com/">Puppet</a> están casi obsoletos, gracias a nuevas tecnologías como <a class="reference external" href="https://www.docker.com/">Docker</a>.</p>
+<p>Pero antes de criticarme por esa afirmación, ruego al lector que se lea este artículo y luego decida por sí mismo.</p>
+<p>Igual que en los otros ejercicios, montaremos una arquitectura LAMP (Linux + Apache + MySQL + PHP) que tan de moda ha estado durante mucho tiempo.</p>
+<!-- TEASER_END -->
+<div class="section" id="codigo-a-ejecutar">
+<h2>Código a ejecutar</h2>
+<p>Como las cosas evolucionan, PHP también lo ha hecho y el programita de ejemplo que usé ya no funciona en PHP 5.6. Así que me he visto obligado a modificar ligeramente el programa de ejemplo.</p>
+<p>Podéis descargarlo de GitHub así:</p>
+<pre class="literal-block">
+$ git clone https://github.com/magmax/small_php_example.git -b mysqli
+</pre>
+<p>Veréis que en el directorio <tt class="docutils literal">small_php_example</tt> tenéis un programa muy sencillito que muestra las tablas disponibles en la base de datos.</p>
+</div>
+<div class="section" id="docker-para-php-con-mysql">
+<h2>Docker para PHP con MySQL</h2>
+<p>Otro problema es que no he encontrado ninguna imagen Docker de PHP con soporte para MySQL, pero es muy sencillo construir una, así que vamos a ello. Aquí podría ayudar el <a class="reference external" href="/blog/lamp-con-salt">artículo que escribí sobre Docker</a>, que podéis usar para ampliar conceptos.</p>
+<p>Necesitamos crear el fichero <tt class="docutils literal">php.dockerfile</tt>:</p>
+<pre class="literal-block">
+FROM php:5.6-apache
+RUN  docker-php-ext-install mysqli
+</pre>
+<p>Y ejecutar la siguiente orden:</p>
+<pre class="literal-block">
+docker build -t php-mysql -f php.dockerfile .
+</pre>
+<p>Y tendremos disponible la imagen <tt class="docutils literal"><span class="pre">php-mysql</span></tt>.</p>
+<p>Con esto tendremos ya todas las piezas. Ahora vamos a unirlas.</p>
+</div>
+<div class="section" id="docker-compose">
+<h2>Docker Compose</h2>
+<p>Existe una aplicación (Python :D) que permite gestionar grupos de Dockers llamada <a class="reference external" href="https://docs.docker.com/compose/">docker-compose</a>. Se puede instalar en un <a class="reference external" href="https://virtualenv.pypa.io/en/latest/">virtualenv</a>:</p>
+<pre class="literal-block">
+$ virtualenv venv
+$ . venv/bin/activate
+(venv) $ pip install docker-compose
+</pre>
+<p>A continuación necesitamos un archivo de definición. Éste es suficiente:</p>
+<pre class="literal-block">
+version: '2'
+services:
+  db:
+    image: mysql:5.7.11
+    environment:
+      - MYSQL_ROOT_PASSWORD=foo
+  app:
+    image: php-mysql
+    ports:
+      - 80:80
+    volumes:
+      - ./small_php_example:/var/www/html/
+    depends_on:
+      - db
+    links:
+      - db
+    environment:
+      - MYSQL_SERVER=db
+      - MYSQL_PASSWORD=foo
+      - MYSQL_USER=root
+</pre>
+<p>Poco que explicar... Tenemos 2 servicios: la base de datos y la aplicación. El primero usa una imagen con MySQL (definiendo la contraseña) y el segundo un Apache con PHP que monta nuestra aplicación en <tt class="docutils literal">/var/www/html</tt>, expone el puerto del Docker 80 con el local 80 y enlaza con el primer Docker; bueno, y define algunas variables de entorno para poder conectar.</p>
+<p>Lo único digno de explicar aquí es que al linkar la máquina se añade al <tt class="docutils literal">/etc/hosts</tt>, por lo que tenemos acceso a la máquina usando su nombre: <tt class="docutils literal">db</tt>. Por eso el valor de la variable <tt class="docutils literal">MYSQL_SERVER</tt> es, simplemente, <tt class="docutils literal">db</tt>.</p>
+<p>Dicho de otro modo: vamos a crear dos Dockers que trabajarán juntos. Y todo con esta orden:</p>
+<pre class="literal-block">
+(venv) $ docker-compose up
+</pre>
+<p>Tardará un poquito, pero tendremos nuestra aplicación corriendo en localhost:80</p>
+</div>
+<div class="section" id="conclusiones">
+<h2>Conclusiones</h2>
+<p>Ventajas sobre <a class="reference external" href="http://puppetlabs.com/">Puppet</a>, <a class="reference external" href="http://www.saltstack.com/">Salt</a> o <a class="reference external" href="https://www.chef.io/">Chef</a>:</p>
+<ul class="simple">
+<li>es más sencillo.</li>
+<li>más ortogonal: se crea el Docker con órdenes típicas del sistema elegido y se usa.</li>
+<li>permite mezclar distribuciones fácilmente.</li>
+<li>Se pueden lanzar varias copias de un mismo Docker sobre la misma máquina.</li>
+<li>Es replicable. Con los sistemas de orquestación puede cambiar una versión de una librería entre ejecuciones, haciendo que una funcione y otra falle.</li>
+<li>Es más difícil que se rompa. No es extraño que la entrada de una máquina nueva en <a class="reference external" href="http://puppetlabs.com/">Puppet</a> me descubra un bug en la definición.</li>
+</ul>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2016-03-28T05:03:05+00:00" title="2016-03-28">2016-03-28</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/docker-docker-compose-lamp/" rel="tag">docker docker-compose LAMP</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/monitorizacion-con-elasticsearch-kibana-y-topbeat/" rel="prev" title="Monitorización con ElasticSearch, Kibana y TopBeat">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/limpiando-dockers-antiguos/" rel="next" title="Limpiando Dockers antiguos">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/lamp-con-docker/",
+        disqus_title="LAMP con Docker",
+        disqus_identifier="cache/posts/lamp-con-docker.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

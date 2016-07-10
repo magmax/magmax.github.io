@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Apache: Autenticación básica | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/apache-auth/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/tuenti-un-mes/" title="Tuenti, un mes después" type="text/html">
+<link rel="next" href="/blog/alternativas/" title="Alternativas" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Apache: Autenticación básica">
+<meta property="og:url" content="http://magmax.org/blog/apache-auth/">
+<meta property="og:description" content="Este artículo va a tratar de responder a una pregunta que me hicieron hace poco. Como bien sabéis, estoy dispuesto a responder vuestras preguntas, aunque puedo tardar un poco.
+Por eso en esta ocasión ">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2012-02-13T00:00:00+00:00">
+<meta property="article:updated" content="2012-02-13T00:00:00">
+<meta property="article:tag" content="apache">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/apache-auth/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/apache-auth/" class="u-url">Apache: Autenticación básica</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2012-02-13T00:00:00+00:00" title="2012-02-13">2012-02-13</time>
+                // <time class="updated dt-updated" datetime="2012-02-13T00:00:00" title="2012-02-13">2012-02-13</time></p>
+              <p class="commentline">            <a href="/blog/apache-auth/#disqus_thread" data-disqus-identifier="cache/posts/apache-auth.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Este artículo va a tratar de responder a una pregunta que me hicieron hace poco. Como bien sabéis, estoy dispuesto a responder vuestras preguntas, aunque puedo tardar un poco.</p>
+<p>Por eso en esta ocasión veremos un tema un poco anticuado pero igualmente útil: cómo evitar el acceso a un directorio mediante una contraseña.</p>
+<p>Hay dos soluciones básicas: la primera, mediante un archivo <tt class="docutils literal">.htaccess</tt>. La segunda, modificando la forma de acceso.</p>
+<!-- TEASER_END -->
+<div class="section" id="autenticacion">
+<h2>Autenticación</h2>
+<div class="section" id="htaccess">
+<h3>.htaccess</h3>
+<p>En el directorio que queráis restringir el acceso, creáis un archivo llamado <tt class="docutils literal">.htaccess</tt>. Este archivo contendrá algo similar a lo siguiente:</p>
+<pre class="code cfg"><a name="rest_code_e75bdcd589414a0395326e4362371147-1"></a><span class="err">AuthUserFile</span> <span class="err">/home/magmax/.htpasswd</span>
+<a name="rest_code_e75bdcd589414a0395326e4362371147-2"></a><span class="err">AuthGroupFile</span> <span class="err">/dev/null</span>
+<a name="rest_code_e75bdcd589414a0395326e4362371147-3"></a><span class="err">AuthName</span> <span class="err">MagMax</span> <span class="err">page</span>
+<a name="rest_code_e75bdcd589414a0395326e4362371147-4"></a><span class="err">AuthType</span> <span class="err">Basic</span>
+<a name="rest_code_e75bdcd589414a0395326e4362371147-5"></a><span class="err">require</span> <span class="err">valid-user</span>
+</pre>
+<p>De esta manera le decimos a <em>apache</em> que debe pedir una contraseña, mostrando el mensaje indicado en "<em>AuthName</em>", y que el usuario debe coincidir con alguno de los que se encuentran en el fichero indicado por <em>AuthUserFile</em>.</p>
+<p>Ahora es cuando se crea el archivo indicado por <em>AuthUserFile</em>, que sería algo así:</p>
+<pre class="code bash"><a name="rest_code_0fb233b3c7784f7c85c84ac073f1c9ef-1"></a><span class="nv">$ </span>htpasswd -c /home/magmax/.htpasswd magmax
+<a name="rest_code_0fb233b3c7784f7c85c84ac073f1c9ef-2"></a>New password:
+<a name="rest_code_0fb233b3c7784f7c85c84ac073f1c9ef-3"></a>Re-type new password:
+<a name="rest_code_0fb233b3c7784f7c85c84ac073f1c9ef-4"></a>Adding password <span class="k">for</span> user magmax
+<a name="rest_code_0fb233b3c7784f7c85c84ac073f1c9ef-5"></a><span class="err">$</span>
+</pre>
+<p>Tened cuidado con la opción <em>-c</em>, ya que crea el archivo, eliminando lo que hubiera anteriormente. Si queréis añadir más usuarios sólo tenéis que quitar esa opción. El resultado será un fichero como el que sigue:</p>
+<pre class="code bash"><a name="rest_code_b41d196e6a854ab082727f5ba534a0cf-1"></a><span class="nv">$ </span>cat file
+<a name="rest_code_b41d196e6a854ab082727f5ba534a0cf-2"></a>magmax:<span class="nv">$apr1$lqzJHMvm$XPYqylsRK7q2gmThL</span>..gy1
+</pre>
+<div class="section" id="htgroups">
+<h4>htgroups</h4>
+<p>Es posible que queráis tener un archivo con todas las contraseñas y limitar el acceso a un directorio sólo para una parte de estos usuarios. Para ello podéis usar la opción <em>AuthGroupFile</em> que en el ejemplo puse a <em>/dev/null</em>.</p>
+<p>El formato de este archivo sería el que sigue:</p>
+<pre class="code cfg"><a name="rest_code_0cf6fe5aaf694dcb82481ef9fbd56576-1"></a><span class="err">amigos:</span> <span class="err">magmax</span> <span class="err">tiouron</span> <span class="err">pollo</span>
+</pre>
+<p>Y ahora hay que realizar dos pequeñas modificaciones al fichero de configuración:</p>
+<pre class="code cfg"><a name="rest_code_c60f3e5a0cb24a11a0ad7731aa448839-1"></a><span class="err">AuthUserFile</span> <span class="err">/home/magmax/.htpasswd</span>
+<a name="rest_code_c60f3e5a0cb24a11a0ad7731aa448839-2"></a><span class="err">AuthGroupFile</span> <span class="err">/home/magmax/.htgroups</span>
+<a name="rest_code_c60f3e5a0cb24a11a0ad7731aa448839-3"></a><span class="err">AuthName</span> <span class="err">MagMax</span> <span class="err">page</span>
+<a name="rest_code_c60f3e5a0cb24a11a0ad7731aa448839-4"></a><span class="err">AuthType</span> <span class="err">Basic</span>
+<a name="rest_code_c60f3e5a0cb24a11a0ad7731aa448839-5"></a><span class="err">require</span> <span class="err">group</span> <span class="err">amigos</span>
+</pre>
+<p>Creo que no requiere más explicaciones.</p>
+</div>
+<div class="section" id="seguridad">
+<h4>Seguridad</h4>
+<p>Por cuestiones de seguridad es mejor que los archivos <tt class="docutils literal">.htpasswd</tt> y <tt class="docutils literal">.htgroups</tt> (al menos el primero) estén en algún lugar no compartido, es decir, fuera de nuestra web. En teoría, al empezar por un punto no son accesibles, pero si están fuera de nuestra web, seguro que no son accesibles XD</p>
+</div>
+</div>
+<div class="section" id="mod-rewrite">
+<h3>mod_rewrite</h3>
+<p><tt class="docutils literal">mod_rewrite</tt> es un <em>plugin</em> para <em>apache</em>. En este caso tendréis que hacer uso de expresiones regulares, lo que puede complicar el temilla y... fallar. Como dijo Jamie Zawinski:</p>
+<p>&gt; Some people, when confronted with a problem, think "I know, I'll use regular expressions." Now they have two problems.</p>
+<p>&gt; Hay gente que, cuando se enfrenta a un problema, piensa "Ya sé, usaré expresiones regulares". Ahora tienen dos problemas.</p>
+<p>De todas maneras, es una opción a evaluar:</p>
+<pre class="code cfg"><a name="rest_code_31f2776e176e4ecb8e471fc1bd092ef4-1"></a><span class="na">RewriteRule ^[a-z0-9_-]*-f([0-9]+)/?(p([0-9]+)\.html)?$ /viewforum.php?f</span><span class="o">=</span><span class="s">$1&amp;start=$3 [QSA,L,NC]</span>
+</pre>
+<p>Si os sentís cómodos con algo así, os invito a que miréis la documentación de <em>rewrite</em> para ver qué significa cada cosa.</p>
+<p>He decidido comentar esto porque si usáis <a class="reference external" href="http://nginx.com/">nginx</a> , un servidor web que está bastante de moda hoy día, no tendréis el módulo <tt class="docutils literal">mod_rewrite</tt> y no podréis usar la primera opción. Claro, que la segunda tampoco porque las expresiones regulares son diferentes:</p>
+<pre class="code cfg"><a name="rest_code_ef3ccb32dcab4d469c9543d60373d911-1"></a><span class="na">rewrite ^/[a-z0-9_-]*-f([0-9]+)/?(p([0-9]+)\.html)?$ /viewforum.php?f</span><span class="o">=</span><span class="s">$1&amp;start=$3 last;</span>
+</pre>
+<p>Y esto es algo que os cuento, pero de lo que no tengo ni idea. Tan sólo lo he copiado para dar una visión más completa del tema. Yo siempre utilizo un archivo <em>.htaccess</em></p>
+</div>
+</div>
+<div class="section" id="mas-informacion">
+<h2>Más información</h2>
+<p>No hay nada que no haya sacado de Google, en concreto de <a class="reference external" href="http://www.euronet.nl/~arnow/htpasswd/documentation.html">aquí</a> .</p>
+<p>La parte del rewrite la he sacado de <a class="reference external" href="http://serverfault.com/questions/24243/nginx-support-for-htaccess-rewrite-rules-differences-from-apache">serverfault</a> .</p>
+<p>Espero que os sea de alguna utilidad.</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2012-02-13T00:00:00+00:00" title="2012-02-13">2012-02-13</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/apache/" rel="tag">apache</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/tuenti-un-mes/" rel="prev" title="Tuenti, un mes después">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/alternativas/" rel="next" title="Alternativas">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/apache-auth/",
+        disqus_title="Apache: Autenticaci\u00f3n b\u00e1sica",
+        disqus_identifier="cache/posts/apache-auth.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

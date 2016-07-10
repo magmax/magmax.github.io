@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>El patrón Singleton | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/patron-singleton/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/jbehave/" title="JBehave" type="text/html">
+<link rel="next" href="/blog/arboles-grafos/" title="Repasando: Árboles y Grafos" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="El patrón Singleton">
+<meta property="og:url" content="http://magmax.org/blog/patron-singleton/">
+<meta property="og:description" content="Para qué sirve
+Permite tener una única instancia de un objeto en toda la aplicación
+
+
+
+Cómo implementarlo en Java
+Necesitamos ocultar el constructor, haciéndolo privado. Para poder obtener el objeto, ">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2012-01-16T00:00:00+00:00">
+<meta property="article:updated" content="2012-01-16T00:00:00">
+<meta property="article:tag" content="patterns">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/patron-singleton/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/patron-singleton/" class="u-url">El patrón Singleton</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2012-01-16T00:00:00+00:00" title="2012-01-16">2012-01-16</time>
+                // <time class="updated dt-updated" datetime="2012-01-16T00:00:00" title="2012-01-16">2012-01-16</time></p>
+              <p class="commentline">            <a href="/blog/patron-singleton/#disqus_thread" data-disqus-identifier="cache/posts/patron-singleton.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<div class="section" id="para-que-sirve">
+<h2>Para qué sirve</h2>
+<p>Permite tener una única instancia de un objeto en toda la aplicación</p>
+<!-- TEASER_END -->
+</div>
+<div class="section" id="como-implementarlo-en-java">
+<h2>Cómo implementarlo en Java</h2>
+<p>Necesitamos ocultar el constructor, haciéndolo privado. Para poder obtener el objeto, necesitaremos un método estático que lo construya si es necesario o lo devuelva si ya estaba construido. Hay varias implementaciones, por ejemplo:</p>
+<pre class="code java"><a name="rest_code_eca5dd53592e4bf2a41239db3ab1b735-1"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Example</span> <span class="o">{</span>
+<a name="rest_code_eca5dd53592e4bf2a41239db3ab1b735-2"></a>    <span class="kd">private</span> <span class="kd">static</span> <span class="n">Example</span> <span class="n">instance</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+<a name="rest_code_eca5dd53592e4bf2a41239db3ab1b735-3"></a>
+<a name="rest_code_eca5dd53592e4bf2a41239db3ab1b735-4"></a>    <span class="kd">private</span> <span class="nf">Example</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_eca5dd53592e4bf2a41239db3ab1b735-5"></a>    <span class="o">}</span>
+<a name="rest_code_eca5dd53592e4bf2a41239db3ab1b735-6"></a>
+<a name="rest_code_eca5dd53592e4bf2a41239db3ab1b735-7"></a>    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Example</span> <span class="nf">getInstance</span><span class="o">()</span> <span class="o">{</span>
+<a name="rest_code_eca5dd53592e4bf2a41239db3ab1b735-8"></a>        <span class="k">if</span> <span class="o">(</span><span class="n">instance</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span>
+<a name="rest_code_eca5dd53592e4bf2a41239db3ab1b735-9"></a>            <span class="n">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Example</span><span class="o">();</span>
+<a name="rest_code_eca5dd53592e4bf2a41239db3ab1b735-10"></a>        <span class="k">return</span> <span class="n">instance</span><span class="o">;</span>
+<a name="rest_code_eca5dd53592e4bf2a41239db3ab1b735-11"></a>    <span class="o">}</span>
+<a name="rest_code_eca5dd53592e4bf2a41239db3ab1b735-12"></a><span class="o">}</span>
+</pre>
+</div>
+<div class="section" id="cuando-utilizarlo">
+<h2>¿Cuándo utilizarlo</h2>
+<p>Ésta es la más fácil: <em>NUNCA</em>.</p>
+<p>Vale, pero... para algo servirá... <em>NO</em></p>
+<p>¿El patrón singleton es el diablo? <em>SÍ</em></p>
+<p>¿No hay ninguna excepción?</p>
+<p>Tan solo se me han ocurrido dos casos en los que es posible que nos ayude este patrón. En cualquier otro caso es muy probable que traiga más problemas que soluciones. La primera de ellas es <em>el sistema de log</em>. La segunda, <em>el sistema de configuración</em>.</p>
+<p>Tanto la configuración como el sistema de log son elementos de nuestra aplicación que se espera que no cambien demasiado a menudo, y deben ser accesibles desde todos los puntos de nuestra aplicación.</p>
+</div>
+<div class="section" id="cosas-que-deben-tenerse-en-cuenta">
+<h2>Cosas que deben tenerse en cuenta</h2>
+<p>Si por una casualidad decidimos implementar un singleton o bien nos encontramos con un singleton, recomiendo siempre crear un método <em>reset</em>, que permita establecer el estado inicial del singleton. Esto permitirá poder hacer pruebas, ya que podemos asumir que, por definición, <em>no se pueden hacer pruebas de un singleton</em>.</p>
+<p>Ahora bien: si vemos que vamos a necesitar más de un singleton (por ejemplo, necesitamos el sistema de log y la configuración), mi consejo es implementar ambos como objetos normales y crear un único singleton que permita crear y obtener la única instancia de ambos. A veces llaman a este método "<em>patrón toolbox</em>"</p>
+<p>De esta manera podemos probar cada objeto por separado y tenemos un objeto que tan sólo construirá el resto. Aún así, insisto en que <em>no es una práctica recomendada</em>.</p>
+<p>De hecho, como regla general, <em>no es recomendable utilizar clases estáticas</em>, ya que suelen ser más complejas de probar y son más difíciles de "transformar". Me explico: durante la vida del software, a menudo que van apareciendo nuevos requisitos, las cosas se transforman: los literales se transforman en constantes; las constantes, en variables; las variables en sentencias; las sentencias, en métodos; los métodos, en clases. Si tenemos un método estático, sólo puede derivar en una clase estática, lo que resulta imposible de probar y, además, imposible de paralelizar.</p>
+<p>Imaginaos que tenemos una clase estática con una funcionalidad determinada y queremos usarla desde un servidor web. Bien: simplemente no podemos. Existen dos opciones:</p>
+<ul class="simple">
+<li>La clase tiene estado: dos accesos concurrentes alterarán el estado obteniendo resultados inciertos.</li>
+<li>La clase no tiene estado: ¿Qué más nos da implementarla como dinámica? Quizá en el futuro sí necesitemos estado.</li>
+</ul>
+</div>
+<div class="section" id="resumiendo">
+<h2>Resumiendo</h2>
+<p>Así que ya sabéis: evitad el uso de <em>static</em> en la medida de lo posible.</p>
+<div class="section" id="referencias">
+<h3>Referencias</h3>
+<p>Aunque me las pasó Julia después de haber escrito este artículo, creo que pueden resultar muy útiles:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://misko.hevery.com/2008/08/17/singletons-are-pathological-liars/">Singletons are Pathological Liars</a></li>
+<li><a class="reference external" href="http://misko.hevery.com/2008/08/25/root-cause-of-singletons/">Root Cause of Singletons</a></li>
+<li><a class="reference external" href="http://misko.hevery.com/code-reviewers-guide/flaw-brittle-global-state-singletons/">Flaw: Brittle Global State &amp; Singletons</a></li>
+</ul>
+</div>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2012-01-16T00:00:00+00:00" title="2012-01-16">2012-01-16</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/patterns/" rel="tag">patterns</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/jbehave/" rel="prev" title="JBehave">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/arboles-grafos/" rel="next" title="Repasando: Árboles y Grafos">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/patron-singleton/",
+        disqus_title="El patr\u00f3n Singleton",
+        disqus_identifier="cache/posts/patron-singleton.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

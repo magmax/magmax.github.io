@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Pequeña introducción al uso de RabbitMQ">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Colas de mensajes: RabbitMQ | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/colas-de-mensajes-rabbitmq/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Pequeña introducción al uso de RabbitMQ">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/monitorizacion-y-alertado/" title="Monitorización y alertado" type="text/html">
+<link rel="next" href="/blog/creando-tu-propia-entidad-certificadora-ssl/" title="Creando tu propia Entidad Certificadora SSL (y volcando certificados autofirmados)" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Colas de mensajes: RabbitMQ">
+<meta property="og:url" content="http://magmax.org/blog/colas-de-mensajes-rabbitmq/">
+<meta property="og:description" content="Pequeña introducción al uso de RabbitMQ">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2015-06-19T04:44:33+00:00">
+<meta property="article:updated" content="2015-06-19T04:44:33+00:00">
+<meta property="article:tag" content="rabbitmq">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Pequeña introducción al uso de RabbitMQ">
+<meta name="twitter:url" content="http://magmax.org//blog/colas-de-mensajes-rabbitmq/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/colas-de-mensajes-rabbitmq/" class="u-url">Colas de mensajes: RabbitMQ</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published updated dt-updated" datetime="2015-06-19T04:44:33+00:00" title="2015-06-19">2015-06-19</time></p>
+              <p class="commentline">            <a href="/blog/colas-de-mensajes-rabbitmq/#disqus_thread" data-disqus-identifier="cache/posts/colas-de-mensajes-rabbitmq.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Cuando se desarrolla una aplicación y ésta comienza a crecer, a menudo necesitamos interconectar distintos componentes. En estos casos se utiliza un <em>middleware</em> que nos permita comunicar las distintas piezas.</p>
+<p>Una opción es usar una cola de mensajes. No es el mecanismo más rápido, pero probablemente sí el más sencillo, y permite realizar acciones de forma asíncrona.</p>
+<p>Y un gestor de colas de mensajes sencillo, robusto y muy utilizado es <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a>.</p>
+<!-- TEASER_END -->
+<div class="section" id="instalando-rabbitmq">
+<h2>Instalando RabbitMQ</h2>
+<p>Esta aplicación <em>Erlang</em> es sencilla de instalar en Linux:</p>
+<pre class="code text"><a name="rest_code_87c74c9c89e7429b89c753de65be8a40-1"></a>apt-get install rabbitmq-server
+</pre>
+<p>Y tendremos la aplicación funcionando, escuchando en el puerto 5672.</p>
+<p>Es interesante instalar el <a class="reference external" href="https://www.rabbitmq.com/management.html">plugin de gestión</a> para poder ver qué está pasando ahí dentro. Para ello basta con hacer:</p>
+<pre class="code text"><a name="rest_code_85dec07abed943b989ab8c03c43cabf3-1"></a>rabbitmq-plugins enable rabbitmq_management
+</pre>
+<p>Y automáticamente lo tendremos escuchando en <a class="reference external" href="http://localhost:15672/">http://localhost:15672/</a></p>
+</div>
+<div class="section" id="lo-basico-de-rabbitmq">
+<h2>Lo básico de RabbitMQ</h2>
+<p>Hay algunos conceptos que hay que tener claros de RabbitMQ:</p>
+<dl class="docutils">
+<dt><em>Exchange</em></dt>
+<dd>Es el punto de entrada de un mensaje. Pueden ser <strong>Direct</strong>, si entregan un mensaje en una cola, <strong>Fanout</strong> si se entregan copias del mensaje a todas las colas o <strong>Topic</strong> si se entregan copias del mensaje sólo a algunas colas.</dd>
+<dt><em>Queue</em></dt>
+<dd>Es el punto de lectura de un mensaje. Pueden ser <strong>durable</strong> o persistentes, si almacenan los mensajes para sobrevivir a un reinicio de <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a>. También pueden ser <strong>exclusivas</strong>, si sólo un consumidor puede estar conectado a la vez.</dd>
+<dt><em>Bindings</em></dt>
+<dd>Son reglas que indican cómo llegar de un <strong>Exchange</strong> a las <strong>Queue</strong> asociadas.</dd>
+<dt><em>Routing key</em></dt>
+<dd>Filtro asociado a un <strong>Binging</strong> que permite seleccionar sólo algunos mensajes para dicho <strong>binding</strong>.</dd>
+<dt><em>Producer o Productor</em></dt>
+<dd>Programa que escribe en un <strong>Exchange</strong>
+</dd>
+<dt><em>Consumer o Consumidor</em></dt>
+<dd>Programa que escucha en una <strong>Queue</strong>
+</dd>
+<dt><em>AMQP</em></dt>
+<dd>Protocolo de comunicaciones utilizado por RabbitMQ. Lo usa tanto el <strong>Productor</strong> como el <strong>Consumidor</strong>.</dd>
+<dt><em>Virtual host o vhost</em></dt>
+<dd>Un entorno aislado, con sus propios grupos de usuarios, <em>exchanges</em>, <em>queues</em>, ...</dd>
+<dt><em>mnesia</em></dt>
+<dd>La base de datos interna de <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a>
+</dd>
+</dl>
+<p>Una vez dicho esto, podemos describir el flujo básico de <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a>:</p>
+<p class="graphviz">b'<?xml version="1.0" encoding="UTF-8" standalone="no"?>\nn "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"&gt;\n<!-- Generated by graphviz version 2.38.0 (20140413.2041)\n -->\n<!-- Title: rabbitmq_basic_flow Pages: 1 -->\n<svg width="130pt" height="326pt" viewbox="0.00 0.00 130.00 326.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 322)">\n<title>rabbitmq_basic_flow</title>\n<polygon fill="white" stroke="none" points="-4,4 -4,-322 126,-322 126,4 -4,4"></polygon>\n<g id="clust1" class="cluster"><title>cluster_0</title>\n<polygon fill="#f5f5f5" stroke="black" points="8,-79 8,-241 114,-241 114,-79 8,-79"></polygon>\n<text text-anchor="middle" x="61" y="-225.8" font-family="Times,serif" font-size="14.00">RabbitMQ</text>\n</g>\n<!-- Exchange -->\n<g id="node1" class="node"><title>Exchange</title>\n<ellipse fill="none" stroke="black" cx="61" cy="-192" rx="45.4919" ry="18"></ellipse>\n<text text-anchor="middle" x="61" y="-188.3" font-family="Times,serif" font-size="14.00">Exchange</text>\n</g>\n<!-- Queue -->\n<g id="node2" class="node"><title>Queue</title>\n<ellipse fill="none" stroke="black" cx="61" cy="-105" rx="33.5952" ry="18"></ellipse>\n<text text-anchor="middle" x="61" y="-101.3" font-family="Times,serif" font-size="14.00">Queue</text>\n</g>\n<!-- Exchange&#45;&gt;Queue -->\n<g id="edge2" class="edge"><title>Exchange-&gt;Queue</title>\n<path fill="none" stroke="black" d="M61,-173.799C61,-162.163 61,-146.548 61,-133.237"></path>\n<polygon fill="black" stroke="black" points="64.5001,-133.175 61,-123.175 57.5001,-133.175 64.5001,-133.175"></polygon>\n<text text-anchor="middle" x="82" y="-144.8" font-family="Times,serif" font-size="14.00">binding</text>\n</g>\n<!-- Consumer -->\n<g id="node4" class="node"><title>Consumer</title>\n<ellipse fill="none" stroke="black" cx="61" cy="-18" rx="47.3916" ry="18"></ellipse>\n<text text-anchor="middle" x="61" y="-14.3" font-family="Times,serif" font-size="14.00">Consumer</text>\n</g>\n<!-- Queue&#45;&gt;Consumer -->\n<g id="edge3" class="edge"><title>Queue-&gt;Consumer</title>\n<path fill="none" stroke="black" d="M61,-86.799C61,-75.1626 61,-59.5479 61,-46.2368"></path>\n<polygon fill="black" stroke="black" points="64.5001,-46.1754 61,-36.1754 57.5001,-46.1755 64.5001,-46.1754"></polygon>\n<text text-anchor="middle" x="76" y="-57.8" font-family="Times,serif" font-size="14.00">listen</text>\n</g>\n<!-- Producer -->\n<g id="node3" class="node"><title>Producer</title>\n<ellipse fill="none" stroke="black" cx="61" cy="-300" rx="42.4939" ry="18"></ellipse>\n<text text-anchor="middle" x="61" y="-296.3" font-family="Times,serif" font-size="14.00">Producer</text>\n</g>\n<!-- Producer&#45;&gt;Exchange -->\n<g id="edge1" class="edge"><title>Producer-&gt;Exchange</title>\n<path fill="none" stroke="black" d="M61,-281.969C61,-265.378 61,-239.883 61,-220.431"></path>\n<polygon fill="black" stroke="black" points="64.5001,-220.341 61,-210.341 57.5001,-220.341 64.5001,-220.341"></polygon>\n<text text-anchor="middle" x="73.5" y="-252.8" font-family="Times,serif" font-size="14.00">send</text>\n</g>\n</g>\n</svg>\n'</p>
+<p>Claro, que esto puede evolucionar a entornos mucho más complejos:</p>
+<p class="graphviz">b'<?xml version="1.0" encoding="UTF-8" standalone="no"?>\nn "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"&gt;\n<!-- Generated by graphviz version 2.38.0 (20140413.2041)\n -->\n<!-- Title: rabbitmq_complex_flow Pages: 1 -->\n<svg width="510pt" height="263pt" viewbox="0.00 0.00 509.79 263.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 259)">\n<title>rabbitmq_complex_flow</title>\n<polygon fill="white" stroke="none" points="-4,4 -4,-259 505.79,-259 505.79,4 -4,4"></polygon>\n<g id="clust1" class="cluster"><title>cluster_0</title>\n<polygon fill="#f5f5f5" stroke="black" points="47.895,-64 47.895,-211 351.895,-211 351.895,-64 47.895,-64"></polygon>\n<text text-anchor="middle" x="199.895" y="-195.8" font-family="Times,serif" font-size="14.00">RabbitMQ</text>\n</g>\n<!-- Exchange_1 -->\n<g id="node1" class="node"><title>Exchange_1</title>\n<ellipse fill="none" stroke="black" cx="136.895" cy="-162" rx="53.8905" ry="18"></ellipse>\n<text text-anchor="middle" x="136.895" y="-158.3" font-family="Times,serif" font-size="14.00">Exchange_1</text>\n</g>\n<!-- Queue_1 -->\n<g id="node3" class="node"><title>Queue_1</title>\n<ellipse fill="none" stroke="black" cx="97.895" cy="-90" rx="42.4939" ry="18"></ellipse>\n<text text-anchor="middle" x="97.895" y="-86.3" font-family="Times,serif" font-size="14.00">Queue_1</text>\n</g>\n<!-- Exchange_1&#45;&gt;Queue_1 -->\n<g id="edge3" class="edge"><title>Exchange_1-&gt;Queue_1</title>\n<path fill="none" stroke="black" d="M127.454,-144.055C122.855,-135.801 117.229,-125.701 112.123,-116.538"></path>\n<polygon fill="black" stroke="black" points="115.173,-114.821 107.249,-107.789 109.058,-118.228 115.173,-114.821"></polygon>\n</g>\n<!-- Queue_2 -->\n<g id="node4" class="node"><title>Queue_2</title>\n<ellipse fill="none" stroke="black" cx="199.895" cy="-90" rx="42.4939" ry="18"></ellipse>\n<text text-anchor="middle" x="199.895" y="-86.3" font-family="Times,serif" font-size="14.00">Queue_2</text>\n</g>\n<!-- Exchange_1&#45;&gt;Queue_2 -->\n<g id="edge4" class="edge"><title>Exchange_1-&gt;Queue_2</title>\n<path fill="none" stroke="black" d="M151.825,-144.411C159.864,-135.479 169.916,-124.31 178.747,-114.498"></path>\n<polygon fill="black" stroke="black" points="181.418,-116.762 185.506,-106.988 176.215,-112.08 181.418,-116.762"></polygon>\n</g>\n<!-- Exchange_2 -->\n<g id="node2" class="node"><title>Exchange_2</title>\n<ellipse fill="none" stroke="black" cx="275.895" cy="-162" rx="53.8905" ry="18"></ellipse>\n<text text-anchor="middle" x="275.895" y="-158.3" font-family="Times,serif" font-size="14.00">Exchange_2</text>\n</g>\n<!-- Exchange_2&#45;&gt;Queue_2 -->\n<g id="edge5" class="edge"><title>Exchange_2-&gt;Queue_2</title>\n<path fill="none" stroke="black" d="M258.268,-144.765C248.247,-135.535 235.542,-123.833 224.546,-113.705"></path>\n<polygon fill="black" stroke="black" points="226.63,-110.866 216.904,-106.666 221.888,-116.015 226.63,-110.866"></polygon>\n</g>\n<!-- Queue_3 -->\n<g id="node5" class="node"><title>Queue_3</title>\n<ellipse fill="none" stroke="black" cx="301.895" cy="-90" rx="42.4939" ry="18"></ellipse>\n<text text-anchor="middle" x="301.895" y="-86.3" font-family="Times,serif" font-size="14.00">Queue_3</text>\n</g>\n<!-- Exchange_2&#45;&gt;Queue_3 -->\n<g id="edge6" class="edge"><title>Exchange_2-&gt;Queue_3</title>\n<path fill="none" stroke="black" d="M282.189,-144.055C285.115,-136.176 288.666,-126.617 291.943,-117.794"></path>\n<polygon fill="black" stroke="black" points="295.278,-118.868 295.479,-108.275 288.716,-116.431 295.278,-118.868"></polygon>\n</g>\n<!-- Consumer_1 -->\n<g id="node8" class="node"><title>Consumer_1</title>\n<ellipse fill="none" stroke="black" cx="55.895" cy="-18" rx="55.7903" ry="18"></ellipse>\n<text text-anchor="middle" x="55.895" y="-14.3" font-family="Times,serif" font-size="14.00">Consumer_1</text>\n</g>\n<!-- Queue_1&#45;&gt;Consumer_1 -->\n<g id="edge7" class="edge"><title>Queue_1-&gt;Consumer_1</title>\n<path fill="none" stroke="black" d="M87.9416,-72.411C82.993,-64.1633 76.9004,-54.0089 71.3609,-44.7765"></path>\n<polygon fill="black" stroke="black" points="74.215,-42.7304 66.0688,-35.9562 68.2125,-46.3319 74.215,-42.7304"></polygon>\n</g>\n<!-- Consumer_2 -->\n<g id="node9" class="node"><title>Consumer_2</title>\n<ellipse fill="none" stroke="black" cx="185.895" cy="-18" rx="55.7903" ry="18"></ellipse>\n<text text-anchor="middle" x="185.895" y="-14.3" font-family="Times,serif" font-size="14.00">Consumer_2</text>\n</g>\n<!-- Queue_2&#45;&gt;Consumer_2 -->\n<g id="edge8" class="edge"><title>Queue_2-&gt;Consumer_2</title>\n<path fill="none" stroke="black" d="M196.506,-72.055C194.964,-64.3456 193.1,-55.0269 191.368,-46.3642"></path>\n<polygon fill="black" stroke="black" points="194.743,-45.3947 189.35,-36.2753 187.879,-46.7675 194.743,-45.3947"></polygon>\n</g>\n<!-- Consumer_3 -->\n<g id="node10" class="node"><title>Consumer_3</title>\n<ellipse fill="none" stroke="black" cx="315.895" cy="-18" rx="55.7903" ry="18"></ellipse>\n<text text-anchor="middle" x="315.895" y="-14.3" font-family="Times,serif" font-size="14.00">Consumer_3</text>\n</g>\n<!-- Queue_3&#45;&gt;Consumer_3 -->\n<g id="edge9" class="edge"><title>Queue_3-&gt;Consumer_3</title>\n<path fill="none" stroke="black" d="M305.284,-72.055C306.826,-64.3456 308.69,-55.0269 310.422,-46.3642"></path>\n<polygon fill="black" stroke="black" points="313.911,-46.7675 312.44,-36.2753 307.047,-45.3947 313.911,-46.7675"></polygon>\n</g>\n<!-- Consumer_4 -->\n<g id="node11" class="node"><title>Consumer_4</title>\n<ellipse fill="none" stroke="black" cx="445.895" cy="-18" rx="55.7903" ry="18"></ellipse>\n<text text-anchor="middle" x="445.895" y="-14.3" font-family="Times,serif" font-size="14.00">Consumer_4</text>\n</g>\n<!-- Queue_3&#45;&gt;Consumer_4 -->\n<g id="edge10" class="edge"><title>Queue_3-&gt;Consumer_4</title>\n<path fill="none" stroke="black" d="M328.643,-75.9976C350.712,-65.2695 382.32,-49.9044 407.159,-37.8301"></path>\n<polygon fill="black" stroke="black" points="408.85,-40.8999 416.313,-33.3801 405.789,-34.6043 408.85,-40.8999"></polygon>\n</g>\n<!-- Producer_1 -->\n<g id="node6" class="node"><title>Producer_1</title>\n<ellipse fill="none" stroke="black" cx="136.895" cy="-237" rx="51.1914" ry="18"></ellipse>\n<text text-anchor="middle" x="136.895" y="-233.3" font-family="Times,serif" font-size="14.00">Producer_1</text>\n</g>\n<!-- Producer_1&#45;&gt;Exchange_1 -->\n<g id="edge1" class="edge"><title>Producer_1-&gt;Exchange_1</title>\n<path fill="none" stroke="black" d="M136.895,-218.7C136.895,-210.245 136.895,-199.869 136.895,-190.373"></path>\n<polygon fill="black" stroke="black" points="140.395,-190.176 136.895,-180.176 133.395,-190.176 140.395,-190.176"></polygon>\n</g>\n<!-- Producer_2 -->\n<g id="node7" class="node"><title>Producer_2</title>\n<ellipse fill="none" stroke="black" cx="275.895" cy="-237" rx="51.1914" ry="18"></ellipse>\n<text text-anchor="middle" x="275.895" y="-233.3" font-family="Times,serif" font-size="14.00">Producer_2</text>\n</g>\n<!-- Producer_2&#45;&gt;Exchange_2 -->\n<g id="edge2" class="edge"><title>Producer_2-&gt;Exchange_2</title>\n<path fill="none" stroke="black" d="M275.895,-218.7C275.895,-210.245 275.895,-199.869 275.895,-190.373"></path>\n<polygon fill="black" stroke="black" points="279.395,-190.176 275.895,-180.176 272.395,-190.176 279.395,-190.176"></polygon>\n</g>\n</g>\n</svg>\n'</p>
+<p>En este entorno, y asumiendo que los <em>Exchange</em> están en modo <strong>Topic</strong> (es decir, que un mensaje llega a todas las colas):</p>
+<ul class="simple">
+<li>
+<tt class="docutils literal">Consumer_1</tt> recibe todo lo que produzca <tt class="docutils literal">Producer_1</tt>, pasando por <tt class="docutils literal">Queue_1</tt>. Este tipo de escenario es igual que el básico.</li>
+<li>
+<tt class="docutils literal">Consumer_2</tt> recibe todo lo que produzca tanto <tt class="docutils literal">Producer_1</tt> como <tt class="docutils literal">Producer_2</tt>, pasando por <tt class="docutils literal">Queue_2</tt>. Útil para procesar eventos que se producen en distintos lugares pero tienen un destino común. Ejemplo: guardar logs de distintas máquinas en base de datos.</li>
+<li>
+<tt class="docutils literal">Consumer_3</tt> y <tt class="docutils literal">Consumer_4</tt> se repartirán lo producido por <tt class="docutils literal">Producer_2</tt>, pasando por <tt class="docutils literal">Queue_3</tt>. Útil cuando la carga producida es muy alta y se requieren muchos recursos para consimir cada mensaje. Ejemplo: Renderización de vídeo 3D.</li>
+</ul>
+<div class="section" id="puertos-y-valores-por-defecto">
+<h3>Puertos y valores por defecto</h3>
+<p>Si no cambiamos nada, <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a> escucha en el puerto 5672, y la interfaz de administración en el 15672.</p>
+<p>Se crea un usuario <em>guest/guest</em> que nos permite acceder a ambas.</p>
+<p><a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a> consume mucha memoria. Recomiendo utilizar servidores dedicados, para que no se haga con toda y tengamos problemas.</p>
+</div>
+</div>
+<div class="section" id="algunas-tareas-de-administracion">
+<h2>Algunas tareas de administración</h2>
+<div class="section" id="crear-un-vhost">
+<h3>Crear un vhost</h3>
+<p>Con el fin de aislar un entorno, podemos crear un <strong>vhost</strong>. Nada más sencillo:</p>
+<pre class="code text"><a name="rest_code_a4b89f73ad8845ddb375e3b3d8914e3b-1"></a>rabbitmqctl add_vhost /mi_vhost
+</pre>
+</div>
+<div class="section" id="crear-un-usuario">
+<h3>Crear un usuario</h3>
+<p>Ahora podemos crear un usuario</p>
+<pre class="code text"><a name="rest_code_1dc747dbae33459c9c7540ce7d025a4b-1"></a>rabbitmqctl add_user my_user my_pass
+</pre>
+<p>Y podemos asociarlo al <strong>vhost</strong>:</p>
+<pre class="code text"><a name="rest_code_3faf78c6ef984f28aa485b522dd0e25b-1"></a>rabbitmqctl set_permissions -p /my_vhost my_user ".*" ".*" ".*"
+</pre>
+</div>
+<div class="section" id="asignar-permisos">
+<h3>Asignar permisos</h3>
+<p>Si queremos poder utilizar este usuario para entrar en la interfaz de administracción, necesitamos darle permisos de <em>management</em> y <em>monitoring</em>:</p>
+<pre class="code text"><a name="rest_code_9da8c01496d5422aacd58ed2d21caf03-1"></a>rabbitmqctl set_user_tags my_user management monitoring
+</pre>
+<p>Por tanto, los mensajes se escriben en un <strong>Exchange</strong> pero se leen de una <strong>Queue</strong>. Para llegar de un <strong>Exchange</strong> a una <strong>Queue</strong> se utilizan los <strong>Routes</strong>.</p>
+</div>
+<div class="section" id="crear-un-cluster">
+<h3>Crear un cluster</h3>
+<p>Una de las tareas típicas es <a class="reference external" href="https://www.rabbitmq.com/clustering.html">crear un cluster de RabbitMQ</a>. Esto nos permite <a class="reference external" href="/blog/en-busca-de-los-cinco-9s">mejorar la disponibilidad del sistema</a>, ya que si uno de nuestros servidores cae, el otro seguirá atendiendo peticiones.</p>
+<p>Esta tarea es algo más compleja. Supongamos que tenemos dos nodos: <em>rabbit1</em> y <em>rabbit2</em>. Vamos a añadir <em>Rabbit2</em>, dejando <em>Rabbit1</em> como maestro inicial. Lo primero que podemos hacer es ver el estado actual del sistema:</p>
+<pre class="code text"><a name="rest_code_bca4c0a6cdca4d66b9709cefe0f31f4c-1"></a>rabbit2$ rabbitmqctl cluster_status
+<a name="rest_code_bca4c0a6cdca4d66b9709cefe0f31f4c-2"></a>[{nodes,[{disc,[rabbit@rabbit2]}]},{running_nodes,[rabbit@rabbit2]}]
+<a name="rest_code_bca4c0a6cdca4d66b9709cefe0f31f4c-3"></a>...done.
+</pre>
+<p>Para crear un cluster, tenemos que parar uno de los <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a>, pero debemos hacerlo con órdenes especiales:</p>
+<pre class="code text"><a name="rest_code_7bb7df89fb8a4d09b1cc0fb1659446cd-1"></a>rabbit2$ rabbitmqctl stop_app
+<a name="rest_code_7bb7df89fb8a4d09b1cc0fb1659446cd-2"></a>Stopping node rabbit@rabbit2 ...done.
+</pre>
+<p>A continuación lo añadimos al cluster:</p>
+<pre class="code text"><a name="rest_code_1f0eacf851b2479c90519ed8a9304b3b-1"></a>rabbit2$ rabbitmqctl join_cluster rabbit@rabbit1
+<a name="rest_code_1f0eacf851b2479c90519ed8a9304b3b-2"></a>Clustering node rabbit@rabbit2 with rabbit@rabbit1 ...done.
+</pre>
+<p>Y volvemos a arrancar:</p>
+<pre class="code text"><a name="rest_code_9d498f2720244bb38a015576e73a2d51-1"></a>rabbit2$ rabbitmqctl start_app
+<a name="rest_code_9d498f2720244bb38a015576e73a2d51-2"></a>Starting node rabbit@rabbit2 ...done.
+</pre>
+<p>Ahora podemos comprobar que todo fue bien:</p>
+<pre class="code text"><a name="rest_code_29b92e21de894ff085bdbf307b9f6619-1"></a>rabbit2$ rabbitmqctl cluster_status
+<a name="rest_code_29b92e21de894ff085bdbf307b9f6619-2"></a>Cluster status of node rabbit@rabbit2 ...
+<a name="rest_code_29b92e21de894ff085bdbf307b9f6619-3"></a>[{nodes,[{disc,[rabbit@rabbit1,rabbit@rabbit2]}]},
+<a name="rest_code_29b92e21de894ff085bdbf307b9f6619-4"></a> {running_nodes,[rabbit@rabbit1,rabbit@rabbit2]}]
+<a name="rest_code_29b92e21de894ff085bdbf307b9f6619-5"></a>...done.
+</pre>
+<p>Aunque también podemos verlo desde la herramienta de administración (mucho más molona XD)</p>
+<p>Es <strong>IMPORTANTE</strong> que todos los nodos de un cluster tengan la misma versión de <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a> o podríamos tener problemas.</p>
+<p>Si se va a gestionar un cluster, recomiendo encarecidamente leerse toda la <a class="reference external" href="https://www.rabbitmq.com/clustering.html">documentación de RabbitMQ sobre clusters</a>. Es poco y muy conveniente. Además, es bueno tenerlo siempre a mano.</p>
+<p>Una vez creado el cluster se puede utilizar una VIp (Virtual IP), de manera que nos respondan ambos indistintamente. Si uno cae, la VIp se puede cambiar mediante <a class="reference external" href="http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html">Keepalive</a> y, si preparamos nuestra aplicación para hacer reintentos, no se verá afectada por la caída.</p>
+<p>En la interfaz de administración podemos ver cómo los mensajes estarán replicados en ambos nodos, el estado de los mismos, etc.</p>
+</div>
+</div>
+<div class="section" id="programando">
+<h2>Programando</h2>
+<p>Para programar contra un <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a> recomiendo usar <a class="reference external" href="https://www.rabbitmq.com/devtools.html">una de las librerías AMQP</a>. Hay otras opciones de más alto nivel. Por ejemplo, en Python está <a class="reference external" href="https://kombu.readthedocs.org/en/latest/">Kombu</a>, que se abstrae de la cola de mensajes a usar, o incluso <a class="reference external" href="https://pypi.python.org/pypi/amqp">Celery</a>, que permite usar una cola de mensajes para la gestión de tareas distribuidas.</p>
+<p>Veamos unos ejemplillos sencillos. Recordad que hay muchas opciones y se pueden configurar bastantes historias, pero voy a ir a lo básico:</p>
+<div class="section" id="python">
+<h3>Python</h3>
+<p>Utilizaré la librería <cite>Pika</cite> (tomado de la propia documentación de la librería):</p>
+<p>El consumidor:</p>
+<pre class="code python"><a name="rest_code_d43c67bf94094f1d968e57fb42b03948-1"></a><span class="kn">import</span> <span class="nn">pika</span>
+<a name="rest_code_d43c67bf94094f1d968e57fb42b03948-2"></a>
+<a name="rest_code_d43c67bf94094f1d968e57fb42b03948-3"></a><span class="n">connection</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">BlockingConnection</span><span class="p">()</span>
+<a name="rest_code_d43c67bf94094f1d968e57fb42b03948-4"></a><span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">channel</span><span class="p">()</span>
+<a name="rest_code_d43c67bf94094f1d968e57fb42b03948-5"></a><span class="n">method_frame</span><span class="p">,</span> <span class="n">header_frame</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">basic_get</span><span class="p">(</span><span class="s">'test'</span><span class="p">)</span>
+<a name="rest_code_d43c67bf94094f1d968e57fb42b03948-6"></a><span class="k">if</span> <span class="n">method_frame</span><span class="p">:</span>
+<a name="rest_code_d43c67bf94094f1d968e57fb42b03948-7"></a>    <span class="k">print</span> <span class="n">method_frame</span><span class="p">,</span> <span class="n">header_frame</span><span class="p">,</span> <span class="n">body</span>
+<a name="rest_code_d43c67bf94094f1d968e57fb42b03948-8"></a>    <span class="n">channel</span><span class="o">.</span><span class="n">basic_ack</span><span class="p">(</span><span class="n">method_frame</span><span class="o">.</span><span class="n">delivery_tag</span><span class="p">)</span>
+<a name="rest_code_d43c67bf94094f1d968e57fb42b03948-9"></a><span class="k">else</span><span class="p">:</span>
+<a name="rest_code_d43c67bf94094f1d968e57fb42b03948-10"></a>    <span class="k">print</span> <span class="s">'No message returned'</span>
+<a name="rest_code_d43c67bf94094f1d968e57fb42b03948-11"></a><span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre>
+<p>Y el productor:</p>
+<pre class="code python"><a name="rest_code_8d83f83d21344391b6706c4d420d3897-1"></a><span class="kn">import</span> <span class="nn">pika</span>
+<a name="rest_code_8d83f83d21344391b6706c4d420d3897-2"></a>
+<a name="rest_code_8d83f83d21344391b6706c4d420d3897-3"></a><span class="n">parameters</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">URLParameters</span><span class="p">(</span><span class="s">'amqp://guest:guest@localhost:5672/</span><span class="si">%2F</span><span class="s">'</span><span class="p">)</span>
+<a name="rest_code_8d83f83d21344391b6706c4d420d3897-4"></a><span class="n">connection</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">BlockingConnection</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+<a name="rest_code_8d83f83d21344391b6706c4d420d3897-5"></a><span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">channel</span><span class="p">()</span>
+<a name="rest_code_8d83f83d21344391b6706c4d420d3897-6"></a><span class="n">channel</span><span class="o">.</span><span class="n">basic_publish</span><span class="p">(</span><span class="s">'test_exchange'</span><span class="p">,</span>
+<a name="rest_code_8d83f83d21344391b6706c4d420d3897-7"></a>                      <span class="s">'test_routing_key'</span><span class="p">,</span>
+<a name="rest_code_8d83f83d21344391b6706c4d420d3897-8"></a>                      <span class="s">'Hello, world!'</span><span class="p">,</span>
+<a name="rest_code_8d83f83d21344391b6706c4d420d3897-9"></a>                      <span class="n">pika</span><span class="o">.</span><span class="n">BasicProperties</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="s">'text/plain'</span><span class="p">,</span>
+<a name="rest_code_8d83f83d21344391b6706c4d420d3897-10"></a>                                           <span class="n">delivery_mode</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+<a name="rest_code_8d83f83d21344391b6706c4d420d3897-11"></a><span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre>
+</div>
+<div class="section" id="java">
+<h3>Java</h3>
+<p>Usando la <a class="reference external" href="https://www.rabbitmq.com/java-client.html">rabbitmq-java-client</a>, el consumidor:</p>
+<pre class="code java"><a name="rest_code_e6bde7c139cc439198d238a222cb7c74-1"></a><span class="kn">import</span> <span class="nn">com.rabbitmq.client.Connection</span><span class="o">;</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-2"></a><span class="kn">import</span> <span class="nn">com.rabbitmq.client.Channel</span><span class="o">;</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-3"></a>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-4"></a><span class="kd">class</span> <span class="nc">Consumer</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-5"></a><span class="o">{</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-6"></a>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(){</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-7"></a>        <span class="n">ConnectionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">();</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-8"></a>        <span class="n">factory</span><span class="o">.</span><span class="na">setUri</span><span class="o">(</span><span class="s">"amqp://guest:guest@hostName:5672/"</span><span class="o">);</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-9"></a>        <span class="n">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">newConnection</span><span class="o">();</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-10"></a>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-11"></a>        <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-12"></a>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-13"></a>        <span class="n">channel</span><span class="o">.</span><span class="na">basicConsume</span><span class="o">(</span><span class="n">queueName</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="s">"myConsumerTag"</span><span class="o">,</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-14"></a>            <span class="k">new</span> <span class="n">DefaultConsumer</span><span class="o">(</span><span class="n">channel</span><span class="o">)</span> <span class="o">{</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-15"></a>                <span class="nd">@Override</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-16"></a>                <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handleDelivery</span><span class="o">(</span><span class="n">String</span> <span class="n">consumerTag</span><span class="o">,</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-17"></a>                                           <span class="n">Envelope</span> <span class="n">envelope</span><span class="o">,</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-18"></a>                                           <span class="n">AMQP</span><span class="o">.</span><span class="na">BasicProperties</span> <span class="n">properties</span><span class="o">,</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-19"></a>                                           <span class="kt">byte</span><span class="o">[]</span> <span class="n">body</span><span class="o">)</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-20"></a>                    <span class="kd">throws</span> <span class="n">IOException</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-21"></a>                <span class="o">{</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-22"></a>                    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">body</span><span class="o">);</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-23"></a>                <span class="o">}</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-24"></a>            <span class="o">}</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-25"></a>        <span class="o">});</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-26"></a>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-27"></a>        <span class="n">channel</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-28"></a>        <span class="n">conn</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-29"></a>    <span class="o">}</span>
+<a name="rest_code_e6bde7c139cc439198d238a222cb7c74-30"></a><span class="o">}</span>
+</pre>
+<p>y el productor:</p>
+<pre class="code java"><a name="rest_code_80e1012f120e432d862a62eca0886de8-1"></a><span class="kn">import</span> <span class="nn">com.rabbitmq.client.Connection</span><span class="o">;</span>
+<a name="rest_code_80e1012f120e432d862a62eca0886de8-2"></a><span class="kn">import</span> <span class="nn">com.rabbitmq.client.Channel</span><span class="o">;</span>
+<a name="rest_code_80e1012f120e432d862a62eca0886de8-3"></a>
+<a name="rest_code_80e1012f120e432d862a62eca0886de8-4"></a><span class="kd">class</span> <span class="nc">Producer</span> <span class="o">{</span>
+<a name="rest_code_80e1012f120e432d862a62eca0886de8-5"></a>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(){</span>
+<a name="rest_code_80e1012f120e432d862a62eca0886de8-6"></a>        <span class="n">ConnectionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">();</span>
+<a name="rest_code_80e1012f120e432d862a62eca0886de8-7"></a>        <span class="n">factory</span><span class="o">.</span><span class="na">setUri</span><span class="o">(</span><span class="s">"amqp://guest:guest@hostName:5672/"</span><span class="o">);</span>
+<a name="rest_code_80e1012f120e432d862a62eca0886de8-8"></a>        <span class="n">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">newConnection</span><span class="o">();</span>
+<a name="rest_code_80e1012f120e432d862a62eca0886de8-9"></a>
+<a name="rest_code_80e1012f120e432d862a62eca0886de8-10"></a>        <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
+<a name="rest_code_80e1012f120e432d862a62eca0886de8-11"></a>
+<a name="rest_code_80e1012f120e432d862a62eca0886de8-12"></a>        <span class="kt">byte</span><span class="o">[]</span> <span class="n">messageBodyBytes</span> <span class="o">=</span> <span class="s">"Hello, world!"</span><span class="o">.</span><span class="na">getBytes</span><span class="o">();</span>
+<a name="rest_code_80e1012f120e432d862a62eca0886de8-13"></a>        <span class="n">channel</span><span class="o">.</span><span class="na">basicPublish</span><span class="o">(</span><span class="s">"test_exchange"</span><span class="o">,</span> <span class="s">"test_routing_key"</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">messageBodyBytes</span><span class="o">);</span>
+<a name="rest_code_80e1012f120e432d862a62eca0886de8-14"></a>
+<a name="rest_code_80e1012f120e432d862a62eca0886de8-15"></a>        <span class="n">channel</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+<a name="rest_code_80e1012f120e432d862a62eca0886de8-16"></a>        <span class="n">conn</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+<a name="rest_code_80e1012f120e432d862a62eca0886de8-17"></a>    <span class="o">}</span>
+<a name="rest_code_80e1012f120e432d862a62eca0886de8-18"></a><span class="o">}</span>
+</pre>
+<p>Debo admitir que no los he probado... Así que si alguien encuentra algún fallo, que me lo diga XD</p>
+</div>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusión</h2>
+<p><a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a> es un canal de comunicaciones. Quizá no sea muy rápido, ya que no deja de ser un <em>man-in-the-middle</em>, pero permite integrarse fácilmente con cualquier sistema existente.</p>
+<p>Además, como no fuerza ningún formato de mensaje, resulta muy sencillo crear conectores que permitan publicar/consumir mensajes e integrar distintos escenarios. Y en las últimas versiones han añadido soporte para <a class="reference external" href="https://www.rabbitmq.com/priority.html">mensajes prioritarios</a>, lo que puede dar mucho juego para enviar mensajes de control.</p>
+<p>De todas maneras, <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a> es sólo un sistema de colas de mensajes, pero hay otros. También está <a class="reference external" href="http://activemq.apache.org/">Apache ActiveMQ</a>, <a class="reference external" href="http://kafka.apache.org/">Apache Kafka</a>, <a class="reference external" href="https://qpid.apache.org/">Apache Qpid</a>,  <a class="reference external" href="http://zeromq.org/">ZeroMQ</a>, <a class="reference external" href="http://hornetq.jboss.org/">HornetQ</a>, <a class="reference external" href="https://code.google.com/p/sparrow/">Sparrow</a>, <a class="reference external" href="https://github.com/starling/starling/tree/master">Starling</a>, <a class="reference external" href="http://aws.amazon.com/es/sqs/">Amazon SQS</a>, <a class="reference external" href="http://kr.github.io/beanstalkd/">Beanstalkd</a>, ...</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2015-06-19T04:44:33+00:00" title="2015-06-19">2015-06-19</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/rabbitmq/" rel="tag">rabbitmq</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/monitorizacion-y-alertado/" rel="prev" title="Monitorización y alertado">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/creando-tu-propia-entidad-certificadora-ssl/" rel="next" title="Creando tu propia Entidad Certificadora SSL (y volcando certificados autofirmados)">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/colas-de-mensajes-rabbitmq/",
+        disqus_title="Colas de mensajes: RabbitMQ",
+        disqus_identifier="cache/posts/colas-de-mensajes-rabbitmq.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

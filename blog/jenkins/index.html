@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Integración continua: Jenkins | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/jenkins/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/java-unit-test-2/" title="Unit tests en Java (II)" type="text/html">
+<link rel="next" href="/blog/buildbot/" title="Integración contínua: BuildBot" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Integración continua: Jenkins">
+<meta property="og:url" content="http://magmax.org/blog/jenkins/">
+<meta property="og:description" content="Ahora está de moda eso de la integración continua (en adelante, CI. de Continuous Integration). Pero... ¿Qué es eso de la CI?
+Contaré a grandes rasgos algunos aspectos y después me centraré en la conf">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2012-07-21T00:00:00+00:00">
+<meta property="article:updated" content="2012-07-21T00:00:00">
+<meta property="article:tag" content="agile">
+<meta property="article:tag" content="continuous integration">
+<meta property="article:tag" content="jenkins">
+<meta property="article:tag" content="testing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/jenkins/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/jenkins/" class="u-url">Integración continua: Jenkins</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2012-07-21T00:00:00+00:00" title="2012-07-21">2012-07-21</time>
+                // <time class="updated dt-updated" datetime="2012-07-21T00:00:00" title="2012-07-21">2012-07-21</time></p>
+              <p class="commentline">            <a href="/blog/jenkins/#disqus_thread" data-disqus-identifier="cache/posts/jenkins.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Ahora está de moda eso de la integración continua (en adelante, <em>CI</em>. de <em>Continuous Integration</em>). Pero... ¿Qué es eso de la <em>CI</em>?</p>
+<p>Contaré a grandes rasgos algunos aspectos y después me centraré en la configuración de un trabajo con jenkins.</p>
+<!-- TEASER_END -->
+<div class="section" id="que-es-ci">
+<h2>¿Qué es CI?</h2>
+<p>Asumamos que tenéis una aplicación terminada; sin embargo, descubrís un pequeño defecto que no os lleva más de 5 minutos arreglar. Desde el mismo momento en el que lo corregís, guardáis y queréis hacer el cambio definitivo, <em>¿cuánto tiempo pasa?</em></p>
+<p>En ese momento es cuando comienza el infierno:</p>
+<ul class="simple">
+<li>Vuestro cambio se <em>mezcla con otros cambios</em>
+</li>
+<li>
+<em>Dependencias</em> con librerías que ya no existen</li>
+<li>Hay que volver a <em>desplegar</em>, <em>configurar</em>,... el producto para poder probarlo</li>
+<li>Con suerte, otro departamento necesitará que le echéis una mano para <em>probarlo</em>. Con mala suerte, no se realizan pruebas en absoluto.</li>
+<li>Se vuelven a abrir incidencias con problemas que ya tenía la versión anterior</li>
+<li>Hay que actualizar la <em>documentación</em>
+</li>
+<li>Posiblemente os pregunten si hay algo nuevo para <em>traducir</em>
+</li>
+<li>Hay que <em>empaquetar</em> el producto</li>
+<li>Además, tenemos que <em>probar</em> el nuevo paquete del producto</li>
+</ul>
+<p>Todos estos puntos y otros dependen de cada empresa, pero siempre es un dolor. Pensadlo en serio: ¿cuánto tiempo puede pasar? ¿Un mes?</p>
+<p>Pues bien... <em>La integración continua consiste, idealmente, en que en el momento en el que metes tu cambio en el repositorio, se desencadena un proceso automático que termina con la publicación/denegación de la nueva versión y un mail en tu cuenta de correo con el resultado</em>. Así de simple. Idealmente. Y, de nuevo idealmente, se trata de un proceso de minutos.</p>
+<p>Claro, entre un caso y el otro hay miles de grises, pero conviene saber cuál es el objetivo real de la <em>CI</em>.</p>
+<p>Por definición, en un proceso automático no intervienen las personas. Así que tenéis dos opciones: o bien confiais en lo buenísimos programadores que sois, ya que nunca rompéis nada, o bien asumís que no somos perfectos y que necesitáis probar el producto. Lo que nos da la...</p>
+<div class="section" id="primera-condicion-necesitamos-pruebas-automaticas">
+<h3>Primera condición: Necesitamos pruebas automáticas</h3>
+<p>Si no hay pruebas automáticas, apaga y vámonos. Y éstas deben desencadenarse con un único comando o con un conjunto de comandos suficientemente pequeño. Y deben cumplir las condiciones de las buenas pruebas (FIRST):</p>
+<ul class="simple">
+<li>
+<em>Fast</em>: Más rápidas que Usain Bolt. La idea es que una rama que intenta entrar en la rama principal, si pasa las pruebas, se <em>mergea</em> automáticamente.</li>
+<li>
+<em>Independant</em>: No importa el orden. De hecho, es mejor que se ordenen de forma aleatoria (pero dejen constancia del orden, para que puedan cumplir la siguiente condición).</li>
+<li>
+<em>Repeatable</em>: Todo esto no sirve si no podéis reproducir el problema si se produce.</li>
+<li>
+<em>Small</em>: Pequeñines sí, gracias. Así acotarán más la zona problemática.</li>
+<li>
+<em>Transparent</em>: Que se vea claramente la intención de la prueba.</li>
+</ul>
+</div>
+<div class="section" id="segunda-condicion-facil-de-desplegar">
+<h3>Segunda condición: Fácil de desplegar</h3>
+<p>También necesitamos que se pueda desplegar de forma automática. Si no es así, ya hemos terminado. No sirve de nada tener que estar hackeando mogollón de ficheros en el sistema. Con un poquito de suerte, podéis utilizar <a class="reference internal" href="/blog/jenkins/#puppet">puppet</a>  o <a class="reference internal" href="/blog/jenkins/#chef">chef</a>  (yo mismo escribí un "tutorial sobre puppet":link://slug/vagrant-puppet no hace mucho) para hacer todas las ñapas que sean necesarias.</p>
+</div>
+<div class="section" id="tercera-condicion-servidor-de-integracion-continua">
+<h3>Tercera condición: Servidor de integración contínua</h3>
+<p>Es importante tener un programa que detecte el cambio y lance todas estas pruebas.</p>
+<p>Aunque es posible que necesitéis más cosas, como un servidor de artefactos/librerías, bases de datos, licencias, gestión de documentación, gestión de traducciones, publicación del artefacto resultante, servidores de mail, ...</p>
+<p>En este caso vamos a utilizar <a class="reference internal" href="/blog/jenkins/#jenkins">Jenkins</a></p>
+</div>
+</div>
+<div class="section" id="instalando-jenkins">
+<h2>Instalando Jenkins</h2>
+<p>Lo siento, no me voy a extender. Os lo descargáis y ejecutáis:</p>
+<pre class="code text"><a name="rest_code_da84e9046d1147b6bf5a209e24ac8daf-1"></a>$ java -jar jenkins.war
+</pre>
+<p>Y comenzará a soltar guarrería javera por la pantalla. No os preocupéis por eso.</p>
+<p>Por lo demás, ya está. Podéis abrir un navegador en la dirección <a class="reference internal" href="/blog/jenkins/#http-localhost-8080">http://localhost:8080</a> .</p>
+</div>
+<div class="section" id="configurando-un-proyecto-pydoubles">
+<h2>Configurando un proyecto: pyDoubles</h2>
+<p>He elegido <a class="reference internal" href="/blog/jenkins/#pydoubles">pyDoubles</a>  para el ejemplo, ya que es pequeñín y tiene pruebas.</p>
+<p>El primer problema es que está en un <a class="reference internal" href="/blog/jenkins/#repositorio-mercurial">repositorio mercurial</a> , así que tendremos que añadir el plugin de mercurial a Jenkins:</p>
+<div class="section" id="anadir-el-plugin-de-mercurial-a-jenkins">
+<h3>Añadir el plugin de mercurial a Jenkins</h3>
+<p>Desde la ventana principal, pulsamos en <em>"Administrar Jenkins"</em>, y después en <em>"Administrar Plugins"</em>. Antes deberíamos pasar por <em>"configurar el sistema"</em>, pero esa parte no es imprescindible y os la dejo a vosotros.</p>
+<p>Ahora, en la pestaña de <em>"Todos los plugins"</em> buscáis el de mercurial, lo marcáis y le dais al botón de instalar. No tiene pérdida.</p>
+<p>Tras unos segundines os dirá que está todo listo para usarse.</p>
+</div>
+<div class="section" id="crear-el-proyecto">
+<h3>Crear el proyecto</h3>
+<p>Volvemos a la ventana inicial y pulsamos en "<tt class="docutils literal">Nueva Tarea</tt>". Indicamos que es un "<tt class="docutils literal">Proyecto libre</tt>" y le ponemos un nombre, algo imaginativo... No sé... <em>"pyDoubles"</em>.</p>
+<p>Ahora vamos a lo básico:</p>
+<ul class="simple">
+<li>
+<em>origen del código fuente</em>: <tt class="docutils literal">mercurial</tt><ul>
+<li>
+<em>repository URL</em>: <tt class="docutils literal"><span class="pre">ssh://hg@bitbucket.org/carlosble/pydoubles</span></tt>
+</li>
+<li>
+<em>branch</em>: <tt class="docutils literal">default</tt>
+</li>
+</ul>
+</li>
+<li>
+<em>Ejecutar</em><ul>
+<li>
+<em>"Añadir un nuevo paso"-&gt;"Ejecutar línea de comandos (shell)"</em>:</li>
+</ul>
+</li>
+</ul>
+<pre class="code text"><a name="rest_code_3bc6f15acd524e539a8daccc5e206049-1"></a>mkdir $WORKSPACE/log || true
+<a name="rest_code_3bc6f15acd524e539a8daccc5e206049-2"></a>nosetests --with-xunit --xunit-file=$WORKSPACE/log/unit.xml pyDoublesTests/unit.py
+<a name="rest_code_3bc6f15acd524e539a8daccc5e206049-3"></a>nosetests --with-xunit --xunit-file=$WORKSPACE/log/hamcrest.xml pyDoublesTests/hamcrest_integration.py
+</pre>
+<ul class="simple">
+<li>
+<em>"Acciones para ejecutar después"</em><ul>
+<li>
+<em>"Publicar los resultados de los tests JUnit"</em>:</li>
+</ul>
+</li>
+</ul>
+<pre class="code text"><a name="rest_code_d59335031abd412d90801846b504f85a-1"></a>**/log/*.xml
+</pre>
+<p>Y ya está.</p>
+<p>Algunos comentarios: si en lugar de un único script hacéis varios, la diferencia será que parará en el primer error. Eso mismo puede hacerse ejecutando "set -e", que es más cómodo.</p>
+<p>No he configurado el <em>polling</em> ni ningún tipo de planificación. Sólo podremos ejecutarlo a mano. Creo que para el ejemplo es más que suficiente, y que la documentación os dará el resto.</p>
+</div>
+<div class="section" id="ejecutar">
+<h3>Ejecutar</h3>
+<p>Es el momento en el que pulsáis sobre <em>"Ejecutar ahora"</em>. Al poco tiempo os llamará la atención una barrita de progreso en la sección <em>"Estado de los nodos"</em>. Voy a contar un poco más de esto.</p>
+<p>Jenkins consta de dos partes: el <em>maestro</em> y los <em>esclavos</em>. El <em>maestro</em> es lo que hemos visto hasta ahora; los <em>esclavos</em> son programas más pequeños que Jenkins instala en otras máquinas y que son los que ejecutarán todo el proyecto en sí. Dado que Jenkins consume bastantes recursos, es normal dejarlo apartado en un único servidor y configurar los workers en otras máquinas. Por defecto vemos que ha configurado dos esclavos en la máquina actual. En un entorno real, eso es un suicidio, pero para nuestro ejemplo es más que suficiente. Cuantos más esclavos tengamos, más trabajo se podrá realizar en paralelo.</p>
+<p>Una vez que haya terminado (no le llevará mucho tiempo), podréis navegar por la información de la build. Os recomiendo las secciones:</p>
+<ul class="simple">
+<li>
+<em>"Salida de Consola"</em>, donde podréis ver cómo fue la ejecución</li>
+<li>
+<em>"Resultados de los tests"</em>, donde se renderizan los tests en formato molón.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="conclusiones">
+<h2>Conclusiones</h2>
+<p>Como podéis observar, resulta tremendamente sencillo crear un proyecto en Jenkins, siempre y cuando se cumplan las dos primeras condiciones: que haya pruebas automáticas y que resulte sencillo de desplegar.</p>
+<p>Aunque hacer cosas sencillas con Jenkins es tremendamente sencillo, hacer cosas un poco más difíciles es un infierno. No os emocionéis todavía creando proyectos a mansalva, ya que en el siguiente artículo comentaré otro servidor de <em>CI</em> que puede gustaros aún más. Cada cual tiene sus ventajas y sus inconvenientes, claro está.</p>
+<p>Si, finalmente, termináis adoptando Jenkins como vuestro <em>CI</em> habitual, os recomiendo que hagáis backup de los proyectos, que son archivos XML que se encontrarán, probablemente, en <tt class="docutils literal"><span class="pre">$HOME/.jenkins</span></tt>. Tened cuidado, porque ese directorio tiende a crecer desmesuradamente (Jenkins tiene mecanismos para controlarlo, investigad las opciones del proyecto).</p>
+<p>En caso de que queráis esperar a ver la otra opción que quiero presentar, podéis ir adaptando vuestros proyectos para que se puedan probar y desplegar fácilmente. ¡Eso nunca está de más!
+.. <span class="target" id="puppet">puppet</span>: <a class="reference external" href="http://puppetlabs.com">http://puppetlabs.com</a>
+.. <span class="target" id="chef">chef</span>: <a class="reference external" href="http://www.opscode.com/chef">http://www.opscode.com/chef</a>
+.. <span class="target" id="jenkins">Jenkins</span>: <a class="reference external" href="http://jenkins-ci.org">http://jenkins-ci.org</a>
+.. <span class="target" id="http-localhost-8080">http://localhost:8080</span>: <a class="reference external" href="http://localhost:8080">http://localhost:8080</a>
+.. <span class="target" id="pydoubles">pyDoubles</span>: <a class="reference external" href="http://www.pydoubles.org/">http://www.pydoubles.org/</a>
+.. <span class="target" id="repositorio-mercurial">repositorio mercurial</span>: <a class="reference external" href="https://bitbucket.org/carlosble/pydoubles/src">https://bitbucket.org/carlosble/pydoubles/src</a></p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2012-07-21T00:00:00+00:00" title="2012-07-21">2012-07-21</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/agile/" rel="tag">agile</a>
+                <a class="label label-primary p-category" href="/categories/continuous-integration/" rel="tag">continuous integration</a>
+                <a class="label label-primary p-category" href="/categories/jenkins/" rel="tag">jenkins</a>
+                <a class="label label-primary p-category" href="/categories/testing/" rel="tag">testing</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/java-unit-test-2/" rel="prev" title="Unit tests en Java (II)">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/buildbot/" rel="next" title="Integración contínua: BuildBot">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/jenkins/",
+        disqus_title="Integraci\u00f3n continua: Jenkins",
+        disqus_identifier="cache/posts/jenkins.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

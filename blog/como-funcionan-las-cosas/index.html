@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Cómo funcionan las cosas | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/como-funcionan-las-cosas/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/python-compiler-internals/" title="El compilador de Python desde dentro" type="text/html">
+<link rel="next" href="/blog/no-somos-islas/" title="No somos islas" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Cómo funcionan las cosas">
+<meta property="og:url" content="http://magmax.org/blog/como-funcionan-las-cosas/">
+<meta property="og:description" content="Saber cómo funciona las cosas es más importante de lo que parece. Al menos, tener una idea general.
+Nosotros, los informáticos, necesitamos saber cómo funcionan las herramientas que utilizamos. En oca">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2012-05-23T00:00:00+00:00">
+<meta property="article:updated" content="2012-05-23T00:00:00">
+<meta property="article:tag" content="engineering">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/como-funcionan-las-cosas/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/como-funcionan-las-cosas/" class="u-url">Cómo funcionan las cosas</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2012-05-23T00:00:00+00:00" title="2012-05-23">2012-05-23</time>
+                // <time class="updated dt-updated" datetime="2012-05-23T00:00:00" title="2012-05-23">2012-05-23</time></p>
+              <p class="commentline">            <a href="/blog/como-funcionan-las-cosas/#disqus_thread" data-disqus-identifier="cache/posts/como-funcionan-las-cosas.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Saber cómo funciona las cosas es más importante de lo que parece. Al menos, tener una idea general.</p>
+<p>Nosotros, los informáticos, necesitamos saber cómo funcionan las herramientas que utilizamos. En ocasiones, ésta es una tarea dura. En otras, muy gratificante.</p>
+<p>La semana pasada traduje un artículo, "El compilador de Python desde dentro":link://slug/python-compiler-internals, donde se analizaba a fondo este compilador.</p>
+<p>Hay muchas otras cosas que saber. Algunas son genéricas; otras más específicas. Pero sin duda alguna, todas importantes.</p>
+<p>Este artículo es una mezcla de algunas de ellas.</p>
+<!-- TEASER_END -->
+<div class="section" id="te-has-planteado-alguna-vez">
+<h2>¿Te has planteado alguna vez...?</h2>
+<ul class="simple">
+<li>¿Por qué siempre recorremos las tablas por filas y no por columnas? ¿Habría alguna diferencia?</li>
+<li>¿Debería tratar de optimizar mi código? En caso afirmativo, ¿cómo lo hago?</li>
+<li>¿Debería implementarme mi propio algoritmo <em>quicksort</em> para ordenar vectores más rápido?</li>
+<li>Me han dicho que .Net es la caña, ¿programaré más rápido?</li>
+<li>Necesito un canal de comunicaciones, ¿qué puedo usar?</li>
+</ul>
+<p>Éstas y muchas otras son preguntas habituales en nuestra profesión. Y son mucho más importantes de lo que parecen. La diferencia entre conocer las respuestas y no saber qué responder puede ser la diferencia entre ganar unas décimas de segundos o el éxito y el fracaso.</p>
+<p>Vamos a jugar. A continuación iré poniendo las respuestas a esas preguntas, pero me gustaría que las respondierais vosotros mismos. Apuntadlas.</p>
+<p>En las secciones siguientes os daré mi contestación. Veréis la respuesta rápida y la larga. Quizá no estéis de acuerdo... ¡Estupendo! Así podremos discutirlo. Si se os ocurre vuestra propia pregunta, también podemos discutirla :D</p>
+<div class="section" id="recorriendo-tablas-filas-o-columnas">
+<h3>Recorriendo tablas: ¿filas o columnas?</h3>
+<p><em>Respuesta rápida:</em> por filas es mucho más rápido.</p>
+<p>Aunque la pregunta parece fácil, realmente es una de las más complejas de las que he planteado. Para saber la respuesta, será necesario saber un poquitín de arquitectura de computadores.</p>
+<p>La lectura de disco es lenta. Así que los sistemas operativos tratan de optimizar esta lectura mediante <em>cachés</em> de bloques con tamaño fijo. Por esa razón, aunque quieras leer un byte, el sistema leerá un bloque completo (el tamaño dependerá de muchas cosas). Así, si lees el siguiente, ya se encuentra en la <em>caché</em> y no tiene que ir a disco, resultando mucho más rápido. Cuando un bloque lleva bastante tiempo sin usarse, se elimina de esa <em>caché</em>.</p>
+<p>Si leemos un vector por filas, muy probablemente el siguiente elemento ya se encuentre en la <em>caché</em>. Si lo leemos por columnas, es mucho menos probable. En este segundo caso, además, si la tabla es muy grande, es posible que cuando cambiemos a la siguiente columna la primera fila ya no se encuentre <em>cacheada</em> y volvamos a tener un fallo de página, resultando desastroso para el rendimiento de nuestro algoritmo.</p>
+<p>¿Es así siempre? No.</p>
+<p>Puede ocurrir que nuestros objetos sean tan grandes que ocupen justamente un bloque. En este caso nos daría igual usar filas o columnas. Pero mejor no contéis con ello :D</p>
+<p>También puede ocurrir que nuestro objetos sean punteros a otros objetos. En este caso también sería más rápido por filas, ya que los punteros serán accesibles más rápido y, con bastante probabilidad, apunten a lugares cercanos (que también quedarían <em>cacheados</em>).</p>
+</div>
+<div class="section" id="optimizo-el-codigo">
+<h3>¿Optimizo el código?</h3>
+<p><em>Respuesta rápida:</em> ¿Qué es optimizar?</p>
+<p>No soy gallego, aunque responda con una pregunta; realmente depende de qué queramos optimizar. Para empezar, se me ocurren 3 opciones:</p>
+<ul class="simple">
+<li>Optimización en velocidad, haciendo que nuestro programa sea más rápido.</li>
+<li>Optimización en espacio, para que ocupe menos.</li>
+<li>Optimización en legibilidad, de manera que sea más mantenible.</li>
+</ul>
+<p>Mejorar la velocidad es complejo, salvo que se sepa cómo funciona el compilador. Se pueden echar manos: en algunos lenguajes interpretados como PHP, es mucho más rápido una hash de propiedad-valor que crear un objeto para tal evento. En el caso de la hash, la búsqueda se realizará en C. Si usamos un objeto, las propiedades y funciones se organizan como una hash...</p>
+<p>Mejorar el espacio es aún más complejo. En general, el código es lo que menos ocupará de toda la aplicación, así que... ¿Es realmente necesario?</p>
+<p>Por último, la legibilidad. Es lo que se suele conocer también como <em>refactorización</em>. Es arriesgada: ¿por qué modificar algo que ya funciona? Pueden introducirse nuevos errores. Por eso se recomienda utilizar <a class="reference internal" href="/blog/como-funcionan-las-cosas/#tdd">TDD</a>  :D</p>
+<p>Cuando mejoramos la legibilidad hacemos que el programa sea más fácil de gestionar y que realizar un cambio resulte más sencillo. Hay muchos detractores de este tipo de acciones, pero no he conocido a nadie que no haya tenido que hacer una refactorización en algún momento.</p>
+<p>Hay ocasiones en las que una de estas optimizaciones entra en conflicto con otra. Por ejemplo, en los lenguajes interpretados (PHP, Ruby, Python, Java, ...), un objeto ocupa bastante memoria (en PHP unos 30 bytes como poco; en Python unos 50), y es posible que no ofrezcan más de lo que hace una simple Hash. ¿Por qué no utilizar una hash entonces? Porque dificulta la legibilidad, aunque es posible que sea más rápido.</p>
+<p>Hay otra cosa a tener en cuenta: las optimizaciones del compilador. Si el compilador va a hacerlo por nosotros, ¿por qué molestarse? Por eso en C y C++ no resulta interesante realizar optimizaciones de espacio o velocidad: el compilador, seguramente, lo hará mejor que nosotros. En lenguajes interpretados (Java, Python, Ruby, PHP,...) esta optimización <em>no existe</em>, así que más vale que dediquemos un poco de tiempo a pensar en ella :D</p>
+</div>
+<div class="section" id="reimplementar-quicksort">
+<h3>¿Reimplementar QuickSort?</h3>
+<p><em>Respuesta rápida:</em> No.</p>
+<p>Por muy listo que seas, probablemente el algoritmo de tu lenguaje sea más rápido, esté más optimizado, más revisado o, simplemente, no puedes hacer algo más rápido.</p>
+<p>Si estás en C o C++, los algoritmos de ordenación llevan probándose más de 20 años. Con optimizaciones constantes.</p>
+<p>Por el contrario, si estás en un lenguaje interpretado, simplemente <em>no puedes</em> hacer algo mejor. Tu implementación será interpretada y, por mucho que lo intentes, más lenta que la existente en el lenguaje nativo, ya que es probable que esté escrita en C.</p>
+</div>
+<div class="section" id="cambiar-de-lenguaje-me-hara-mas-rapido">
+<h3>¿Cambiar de lenguaje me hará más rápido?</h3>
+<p><em>Respuesta rápida:</em> No.</p>
+<p>Si ya sabes manejar un lenguaje, ¿te hará más rápido otro? No, ya que necesitas mucho tiempo para aprender a usarlo. No me refiero a las estructuras básicas; éstas son fáciles. Me refiero a conocer el compilador, saber qué optimizaciones son fáciles y debes usar, saber elegir una función sobre otra parecida porque es más rápida, ... Este tipo de aprendizaje.</p>
+<p>Sin embargo, cambiar de lenguaje puede darte <em>perspectiva</em>, conocer nuevos paradigmas puede ser interesante cuando vas a tratar de atacar un nuevo problema.</p>
+<p>Además, cada lenguaje tiene distintas construcciones y distintas maneras de implementar sus patrones. Algunos tienen sus propios patrones. Este tipo de actividad siempre es positiva.</p>
+<p>Pero tu velocidad no aumentará de la noche a la mañana. Quizá sí que lo haga a la larga, pero no sólo por el hecho de cambiar.</p>
+</div>
+<div class="section" id="que-middleware-usar">
+<h3>¿Qué middleware usar?</h3>
+<p><em>Respuesta rápida:</em> Usa Rest con HTTP.</p>
+<p>Vale, sí: no suele ser la mejor opción, pero siempre digo que es una opción que debe plantearse.</p>
+<p>La verdad es que depende. Depende de qué estés haciendo, del tamaño de tus mensajes, de para qué lo quieres.</p>
+<p>Si necesitas velocidad de comunicaciones, con mensajes cortos, con respuesta inmediata, entonces deberías usar un middleware binario, como <a class="reference internal" href="/blog/como-funcionan-las-cosas/#corba">CORBA</a> , <a class="reference internal" href="/blog/como-funcionan-las-cosas/#ice">ICE</a>  o <a class="reference internal" href="/blog/como-funcionan-las-cosas/#apache-thrift">Apache Thrift</a> .</p>
+<p>En caso de que busques algo para procesar mensajes grandes, en la que el tiempo de respuesta no es importante o bien no tienes suficientes recursos para responder en el momento, entonces estás buscando una cola de mensajes como <a class="reference internal" href="/blog/como-funcionan-las-cosas/#rabbitmq">RabbitMQ</a> , <a class="reference internal" href="/blog/como-funcionan-las-cosas/#apache-active-mq">Apache Active MQ</a>  o <a class="reference internal" href="/blog/como-funcionan-las-cosas/#zeromq">ZeroMQ</a> .</p>
+<p>Si quieres algo genérico, que te permita gran flexibilidad y modificar el protocolo de comunicaciones en el futuro, o necesitas que funcione en cualquier parte con pocos recursos... Entonces usa HTTP y cúrrate un protocolo Rest.</p>
+</div>
+</div>
+<div class="section" id="despedida">
+<h2>Despedida</h2>
+<p>Bueno, estas son algunas preguntas que creo que todos nos hemos hecho alguna vez. Espero que os hayan gustado y que, si se os ocurre alguna otra, ¡no dejéis de hacerla! (aquí o a vosotros mismos)
+.. <span class="target" id="tdd">TDD</span>: <a class="reference external" href="http://en.wikipedia.org/wiki/Test-driven_development">http://en.wikipedia.org/wiki/Test-driven_development</a>
+.. <span class="target" id="corba">CORBA</span>: <a class="reference external" href="http://es.wikipedia.org/wiki/CORBA">http://es.wikipedia.org/wiki/CORBA</a>
+.. <span class="target" id="ice">ICE</span>: <a class="reference external" href="http://www.zeroc.com/">http://www.zeroc.com/</a>
+.. <span class="target" id="apache-thrift">Apache Thrift</span>: <a class="reference external" href="http://thrift.apache.org/">http://thrift.apache.org/</a>
+.. <span class="target" id="rabbitmq">RabbitMQ</span>: <a class="reference external" href="http://www.rabbitmq.com/">http://www.rabbitmq.com/</a>
+.. <span class="target" id="apache-active-mq">Apache Active MQ</span>: <a class="reference external" href="http://activemq.apache.org/">http://activemq.apache.org/</a>
+.. <span class="target" id="zeromq">ZeroMQ</span>: <a class="reference external" href="http://www.zeromq.org/">http://www.zeromq.org/</a></p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2012-05-23T00:00:00+00:00" title="2012-05-23">2012-05-23</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/engineering/" rel="tag">engineering</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/python-compiler-internals/" rel="prev" title="El compilador de Python desde dentro">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/no-somos-islas/" rel="next" title="No somos islas">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/como-funcionan-las-cosas/",
+        disqus_title="C\u00f3mo funcionan las cosas",
+        disqus_identifier="cache/posts/como-funcionan-las-cosas.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

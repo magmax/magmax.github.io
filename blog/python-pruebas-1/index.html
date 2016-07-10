@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Python: Cómo hacer pruebas 1: doctest | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/python-pruebas-1/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/python-asignaciones/" title="Python: Asignaciones con valores por defecto." type="text/html">
+<link rel="next" href="/blog/xpweek/" title="Lecciones aprendidas en la XPWeek" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Python: Cómo hacer pruebas 1: doctest">
+<meta property="og:url" content="http://magmax.org/blog/python-pruebas-1/">
+<meta property="og:description" content="Voy a redactar distintas maneras de hacer pruebas en Python. En este sentido, veremos diferentes estilos, desde el más sencillo al más complejo; desde las pruebas unitarias hasta las pruebas de sistem">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2011-09-25T00:00:00+00:00">
+<meta property="article:updated" content="2011-09-25T00:00:00">
+<meta property="article:tag" content="doctest">
+<meta property="article:tag" content="python testing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/python-pruebas-1/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/python-pruebas-1/" class="u-url">Python: Cómo hacer pruebas 1: doctest</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2011-09-25T00:00:00+00:00" title="2011-09-25">2011-09-25</time>
+                // <time class="updated dt-updated" datetime="2011-09-25T00:00:00" title="2011-09-25">2011-09-25</time></p>
+              <p class="commentline">            <a href="/blog/python-pruebas-1/#disqus_thread" data-disqus-identifier="cache/posts/python-pruebas-1.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Voy a redactar distintas maneras de hacer pruebas en Python. En este sentido, veremos diferentes estilos, desde el más sencillo al más complejo; desde las pruebas unitarias hasta las pruebas de sistema.</p>
+<p>Estoy convencido de que me voy a dejar mil historias en el tintero... os ruego un poco de paciencia y de ayuda :D</p>
+<p>En esta primera entrega, veremos cómo probar utilizando los desconocidos <em>doctest</em>.</p>
+<!-- TEASER_END -->
+<div class="section" id="funcion-de-ejemplo">
+<h2>Función de ejemplo</h2>
+<p>Vamos a practicar con la función que obtiene el factorial de un número, función que queremos probar. Es decir, que tenemos la función:</p>
+<pre class="code python"><a name="rest_code_16bc40f6894647c69f67436091e2c193-1"></a><span class="k">def</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+<a name="rest_code_16bc40f6894647c69f67436091e2c193-2"></a>    <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">n</span> <span class="o">*</span> <span class="n">factorial</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</pre>
+<p>Y queremos probar si funciona.</p>
+</div>
+<div class="section" id="pruebas-en-la-documentacion">
+<h2>Pruebas en la documentación</h2>
+<p>Por esta razón vamos a añadirle el paquete <em>doctest</em> y la línea de ejecución adecuada:</p>
+<pre class="code python"><a name="rest_code_09e32244291548879f09484e487a953f-1"></a><span class="kn">import</span> <span class="nn">doctest</span>
+<a name="rest_code_09e32244291548879f09484e487a953f-2"></a>
+<a name="rest_code_09e32244291548879f09484e487a953f-3"></a><span class="k">def</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+<a name="rest_code_09e32244291548879f09484e487a953f-4"></a>    <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">n</span> <span class="o">*</span> <span class="n">factorial</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<a name="rest_code_09e32244291548879f09484e487a953f-5"></a>
+<a name="rest_code_09e32244291548879f09484e487a953f-6"></a><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+<a name="rest_code_09e32244291548879f09484e487a953f-7"></a>    <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+</pre>
+<p>Finalmente, será necesario añadir un comentario a la función, de la misma manera que lo veríamos en el intérprete en línea:</p>
+<pre class="code python"><a name="rest_code_1f950f107bce4bd68b41b5dee793dd02-1"></a><span class="kn">import</span> <span class="nn">doctest</span>
+<a name="rest_code_1f950f107bce4bd68b41b5dee793dd02-2"></a>
+<a name="rest_code_1f950f107bce4bd68b41b5dee793dd02-3"></a><span class="k">def</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+<a name="rest_code_1f950f107bce4bd68b41b5dee793dd02-4"></a>    <span class="sd">"""</span>
+<a name="rest_code_1f950f107bce4bd68b41b5dee793dd02-5"></a><span class="sd">    &gt;&gt;&gt; factorial(3)</span>
+<a name="rest_code_1f950f107bce4bd68b41b5dee793dd02-6"></a><span class="sd">    6</span>
+<a name="rest_code_1f950f107bce4bd68b41b5dee793dd02-7"></a><span class="sd">    &gt;&gt;&gt; factorial(4)</span>
+<a name="rest_code_1f950f107bce4bd68b41b5dee793dd02-8"></a><span class="sd">    24</span>
+<a name="rest_code_1f950f107bce4bd68b41b5dee793dd02-9"></a><span class="sd">    &gt;&gt;&gt; factorial(5)</span>
+<a name="rest_code_1f950f107bce4bd68b41b5dee793dd02-10"></a><span class="sd">    120</span>
+<a name="rest_code_1f950f107bce4bd68b41b5dee793dd02-11"></a><span class="sd">    """</span>
+<a name="rest_code_1f950f107bce4bd68b41b5dee793dd02-12"></a>    <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">n</span> <span class="o">*</span> <span class="n">factorial</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<a name="rest_code_1f950f107bce4bd68b41b5dee793dd02-13"></a>
+<a name="rest_code_1f950f107bce4bd68b41b5dee793dd02-14"></a>
+<a name="rest_code_1f950f107bce4bd68b41b5dee793dd02-15"></a><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+<a name="rest_code_1f950f107bce4bd68b41b5dee793dd02-16"></a>    <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+</pre>
+<div class="section" id="ejecutando-que-es-gerundio">
+<h3>Ejecutando, que es gerundio</h3>
+<p>Vamos a ver lo que ocurre cuando lo ejecutamos. Por favor, hacedlo.</p>
+<p>¿Nada? Eso es porque todo ha ido bien. Pero claro, no podemos fiarnos... Así que ejecutaremos de nuevo pero con el parámetro <tt class="docutils literal"><span class="pre">-v</span></tt>:</p>
+<pre class="code bash"><a name="rest_code_627091c29835447bab00cd7468eab9c2-1"></a><span class="nv">$ </span>./example1.py -v
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-2"></a>Trying:
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-3"></a>    factorial<span class="o">(</span>3<span class="o">)</span>
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-4"></a>Expecting:
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-5"></a>    6
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-6"></a>ok
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-7"></a>Trying:
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-8"></a>    factorial<span class="o">(</span>4<span class="o">)</span>
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-9"></a>Expecting:
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-10"></a>    24
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-11"></a>ok
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-12"></a>Trying:
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-13"></a>    factorial<span class="o">(</span>5<span class="o">)</span>
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-14"></a>Expecting:
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-15"></a>    120
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-16"></a>ok
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-17"></a><span class="m">1</span> items had no tests:
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-18"></a>    __main__
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-19"></a><span class="m">1</span> items passed all tests:
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-20"></a>   <span class="m">3</span> tests in __main__.factorial
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-21"></a><span class="m">3</span> tests in <span class="m">2</span> items.
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-22"></a><span class="m">3</span> passed and <span class="m">0</span> failed.
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-23"></a>Test passed.
+<a name="rest_code_627091c29835447bab00cd7468eab9c2-24"></a><span class="err">$</span>
+</pre>
+<p>Madre mía, qué cosa más sencilla.</p>
+</div>
+</div>
+<div class="section" id="separacion-de-tests-y-pruebas">
+<h2>Separación de tests y pruebas</h2>
+<p>Usar este tipo de pruebas puede resultar un problema, ya que ensucia muchísimo el código. La solución está en sacarlo a un archivo diferente. De esta manera, el código se quedará más limpio (ojo a la función <em>doctest.testfile</em>):</p>
+<pre class="code python"><a name="rest_code_4d168b9057dd46f8b60bb0e3fd5d2ae0-1"></a><span class="kn">import</span> <span class="nn">doctest</span>
+<a name="rest_code_4d168b9057dd46f8b60bb0e3fd5d2ae0-2"></a>
+<a name="rest_code_4d168b9057dd46f8b60bb0e3fd5d2ae0-3"></a><span class="k">def</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+<a name="rest_code_4d168b9057dd46f8b60bb0e3fd5d2ae0-4"></a>    <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">n</span> <span class="o">*</span> <span class="n">factorial</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<a name="rest_code_4d168b9057dd46f8b60bb0e3fd5d2ae0-5"></a>
+<a name="rest_code_4d168b9057dd46f8b60bb0e3fd5d2ae0-6"></a><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+<a name="rest_code_4d168b9057dd46f8b60bb0e3fd5d2ae0-7"></a>    <span class="n">doctest</span><span class="o">.</span><span class="n">testfile</span><span class="p">(</span><span class="s">'example2.txt'</span><span class="p">)</span>
+</pre>
+<p>Separando los tests a un fichero externo, que en este caso se tiene que llamar <a class="reference external" href="mailto:'@example2">'@example2</a>.txt@':</p>
+<pre class="code python"><a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-1"></a><span class="n">Módulo</span> <span class="n">de</span> <span class="n">ejemplo</span>
+<a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-2"></a><span class="o">=================</span>
+<a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-3"></a>
+<a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-4"></a><span class="n">Usando</span> <span class="s">'factorial'</span>
+<a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-5"></a><span class="o">------------------</span>
+<a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-6"></a>
+<a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-7"></a><span class="n">Primero</span> <span class="n">importamos</span> <span class="n">nuestra</span> <span class="n">función</span><span class="p">:</span>
+<a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-8"></a>
+<a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-9"></a>    <span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">example</span> <span class="kn">import</span> <span class="n">factorial</span>
+<a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-10"></a>
+<a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-11"></a><span class="n">Y</span> <span class="n">esto</span> <span class="n">es</span> <span class="n">un</span> <span class="n">ejemplo</span> <span class="n">de</span> <span class="n">lo</span> <span class="n">bien</span> <span class="n">que</span> <span class="n">se</span> <span class="n">nos</span> <span class="n">da</span> <span class="n">calcular</span> <span class="n">factoriales</span><span class="p">:</span>
+<a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-12"></a>
+<a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-13"></a>    <span class="o">&gt;&gt;&gt;</span> <span class="n">factorial</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-14"></a>    <span class="mi">6</span>
+<a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-15"></a>    <span class="o">&gt;&gt;&gt;</span> <span class="n">factorial</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-16"></a>    <span class="mi">24</span>
+<a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-17"></a>    <span class="o">&gt;&gt;&gt;</span> <span class="n">factorial</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<a name="rest_code_999b90af0e1d4f8b91a7f9ac3cfdb73c-18"></a>    <span class="mi">120</span>
+</pre>
+<p>Lo más divertido de este método es que podemos dejar perfectamente documentado nuestro código y que estos comentarios se van a probar. Es decir: si nuestro código cambia, invalidará la documentación.</p>
+<p>El próximo día... UnitTest/UnitTest2</p>
+</div>
+<div class="section" id="para-saber-mas">
+<h2>Para saber más...</h2>
+<p>Aunque pensaba utilizar la función del factorial, resulta que la misma idea la tuvieron ya la gente de <em>Python</em> al hacer el propio manual de <a class="reference external" href="http://docs.python.org/library/doctest.html">doctest</a> . Aún así os contarán muchas cosas que yo me he dejado en el tintero, como la captura de excepciones, etc.</p>
+<p>También podéis preguntar en este foro y así responderemos a las preguntas entre todos</p>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2011-09-25T00:00:00+00:00" title="2011-09-25">2011-09-25</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/doctest/" rel="tag">doctest</a>
+                <a class="label label-primary p-category" href="/categories/python-testing/" rel="tag">python testing</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/python-asignaciones/" rel="prev" title="Python: Asignaciones con valores por defecto.">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/xpweek/" rel="next" title="Lecciones aprendidas en la XPWeek">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/python-pruebas-1/",
+        disqus_title="Python: C\u00f3mo hacer pruebas 1: doctest",
+        disqus_identifier="cache/posts/python-pruebas-1.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

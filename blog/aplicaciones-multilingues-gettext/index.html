@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Aplicaciones multilingües, gettext | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/aplicaciones-multilingues-gettext/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/debaday/" title="Debaday" type="text/html">
+<link rel="next" href="/blog/bash-completion/" title="bash-completion: the greatest things since bash completion" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Aplicaciones multilingües, gettext">
+<meta property="og:url" content="http://magmax.org/blog/aplicaciones-multilingues-gettext/">
+<meta property="og:description" content="A menudo se piensa que una aplicación estaría mucho mejor si se encontrara en varios idiomas. Podemos pensar en distintas formas de soportar esto, pero otros ya lo han pensado por nosotros y han cread">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2010-05-26T00:00:00+00:00">
+<meta property="article:updated" content="2010-05-26T00:00:00">
+<meta property="article:tag" content="gettext">
+<meta property="article:tag" content="internationalization">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
+<meta name="twitter:url" content="http://magmax.org//blog/aplicaciones-multilingues-gettext/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/aplicaciones-multilingues-gettext/" class="u-url">Aplicaciones multilingües, gettext</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2010-05-26T00:00:00+00:00" title="2010-05-26">2010-05-26</time>
+                // <time class="updated dt-updated" datetime="2010-05-26T00:00:00" title="2010-05-26">2010-05-26</time></p>
+              <p class="commentline">            <a href="/blog/aplicaciones-multilingues-gettext/#disqus_thread" data-disqus-identifier="cache/posts/aplicaciones-multilingues-gettext.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>A menudo se piensa que una aplicación estaría mucho mejor si se encontrara en varios idiomas. Podemos pensar en distintas formas de soportar esto, pero otros ya lo han pensado por nosotros y han creado las fabulosas herramientas gettext. Este documento pretende ser una guía para el uso rápido (rápido de verdad) de estas herramientas.</p>
+<!-- TEASER_END -->
+<p><strong>Notas</strong></p>
+<p>Esta receta se publicó por primera vez en <a class="reference external" href="http://crysol.org/es/node/203">Crysol</a>, pero a partir de ahora estará aquí la última versión, si decido modificarla.</p>
+<p>Como yo fui el autor de la receta original, no estoy haciendo plagio :-D</p>
+<div class="section" id="ingredientes">
+<h2>Ingredientes</h2>
+<ul class="simple">
+<li>gettext</li>
+</ul>
+</div>
+<div class="section" id="modificaciones-en-el-codigo">
+<h2>Modificaciones en el código</h2>
+<p>Lo primero es acordarse de evitar cadenas sin más (al menos las que se muestran) en nuestro código. Ahora importaremos la librería gettext y utilizaremos la función gettext. Se encuentra disponible para numerosos lenguajes, aunque aquí se explicará con ejemplos en python (las diferencias serán mínimas en el resto de lenguajes).</p>
+<p>En Python queda así:</p>
+<pre class="code python"><a name="rest_code_6a784cd22b5b4e42ac8cf420d32fd366-1"></a><span class="kn">import</span> <span class="nn">gettext</span>
+<a name="rest_code_6a784cd22b5b4e42ac8cf420d32fd366-2"></a><span class="n">gettext</span><span class="o">.</span><span class="n">textdomain</span><span class="p">(</span><span class="s">"programita"</span><span class="p">)</span>
+<a name="rest_code_6a784cd22b5b4e42ac8cf420d32fd366-3"></a><span class="n">gettext</span><span class="o">.</span><span class="n">bindtextdomain</span><span class="p">(</span><span class="s">"programita"</span><span class="p">,</span> <span class="s">"./mo"</span><span class="p">)</span>
+<a name="rest_code_6a784cd22b5b4e42ac8cf420d32fd366-4"></a><span class="n">gettext</span><span class="o">.</span><span class="n">gettext</span><span class="p">(</span><span class="s">"hello, world!"</span><span class="p">)</span><span class="err">`</span>
+</pre>
+<p>No os asustéis: Las funciones <code>textdomain</code> y <code>bindtextdomain</code>" sirven para decirle a gettext dónde se encuentran las traducciones. Aquí se está poniendo un ejemplo, así que sustituid <em>"programita"</em> por el nombre de vuestro programa, y <em>"./mo"</em> por el directorio donde vamos a meter las traducciones.</p>
+<p>A menudo, además, se suele importar la función gettext cambiándole el nombre a algo más sencillo como la barra baja. De esta manera, nos evitamos tener que escribir <code>gettext.gettext</code> cada vez. Para hacer esto hay distintas maneras, una de ellas es durante la importación:</p>
+<pre class="code python"><a name="rest_code_d4fe56d236b5449c94f8fe774ee6ddb2-1"></a><span class="kn">from</span> <span class="nn">gettext</span> <span class="kn">import</span> <span class="n">gettext</span> <span class="k">as</span> <span class="n">_</span>
+</pre>
+</div>
+<div class="section" id="generacion-de-la-plantilla-de-traduccion-pot">
+<h2>Generación de la plantilla de traducción (.pot)</h2>
+<p>Podemos obtener la plantilla del código en casi cualquier lenguaje: C, C++, Python, Perl, Glade, Java, ... Y se hace así:</p>
+<pre class="code bash"><a name="rest_code_00b3f306f3d94a489888ba202c3f8825-1"></a>xgettext --language<span class="o">=</span>Python -j programita.py
+</pre>
+<p>Las opciones son: <em>--language</em> indicando el lenguaje del código, y <em>-j</em> que indica que, si hay ya un .pot existente, se deben mezclar los mensajes.</p>
+<p>Si hemos usado algún cambio y no aparece la función como "gettext", será necesario usar también la opción <em>--keyword</em>. Por ejemplo:</p>
+<pre class="code bash"><a name="rest_code_2ccd77efb82e4e9f8df5b453709839b2-1"></a>xgettext --language<span class="o">=</span>Python -j -k _ programita.py
+</pre>
+<p>Ale, ya tenemos el messages.pot.</p>
+</div>
+<div class="section" id="generar-el-fichero-de-traducciones-po">
+<h2>Generar el fichero de traducciones (*.po)</h2>
+<p>Ahora se utiliza el messages.pot para generar cada plantilla. Nosotros queremos la traducción al castellano, así que será es.po:</p>
+<pre class="code bash"><a name="rest_code_7cf6b8df48fe42adb525e7d37d6db2bf-1"></a>msginit -i messages.pot -o es.po
+</pre>
+<p>Ahora viene la parte en la que editamos el fichero es.po (yo suelo usar gtranslator o kbabel) y demás.</p>
+</div>
+<div class="section" id="mezclar-el-fichero-de-traducciones-po-con-una-nueva-plantilla-pot">
+<h2>Mezclar el fichero de traducciones (*.po) con una nueva plantilla (*.pot)</h2>
+<p>Este sistema sería poco eficiente si tuviéramos que traducirlo todo de nuevo cada vez que se cambie el fuente. Por ello, hay un sistema por el que se mezcla el fichero ya traducido con la plantilla nueva (es decir: volvemos al paso de creación de plantilla y después ejecutamos esto):</p>
+<pre class="code bash"><a name="rest_code_61bbaada00b24e83915c89a9cf6039e5-1"></a>msgmerge -U es.po messages.pot
+</pre>
+<p>Y, nuevamente, volvemos a traducir :-D</p>
+</div>
+<div class="section" id="creacion-del-fichero-de-equivalencias-mo">
+<h2>Creación del fichero de equivalencias (*.mo)</h2>
+<p>Realmente, el ficherito <em>.po</em> no se utiliza en el ejecutable. Es necesario utilizar un ficherito <em>.mo</em>. Aquí crearemos nuestro <em>es.mo</em>, como es lógico:</p>
+<pre class="code bash"><a name="rest_code_f73d1e8b7cd84e82a5bb91e595a351bf-1"></a>msgfmt es.po mo/es/LC_MESSAGES/programita.mo
+</pre>
+<p>Como podéis observar, el resultado lo dejamos en _mo/es/LC_MESSAGES/_. Eso lo hacemos así porque en el código fuente dijimos que las traducciones colgarían del directorio mo, el idioma es Español (las locales son "es"), y porque todos los .mo deben colgar de un directorio LC_MESSAGES dentro de las locales para que sea encontrado correctamente.</p>
+</div>
+<div class="section" id="utilizacion">
+<h2>Utilización</h2>
+<p>Ya está. No hay nada más que contar. Si las locales son "es", escribirá nuestra traducción, y si son "en", lo escribirá en inglés. Eso es todo.</p>
+</div>
+<div class="section" id="ejemplo">
+<h2>Ejemplo</h2>
+<p>Veamos un ejemplo, <a class="reference external" href="http://crysol.org/es/node/203#comment-4473">sugerencia hecha por david.villa</a></p>
+<pre class="code python"><a name="rest_code_d2040acd23fb4cf1a5d59b93182dd0e2-1"></a><span class="c">#!/usr/bin/python</span>
+<a name="rest_code_d2040acd23fb4cf1a5d59b93182dd0e2-2"></a>
+<a name="rest_code_d2040acd23fb4cf1a5d59b93182dd0e2-3"></a><span class="kn">import</span> <span class="nn">gettext</span>
+<a name="rest_code_d2040acd23fb4cf1a5d59b93182dd0e2-4"></a>
+<a name="rest_code_d2040acd23fb4cf1a5d59b93182dd0e2-5"></a><span class="n">APP</span> <span class="o">=</span> <span class="s">"hello"</span>
+<a name="rest_code_d2040acd23fb4cf1a5d59b93182dd0e2-6"></a>
+<a name="rest_code_d2040acd23fb4cf1a5d59b93182dd0e2-7"></a><span class="n">gettext</span><span class="o">.</span><span class="n">textdomain</span> <span class="p">(</span> <span class="n">APP</span> <span class="p">)</span>
+<a name="rest_code_d2040acd23fb4cf1a5d59b93182dd0e2-8"></a><span class="n">gettext</span><span class="o">.</span><span class="n">bindtextdomain</span> <span class="p">(</span> <span class="n">APP</span><span class="p">,</span> <span class="s">"./mo"</span> <span class="p">)</span>
+<a name="rest_code_d2040acd23fb4cf1a5d59b93182dd0e2-9"></a>
+<a name="rest_code_d2040acd23fb4cf1a5d59b93182dd0e2-10"></a><span class="n">_</span> <span class="o">=</span> <span class="n">gettext</span><span class="o">.</span><span class="n">gettext</span>
+<a name="rest_code_d2040acd23fb4cf1a5d59b93182dd0e2-11"></a>
+<a name="rest_code_d2040acd23fb4cf1a5d59b93182dd0e2-12"></a><span class="k">print</span> <span class="n">_</span><span class="p">(</span><span class="s">"hello, world!"</span><span class="p">)</span>
+</pre>
+<p>Como requisito, necesitaremos el directorio donde vamos adejar las cosas. En el código hemos puesto "./mo", así que hay que ser consecuentes:</p>
+<pre class="code bash"><a name="rest_code_9f53b89576c64479b2c0c4d149a82e3c-1"></a>mkdir -p  mo/es_ES/LC_MESSAGES
+</pre>
+<p>Ahora inicializamos (llamaremos al <em>.pot</em> "messages.pot"):</p>
+<pre class="code bash"><a name="rest_code_be9082e90592460f90ee58e3c8c01b73-1"></a>xgettext --language<span class="o">=</span>Python --keyword<span class="o">=</span>_ -o messages.pot hello.py
+</pre>
+<p>Y generamos nuestro primer .po:</p>
+<pre class="code bash"><a name="rest_code_56967a2f0586442a89e10072265033e5-1"></a><span class="nv">$ </span>msginit -i messages.pot -l es_ES
+</pre>
+<p>Editamos el archivo es.po que se nos habrá creado, traduciendo la única cadena. Mi archivo pinta así:</p>
+<pre class="code po"><a name="rest_code_c68471d281424ed1b6347ffb896096b8-1"></a><span class="c1"># Spanish translations for PACKAGE package.</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-2"></a><span class="c1"># Copyright (C) 2010 THE PACKAGE''S COPYRIGHT HOLDER</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-3"></a><span class="c1"># This file is distributed under the same license as the PACKAGE package.</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-4"></a><span class="c1"># miguel &lt;miguelangel.garcia@gmail.com&gt;, 2010.</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-5"></a><span class="c1">#</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-6"></a><span class="nv">msgid</span> <span class="s">""</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-7"></a><span class="nv">msgstr</span> <span class="s">""</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-8"></a><span class="err">"Project-Id-Version: PACKAGE VERSION\</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-9"></a><span class="err">"</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-10"></a><span class="err">"Report-Msgid-Bugs-To: \</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-11"></a><span class="err">"</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-12"></a><span class="err">"POT-Creation-Date: 2010-05-25 07:31+0200\</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-13"></a><span class="err">"</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-14"></a><span class="err">"PO-Revision-Date: 2010-05-25 07:32+0200\</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-15"></a><span class="err">"</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-16"></a><span class="err">"Last-Translator: miguel &lt;miguelangel.garcia@gmail.com&gt;\</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-17"></a><span class="err">"</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-18"></a><span class="err">"Language-Team: Spanish &lt;&gt;\</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-19"></a><span class="err">"</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-20"></a><span class="err">"MIME-Version: 1.0\</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-21"></a><span class="err">"</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-22"></a><span class="err">"Content-Type: text/plain; charset=ASCII\</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-23"></a><span class="err">"</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-24"></a><span class="err">"Content-Transfer-Encoding: 8bit\</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-25"></a><span class="err">"</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-26"></a><span class="err">"Plural-Forms: nplurals=2; plural=(n != 1);\</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-27"></a><span class="err">"</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-28"></a>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-29"></a><span class="kd">#: hello.py:12</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-30"></a><span class="nv">msgid</span> <span class="s">"hello, world!"</span>
+<a name="rest_code_c68471d281424ed1b6347ffb896096b8-31"></a><span class="nv">msgstr</span> <span class="s">"hola, mundo!"</span>
+</pre>
+<p>Por ahora no nos fijaremos mucho en las cosa que deberíamos cambiar, como el PACKAGE y demás. Sólo nos queda compilar:</p>
+<pre class="code bash"><a name="rest_code_c479942f415b416a92a1d9704a8ec49a-1"></a>msgfmt -o mo/es_ES/LC_MESSAGES/hello.mo es.po
+</pre>
+<p>y probarlo:</p>
+<pre class="code bash"><a name="rest_code_f02e9e6a7a134151827ec7643c1b4ef0-1"></a><span class="nv">LANG</span><span class="o">=</span>es_ES ./hello.py
+<a name="rest_code_f02e9e6a7a134151827ec7643c1b4ef0-2"></a>hola, mundo!
+<a name="rest_code_f02e9e6a7a134151827ec7643c1b4ef0-3"></a><span class="nv">LANG</span><span class="o">=</span>en_US ./hello.py
+<a name="rest_code_f02e9e6a7a134151827ec7643c1b4ef0-4"></a>hello, world!
+</pre>
+<p>¡¡Gracias, David, por tu propuesta!!</p>
+</div>
+<div class="section" id="referencias">
+<h2>Referencias</h2>
+<ul class="simple">
+<li><a class="reference external" href="http://www.gnu.org/software/gettext/manual/">Manual de gettext</a></li>
+<li><a class="reference external" href="http://www.pipiten.com.ar/archives/7">Traducir aplicaciones PyGTK/Glade</a></li>
+</ul>
+</div>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2010-05-26T00:00:00+00:00" title="2010-05-26">2010-05-26</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/gettext/" rel="tag">gettext</a>
+                <a class="label label-primary p-category" href="/categories/internationalization/" rel="tag">internationalization</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/debaday/" rel="prev" title="Debaday">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/bash-completion/" rel="next" title="bash-completion: the greatest things since bash completion">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/aplicaciones-multilingues-gettext/",
+        disqus_title="Aplicaciones multiling\u00fces, gettext",
+        disqus_identifier="cache/posts/aplicaciones-multilingues-gettext.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>

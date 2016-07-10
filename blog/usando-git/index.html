@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html prefix="
+og: http://ogp.me/ns#
+article: http://ogp.me/ns/article#
+" lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Descripción de Git desde el punto de vista del usuario">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="max-age=43200">
+<meta http-equiv="ETag" content="b'9d3a2c636e1f062842af3aff686491e3efba2446'">
+<title>Usando Git(1) | MagMax Blog</title>
+<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
+<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
+<link rel="canonical" href="http://magmax.org/blog/usando-git/">
+<link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
+<meta name="description" itemprop="description" content="Descripción de Git desde el punto de vista del usuario">
+<meta name="author" content="Miguel Ángel García">
+<link rel="prev" href="/blog/yui/" title="YUI, JQuery y JavaScript en general" type="text/html">
+<link rel="next" href="/blog/usando-git2/" title="Usando Git(2): varios working copies" type="text/html">
+<meta property="og:site_name" content="MagMax Blog">
+<meta property="og:title" content="Usando Git(1)">
+<meta property="og:url" content="http://magmax.org/blog/usando-git/">
+<meta property="og:description" content="Descripción de Git desde el punto de vista del usuario">
+<meta property="og:type" content="article">
+<meta property="article:author" content="Miguel Ángel García">
+<meta property="article:published_time" content="2013-10-18T00:00:00+00:00">
+<meta property="article:updated" content="2013-10-18T00:00:00">
+<meta property="article:tag" content="dvcs">
+<meta property="article:tag" content="git">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@magmax">
+<meta name="twitter:creator" content="@magmax">
+<meta name="twitter:title" content="MagMax Blog">
+<meta name="twitter:description" content="Descripción de Git desde el punto de vista del usuario">
+<meta name="twitter:url" content="http://magmax.org//blog/usando-git/">
+<meta name="twitter:image" content="http://magmax.org/favicon.png">
+</head>
+<body>
+<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+
+<!-- Menubar -->
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
+<!-- This keeps the margins nice -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://magmax.org/">
+
+        <span id="blog-title">MagMax Blog</span>
+      </a>
+    </div>
+<!-- /.navbar-header -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+      <ul class="nav navbar-nav">
+<li>
+<a href="/">Inicio</a>
+                </li>
+<li>
+<a href="/archive.html">Archivo</a>
+                </li>
+<li>
+<a href="/categories">Categorías</a>
+                </li>
+<li>
+<a href="/projects">Proyectos</a>
+                </li>
+<li>
+<a href="/news">Posts Externos</a>
+
+        
+      </li>
+</ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
+<div class="form-group">
+<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
+</div>
+</form>
+</li>
+
+        <li style="margin-left:0">
+          <a href="http://feeds.feedburner.com/magmax">
+            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
+        </li>
+
+        
+      </ul>
+</div>
+<!-- /.navbar-collapse -->
+  </div>
+<!-- /.container -->
+</nav><!-- End of Menubar --><div class="container" id="content" role="main">
+  <div class="body-content">
+    <div class="row">
+      <div class="page-content col-md-9">
+        
+        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="http://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/usando-git/" class="u-url">Usando Git(1)</a></h1>
+            <div class="metadata text-muted">
+              <i class="glyphicon glyphicon-calendar"></i>
+              <p class="dateline">
+                <time class="published dt-published" datetime="2013-10-18T00:00:00+00:00" title="2013-10-18">2013-10-18</time>
+                // <time class="updated dt-updated" datetime="2013-10-18T00:00:00" title="2013-10-18">2013-10-18</time></p>
+              <p class="commentline">            <a href="/blog/usando-git/#disqus_thread" data-disqus-identifier="cache/posts/usando-git.html">Comments</a>
+
+</p>
+              <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
+            </div>
+            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <div>
+<p>Es habitual encontrar manuales de <a href="http://git-scm.com/" title="Official Git page">Git</a> en los que se describe la estructura interna de los <em>changesets</em>, los ficheros y otras tecnicidades similares. Sin embargo, el otro día nos reunimos en <a href="https://sites.google.com/site/agileciudadreal/home" title="Agile Ciudad Real">Agile-cr</a> y sin quererlo me di cuenta de lo sencillo que resulta explicarlo sin hablar de nada de eso.</p>
+<p>Así que voy a intentarlo :D</p>
+<p>A pesar de haber escrito ya <a href="/blog/git">otro artículo sobre Git</a>, creo que esta vez voy ha contarlo desde un punto de vista muy diferente: uno completamente práctico.</p>
+<!-- TEASER_END -->
+
+<h2 id="a-vista-de-pajaro">A vista de pájaro</h2>
+<p>Por mucho que quiera evitar tecnicidades, hay algunos términos que no resulta fácil evitar. Voy a tratar de reducirlos al mínimo.</p>
+<p>Comencemos con un dibujo lleno de <em>glamour</em>:</p>
+<pre class="code literal-block">-----------   1   ---------
+| Working |&lt;-----&gt;| Stash |
+|  copy   |       ---------
+-----------
+     ^
+     |2
+     |
+     v
+----------   3   ---------   4    ----------
+|  Stage |&lt;-----&gt;| Local |&lt;------&gt;| Remote |
+----------       ---------        ----------
+</pre>
+
+
+<p>Como véis, he pintado 5 zonas:</p>
+<ul>
+<li>
+<strong>Working copy</strong>, que se corresponde con el espacio de trabajo, la zona habitual donde están los archivos que iremos modificando.</li>
+<li>
+<strong>Stash</strong>, que es el cajón de sastre, donde podemos guardar los retales para utilizarlos luego. Podemos olvidarnos de esto por el momento, pero es interesante que sepamos de su existencia.</li>
+<li>
+<strong>Stage</strong>, la rampa de lanzamiento, donde se van colocando las cosas que vamos a querer persistir.</li>
+<li>
+<strong>local</strong>, que se corresponde con los archivos internos de <a href="http://git-scm.com/" title="Official Git page">Git</a> en la máquina local. Realmente, el <strong>stash</strong> y el <strong>stage</strong>  forman parte de este bloque, pero separémoslo de forma didáctica.</li>
+<li>
+<strong>remote</strong>, con los archivos de <a href="http://git-scm.com/" title="Official Git page">Git</a> remotos.</li>
+</ul>
+<p>Además, he marcado en el dibujo 4 procesos, todos ellos de dos direcciones, indicando las interacciones que pueden realizarse. Hay alguna de ellas que podemos saltarnos... Pero vamos a suponer en este artículo que no es así, por simplicidad. Y por simplicidad también, veremos sólo los puntos 2, 3 y 4.</p>
+<p>Es importante no confundir el <strong>Stage</strong> con el <strong>Stash</strong>. En este artículo sólo hablaremos del <strong>Stage</strong>.</p>
+<p>Y, a partir de ahora, mostraré cómo se suele trabajar con un repositorio tipo <a href="http://git-scm.com/" title="Official Git page">Git</a>.</p>
+<h2 id="proceso">Proceso</h2>
+<h3 id="creacion">Creación</h3>
+<p>Vamos a comenzar el <em>"Proyecto Fantabuloso"</em>. Tenemos una idea en la cabeza y decidimos ponerla en práctica. Lo suyo sería comenzar escribiendo nuestras intenciones, por si acaso mañana nos olvidamos, así que escribiremos un archivo <strong>README</strong> indicando de qué va nuestro <em>"Proyecto Fantabuloso"</em>.</p>
+<p>Ya tenemos algo, y decidimos que vamos a utilizar un repositorio. Y <a href="http://git-scm.com/" title="Official Git page">Git</a> nos parece una buena idea.</p>
+<p>Lo primero es crear la estructura. Necesitamos que <a href="http://git-scm.com/" title="Official Git page">Git</a> haga un poco de magia y nos prepare la zona de trabajo. Para ello:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git init
+</pre>
+
+
+<p>Y ya se han creado el <strong>stash</strong>, <strong>stage</strong> y, por llamarlo de alguna forma, <strong>local</strong>.</p>
+<p>Queremos añadir nuestro <strong>README</strong> para seguir su evolución. Para ello, primero tenemos que registrarlo en el <strong>stage</strong>:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git add README
+</pre>
+
+
+<p>Resulta dificil describir este <strong>stage</strong>. Digamos que es como una pizarra en la que se va apuntando lo que se desea hacer. Así podemos ir viendo lo que estamos preparando y, una vez hecho, persistirlo definitivamente.</p>
+<p>Con el comando anterior ya hemos preparado todo lo que queremos guardar en nuestro <strong>stage</strong>, así que persistimos:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git commit -m <span class="s2">"Explaining about the Fantabulosum Project"</span>
+<span class="o">[</span>master <span class="o">(</span>root-commit<span class="o">)</span> 59aff13<span class="o">]</span> Explaining about the Fantabulosum Project
+ <span class="m">0</span> files changed
+ create mode <span class="m">100644</span> README
+</pre>
+
+
+<p>Esta orden limpia el <strong>stage</strong> y guarda todo lo que se encuentre allí en la copia <strong>local</strong> del repositorio. Ya está persistido. Podemos continuar con ciclos de <code>add</code> y <code>commit</code>.</p>
+<p>Podéis ejecutarlo son la opción <code>-m</code> y se os abrirá vuestro editor favorito para que escribáis el mensaje.</p>
+<p>Para comprobar el estado del <strong>working copy</strong> y del <strong>stage</strong> podéis usar la orden siguiente:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git status
+<span class="c"># On branch master</span>
+<span class="c">#</span>
+<span class="c"># Initial commit</span>
+<span class="c">#</span>
+<span class="c"># Changes to be committed:</span>
+<span class="c">#   (use "git rm --cached &lt;file&gt;..." to unstage)</span>
+<span class="c">#</span>
+<span class="c">#   new file:   README</span>
+<span class="c">#</span>
+<span class="c"># Untracked files:</span>
+<span class="c">#   (use "git add &lt;file&gt;..." to include in what will be committed)</span>
+<span class="c">#</span>
+<span class="c">#   ignored</span>
+</pre>
+
+
+<p>En este ejemplo vemos cómo el archivo <em>README</em> está preparado para ser añadido, mientras que el archivo <em>ignored</em> no se está siguiendo. Vemos también cómo <a href="http://git-scm.com/" title="Official Git page">Git</a> nos ofrece cierta ayuda con órdenes que podemos utilizar, para sacarlo del <strong>stage</strong> o para añadir archivos que actualmente se están ignorando.</p>
+<h3 id="backups">Backups</h3>
+<p>Nuestro proyecto evoluciona y nos entra miedo de perder el <em>"Proyecto Fantabuloso"</em>, así que queremos hacer un <em>backup</em>. Pero... ¿Por qué un complicado <em>backup</em> cuando podemos tener nuestro repositorio accesible en remoto?</p>
+<p>Así que nos vamos a <a href="https://github.com/">GitHub</a>, <a href="https://bitbucket.org">BitBucket</a> o algún otro lugar gratuito y creamos allí un repositorio. Debería ser tan simple como pulsar un botón y ponerle un nombre. Una vez hecho eso, nos darán una dirección, algo como <em>"git://example.com/fantabulosum.git"</em>.</p>
+<p>Otra opción es creárnoslo nosotros. Pero aquí ya entran temas de red en los que no quiero entrar. Por eso sólo voy a explicar cómo crearlo en un repositorio local, es decir, en otro directorio:</p>
+<pre class="code literal-block">/opt/repos/fantabulosum<span class="nv">$ </span>git init --bare --shared
+Initialized empty shared Git repository in /opt/repos/fantabulosum
+</pre>
+
+
+<p>Esto nos daría la ruta <em>"/opt/repos/fantabulosum"</em> o bien <em>"ssh://user@machine:/opt/repos/fantabulosum"</em> para utilizar como dirección del repositorio. Todas ellas se usarían igual a partir de ahora, así que disculpad que yo siga usando <em>"git://example.com/fantabulosum.git"</em> nada más.</p>
+<p>Ya tenemos creado <strong>local</strong> y <strong>remote</strong>, pero no hay nada que los una. Así que desde mi <strong>working copy</strong> tengo que enlazarlos:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git remote add origin git://example.com/fantabulosum.git
+</pre>
+
+
+<p>Al enlazarlos, le hemos dado un nombre al enlace. Lo habitual es, como en este caso, usar <em>origin</em> como nombre del <strong>remote</strong> principal. Una vez enlazados, podemos empujar algunos cambios de <strong>local</strong> a <strong>remote</strong>:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git push origin master
+Counting objects: 3, <span class="k">done</span>.
+Writing objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, <span class="m">243</span> bytes, <span class="k">done</span>.
+Total <span class="m">3</span> <span class="o">(</span>delta 0<span class="o">)</span>, reused <span class="m">0</span> <span class="o">(</span>delta 0<span class="o">)</span>
+Unpacking objects: 100% <span class="o">(</span>3/3<span class="o">)</span>, <span class="k">done</span>.
+To git://example.com/fantabulosum.git
+ * <span class="o">[</span>new branch<span class="o">]</span>      master -&gt; master
+</pre>
+
+
+<p>Sabemos qué es <em>origin</em>, el nombre que hemos puesto a nuestro <strong>remote</strong>, pero no qué es <em>master</em>. Fijáos que hasta ahora no he necesitado hablar de eso tan feo que son las <strong>ramas</strong>. Y aún no lo voy a hacer.</p>
+<p>Baste saber de momento que <a href="http://git-scm.com/" title="Official Git page">Git</a> tiene ramas y que si no te pones a hacer marranadas estarás en una rama cuyo nombre es <em>master</em>. Suficiente de momento.</p>
+<p>Como es la primera vez que se hace un <code>push</code>, se enlaza la rama <em>master</em> y el <strong>remote</strong> <em>origin</em>, de manera que ya basta hacer:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git push
+Everything up-to-date
+</pre>
+
+
+<p>Así que, a partir de ahora, a nuestros ciclos de editar, <code>add</code> y <code>push</code> se verán envueltos dentro de ciclos <code>push</code>.</p>
+<h4 id="recuperando">Recuperando</h4>
+<p>Un mal día se nos jode el ordenador. Pero no es un problema, porque como tenemos nuestros <em>backups</em> podemos recuperarlo todo rápidamente:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git clone git://example.com/fantabulosum.git
+Cloning into <span class="s1">'fantabulosum'</span>...
+<span class="k">done</span>.
+</pre>
+
+
+<p>Y ya está. A seguir trabajando.</p>
+<h3 id="deshaciendo">Deshaciendo</h3>
+<p>No sé los demás, pero yo muchas veces me equivoco: se me olvida añadir un archivo, añado uno de más, me equivoco en el mensaje del commit... Esas pequeñas cosas.</p>
+<p>En estos casos la solución es preparar el <strong>stage</strong> de acuerdo a como lo quiero y luego ejecutar:</p>
+<pre class="code literal-block"><span class="nv">$ </span>git commit -m <span class="s2">"new message"</span> --amend
+</pre>
+
+
+<p>Y asunto arreglado.</p>
+<p>Cuando meto la pata aún más y no es tan fácil arreglarlo, también hay solución. Pero tendría que liarme a hablar de cosas raras y no es el momento. Lo veremos más adelante.</p>
+<h2 id="mas-que-suficiente">Más que suficiente.</h2>
+<p>Y esto es todo lo que se necesita para trabajar con <a href="http://git-scm.com/" title="Official Git page">Git</a>. Resumiendo:</p>
+<ul>
+<li>Crear repositorio: <code>git init</code>
+</li>
+<li>Crear repositorio compartido: <code>git init --bare --shared</code>
+</li>
+<li>Añadir un archivo al <strong>stage</strong>: <code>git add file</code>
+</li>
+<li>Persistir el <strong>stage</strong>: <code>git commit -m "message"</code>
+</li>
+<li>Comprobar el estado del <strong>stage</strong>: <code>git status</code>
+</li>
+<li>La <strong>branch</strong> principal suele ser <em>"master"</em>
+</li>
+<li>Enviar cambios de <strong>local</strong> a <strong>remote</strong> por primera vez: <code>git push remote branch</code>
+</li>
+<li>Enviar cambios de <strong>local</strong> a <strong>remote</strong>: <code>git push</code>
+</li>
+<li>Clonar el repositorio: <code>git clone URL</code>
+</li>
+</ul>
+<p>En el próximo artículo continuaremos haciendo crecer nuestro <em>"Proyecto Fantabuloso"</em> y viendo más órdenes de <a href="http://git-scm.com/" title="Official Git page">Git</a>.</p>
+<h2 id="desmitificando-git">Desmitificando Git</h2>
+<p>Como véis, no es dificil trabajar con <a href="http://git-scm.com/" title="Official Git page">Git</a>. La dificultad comienza cuando se empiezan a utilizar ramas, cuando se comparten repositorios, etc. Es decir: cuando se hacen marranadas. Pues bien, comentaremos estas marranadas en próximos posts XD</p>
+<h2 id="mas-informacion">Más información</h2>
+<p>Recomiendo la web de <a href="http://git-scm.com/" title="Official Git page">Git</a> o el libro <a href="http://git-scm.com/book/es" title="Libro gratuíto sobre Git">progit</a>, de <a href="http://scottchacon.com/">Scott Chacon</a>.</p>
+</div>
+          </div>
+          <br><div>
+            <nav><span class="author">
+                <span class="glyphicon glyphicon-user"></span> 
+                <span>Publicado:Miguel Ángel García</span>
+              </span>
+               
+
+              
+              <span class="dateline">
+                <span class="glyphicon glyphicon-calendar"></span> 
+                <time class="published dt-published" datetime="2013-10-18T00:00:00+00:00" title="2013-10-18">2013-10-18</time></span>
+               
+              <span class="tags">
+                <span class="glyphicon glyphicon-tags"></span> 
+                <a class="label label-primary p-category" href="/categories/dvcs/" rel="tag">dvcs</a>
+                <a class="label label-primary p-category" href="/categories/git/" rel="tag">git</a>
+              </span>
+                      <ul class="pager">
+<li class="previous">
+              <a href="/blog/yui/" rel="prev" title="YUI, JQuery y JavaScript en general">
+                <span class="glyphicon glyphicon-arrow-left"></span>
+                Publicación anterior
+              </a>
+            </li>
+            <li class="next">
+              <a href="/blog/usando-git2/" rel="next" title="Usando Git(2): varios working copies">
+                Siguiente publicación
+                <span class="glyphicon glyphicon-arrow-right"></span>
+              </a>
+            </li>
+        </ul>
+<div style="margin-left: auto; margin-right: auto;">
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="4236077264"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>
+            </nav>
+</div>
+          <section class="comments"><h2>Comentarios</h2>
+                            <div id="disqus_thread"></div>
+        <script>
+        var disqus_shortname ="magmax",
+            disqus_url="http://magmax.org/blog/usando-git/",
+        disqus_title="Usando Git(1)",
+        disqus_identifier="cache/posts/usando-git.html",
+        disqus_config = function () {
+            this.language = "es_ES";
+        };
+        (function() {
+            var dsq = document.createElement('script'); dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
+</noscript>
+    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
+</div>
+      <aside class="sidebar col-md-3"><div>
+<section class="panel panel-default"><div class="panel-body">
+    <div id="recentcomments" class="dsq-widget">
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><ins class="adsbygoogle" style="display:inline-block;width:180px;height:150px" data-ad-client="ca-pub-1887364423515042" data-ad-slot="7479875641"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">Last comments</h3>
+  </div>
+  <div class="panel-body">
+    <div id="disqus_last_comments" class="dsq-widget">
+      <script type="text/javascript" src="http://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
+      </script>
+</div>
+  </div>
+</section>
+</div>
+          <div>
+<section class="panel panel-default"><div class="panel-heading">
+    <h3 class="panel-title">GitHub Repos</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="gh_repos" class="list-unstyled">
+<li class="loading">Status updating…</li>
+    </ul>
+</div>
+  <div class="panel-footer">
+    <a href="https://github.com/magmax">@magmax</a> on GitHub
+  </div>
+</section>
+</div>
+      </aside>
+</div>
+
+    <footer>
+      Contents © 2009-2016 <a href="mailto:">Miguel Ángel García</a> 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
+<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+      
+    </footer>
+</div>
+</div>
+
+
+
+
+<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-9308241-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
+</body>
+</html>
