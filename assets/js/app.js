@@ -6,7 +6,7 @@ define([
   'jquery',
   'bootstrap'
 
-], function (github, addthis, cookie, math, $, bootstrap) {
+], function (github, cookie, math, $, bootstrap) {
 
   var initialize = function(){
 
