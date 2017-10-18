@@ -8,7 +8,7 @@ article: http://ogp.me/ns/article#
 <meta name="description" content="Descripción de Git desde el punto de vista del usuario">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'3bd015e793d5b7fb036d69e2c1a3cf0159bfa960'">
+<meta http-equiv="ETag" content="b'6e600588c36e3bf0ea056e2c83d6ba05f81dad93'">
 <title>Usando Git(1) | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,9 +18,9 @@ article: http://ogp.me/ns/article#
 <link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/usando-git/">
-<link rel="icon" href="/favicon.ico" sizes="16x16">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
 <link rel="icon" href="/favicon.png" sizes="128x128">
+<link rel="icon" href="/favicon.ico" sizes="16x16">
 <meta name="description" itemprop="description" content="Descripción de Git desde el punto de vista del usuario">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/yui/" title="YUI, JQuery y JavaScript en general" type="text/html">
@@ -152,7 +152,7 @@ article: http://ogp.me/ns/article#
 <li>
 <strong>Stage</strong>, la rampa de lanzamiento, donde se van colocando las cosas que vamos a querer persistir.</li>
 <li>
-<strong>local</strong>, que se corresponde con los archivos internos de <a href="http://git-scm.com/" title="Official Git page">Git</a> en la máquina local. Realmente, el <strong>stash</strong> y el <strong>stage</strong>  forman parte de este bloque, pero separémoslo de forma didáctica.</li>
+<strong>local</strong>, que se corresponde con los archivos internos de <a href="http://git-scm.com/" title="Official Git page">Git</a> en la máquina local. Realmente, el <strong>stash</strong> y el <strong>index</strong> (antes conocido como <strong>stage</strong>) forman parte de este bloque, pero separémoslo de forma didáctica.</li>
 <li>
 <strong>remote</strong>, con los archivos de <a href="http://git-scm.com/" title="Official Git page">Git</a> remotos.</li>
 </ul>
@@ -168,14 +168,14 @@ article: http://ogp.me/ns/article#
 </pre>
 
 
-<p>Y ya se han creado el <strong>stash</strong>, <strong>stage</strong> y, por llamarlo de alguna forma, <strong>local</strong>.</p>
-<p>Queremos añadir nuestro <strong>README</strong> para seguir su evolución. Para ello, primero tenemos que registrarlo en el <strong>stage</strong>:</p>
+<p>Y ya se han creado el <strong>stash</strong>, <strong>index</strong> y, por llamarlo de alguna forma, <strong>local</strong>.</p>
+<p>Queremos añadir nuestro <strong>README</strong> para seguir su evolución. Para ello, primero tenemos que registrarlo en el <strong>index</strong>:</p>
 <pre class="code literal-block"><span class="nv">$ </span>git add README
 </pre>
 
 
-<p>Resulta dificil describir este <strong>stage</strong>. Digamos que es como una pizarra en la que se va apuntando lo que se desea hacer. Así podemos ir viendo lo que estamos preparando y, una vez hecho, persistirlo definitivamente.</p>
-<p>Con el comando anterior ya hemos preparado todo lo que queremos guardar en nuestro <strong>stage</strong>, así que persistimos:</p>
+<p>Resulta dificil describir este <strong>index</strong>. Digamos que es como una pizarra en la que se va apuntando lo que se desea hacer. Así podemos ir viendo lo que estamos preparando y, una vez hecho, persistirlo definitivamente.</p>
+<p>Con el comando anterior ya hemos preparado todo lo que queremos guardar en nuestro <strong>index</strong>, así que persistimos:</p>
 <pre class="code literal-block"><span class="nv">$ </span>git commit -m <span class="s2">"Explaining about the Fantabulosum Project"</span>
 <span class="o">[</span>master <span class="o">(</span>root-commit<span class="o">)</span> 59aff13<span class="o">]</span> Explaining about the Fantabulosum Project
  <span class="m">0</span> files changed
@@ -183,9 +183,9 @@ article: http://ogp.me/ns/article#
 </pre>
 
 
-<p>Esta orden limpia el <strong>stage</strong> y guarda todo lo que se encuentre allí en la copia <strong>local</strong> del repositorio. Ya está persistido. Podemos continuar con ciclos de <code>add</code> y <code>commit</code>.</p>
+<p>Esta orden limpia el <strong>index</strong> y guarda todo lo que se encuentre allí en la copia <strong>local</strong> del repositorio. Ya está persistido. Podemos continuar con ciclos de <code>add</code> y <code>commit</code>.</p>
 <p>Podéis ejecutarlo son la opción <code>-m</code> y se os abrirá vuestro editor favorito para que escribáis el mensaje.</p>
-<p>Para comprobar el estado del <strong>working copy</strong> y del <strong>stage</strong> podéis usar la orden siguiente:</p>
+<p>Para comprobar el estado del <strong>working copy</strong> y del <strong>index</strong> podéis usar la orden siguiente:</p>
 <pre class="code literal-block"><span class="nv">$ </span>git status
 <span class="c"># On branch master</span>
 <span class="c">#</span>
@@ -203,7 +203,7 @@ article: http://ogp.me/ns/article#
 </pre>
 
 
-<p>En este ejemplo vemos cómo el archivo <em>README</em> está preparado para ser añadido, mientras que el archivo <em>ignored</em> no se está siguiendo. Vemos también cómo <a href="http://git-scm.com/" title="Official Git page">Git</a> nos ofrece cierta ayuda con órdenes que podemos utilizar, para sacarlo del <strong>stage</strong> o para añadir archivos que actualmente se están ignorando.</p>
+<p>En este ejemplo vemos cómo el archivo <em>README</em> está preparado para ser añadido, mientras que el archivo <em>ignored</em> no se está siguiendo. Vemos también cómo <a href="http://git-scm.com/" title="Official Git page">Git</a> nos ofrece cierta ayuda con órdenes que podemos utilizar, para sacarlo del <strong>index</strong> o para añadir archivos que actualmente se están ignorando.</p>
 <h3 id="backups">Backups</h3>
 <p>Nuestro proyecto evoluciona y nos entra miedo de perder el <em>"Proyecto Fantabuloso"</em>, así que queremos hacer un <em>backup</em>. Pero... ¿Por qué un complicado <em>backup</em> cuando podemos tener nuestro repositorio accesible en remoto?</p>
 <p>Así que nos vamos a <a href="https://github.com/">GitHub</a>, <a href="https://bitbucket.org">BitBucket</a> o algún otro lugar gratuito y creamos allí un repositorio. Debería ser tan simple como pulsar un botón y ponerle un nombre. Una vez hecho eso, nos darán una dirección, algo como <em>"git://example.com/fantabulosum.git"</em>.</p>
@@ -250,7 +250,7 @@ Cloning into <span class="s1">'fantabulosum'</span>...
 <p>Y ya está. A seguir trabajando.</p>
 <h3 id="deshaciendo">Deshaciendo</h3>
 <p>No sé los demás, pero yo muchas veces me equivoco: se me olvida añadir un archivo, añado uno de más, me equivoco en el mensaje del commit... Esas pequeñas cosas.</p>
-<p>En estos casos la solución es preparar el <strong>stage</strong> de acuerdo a como lo quiero y luego ejecutar:</p>
+<p>En estos casos la solución es preparar el <strong>index</strong> de acuerdo a como lo quiero y luego ejecutar:</p>
 <pre class="code literal-block"><span class="nv">$ </span>git commit -m <span class="s2">"new message"</span> --amend
 </pre>
 
@@ -264,11 +264,11 @@ Cloning into <span class="s1">'fantabulosum'</span>...
 </li>
 <li>Crear repositorio compartido: <code>git init --bare --shared</code>
 </li>
-<li>Añadir un archivo al <strong>stage</strong>: <code>git add file</code>
+<li>Añadir un archivo al <strong>index</strong>: <code>git add file</code>
 </li>
-<li>Persistir el <strong>stage</strong>: <code>git commit -m "message"</code>
+<li>Persistir el <strong>index</strong>: <code>git commit -m "message"</code>
 </li>
-<li>Comprobar el estado del <strong>stage</strong>: <code>git status</code>
+<li>Comprobar el estado del <strong>index</strong>: <code>git status</code>
 </li>
 <li>La <strong>branch</strong> principal suele ser <em>"master"</em>
 </li>
