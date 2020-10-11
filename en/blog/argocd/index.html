@@ -8,7 +8,7 @@ article: http://ogp.me/ns/article#
 <meta name="description" content="Easy steps to run ArgoCD locally on a Kind cluster.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'e6d9a3a6436868cc37f2adc95962bbff925af33b'">
+<meta http-equiv="ETag" content="b'adb158dbc724060983dd702f3f7e291089e1bd11'">
 <title>ArgoCD with Kind | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,8 +18,8 @@ article: http://ogp.me/ns/article#
 <link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/en/blog/argocd/">
-<link rel="icon" href="/favicon_330.png" sizes="330x330">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon_330.png" sizes="330x330">
 <link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="description" itemprop="description" content="Easy steps to run ArgoCD locally on a Kind cluster.">
 <meta name="author" content="Miguel Ángel García">
@@ -40,6 +40,7 @@ article: http://ogp.me/ns/article#
 <meta name="twitter:description" content="Easy steps to run ArgoCD locally on a Kind cluster.">
 <meta name="twitter:url" content="http://magmax.org//en/blog/argocd/">
 <meta name="twitter:image" content="http://magmax.org/favicon.png">
+<link rel="alternate" hreflang="es" href="/blog/argocd/">
 </head>
 <body>
 <a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
@@ -111,17 +112,23 @@ article: http://ogp.me/ns/article#
               <i class="glyphicon glyphicon-calendar"></i>
               <p class="dateline">
                 <time class="published dt-published updated dt-updated" datetime="2020-10-11T10:03:22+00:00" title="2020-10-11">2020-10-11</time></p>
-              <p class="commentline">            <a href="/en/blog/argocd/#disqus_thread" data-disqus-identifier="cache/posts/argocd.en.html">Comments</a>
+              <p class="commentline">            <a href="/en/blog/argocd/#disqus_thread" data-disqus-identifier="cache/posts/argocd.html">Comments</a>
 
 </p>
               <address class="vcard author"><a class="url fn" href="http://magmax.org">Miguel Ángel García</a></address>
             </div>
-            <br></header><div class="e-content entry-content" itemprop="articleBody text">
+            <br><div class="metadata posttranslations translations">
+              <h3 class="posttranslations-intro">Also available in:</h3>
+              <p><a href="/blog/argocd/" rel="alternate" hreflang="es"><img src="/images/es.png"> Español</a></p>
+            </div>
+          </header><div class="e-content entry-content" itemprop="articleBody text">
             <div>
 <p>This post will document how to run an
 <a href="https://argoproj.github.io/argo-cd/https://argoproj.github.io/argo-cd/">ArgoCD</a>
 instance locally, using <a href="https://kind.sigs.k8s.io/">Kind</a> to create the
-Kubernetes cluster.</p>
+Kubernetes cluster.
+In addition, I will use cert-manager to create a self-signed certificate to
+serve it with HTTPS.</p>
 <!-- TEASER_END -->
 
 <h2 id="creating-the-cluster-with-kind">Creating the cluster with kind</h2>
@@ -172,13 +179,8 @@ certificates. This will be easier than it seems to be :)</p>
 </pre>
 
 
-<p>Now it will require a certificate. I needed to create this file:</p>
-<pre class="code literal-block"># certs.yaml
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: cert-manager-test
----
+<p>Now it will require a issuer. I needed to create this file:</p>
+<pre class="code literal-block"># cert-issuer.yaml
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -189,7 +191,7 @@ spec:
 
 
 <p>And run next command:</p>
-<pre class="code literal-block"><span class="nv">$ </span>kubectl apply -f certs.yaml
+<pre class="code literal-block"><span class="nv">$ </span>kubectl apply -f cert-issuer.yaml
 </pre>
 
 
@@ -288,7 +290,7 @@ is the name of the argo server docker, which can be obtained with:</p>
         var disqus_shortname ="magmax",
             disqus_url="http://magmax.org/en/blog/argocd/",
         disqus_title="ArgoCD with Kind",
-        disqus_identifier="cache/posts/argocd.en.html",
+        disqus_identifier="cache/posts/argocd.html",
         disqus_config = function () {
             this.language = "en";
         };
