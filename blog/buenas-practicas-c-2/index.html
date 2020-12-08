@@ -7,7 +7,7 @@ article: https://ogp.me/ns/article#
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Buenas prácticas en Ansi C (2) | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,8 +18,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/buenas-practicas-c-2/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/buenas-practicas-c-1/" title="Buenas prácticas en Ansi C (1)" type="text/html">
 <link rel="next" href="/blog/migrando/" title="Migrando el site: lecciones aprendidas" type="text/html">
@@ -153,40 +153,40 @@ En conc'>
 <p>Nunca deis la oportunidad al programador de poder acceder a una estructura de vuestra librería.</p>
 <p>Para ello yo suelo utilizar la siguiente técnica: en las cabeceras externas no hay ninguna estructura, pero sí punteros a void; en las funciones que exporto, lo primero que hago es transformar los punteros a void a estructuras internas (que pueden estar en archivos de cabecera internos).</p>
 <p>Veamos un ejemplo.</p>
-<pre class="code c"><a name="rest_code_412824aa1c7f4287a9c829b74c5f5da4-1"></a><span class="c1">// archivo de cabecera externo "ejemplo.h"</span>
-<a name="rest_code_412824aa1c7f4287a9c829b74c5f5da4-2"></a>
-<a name="rest_code_412824aa1c7f4287a9c829b74c5f5da4-3"></a><span class="k">typedef</span> <span class="kt">ejemplo_t</span> <span class="kt">void</span><span class="p">;</span>
-<a name="rest_code_412824aa1c7f4287a9c829b74c5f5da4-4"></a>
-<a name="rest_code_412824aa1c7f4287a9c829b74c5f5da4-5"></a><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="nf">ejemplo_new</span> <span class="p">();</span>
-<a name="rest_code_412824aa1c7f4287a9c829b74c5f5da4-6"></a><span class="kt">void</span>       <span class="nf">ejemplo_destroy</span><span class="p">(</span><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">);</span>
+<pre class="code c"><a name="rest_code_8dcca702f6904988b382193aa2142d3d-1"></a><span class="c1">// archivo de cabecera externo "ejemplo.h"</span>
+<a name="rest_code_8dcca702f6904988b382193aa2142d3d-2"></a>
+<a name="rest_code_8dcca702f6904988b382193aa2142d3d-3"></a><span class="k">typedef</span> <span class="n">ejemplo_t</span> <span class="kt">void</span><span class="p">;</span>
+<a name="rest_code_8dcca702f6904988b382193aa2142d3d-4"></a>
+<a name="rest_code_8dcca702f6904988b382193aa2142d3d-5"></a><span class="n">ejemplo_t</span><span class="o">*</span> <span class="nf">ejemplo_new</span> <span class="p">();</span>
+<a name="rest_code_8dcca702f6904988b382193aa2142d3d-6"></a><span class="kt">void</span>       <span class="nf">ejemplo_destroy</span><span class="p">(</span><span class="n">ejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">);</span>
 </pre>
-<pre class="code c"><a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-1"></a><span class="cp">#include "ejemplo.h"</span>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-2"></a>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-3"></a><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-4"></a>  <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-5"></a>  <span class="kt">char</span><span class="o">*</span> <span class="n">b</span><span class="p">;</span>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-6"></a><span class="p">}</span> <span class="n">ejemplo_tp</span><span class="p">;</span>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-7"></a>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-8"></a><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="nf">ejemplo_new</span> <span class="p">()</span> <span class="p">{</span>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-9"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">result</span><span class="p">;</span>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-10"></a>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-11"></a>  <span class="n">result</span> <span class="o">=</span> <span class="n">calloc</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">ejemplo_tp</span><span class="p">));</span>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-12"></a>  <span class="c1">// inicializar result</span>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-13"></a>  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-14"></a><span class="p">}</span>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-15"></a>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-16"></a><span class="kt">void</span> <span class="nf">ejemplo_destroy</span><span class="p">(</span><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="n">vejemplo</span><span class="p">)</span> <span class="p">{</span>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-17"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">ejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-18"></a>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-19"></a>  <span class="c1">// liberar variables internas de "ejemplo"</span>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-20"></a>  <span class="n">free</span> <span class="p">(</span><span class="n">ejemplo</span><span class="p">);</span>
-<a name="rest_code_270a241f07194f71abe4ce5b4cc29a93-21"></a><span class="p">}</span>
+<pre class="code c"><a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-1"></a><span class="cp">#include</span> <span class="cpf">"ejemplo.h"</span><span class="cp"></span>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-2"></a>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-3"></a><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-4"></a>  <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-5"></a>  <span class="kt">char</span><span class="o">*</span> <span class="n">b</span><span class="p">;</span>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-6"></a><span class="p">}</span> <span class="n">ejemplo_tp</span><span class="p">;</span>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-7"></a>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-8"></a><span class="n">ejemplo_t</span><span class="o">*</span> <span class="nf">ejemplo_new</span> <span class="p">()</span> <span class="p">{</span>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-9"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">result</span><span class="p">;</span>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-10"></a>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-11"></a>  <span class="n">result</span> <span class="o">=</span> <span class="n">calloc</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">ejemplo_tp</span><span class="p">));</span>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-12"></a>  <span class="c1">// inicializar result</span>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-13"></a>  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-14"></a><span class="p">}</span>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-15"></a>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-16"></a><span class="kt">void</span> <span class="nf">ejemplo_destroy</span><span class="p">(</span><span class="n">ejemplo_t</span><span class="o">*</span> <span class="n">vejemplo</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-17"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">ejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-18"></a>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-19"></a>  <span class="c1">// liberar variables internas de "ejemplo"</span>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-20"></a>  <span class="n">free</span> <span class="p">(</span><span class="n">ejemplo</span><span class="p">);</span>
+<a name="rest_code_53819e6415ca4ee2a5279b7739ec2953-21"></a><span class="p">}</span>
 </pre>
 <p>Aquí hay algunas convenciones de nombrado que yo suelo utilizar, aunque seguro que podéis encontrar otras mejores.</p>
 <p>Lo primero, es decir que el <tt class="docutils literal">_t</tt> de la estructura me hace referencia a "tipo", con el fin de diferenciar lo que es un tipo de lo que es una variable. Se me hace muy raro ver cosas como:</p>
-<pre class="code c"><a name="rest_code_17fdabd80e03416a9ace7ea34f083524-1"></a><span class="n">ejemplo</span> <span class="n">data</span><span class="p">;</span> <span class="c1">// raro. Además, ¿cómo llamas a la variable?</span>
-<a name="rest_code_17fdabd80e03416a9ace7ea34f083524-2"></a><span class="kt">ejemplo_t</span> <span class="n">ejemplo</span><span class="p">;</span> <span class="c1">// se diferencia claramente el tipo de la variable.</span>
-<a name="rest_code_17fdabd80e03416a9ace7ea34f083524-3"></a><span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">ejemplo</span><span class="p">)(</span><span class="n">data</span><span class="p">);</span> <span class="c1">// ¿Estamos multiplicando variables o haciendo un cast?</span>
+<pre class="code c"><a name="rest_code_be20ee0985a54c77a60ff1c95924bddc-1"></a><span class="n">ejemplo</span> <span class="n">data</span><span class="p">;</span> <span class="c1">// raro. Además, ¿cómo llamas a la variable?</span>
+<a name="rest_code_be20ee0985a54c77a60ff1c95924bddc-2"></a><span class="n">ejemplo_t</span> <span class="n">ejemplo</span><span class="p">;</span> <span class="c1">// se diferencia claramente el tipo de la variable.</span>
+<a name="rest_code_be20ee0985a54c77a60ff1c95924bddc-3"></a><span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">ejemplo</span><span class="p">)(</span><span class="n">data</span><span class="p">);</span> <span class="c1">// ¿Estamos multiplicando variables o haciendo un cast?</span>
 </pre>
 <p>Después vemos un <tt class="docutils literal">_tp</tt> que yo utilizo para nombrar mis <em>tipos privados</em>, para diferenciarlos de los que estarán en las cabeceras externas.</p>
 <p>Para terminar, en mis métodos suelo llamar a las variables de los tipos públicos con una uve (<tt class="docutils literal">v</tt>) delante, con el fin de avisarme que ése es el <tt class="docutils literal">void</tt>.</p>
@@ -214,12 +214,12 @@ En conc'>
 <h2>Librerías dinámicas</h2>
 <p>Es importante que nuestra librería dinámica mantenga en su archivo de cabecera público tipos de datos con forma de puntero a función para facilitar la vida a quien vaya a usarla, ya que no se puede acceder directamente a las funciones, pero siempre habrá que cargarlas.</p>
 <p>En el ejemplo anterior:</p>
-<pre class="code c"><a name="rest_code_f0baa76226e34331883b572338b013c4-1"></a><span class="c1">// archivo de cabecera externo "ejemplodll.h"</span>
-<a name="rest_code_f0baa76226e34331883b572338b013c4-2"></a>
-<a name="rest_code_f0baa76226e34331883b572338b013c4-3"></a><span class="k">typedef</span> <span class="kt">ejemplo_t</span> <span class="kt">void</span><span class="p">;</span>
-<a name="rest_code_f0baa76226e34331883b572338b013c4-4"></a>
-<a name="rest_code_f0baa76226e34331883b572338b013c4-5"></a><span class="k">typedef</span> <span class="kt">ejemplo_t</span><span class="o">*</span> <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_new</span><span class="p">)</span> <span class="p">();</span>
-<a name="rest_code_f0baa76226e34331883b572338b013c4-6"></a><span class="k">typedef</span> <span class="nf">void</span>       <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_destroy</span><span class="p">)</span> <span class="p">();</span>
+<pre class="code c"><a name="rest_code_9abae5e38cbf4d8c95d0fb413c7a2763-1"></a><span class="c1">// archivo de cabecera externo "ejemplodll.h"</span>
+<a name="rest_code_9abae5e38cbf4d8c95d0fb413c7a2763-2"></a>
+<a name="rest_code_9abae5e38cbf4d8c95d0fb413c7a2763-3"></a><span class="k">typedef</span> <span class="n">ejemplo_t</span> <span class="kt">void</span><span class="p">;</span>
+<a name="rest_code_9abae5e38cbf4d8c95d0fb413c7a2763-4"></a>
+<a name="rest_code_9abae5e38cbf4d8c95d0fb413c7a2763-5"></a><span class="k">typedef</span> <span class="n">ejemplo_t</span><span class="o">*</span> <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_new</span><span class="p">)</span> <span class="p">();</span>
+<a name="rest_code_9abae5e38cbf4d8c95d0fb413c7a2763-6"></a><span class="k">typedef</span> <span class="nf">void</span>       <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_destroy</span><span class="p">)</span> <span class="p">();</span>
 </pre>
 </div>
 <div class="section" id="fachadas">
@@ -229,116 +229,116 @@ En conc'>
 <p>Esto facilitará mucho la vida al usuario. Veamos un ejemplo (continuando con el ejemplo de más arriba, que amplío un poco):</p>
 <div class="section" id="dll">
 <h3>DLL</h3>
-<pre class="code c"><a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-1"></a><span class="c1">// archivo de cabecera externo "ejemplo.h"</span>
-<a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-2"></a>
-<a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-3"></a><span class="k">typedef</span> <span class="kt">ejemplo_t</span> <span class="kt">void</span><span class="p">;</span>
-<a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-4"></a>
-<a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-5"></a><span class="k">typedef</span> <span class="kt">ejemplo_t</span><span class="o">*</span> <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_new</span><span class="p">)</span> <span class="p">();</span>
-<a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-6"></a><span class="k">typedef</span> <span class="nf">void</span>       <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_destroy</span><span class="p">)</span> <span class="p">();</span>
-<a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-7"></a>
-<a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-8"></a><span class="k">typedef</span> <span class="nf">void</span>       <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_operacion1</span><span class="p">)</span> <span class="p">(</span><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">);</span>
-<a name="rest_code_24cc1b57d79348a095384a7c2ab3ee62-9"></a><span class="k">typedef</span> <span class="nf">void</span>       <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_operacion2</span><span class="p">)</span> <span class="p">(</span><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">);</span>
+<pre class="code c"><a name="rest_code_385607d5999f4204a5d8e798829044b7-1"></a><span class="c1">// archivo de cabecera externo "ejemplo.h"</span>
+<a name="rest_code_385607d5999f4204a5d8e798829044b7-2"></a>
+<a name="rest_code_385607d5999f4204a5d8e798829044b7-3"></a><span class="k">typedef</span> <span class="n">ejemplo_t</span> <span class="kt">void</span><span class="p">;</span>
+<a name="rest_code_385607d5999f4204a5d8e798829044b7-4"></a>
+<a name="rest_code_385607d5999f4204a5d8e798829044b7-5"></a><span class="k">typedef</span> <span class="n">ejemplo_t</span><span class="o">*</span> <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_new</span><span class="p">)</span> <span class="p">();</span>
+<a name="rest_code_385607d5999f4204a5d8e798829044b7-6"></a><span class="k">typedef</span> <span class="nf">void</span>       <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_destroy</span><span class="p">)</span> <span class="p">();</span>
+<a name="rest_code_385607d5999f4204a5d8e798829044b7-7"></a>
+<a name="rest_code_385607d5999f4204a5d8e798829044b7-8"></a><span class="k">typedef</span> <span class="nf">void</span>       <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_operacion1</span><span class="p">)</span> <span class="p">(</span><span class="n">ejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">);</span>
+<a name="rest_code_385607d5999f4204a5d8e798829044b7-9"></a><span class="k">typedef</span> <span class="nf">void</span>       <span class="p">(</span><span class="o">*</span> <span class="n">PF_ejemplo_operacion2</span><span class="p">)</span> <span class="p">(</span><span class="n">ejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">);</span>
 </pre>
-<pre class="code c"><a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-1"></a><span class="cp">#include "ejemplo.h"</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-2"></a>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-3"></a><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-4"></a>  <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-5"></a>  <span class="kt">char</span><span class="o">*</span> <span class="n">b</span><span class="p">;</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-6"></a><span class="p">}</span> <span class="n">ejemplo_tp</span><span class="p">;</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-7"></a>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-8"></a><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="nf">ejemplo_new</span> <span class="p">()</span> <span class="p">{</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-9"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">result</span><span class="p">;</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-10"></a>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-11"></a>  <span class="n">result</span> <span class="o">=</span> <span class="n">calloc</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">ejemplo_tp</span><span class="p">));</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-12"></a>  <span class="c1">// inicializar result</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-13"></a>  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-14"></a><span class="p">}</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-15"></a>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-16"></a><span class="kt">void</span> <span class="nf">ejemplo_destroy</span><span class="p">(</span><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="n">vejemplo</span><span class="p">)</span> <span class="p">{</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-17"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">ejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-18"></a>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-19"></a>  <span class="c1">// liberar variables internas de "ejemplo"</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-20"></a>  <span class="n">free</span> <span class="p">(</span><span class="n">ejemplo</span><span class="p">);</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-21"></a><span class="p">}</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-22"></a>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-23"></a><span class="kt">void</span> <span class="nf">ejemplo_operacion1</span><span class="p">(</span><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="n">vejemplo</span><span class="p">)</span> <span class="p">{</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-24"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">ejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-25"></a>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-26"></a>  <span class="c1">// operar</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-27"></a><span class="p">}</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-28"></a>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-29"></a><span class="kt">void</span> <span class="nf">ejemplo_operacion2</span><span class="p">(</span><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="n">vejemplo</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-30"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">ejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-31"></a>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-32"></a>  <span class="c1">// operar</span>
-<a name="rest_code_2591d6fa85ab4379ad333f684e1408c5-33"></a><span class="p">}</span>
+<pre class="code c"><a name="rest_code_8adb0953130148d2acadf77f880b5ba0-1"></a><span class="cp">#include</span> <span class="cpf">"ejemplo.h"</span><span class="cp"></span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-2"></a>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-3"></a><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-4"></a>  <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-5"></a>  <span class="kt">char</span><span class="o">*</span> <span class="n">b</span><span class="p">;</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-6"></a><span class="p">}</span> <span class="n">ejemplo_tp</span><span class="p">;</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-7"></a>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-8"></a><span class="n">ejemplo_t</span><span class="o">*</span> <span class="nf">ejemplo_new</span> <span class="p">()</span> <span class="p">{</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-9"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">result</span><span class="p">;</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-10"></a>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-11"></a>  <span class="n">result</span> <span class="o">=</span> <span class="n">calloc</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">ejemplo_tp</span><span class="p">));</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-12"></a>  <span class="c1">// inicializar result</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-13"></a>  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-14"></a><span class="p">}</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-15"></a>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-16"></a><span class="kt">void</span> <span class="nf">ejemplo_destroy</span><span class="p">(</span><span class="n">ejemplo_t</span><span class="o">*</span> <span class="n">vejemplo</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-17"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">ejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-18"></a>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-19"></a>  <span class="c1">// liberar variables internas de "ejemplo"</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-20"></a>  <span class="n">free</span> <span class="p">(</span><span class="n">ejemplo</span><span class="p">);</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-21"></a><span class="p">}</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-22"></a>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-23"></a><span class="kt">void</span> <span class="nf">ejemplo_operacion1</span><span class="p">(</span><span class="n">ejemplo_t</span><span class="o">*</span> <span class="n">vejemplo</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-24"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">ejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-25"></a>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-26"></a>  <span class="c1">// operar</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-27"></a><span class="p">}</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-28"></a>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-29"></a><span class="kt">void</span> <span class="nf">ejemplo_operacion2</span><span class="p">(</span><span class="n">ejemplo_t</span><span class="o">*</span> <span class="n">vejemplo</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-30"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">ejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-31"></a>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-32"></a>  <span class="c1">// operar</span>
+<a name="rest_code_8adb0953130148d2acadf77f880b5ba0-33"></a><span class="p">}</span>
 </pre>
 </div>
 <div class="section" id="lib">
 <h3>Lib</h3>
-<pre class="code c"><a name="rest_code_f9fa8592a94449e595c19d8bce2e736f-1"></a><span class="c1">// archivo de cabecera "lejemplo.h"</span>
-<a name="rest_code_f9fa8592a94449e595c19d8bce2e736f-2"></a><span class="k">typedef</span>    <span class="kt">lejemplo_t</span> <span class="kt">void</span><span class="p">;</span>
-<a name="rest_code_f9fa8592a94449e595c19d8bce2e736f-3"></a>
-<a name="rest_code_f9fa8592a94449e595c19d8bce2e736f-4"></a><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="nf">lejemplo_new</span> <span class="p">();</span>
-<a name="rest_code_f9fa8592a94449e595c19d8bce2e736f-5"></a><span class="kt">void</span>       <span class="nf">ljemplo_destroy</span><span class="p">(</span><span class="kt">lejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">);</span>
-<a name="rest_code_f9fa8592a94449e595c19d8bce2e736f-6"></a>
-<a name="rest_code_f9fa8592a94449e595c19d8bce2e736f-7"></a><span class="kt">void</span>       <span class="nf">lejemplo_operacion1</span> <span class="p">(</span><span class="kt">lejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">);</span>
-<a name="rest_code_f9fa8592a94449e595c19d8bce2e736f-8"></a><span class="kt">void</span>       <span class="nf">lejemplo_operacion2</span> <span class="p">(</span><span class="kt">lejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">);</span>
+<pre class="code c"><a name="rest_code_be821f968da24def805b48a66c865dcb-1"></a><span class="c1">// archivo de cabecera "lejemplo.h"</span>
+<a name="rest_code_be821f968da24def805b48a66c865dcb-2"></a><span class="k">typedef</span>    <span class="n">lejemplo_t</span> <span class="kt">void</span><span class="p">;</span>
+<a name="rest_code_be821f968da24def805b48a66c865dcb-3"></a>
+<a name="rest_code_be821f968da24def805b48a66c865dcb-4"></a><span class="n">ejemplo_t</span><span class="o">*</span> <span class="nf">lejemplo_new</span> <span class="p">();</span>
+<a name="rest_code_be821f968da24def805b48a66c865dcb-5"></a><span class="kt">void</span>       <span class="nf">ljemplo_destroy</span><span class="p">(</span><span class="n">lejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">);</span>
+<a name="rest_code_be821f968da24def805b48a66c865dcb-6"></a>
+<a name="rest_code_be821f968da24def805b48a66c865dcb-7"></a><span class="kt">void</span>       <span class="nf">lejemplo_operacion1</span> <span class="p">(</span><span class="n">lejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">);</span>
+<a name="rest_code_be821f968da24def805b48a66c865dcb-8"></a><span class="kt">void</span>       <span class="nf">lejemplo_operacion2</span> <span class="p">(</span><span class="n">lejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">);</span>
 </pre>
-<pre class="code c"><a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-1"></a><span class="c1">// archivo de implementación, "lejemplo.c"</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-2"></a><span class="cp">#import "ejemplo.h"</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-3"></a><span class="cp">#import "lejemplo.h"</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-4"></a>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-5"></a><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-6"></a>  <span class="n">PF_ejemplo_new</span> <span class="n">new</span><span class="p">;</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-7"></a>  <span class="n">PF_ejemplo_destroy</span> <span class="n">destroy</span><span class="p">;</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-8"></a>  <span class="n">PF_ejemplo_operacion1</span> <span class="n">operacion1</span><span class="p">;</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-9"></a>  <span class="n">PF_ejemplo_operacion2</span> <span class="n">operacion2</span><span class="p">;</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-10"></a><span class="p">}</span> <span class="n">functions_tp</span><span class="p">;</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-11"></a>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-12"></a><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-13"></a>  <span class="kt">void</span><span class="o">*</span> <span class="n">dllhandle</span><span class="p">;</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-14"></a>  <span class="kt">ejemplo_t</span><span class="o">*</span> <span class="n">internal</span><span class="p">;</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-15"></a>  <span class="n">functions_tp</span> <span class="n">functions</span><span class="p">;</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-16"></a><span class="p">}</span> <span class="n">lejemplo_tp</span><span class="p">;</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-17"></a>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-18"></a><span class="kt">ejemplo_t</span><span class="o">*</span> <span class="nf">lejemplo_new</span> <span class="p">()</span> <span class="p">{</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-19"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">result</span> <span class="o">=</span> <span class="n">calloc</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">lejemplo_tp</span><span class="p">));</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-20"></a>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-21"></a>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-22"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">dllhandle</span> <span class="o">=</span> <span class="n">dlopen</span> <span class="p">(</span><span class="s">"ejemplo.so"</span><span class="p">,</span> <span class="n">RT_LAZY</span><span class="p">);</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-23"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">new</span> <span class="o">=</span> <span class="p">(</span><span class="n">PF_ejemplo_new</span><span class="p">)</span> <span class="n">dlsym</span> <span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">dllhandle</span><span class="p">,</span> <span class="s">"ejemplo_new"</span><span class="p">);</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-24"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">destroy</span> <span class="o">=</span> <span class="p">(</span><span class="n">PF_ejemplo_destroy</span><span class="p">)</span> <span class="n">dlsym</span> <span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">dllhandle</span><span class="p">,</span> <span class="s">"ejemplo_destroy"</span><span class="p">);</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-25"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">operacion1</span> <span class="o">=</span> <span class="p">(</span><span class="n">PF_ejemplo_operacion1</span><span class="p">)</span> <span class="n">dlsym</span> <span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">dllhandle</span><span class="p">,</span> <span class="s">"ejemplo_operacion1"</span><span class="p">);</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-26"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">operacion2</span> <span class="o">=</span> <span class="p">(</span><span class="n">PF_ejemplo_operacion2</span><span class="p">)</span> <span class="n">dlsym</span> <span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">dllhandle</span><span class="p">,</span> <span class="s">"ejemplo_operacion2"</span><span class="p">);</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-27"></a>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-28"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">internal</span> <span class="o">=</span> <span class="n">result</span><span class="o">-&gt;</span><span class="n">funcitons</span><span class="p">.</span><span class="n">new</span> <span class="p">();</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-29"></a>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-30"></a>  <span class="c1">// añadir control de errores allá donde haga falta</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-31"></a>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-32"></a>  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-33"></a><span class="p">}</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-34"></a>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-35"></a><span class="kt">void</span> <span class="nf">lejemplo_destroy</span><span class="p">(</span><span class="kt">lejemplo_t</span><span class="o">*</span> <span class="n">vejemplo</span><span class="p">)</span> <span class="p">{</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-36"></a>  <span class="n">lejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">lejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-37"></a>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-38"></a>  <span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">destroy</span><span class="p">(</span><span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">internal</span><span class="p">);</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-39"></a>  <span class="n">dlclose</span> <span class="p">(</span><span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">dllhandle</span><span class="p">);</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-40"></a>  <span class="n">free</span> <span class="p">(</span><span class="n">ejemplo</span><span class="p">);</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-41"></a>  <span class="c1">// Añadir comprobaciones de nulos y demás.</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-42"></a><span class="p">}</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-43"></a>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-44"></a><span class="kt">void</span> <span class="nf">lejemplo_operacion1</span> <span class="p">(</span><span class="kt">lejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">)</span> <span class="p">{</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-45"></a>  <span class="n">lejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">lejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-46"></a>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-47"></a>  <span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">operacion1</span> <span class="p">(</span><span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">internal</span><span class="p">);</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-48"></a><span class="p">}</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-49"></a>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-50"></a><span class="kt">void</span> <span class="nf">lejemplo_operacion2</span> <span class="p">(</span><span class="kt">lejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-51"></a>  <span class="n">lejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">lejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-52"></a>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-53"></a>  <span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">operacion2</span> <span class="p">(</span><span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">internal</span><span class="p">,</span> <span class="n">a</span><span class="p">);</span>
-<a name="rest_code_0ab63808a9aa462fbe1b181e5bfc0427-54"></a><span class="p">}</span>
+<pre class="code c"><a name="rest_code_7e5681aebf4b40f689011b166cbb261c-1"></a><span class="c1">// archivo de implementación, "lejemplo.c"</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-2"></a><span class="cp">#import "ejemplo.h"</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-3"></a><span class="cp">#import "lejemplo.h"</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-4"></a>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-5"></a><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-6"></a>  <span class="n">PF_ejemplo_new</span> <span class="n">new</span><span class="p">;</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-7"></a>  <span class="n">PF_ejemplo_destroy</span> <span class="n">destroy</span><span class="p">;</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-8"></a>  <span class="n">PF_ejemplo_operacion1</span> <span class="n">operacion1</span><span class="p">;</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-9"></a>  <span class="n">PF_ejemplo_operacion2</span> <span class="n">operacion2</span><span class="p">;</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-10"></a><span class="p">}</span> <span class="n">functions_tp</span><span class="p">;</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-11"></a>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-12"></a><span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-13"></a>  <span class="kt">void</span><span class="o">*</span> <span class="n">dllhandle</span><span class="p">;</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-14"></a>  <span class="n">ejemplo_t</span><span class="o">*</span> <span class="n">internal</span><span class="p">;</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-15"></a>  <span class="n">functions_tp</span> <span class="n">functions</span><span class="p">;</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-16"></a><span class="p">}</span> <span class="n">lejemplo_tp</span><span class="p">;</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-17"></a>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-18"></a><span class="n">ejemplo_t</span><span class="o">*</span> <span class="nf">lejemplo_new</span> <span class="p">()</span> <span class="p">{</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-19"></a>  <span class="n">ejemplo_tp</span><span class="o">*</span> <span class="n">result</span> <span class="o">=</span> <span class="n">calloc</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">lejemplo_tp</span><span class="p">));</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-20"></a>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-21"></a>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-22"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">dllhandle</span> <span class="o">=</span> <span class="n">dlopen</span> <span class="p">(</span><span class="s">"ejemplo.so"</span><span class="p">,</span> <span class="n">RT_LAZY</span><span class="p">);</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-23"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">new</span> <span class="o">=</span> <span class="p">(</span><span class="n">PF_ejemplo_new</span><span class="p">)</span> <span class="n">dlsym</span> <span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">dllhandle</span><span class="p">,</span> <span class="s">"ejemplo_new"</span><span class="p">);</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-24"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">destroy</span> <span class="o">=</span> <span class="p">(</span><span class="n">PF_ejemplo_destroy</span><span class="p">)</span> <span class="n">dlsym</span> <span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">dllhandle</span><span class="p">,</span> <span class="s">"ejemplo_destroy"</span><span class="p">);</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-25"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">operacion1</span> <span class="o">=</span> <span class="p">(</span><span class="n">PF_ejemplo_operacion1</span><span class="p">)</span> <span class="n">dlsym</span> <span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">dllhandle</span><span class="p">,</span> <span class="s">"ejemplo_operacion1"</span><span class="p">);</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-26"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">operacion2</span> <span class="o">=</span> <span class="p">(</span><span class="n">PF_ejemplo_operacion2</span><span class="p">)</span> <span class="n">dlsym</span> <span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">dllhandle</span><span class="p">,</span> <span class="s">"ejemplo_operacion2"</span><span class="p">);</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-27"></a>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-28"></a>  <span class="n">result</span><span class="o">-&gt;</span><span class="n">internal</span> <span class="o">=</span> <span class="n">result</span><span class="o">-&gt;</span><span class="n">funcitons</span><span class="p">.</span><span class="n">new</span> <span class="p">();</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-29"></a>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-30"></a>  <span class="c1">// añadir control de errores allá donde haga falta</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-31"></a>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-32"></a>  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-33"></a><span class="p">}</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-34"></a>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-35"></a><span class="kt">void</span> <span class="nf">lejemplo_destroy</span><span class="p">(</span><span class="n">lejemplo_t</span><span class="o">*</span> <span class="n">vejemplo</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-36"></a>  <span class="n">lejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">lejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-37"></a>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-38"></a>  <span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">destroy</span><span class="p">(</span><span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">internal</span><span class="p">);</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-39"></a>  <span class="n">dlclose</span> <span class="p">(</span><span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">dllhandle</span><span class="p">);</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-40"></a>  <span class="n">free</span> <span class="p">(</span><span class="n">ejemplo</span><span class="p">);</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-41"></a>  <span class="c1">// Añadir comprobaciones de nulos y demás.</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-42"></a><span class="p">}</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-43"></a>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-44"></a><span class="kt">void</span> <span class="nf">lejemplo_operacion1</span> <span class="p">(</span><span class="n">lejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-45"></a>  <span class="n">lejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">lejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-46"></a>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-47"></a>  <span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">operacion1</span> <span class="p">(</span><span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">internal</span><span class="p">);</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-48"></a><span class="p">}</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-49"></a>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-50"></a><span class="kt">void</span> <span class="nf">lejemplo_operacion2</span> <span class="p">(</span><span class="n">lejemplo_t</span><span class="o">*</span> <span class="n">t</span><span class="p">,</span> <span class="kt">int</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-51"></a>  <span class="n">lejemplo_tp</span><span class="o">*</span> <span class="n">ejemplo</span> <span class="o">=</span> <span class="p">(</span><span class="n">lejemplo_tp</span><span class="o">*</span><span class="p">)</span> <span class="n">vejemplo</span><span class="p">;</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-52"></a>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-53"></a>  <span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">functions</span><span class="p">.</span><span class="n">operacion2</span> <span class="p">(</span><span class="n">ejemplo</span><span class="o">-&gt;</span><span class="n">internal</span><span class="p">,</span> <span class="n">a</span><span class="p">);</span>
+<a name="rest_code_7e5681aebf4b40f689011b166cbb261c-54"></a><span class="p">}</span>
 </pre>
 <p>Se podría hacer hasta una carga "<em>lazy</em>", esperando a cargar las funciones en el momento de su utilización, pero eso puede implicar una gestión de errores más compleja (con lo indicado, la gestión de errores está centralizada al inicializar).</p>
 <p>Utilizando esta librería, al usuario se le quitan muchos dolores de cabeza, ya que tendría que realizar eso mismo de todas maneras.</p>

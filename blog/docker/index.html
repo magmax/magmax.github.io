@@ -8,7 +8,7 @@ article: https://ogp.me/ns/article#
 <meta name="description" content="Introducción a Docker, con un ejemplo con RabbitMQ">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Docker | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -19,8 +19,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/docker/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="description" itemprop="description" content="Introducción a Docker, con un ejemplo con RabbitMQ">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/puppet-templates-hint-quitando-espacios/" title="Puppet templates hint: quitando espacios" type="text/html">
@@ -149,63 +149,63 @@ article: https://ogp.me/ns/article#
 <div class="section" id="generando-las-imagenes">
 <h3>Generando las imágenes</h3>
 <p>Vamos con un ejemplo pequeño: vamos a crear un docker que ejecute un <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a>. Vamos a hacer lo mismo que hicimos en el artículo <a class="reference external" href="/blog/colas-de-mensajes-rabbitmq">Colas de mensajes: RabbitMQ</a>. Para ello vamos con un <strong>Dockerfile</strong>:</p>
-<pre class="code docker"><a name="rest_code_66b783d2974b4cf4be01708894f3b938-1"></a><span class="k">FROM</span><span class="s"> debian:8.1</span>
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-2"></a>
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-3"></a><span class="k">MAINTAINER</span><span class="s"> Miguel Angel Garcia &lt;miguelangel@magmax.org&gt;</span>
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-4"></a>
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-5"></a><span class="k">RUN</span> <span class="se">\</span>
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-6"></a>    apt-get update <span class="o">&amp;&amp;</span> <span class="se">\</span>
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-7"></a>    apt-get install -y rabbitmq-server
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-8"></a><span class="k">RUN</span> <span class="se">\</span>
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-9"></a>    rabbitmq-plugins <span class="nb">enable </span>rabbitmq_management <span class="o">&amp;&amp;</span> <span class="se">\</span>
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-10"></a>    rabbitmqctl add_vhost /my_vhost <span class="o">&amp;&amp;</span> <span class="se">\</span>
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-11"></a>    rabbitmqctl add_user my_user my_pass <span class="o">&amp;&amp;</span> <span class="se">\</span>
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-12"></a>    rabbitmqctl set_permissions -p /my_vhost my_user <span class="s2">".*"</span> <span class="s2">".*"</span> <span class="s2">".*"</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-13"></a>    rabbitmqctl set_user_tags my_user management monitoring <span class="o">&amp;&amp;</span> <span class="se">\</span>
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-14"></a>    /etc/init.d/rabbitmq-server stop
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-15"></a>
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-16"></a><span class="k">CMD</span><span class="s"> ["rabbitmq-server"]</span>
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-17"></a>
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-18"></a><span class="c"># Expose ports.</span>
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-19"></a><span class="k">EXPOSE</span><span class="s"> 5672</span>
-<a name="rest_code_66b783d2974b4cf4be01708894f3b938-20"></a><span class="k">EXPOSE</span><span class="s"> 15672</span>
+<pre class="code docker"><a name="rest_code_41601780da3948a2a63da9e798f0b48a-1"></a><span class="k">FROM</span> <span class="s">debian:8.1</span>
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-2"></a>
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-3"></a><span class="k">MAINTAINER</span><span class="s"> Miguel Angel Garcia &lt;miguelangel@magmax.org&gt;</span>
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-4"></a>
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-5"></a><span class="k">RUN</span> <span class="se">\</span>
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-6"></a>    apt-get update <span class="o">&amp;&amp;</span> <span class="se">\</span>
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-7"></a>    apt-get install -y rabbitmq-server
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-8"></a><span class="k">RUN</span> <span class="se">\</span>
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-9"></a>    rabbitmq-plugins <span class="nb">enable</span> rabbitmq_management <span class="o">&amp;&amp;</span> <span class="se">\</span>
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-10"></a>    rabbitmqctl add_vhost /my_vhost <span class="o">&amp;&amp;</span> <span class="se">\</span>
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-11"></a>    rabbitmqctl add_user my_user my_pass <span class="o">&amp;&amp;</span> <span class="se">\</span>
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-12"></a>    rabbitmqctl set_permissions -p /my_vhost my_user <span class="s2">".*"</span> <span class="s2">".*"</span> <span class="s2">".*"</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-13"></a>    rabbitmqctl set_user_tags my_user management monitoring <span class="o">&amp;&amp;</span> <span class="se">\</span>
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-14"></a>    /etc/init.d/rabbitmq-server stop
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-15"></a>
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-16"></a><span class="k">CMD</span> <span class="p">[</span><span class="s2">"rabbitmq-server"</span><span class="p">]</span>
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-17"></a>
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-18"></a><span class="c"># Expose ports.</span>
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-19"></a><span class="k">EXPOSE</span><span class="s"> 5672</span>
+<a name="rest_code_41601780da3948a2a63da9e798f0b48a-20"></a><span class="k">EXPOSE</span><span class="s"> 15672</span>
 </pre>
 <p>Ahora utilizaremos el <strong>Dockerfile</strong> para generar una <strong>imagen</strong>:</p>
-<pre class="code text"><a name="rest_code_1a207fb807704e8991cce9cb589bbc32-1"></a>docker build .
+<pre class="code text"><a name="rest_code_8bd83d1344374c4a8149a81230dab216-1"></a>docker build .
 </pre>
 <p>Y nos vamos a tomar un café. Aquí <a class="reference external" href="https://www.docker.com/">Docker</a> hará de las suyas, descargándose la imagen base (en nuestro caso, <tt class="docutils literal">debian:8.1</tt>) y ejecutando todas las órdenes de <tt class="docutils literal">RUN</tt>. Cada orden <tt class="docutils literal">RUN</tt> generará una imagen intermedia que ocupará espacio, pero son puntos de <em>"checkpoint"</em>, ya que generará el resto de imágenes a partir de ahí.</p>
 <p>Si optamos por varios <tt class="docutils literal">RUN</tt> es importante el orden, ya que cualquier modificación regenerará todas las imágenes tras ella. Por ejemplo, si creemos que vamos a cambiar la contraseña del usuario con frecuencia, sería más eficiente usar algo así:</p>
-<pre class="code docker"><a name="rest_code_f20409dccf9c4757b6bc434ee92ba617-1"></a><span class="k">FROM</span><span class="s"> debian:8.1</span>
-<a name="rest_code_f20409dccf9c4757b6bc434ee92ba617-2"></a>
-<a name="rest_code_f20409dccf9c4757b6bc434ee92ba617-3"></a><span class="k">MAINTAINER</span><span class="s"> Miguel Angel Garcia &lt;miguelangel@magmax.org&gt;</span>
-<a name="rest_code_f20409dccf9c4757b6bc434ee92ba617-4"></a>
-<a name="rest_code_f20409dccf9c4757b6bc434ee92ba617-5"></a><span class="k">RUN</span> <span class="se">\</span>
-<a name="rest_code_f20409dccf9c4757b6bc434ee92ba617-6"></a>    apt-get update <span class="o">&amp;&amp;</span> <span class="se">\</span>
-<a name="rest_code_f20409dccf9c4757b6bc434ee92ba617-7"></a>    apt-get install -y rabbitmq-server
-<a name="rest_code_f20409dccf9c4757b6bc434ee92ba617-8"></a><span class="k">RUN</span> rabbitmq-plugins <span class="nb">enable </span>rabbitmq_management
-<a name="rest_code_f20409dccf9c4757b6bc434ee92ba617-9"></a><span class="k">RUN</span> rabbitmqctl add_vhost /my_vhost
-<a name="rest_code_f20409dccf9c4757b6bc434ee92ba617-10"></a><span class="k">RUN</span> <span class="se">\</span>
-<a name="rest_code_f20409dccf9c4757b6bc434ee92ba617-11"></a>    rabbitmqctl add_user my_user my_pass <span class="o">&amp;&amp;</span> <span class="se">\</span>
-<a name="rest_code_f20409dccf9c4757b6bc434ee92ba617-12"></a>    rabbitmqctl set_permissions -p /my_vhost my_user <span class="s2">".*"</span> <span class="s2">".*"</span> <span class="s2">".*"</span>
-<a name="rest_code_f20409dccf9c4757b6bc434ee92ba617-13"></a><span class="k">RUN</span> <span class="se">\</span>
-<a name="rest_code_f20409dccf9c4757b6bc434ee92ba617-14"></a>    rabbitmqctl set_user_tags my_user management monitoring <span class="o">&amp;&amp;</span> <span class="se">\</span>
-<a name="rest_code_f20409dccf9c4757b6bc434ee92ba617-15"></a>    /etc/init.d/rabbitmq-server stop
+<pre class="code docker"><a name="rest_code_7d944af923694e51b79eecd00e8f693b-1"></a><span class="k">FROM</span> <span class="s">debian:8.1</span>
+<a name="rest_code_7d944af923694e51b79eecd00e8f693b-2"></a>
+<a name="rest_code_7d944af923694e51b79eecd00e8f693b-3"></a><span class="k">MAINTAINER</span><span class="s"> Miguel Angel Garcia &lt;miguelangel@magmax.org&gt;</span>
+<a name="rest_code_7d944af923694e51b79eecd00e8f693b-4"></a>
+<a name="rest_code_7d944af923694e51b79eecd00e8f693b-5"></a><span class="k">RUN</span> <span class="se">\</span>
+<a name="rest_code_7d944af923694e51b79eecd00e8f693b-6"></a>    apt-get update <span class="o">&amp;&amp;</span> <span class="se">\</span>
+<a name="rest_code_7d944af923694e51b79eecd00e8f693b-7"></a>    apt-get install -y rabbitmq-server
+<a name="rest_code_7d944af923694e51b79eecd00e8f693b-8"></a><span class="k">RUN</span> rabbitmq-plugins <span class="nb">enable</span> rabbitmq_management
+<a name="rest_code_7d944af923694e51b79eecd00e8f693b-9"></a><span class="k">RUN</span> rabbitmqctl add_vhost /my_vhost
+<a name="rest_code_7d944af923694e51b79eecd00e8f693b-10"></a><span class="k">RUN</span> <span class="se">\</span>
+<a name="rest_code_7d944af923694e51b79eecd00e8f693b-11"></a>    rabbitmqctl add_user my_user my_pass <span class="o">&amp;&amp;</span> <span class="se">\</span>
+<a name="rest_code_7d944af923694e51b79eecd00e8f693b-12"></a>    rabbitmqctl set_permissions -p /my_vhost my_user <span class="s2">".*"</span> <span class="s2">".*"</span> <span class="s2">".*"</span>
+<a name="rest_code_7d944af923694e51b79eecd00e8f693b-13"></a><span class="k">RUN</span> <span class="se">\</span>
+<a name="rest_code_7d944af923694e51b79eecd00e8f693b-14"></a>    rabbitmqctl set_user_tags my_user management monitoring <span class="o">&amp;&amp;</span> <span class="se">\</span>
+<a name="rest_code_7d944af923694e51b79eecd00e8f693b-15"></a>    /etc/init.d/rabbitmq-server stop
 </pre>
 <p>Esto generará 5 imágenes reutilizables. Si modificamos la contraseña, hay tres imágenes que se reusarán, haciendo el proceso de <tt class="docutils literal">build</tt> mucho más rápido.</p>
 <p>Un poco más abajo vemos la orden <tt class="docutils literal">CMD</tt>, que es la orden por defecto a ejecutar cuando lancemos el <em>container</em>.</p>
 <p>Finalmente, un par de <tt class="docutils literal">EXPOSE</tt>, que son puertos que queremos exportar. Lo veremos ahora en la parte de ejecución.</p>
 <p>También podríamos haber visto un <tt class="docutils literal">ADD</tt>, que copia archivos de la máquina actual a la jaula o <tt class="docutils literal">VOLUME</tt>, que sirve para crear puntos de montaje, pero para este artículo es suficiente con <tt class="docutils literal">FROM</tt>, <tt class="docutils literal">MAINTAINER</tt>, <tt class="docutils literal">RUN</tt>, <tt class="docutils literal">CMD</tt> y <tt class="docutils literal">EXPOSE</tt>. No os creáis que hay muchas órdenes más.</p>
 <p>Una vez construida la imagen podemos listarla:</p>
-<pre class="code text"><a name="rest_code_60e51e93ad0c42768a903f65076fc39a-1"></a>$ docker images
-<a name="rest_code_60e51e93ad0c42768a903f65076fc39a-2"></a>REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
-<a name="rest_code_60e51e93ad0c42768a903f65076fc39a-3"></a>&lt;none&gt;              &lt;none&gt;              5e98d103b422        22 seconds ago      229.1 MB
+<pre class="code text"><a name="rest_code_57c0788005404675a7ad8669052692bd-1"></a>$ docker images
+<a name="rest_code_57c0788005404675a7ad8669052692bd-2"></a>REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+<a name="rest_code_57c0788005404675a7ad8669052692bd-3"></a>&lt;none&gt;              &lt;none&gt;              5e98d103b422        22 seconds ago      229.1 MB
 </pre>
 </div>
 <div class="section" id="ejecutando-un-docker">
 <h3>Ejecutando un docker</h3>
 <p>Lo siguiente es ejecutar un docker. Lo primero que tenemos que ver son los puntos de montaje, variables y puertos que exponga. En este caso sólo explicaré los puertos expuestos. Es importante porque alterarán los argumentos con los que llamar al <a class="reference external" href="https://www.docker.com/">Docker</a>.</p>
 <p>En nuestro caso, vamos a mapear los puertos locales 35000 y 35001 a los de la máquina 5672 y 15672, respectivamente:</p>
-<pre class="code text"><a name="rest_code_a3637b7518884240af49ff00677c66d8-1"></a>docker run -i -p 35000:5672 -p 35001:15672 5e98d103b422
+<pre class="code text"><a name="rest_code_0c638f8597774ccd95da3513c7e0d9bc-1"></a>docker run -i -p 35000:5672 -p 35001:15672 5e98d103b422
 </pre>
 <p>Explico los argumentos:</p>
 <dl class="docutils">
@@ -219,9 +219,9 @@ article: https://ogp.me/ns/article#
 <dd>Hash o nombre de la imagen a ejecutar.</dd>
 </dl>
 <p>Ahora podemos ver el <em>container</em> corriendo:</p>
-<pre class="code text"><a name="rest_code_19863362a7c24a0d9b55c57b37aeba6b-1"></a>$ docker ps
-<a name="rest_code_19863362a7c24a0d9b55c57b37aeba6b-2"></a>CONTAINER ID        IMAGE                 COMMAND             CREATED             STATUS              PORTS                                               NAMES
-<a name="rest_code_19863362a7c24a0d9b55c57b37aeba6b-3"></a>859bd82d0f8a        5e98d103b422:latest   "rabbitmq-server"   2 minutes ago       Up 2 minutes        0.0.0.0:35000-&gt;5672/tcp, 0.0.0.0:35001-&gt;15672/tcp   suspicious_turing
+<pre class="code text"><a name="rest_code_de1f01fe3b4946c0aed4a3985c2c0761-1"></a>$ docker ps
+<a name="rest_code_de1f01fe3b4946c0aed4a3985c2c0761-2"></a>CONTAINER ID        IMAGE                 COMMAND             CREATED             STATUS              PORTS                                               NAMES
+<a name="rest_code_de1f01fe3b4946c0aed4a3985c2c0761-3"></a>859bd82d0f8a        5e98d103b422:latest   "rabbitmq-server"   2 minutes ago       Up 2 minutes        0.0.0.0:35000-&gt;5672/tcp, 0.0.0.0:35001-&gt;15672/tcp   suspicious_turing
 </pre>
 <p>Por defecto <a class="reference external" href="https://www.docker.com/">Docker</a> da nombres graciosos a todos los containers, como "suspicious_turing" :D</p>
 <p>Y podemos conectarnos a <a class="reference external" href="http://localhost:35001">http://localhost:35001</a>, donde está la interfaz de nuestro precioso <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a>.</p>
@@ -231,14 +231,14 @@ article: https://ogp.me/ns/article#
 <h2>Ventajas e inconvenientes</h2>
 <p>¿Qué ventajas ofrece este sistema de empaquetado?</p>
 <p>La primera, que <strong>una vez creada la imagen podemos lanzar varias instancias de la misma</strong>:</p>
-<pre class="code text"><a name="rest_code_db6500443fdb4616bdeee2ae6ceec75b-1"></a>$ docker run -d -p 35000:5672 -p 35001:15672 5e98d103b422
-<a name="rest_code_db6500443fdb4616bdeee2ae6ceec75b-2"></a>f99518d24970fe5d39787340e25947851daba31c8dea7e8c4380f23f4bb82d19
-<a name="rest_code_db6500443fdb4616bdeee2ae6ceec75b-3"></a>$ docker run -d -p 36000:5672 -p 36001:15672 5e98d103b422
-<a name="rest_code_db6500443fdb4616bdeee2ae6ceec75b-4"></a>2b415bcb600995b80874e1109a1ad1320f20162ce1efac58637a1c8a04b7d439
-<a name="rest_code_db6500443fdb4616bdeee2ae6ceec75b-5"></a>$ docker ps
-<a name="rest_code_db6500443fdb4616bdeee2ae6ceec75b-6"></a>CONTAINER ID        IMAGE                 COMMAND             CREATED             STATUS              PORTS                                               NAMES
-<a name="rest_code_db6500443fdb4616bdeee2ae6ceec75b-7"></a>2b415bcb6009        5e98d103b422:latest   "rabbitmq-server"   4 seconds ago       Up 4 seconds        0.0.0.0:36000-&gt;5672/tcp, 0.0.0.0:36001-&gt;15672/tcp   prickly_babbage
-<a name="rest_code_db6500443fdb4616bdeee2ae6ceec75b-8"></a>f99518d24970        5e98d103b422:latest   "rabbitmq-server"   11 seconds ago      Up 11 seconds       0.0.0.0:35000-&gt;5672/tcp, 0.0.0.0:35001-&gt;15672/tcp   grave_stallman
+<pre class="code text"><a name="rest_code_73dd45b653a8413abfa4d63af226648f-1"></a>$ docker run -d -p 35000:5672 -p 35001:15672 5e98d103b422
+<a name="rest_code_73dd45b653a8413abfa4d63af226648f-2"></a>f99518d24970fe5d39787340e25947851daba31c8dea7e8c4380f23f4bb82d19
+<a name="rest_code_73dd45b653a8413abfa4d63af226648f-3"></a>$ docker run -d -p 36000:5672 -p 36001:15672 5e98d103b422
+<a name="rest_code_73dd45b653a8413abfa4d63af226648f-4"></a>2b415bcb600995b80874e1109a1ad1320f20162ce1efac58637a1c8a04b7d439
+<a name="rest_code_73dd45b653a8413abfa4d63af226648f-5"></a>$ docker ps
+<a name="rest_code_73dd45b653a8413abfa4d63af226648f-6"></a>CONTAINER ID        IMAGE                 COMMAND             CREATED             STATUS              PORTS                                               NAMES
+<a name="rest_code_73dd45b653a8413abfa4d63af226648f-7"></a>2b415bcb6009        5e98d103b422:latest   "rabbitmq-server"   4 seconds ago       Up 4 seconds        0.0.0.0:36000-&gt;5672/tcp, 0.0.0.0:36001-&gt;15672/tcp   prickly_babbage
+<a name="rest_code_73dd45b653a8413abfa4d63af226648f-8"></a>f99518d24970        5e98d103b422:latest   "rabbitmq-server"   11 seconds ago      Up 11 seconds       0.0.0.0:35000-&gt;5672/tcp, 0.0.0.0:35001-&gt;15672/tcp   grave_stallman
 </pre>
 <p>Y tener una escuchando en el pueto 35001 y otra en el 36002 (la opción <tt class="docutils literal"><span class="pre">-d</span></tt> es para lanzar en segundo plano). Con un par de scripts resultaría sencillo montarse un cluster, ¿no?</p>
 <p>Otra ventaja es la <strong>inmutabilidad</strong>. Si tenemos una infraestructura montada con <a class="reference external" href="https://puppetlabs.com/">Puppet</a>, <a class="reference external" href="https://www.chef.io">Chef</a>, <a class="reference external" href="http://saltstack.com/">Salt</a> o <a class="reference external" href="http://www.ansible.com">Ansible</a>, nada impide que entre dos ejecuciones se haya cambiado una librería (la típica <em>libc6</em>) que provoque fallos de instalación o, lo que es mucho peor, de ejecución. Sin embargo, con las imágenes de <a class="reference external" href="https://www.docker.com/">Docker</a> estamos seguros de que todas las máquinas son iguales.</p>
@@ -248,25 +248,25 @@ article: https://ogp.me/ns/article#
 <div class="section" id="otras-ordenes-interesantes">
 <h2>Otras órdenes interesantes</h2>
 <p>Para terminar, veamos otras órdenes interesantes, como parar un <em>container</em>:</p>
-<pre class="code text"><a name="rest_code_56c9625489ea479192aba509ff60b6d8-1"></a>$ docker stop 2b415bcb6009
+<pre class="code text"><a name="rest_code_73f72496624b4ec48a5793ba938a9170-1"></a>$ docker stop 2b415bcb6009
 </pre>
 <p>O volver a lanzarlo (notad que ya no es necesario indicar el mapeo de puertos):</p>
-<pre class="code text"><a name="rest_code_668e685c01314107894b2cf62779645d-1"></a>$ docker start 2b415bcb6009
+<pre class="code text"><a name="rest_code_e6797f059e8e4108a828e15e0e4d25d7-1"></a>$ docker start 2b415bcb6009
 </pre>
 <p>Mostrar todos los <em>containers</em> disponibles:</p>
-<pre class="code text"><a name="rest_code_eee30ec304224b0f93f08d39ab01c624-1"></a>$ docker ps -a
+<pre class="code text"><a name="rest_code_e9af24309c9744ea9caad918e4fe4f83-1"></a>$ docker ps -a
 </pre>
 <p>Eliminar un <em>container</em></p>
-<pre class="code text"><a name="rest_code_98b70455545444df9bcca39562c2007f-1"></a>$ docker rm 2b415bcb6009
+<pre class="code text"><a name="rest_code_27f48af491ff4de1bf649b2eec074af2-1"></a>$ docker rm 2b415bcb6009
 </pre>
 <p>Mostrar todas las <em>imágenes</em> disponibles:</p>
-<pre class="code text"><a name="rest_code_3e68c610d0dc4b44a07ae49e35e09603-1"></a>$ docker images
+<pre class="code text"><a name="rest_code_637f332ea35743fbbe9cea89057b09d5-1"></a>$ docker images
 </pre>
 <p>Eliminar una <em>imagen</em> que no tiene <em>containers</em>:</p>
-<pre class="code text"><a name="rest_code_22fc0e58f3ef46e09c22aca1b7ef5bea-1"></a>$ docker rmi 5e98d103b422
+<pre class="code text"><a name="rest_code_3a6b64235da944c893f091128e4fe746-1"></a>$ docker rmi 5e98d103b422
 </pre>
 <p>O forzar el borrado de una <em>imagen</em> a pesar de tener <em>containers</em>:</p>
-<pre class="code text"><a name="rest_code_22d1aa65856740378b49cd1bbefc3011-1"></a>$ docker rmi -i 5e98d103b422
+<pre class="code text"><a name="rest_code_d3e73f81f2804a7cb22c3cac8664a90f-1"></a>$ docker rmi -i 5e98d103b422
 </pre>
 <p>Finalmente, un aviso: <strong>El nombre del container o su hash siempre es el último argumento de cualquier órden</strong>. Eso es algo que me ha vuelto loco en alguna ocasión.</p>
 </div>

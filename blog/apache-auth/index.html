@@ -7,7 +7,7 @@ article: https://ogp.me/ns/article#
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Apache: Autenticación básica | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,8 +18,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/apache-auth/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/tuenti-un-mes/" title="Tuenti, un mes después" type="text/html">
 <link rel="next" href="/blog/alternativas/" title="Alternativas" type="text/html">
@@ -128,36 +128,36 @@ Por eso en esta ocasión ">
 <div class="section" id="htaccess">
 <h3>.htaccess</h3>
 <p>En el directorio que queráis restringir el acceso, creáis un archivo llamado <tt class="docutils literal">.htaccess</tt>. Este archivo contendrá algo similar a lo siguiente:</p>
-<pre class="code cfg"><a name="rest_code_e75bdcd589414a0395326e4362371147-1"></a><span class="err">AuthUserFile</span> <span class="err">/home/magmax/.htpasswd</span>
-<a name="rest_code_e75bdcd589414a0395326e4362371147-2"></a><span class="err">AuthGroupFile</span> <span class="err">/dev/null</span>
-<a name="rest_code_e75bdcd589414a0395326e4362371147-3"></a><span class="err">AuthName</span> <span class="err">MagMax</span> <span class="err">page</span>
-<a name="rest_code_e75bdcd589414a0395326e4362371147-4"></a><span class="err">AuthType</span> <span class="err">Basic</span>
-<a name="rest_code_e75bdcd589414a0395326e4362371147-5"></a><span class="err">require</span> <span class="err">valid-user</span>
+<pre class="code cfg"><a name="rest_code_0401ef88c0d64dbfa86caf9f0e4afc5a-1"></a><span class="na">AuthUserFile /home/magmax/.htpasswd</span>
+<a name="rest_code_0401ef88c0d64dbfa86caf9f0e4afc5a-2"></a><span class="na">AuthGroupFile /dev/null</span>
+<a name="rest_code_0401ef88c0d64dbfa86caf9f0e4afc5a-3"></a><span class="na">AuthName MagMax page</span>
+<a name="rest_code_0401ef88c0d64dbfa86caf9f0e4afc5a-4"></a><span class="na">AuthType Basic</span>
+<a name="rest_code_0401ef88c0d64dbfa86caf9f0e4afc5a-5"></a><span class="na">require valid-user</span>
 </pre>
 <p>De esta manera le decimos a <em>apache</em> que debe pedir una contraseña, mostrando el mensaje indicado en "<em>AuthName</em>", y que el usuario debe coincidir con alguno de los que se encuentran en el fichero indicado por <em>AuthUserFile</em>.</p>
 <p>Ahora es cuando se crea el archivo indicado por <em>AuthUserFile</em>, que sería algo así:</p>
-<pre class="code bash"><a name="rest_code_0fb233b3c7784f7c85c84ac073f1c9ef-1"></a><span class="nv">$ </span>htpasswd -c /home/magmax/.htpasswd magmax
-<a name="rest_code_0fb233b3c7784f7c85c84ac073f1c9ef-2"></a>New password:
-<a name="rest_code_0fb233b3c7784f7c85c84ac073f1c9ef-3"></a>Re-type new password:
-<a name="rest_code_0fb233b3c7784f7c85c84ac073f1c9ef-4"></a>Adding password <span class="k">for</span> user magmax
-<a name="rest_code_0fb233b3c7784f7c85c84ac073f1c9ef-5"></a><span class="err">$</span>
+<pre class="code bash"><a name="rest_code_0cedc89275d948a59ae2095f874cdca8-1"></a>$ htpasswd -c /home/magmax/.htpasswd magmax
+<a name="rest_code_0cedc89275d948a59ae2095f874cdca8-2"></a>New password:
+<a name="rest_code_0cedc89275d948a59ae2095f874cdca8-3"></a>Re-type new password:
+<a name="rest_code_0cedc89275d948a59ae2095f874cdca8-4"></a>Adding password <span class="k">for</span> user magmax
+<a name="rest_code_0cedc89275d948a59ae2095f874cdca8-5"></a>$
 </pre>
 <p>Tened cuidado con la opción <em>-c</em>, ya que crea el archivo, eliminando lo que hubiera anteriormente. Si queréis añadir más usuarios sólo tenéis que quitar esa opción. El resultado será un fichero como el que sigue:</p>
-<pre class="code bash"><a name="rest_code_b41d196e6a854ab082727f5ba534a0cf-1"></a><span class="nv">$ </span>cat file
-<a name="rest_code_b41d196e6a854ab082727f5ba534a0cf-2"></a>magmax:<span class="nv">$apr1$lqzJHMvm$XPYqylsRK7q2gmThL</span>..gy1
+<pre class="code bash"><a name="rest_code_438cc47fb402496d89305ff4ced202ea-1"></a>$ cat file
+<a name="rest_code_438cc47fb402496d89305ff4ced202ea-2"></a>magmax:<span class="nv">$apr1$lqzJHMvm$XPYqylsRK7q2gmThL</span>..gy1
 </pre>
 <div class="section" id="htgroups">
 <h4>htgroups</h4>
 <p>Es posible que queráis tener un archivo con todas las contraseñas y limitar el acceso a un directorio sólo para una parte de estos usuarios. Para ello podéis usar la opción <em>AuthGroupFile</em> que en el ejemplo puse a <em>/dev/null</em>.</p>
 <p>El formato de este archivo sería el que sigue:</p>
-<pre class="code cfg"><a name="rest_code_0cf6fe5aaf694dcb82481ef9fbd56576-1"></a><span class="err">amigos:</span> <span class="err">magmax</span> <span class="err">tiouron</span> <span class="err">pollo</span>
+<pre class="code cfg"><a name="rest_code_5f58830760dc4d4e968ccec5057e3b8b-1"></a><span class="na">amigos: magmax tiouron pollo</span>
 </pre>
 <p>Y ahora hay que realizar dos pequeñas modificaciones al fichero de configuración:</p>
-<pre class="code cfg"><a name="rest_code_c60f3e5a0cb24a11a0ad7731aa448839-1"></a><span class="err">AuthUserFile</span> <span class="err">/home/magmax/.htpasswd</span>
-<a name="rest_code_c60f3e5a0cb24a11a0ad7731aa448839-2"></a><span class="err">AuthGroupFile</span> <span class="err">/home/magmax/.htgroups</span>
-<a name="rest_code_c60f3e5a0cb24a11a0ad7731aa448839-3"></a><span class="err">AuthName</span> <span class="err">MagMax</span> <span class="err">page</span>
-<a name="rest_code_c60f3e5a0cb24a11a0ad7731aa448839-4"></a><span class="err">AuthType</span> <span class="err">Basic</span>
-<a name="rest_code_c60f3e5a0cb24a11a0ad7731aa448839-5"></a><span class="err">require</span> <span class="err">group</span> <span class="err">amigos</span>
+<pre class="code cfg"><a name="rest_code_a4256b08d24f4e1e9de1c28449bce3b6-1"></a><span class="na">AuthUserFile /home/magmax/.htpasswd</span>
+<a name="rest_code_a4256b08d24f4e1e9de1c28449bce3b6-2"></a><span class="na">AuthGroupFile /home/magmax/.htgroups</span>
+<a name="rest_code_a4256b08d24f4e1e9de1c28449bce3b6-3"></a><span class="na">AuthName MagMax page</span>
+<a name="rest_code_a4256b08d24f4e1e9de1c28449bce3b6-4"></a><span class="na">AuthType Basic</span>
+<a name="rest_code_a4256b08d24f4e1e9de1c28449bce3b6-5"></a><span class="na">require group amigos</span>
 </pre>
 <p>Creo que no requiere más explicaciones.</p>
 </div>
@@ -172,11 +172,11 @@ Por eso en esta ocasión ">
 <p>&gt; Some people, when confronted with a problem, think "I know, I'll use regular expressions." Now they have two problems.</p>
 <p>&gt; Hay gente que, cuando se enfrenta a un problema, piensa "Ya sé, usaré expresiones regulares". Ahora tienen dos problemas.</p>
 <p>De todas maneras, es una opción a evaluar:</p>
-<pre class="code cfg"><a name="rest_code_31f2776e176e4ecb8e471fc1bd092ef4-1"></a><span class="na">RewriteRule ^[a-z0-9_-]*-f([0-9]+)/?(p([0-9]+)\.html)?$ /viewforum.php?f</span><span class="o">=</span><span class="s">$1&amp;start=$3 [QSA,L,NC]</span>
+<pre class="code cfg"><a name="rest_code_ced004cea8e44e21bd5e70872ffe5fcc-1"></a><span class="na">RewriteRule ^[a-z0-9_-]*-f([0-9]+)/?(p([0-9]+)\.html)?$ /viewforum.php?f</span><span class="o">=</span><span class="s">$1&amp;start=$3 [QSA,L,NC]</span>
 </pre>
 <p>Si os sentís cómodos con algo así, os invito a que miréis la documentación de <em>rewrite</em> para ver qué significa cada cosa.</p>
 <p>He decidido comentar esto porque si usáis <a class="reference external" href="http://nginx.com/">nginx</a> , un servidor web que está bastante de moda hoy día, no tendréis el módulo <tt class="docutils literal">mod_rewrite</tt> y no podréis usar la primera opción. Claro, que la segunda tampoco porque las expresiones regulares son diferentes:</p>
-<pre class="code cfg"><a name="rest_code_ef3ccb32dcab4d469c9543d60373d911-1"></a><span class="na">rewrite ^/[a-z0-9_-]*-f([0-9]+)/?(p([0-9]+)\.html)?$ /viewforum.php?f</span><span class="o">=</span><span class="s">$1&amp;start=$3 last;</span>
+<pre class="code cfg"><a name="rest_code_16ec85b1a2434fb1bf1254420ca07ee4-1"></a><span class="na">rewrite ^/[a-z0-9_-]*-f([0-9]+)/?(p([0-9]+)\.html)?$ /viewforum.php?f</span><span class="o">=</span><span class="s">$1&amp;start=$3 last;</span>
 </pre>
 <p>Y esto es algo que os cuento, pero de lo que no tengo ni idea. Tan sólo lo he copiado para dar una visión más completa del tema. Yo siempre utilizo un archivo <em>.htaccess</em></p>
 </div>

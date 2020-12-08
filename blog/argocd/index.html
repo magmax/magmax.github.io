@@ -8,7 +8,7 @@ article: https://ogp.me/ns/article#
 <meta name="description" content="Sencillos pasos para ejecutar ArgoCD localmente en un cluster Kind">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>ArgoCD con Kind | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -19,11 +19,11 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/argocd/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="description" itemprop="description" content="Sencillos pasos para ejecutar ArgoCD localmente en un cluster Kind">
 <meta name="author" content="Miguel Ángel García">
-<link rel="prev" href="/blog/organizacion/" title="Organización" type="text/html">
+<link rel="prev" href="/blog/monitorizacion-con-graphite/" title="Monitorización con Graphite" type="text/html">
 <meta property="og:site_name" content="MagMax Blog">
 <meta property="og:title" content="ArgoCD con Kind">
 <meta property="og:url" content="http://magmax.org/blog/argocd/">
@@ -135,29 +135,29 @@ servirlo sobre HTTPS.</p>
 <p>Lo primero es tener un cluster kubernetes. Se necesita tener <code>kind</code> disponible
 en el path (quizá descargándolo en <code>~/bin</code> o <code>~/.local/bin</code>). Ésta es la
 configuración que he utilizado yo:</p>
-<pre class="code literal-block"># kind.yaml
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-nodes:
-- role: control-plane
-  kubeadmConfigPatches:
-  - |
-    kind: InitConfiguration
-    nodeRegistration:
-      kubeletExtraArgs:
-        node-labels: "ingress-ready=true"
-  extraPortMappings:
-  - containerPort: 80
-    hostPort: 80
-    protocol: TCP
-  - containerPort: 443
-    hostPort: 443
-    protocol: TCP
+<pre class="code literal-block"><span></span><span class="err"># kind.yaml</span>
+<span class="c">kind: Cluster</span>
+<span class="c">apiVersion: kind.x-k8s.io/v1alpha4</span>
+<span class="c">nodes:</span>
+<span class="err">- role: control-plane</span>
+<span class="err">  kubeadmConfigPatches:</span>
+<span class="err">  - |</span>
+<span class="err">    kind: InitConfiguration</span>
+<span class="err">    nodeRegistration:</span>
+<span class="err">      kubeletExtraArgs:</span>
+<span class="err">        node-labels: "ingress-ready=true"</span>
+<span class="err">  extraPortMappings:</span>
+<span class="err">  - containerPort: 80</span>
+<span class="err">    hostPort: 80</span>
+<span class="err">    protocol: TCP</span>
+<span class="err">  - containerPort: 443</span>
+<span class="err">    hostPort: 443</span>
+<span class="err">    protocol: TCP</span>
 </pre>
 
 
 <p>Así que para crear el cluster basta escribir:</p>
-<pre class="code literal-block"><span class="nv">$ </span>kind create cluster --config<span class="o">=</span>kind.yaml 
+<pre class="code literal-block"><span></span>$ kind create cluster --config<span class="o">=</span>kind.yaml 
 </pre>
 
 
@@ -166,7 +166,7 @@ nodes:
 <p>Para añadir ingress al cluster kind, se necsita <a href="https://kind.sigs.k8s.io/docs/user/ingress/">añadir un controlador
 ingress</a>.</p>
 <p>Esto es lo que he hecho yo para instalar el controlador nginx:</p>
-<pre class="code literal-block"><span class="nv">$ </span>kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
+<pre class="code literal-block"><span></span>$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/kind/deploy.yaml
 </pre>
 
 
@@ -175,73 +175,73 @@ ingress</a>.</p>
 <p>Bien... Hagamos las cosas más o menos bien usando certificados autofirmados.
 Será más sencillo de lo que pueda parecer.</p>
 <p>Para instalar cert-manager basta ejecutra:</p>
-<pre class="code literal-block"><span class="nv">$ </span>kubectl apply --validate<span class="o">=</span><span class="nb">false</span> -f https://github.com/jetstack/cert-manager/releases/download/v1.0.2/cert-manager.yaml
+<pre class="code literal-block"><span></span><span class="o">$</span> <span class="n">kubectl</span> <span class="n">apply</span> <span class="o">--</span><span class="n">validate</span><span class="o">=</span><span class="bp">false</span> <span class="o">-</span><span class="n">f</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">jetstack</span><span class="o">/</span><span class="n">cert</span><span class="o">-</span><span class="n">manager</span><span class="o">/</span><span class="n">releases</span><span class="o">/</span><span class="n">download</span><span class="o">/</span><span class="n">v1</span><span class="o">.</span><span class="mf">0.2</span><span class="o">/</span><span class="n">cert</span><span class="o">-</span><span class="n">manager</span><span class="o">.</span><span class="n">yaml</span>
 </pre>
 
 
 <p>Ahora se requiere un issuer. Tengo que crear este archivo:</p>
-<pre class="code literal-block"># cert-issuer.yaml
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: test-selfsigned
-spec:
-  selfSigned: {}
+<pre class="code literal-block"><span></span><span class="err"># cert-issuer.yaml</span>
+<span class="c">apiVersion: cert-manager.io/v1</span>
+<span class="c">kind: ClusterIssuer</span>
+<span class="c">metadata:</span>
+<span class="c">  name: test-selfsigned</span>
+<span class="c">spec:</span>
+<span class="c">  selfSigned: {}</span>
 </pre>
 
 
 <p>Y ejecutar la orden siguiente:</p>
-<pre class="code literal-block"><span class="nv">$ </span>kubectl apply -f cert-issuer.yaml
+<pre class="code literal-block"><span></span>$ kubectl apply -f cert-issuer.yaml
 </pre>
 
 
 <p>Eso es todo.</p>
 <h2 id="argocd">ArgoCD</h2>
 <p>Ahora le toca a ArgoCD:</p>
-<pre class="code literal-block"><span class="nv">$ </span>kubectl create namespace argocd
-<span class="nv">$ </span>kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+<pre class="code literal-block"><span></span>$ kubectl create namespace argocd
+$ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 </pre>
 
 
 <h3 id="enlace-local">Enlace local</h3>
 <p>Lo serviré en <em>argocd.local</em>. Por eso necesito modificar mi <code>/etc/hosts</code> con
 esta línea:</p>
-<pre class="code literal-block">127.0.0.1       localhost argocd.local
+<pre class="code literal-block"><span></span><span class="err">127.0.0.1       localhost argocd.local</span>
 </pre>
 
 
 <h3 id="ingress">Ingress</h3>
 <p>Una vez tenemos la URL, se requiere tener un ingress. Por eso necesito el
 fichero:</p>
-<pre class="code literal-block"># ingress.yaml
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: argocd-server-ingress
-  namespace: argocd
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    cert-manager.io/cluster-issuer: test-selfsigned
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-spec:
-  rules:
-  - http:
-      paths:
-      - backend:
-          serviceName: argocd-server
-          servicePort: https
-    host: argocd.local
-  tls:
-  - secretName: https-cert
-    hosts:                             
-    - argocd.local
+<pre class="code literal-block"><span></span><span class="err"># ingress.yaml</span>
+<span class="c">apiVersion: extensions/v1beta1</span>
+<span class="c">kind: Ingress</span>
+<span class="c">metadata:</span>
+<span class="c">  name: argocd-server-ingress</span>
+<span class="c">  namespace: argocd</span>
+<span class="c">  annotations:</span>
+<span class="c">    kubernetes.io/ingress.class: nginx</span>
+<span class="c">    cert-manager.io/cluster-issuer: test-selfsigned</span>
+<span class="c">    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"</span>
+<span class="c">    nginx.ingress.kubernetes.io/ssl-passthrough: "true"</span>
+<span class="c">    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"</span>
+<span class="c">spec:</span>
+<span class="c">  rules:</span>
+<span class="c">  - http:</span>
+<span class="c">      paths:</span>
+<span class="c">      - backend:</span>
+<span class="c">          serviceName: argocd-server</span>
+<span class="c">          servicePort: https</span>
+<span class="c">    host: argocd.local</span>
+<span class="c">  tls:</span>
+<span class="c">  - secretName: https-cert</span>
+<span class="c">    hosts:                             </span>
+<span class="c">    - argocd.local</span>
 </pre>
 
 
 <p>y ejecutarlo:</p>
-<pre class="code literal-block"><span class="nv">$ </span>kubectl apply -f ingress.yaml
+<pre class="code literal-block"><span></span>$ kubectl apply -f ingress.yaml
 </pre>
 
 
@@ -250,7 +250,7 @@ spec:
 <p>Tan solo abre https://argocd.local para entrar. El usuario es admin y la
 password es el nombre de la instancia docker con el servidor argo, que se puede
 obtener con el comando:</p>
-<pre class="code literal-block"><span class="nv">$ </span>kubectl get pods -n argocd -l app.kubernetes.io/name<span class="o">=</span>argocd-server -o name <span class="p">|</span> cut -d<span class="s1">'/'</span> -f 2
+<pre class="code literal-block"><span></span>$ kubectl get pods -n argocd -l app.kubernetes.io/name<span class="o">=</span>argocd-server -o name <span class="p">|</span> cut -d<span class="s1">'/'</span> -f <span class="m">2</span>
 </pre>
 </div>
           </div>
@@ -272,7 +272,7 @@ obtener con el comando:</p>
               </span>
                       <ul class="pager">
 <li class="previous">
-              <a href="/blog/organizacion/" rel="prev" title="Organización">
+              <a href="/blog/monitorizacion-con-graphite/" rel="prev" title="Monitorización con Graphite">
                 <span class="glyphicon glyphicon-arrow-left"></span>
                 Publicación anterior
               </a>

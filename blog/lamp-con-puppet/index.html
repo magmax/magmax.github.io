@@ -8,7 +8,7 @@ article: https://ogp.me/ns/article#
 <meta name="description" content="Creación de un entorno LAMP (Linux + Apache + MySQL + Php) con puppet en una máquina virtual Vagrant">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>LAMP con Puppet | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -19,8 +19,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/lamp-con-puppet/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="description" itemprop="description" content="Creación de un entorno LAMP (Linux + Apache + MySQL + Php) con puppet en una máquina virtual Vagrant">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/usando-git2/" title="Usando Git(2): varios working copies" type="text/html">
@@ -140,22 +140,22 @@ article: https://ogp.me/ns/article#
 
 <h2 id="jerarquia">Jerarquía</h2>
 <p>Ésta es la jerarquía de archivos que se van a emplear. Así no tendréis que romperos la cabeza más adelante:</p>
-<pre class="code literal-block">.
-├── bootstrap.sh
-├── manifests/
-│   └── site.pp
-├── modules/
-├── puppet.conf
-├── Puppetfile
-├── Puppetfile.lock
-└── Vagrantfile
+<pre class="code literal-block"><span></span><span class="err">.</span>
+<span class="err">├── bootstrap.sh</span>
+<span class="err">├── manifests/</span>
+<span class="err">│   └── site.pp</span>
+<span class="err">├── modules/</span>
+<span class="err">├── puppet.conf</span>
+<span class="err">├── Puppetfile</span>
+<span class="err">├── Puppetfile.lock</span>
+<span class="err">└── Vagrantfile</span>
 </pre>
 
 
 <p>Los directorios son los que tienen la barra al final. Creadlos para evitar problemas posteriores.</p>
 <h2 id="vagrant">Vagrant</h2>
 <p>Lo primero es que no queremos romper nuestra máquina. Así que vamos a usar una máquina virtual. En esta ocasión será una <a href="http://www.debian.org/releases/stable/" title="Debian 7.2 'Wheezy' es la versión estable a día de hoy">Debian Wheezy</a> de 64 bytes. Pero no os aburriré con tonterías:</p>
-<pre class="code literal-block"><span class="c1"># -*- coding:utf-8; tab-width:4; mode:ruby -*-</span>
+<pre class="code literal-block"><span></span><span class="c1"># -*- coding:utf-8; tab-width:4; mode:ruby -*-</span>
 <span class="c1"># vi: set ft=ruby :</span>
 <span class="c1"># filename: Vagrantfile</span>
 
@@ -190,8 +190,8 @@ article: https://ogp.me/ns/article#
 <p>Finalmente rollos de configuración típicos de <a href="http://www.vagrantup.com/" title="Web oficial de Vagrant">Vagrant</a> para que funcione bien con <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a>.</p>
 <h3 id="bootstrap">Bootstrap</h3>
 <p>Mi pequeño script de provisionamiento inicial:</p>
-<pre class="code literal-block"><span class="c">#!/bin/bash</span>
-<span class="c"># filename: bootstrap.sh</span>
+<pre class="code literal-block"><span></span><span class="ch">#!/bin/bash</span>
+<span class="c1"># filename: bootstrap.sh</span>
 
 <span class="k">function</span> install <span class="o">{</span>
         <span class="nv">package</span><span class="o">=</span><span class="nv">$1</span>
@@ -211,41 +211,41 @@ article: https://ogp.me/ns/article#
 
 <span class="k">if</span> <span class="o">[[</span> ! <span class="k">$(</span>grep <span class="s2">"deb http://ftp.es.debian.org/debian unstable main contrib non-free"</span> /etc/apt/sources.list<span class="k">)</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
         <span class="o">(</span>
-                <span class="nb">echo </span>deb http://ftp.es.debian.org/debian unstable main contrib non-free
-                <span class="nb">echo </span>deb http://ftp.es.debian.org/debian testing main contrib non-free
+                <span class="nb">echo</span> deb http://ftp.es.debian.org/debian unstable main contrib non-free
+                <span class="nb">echo</span> deb http://ftp.es.debian.org/debian testing main contrib non-free
         <span class="o">)</span> &gt; /etc/apt/sources.list
 
         apt-get update
 <span class="k">fi</span>
 
-install facter 1.6
-install puppet 3.3
+install facter <span class="m">1</span>.6
+install puppet <span class="m">3</span>.3
 </pre>
 
 
 <p>Básicamente: le meto una configuración de APT fija (así dará igual qué VM hayais elegido) y me aseguro de tener dos cosas instaladas: facter y puppet (en una versión superior a la 3.3). Todo esto ocurrirá en la VM, por lo que no tenéis que temer por vuestras máquinas reales. Estos paquetes me hacen falta para poder ejecutar <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a>, así que en una máquina real tendría que instalarlos a mano.</p>
 <h2 id="puppet">Puppet</h2>
 <p>Vamos con puppet, aunque no estoy seguro de que este archivo haga falta:</p>
-<pre class="code literal-block"><span class="err">#</span><span class="x"> filename: puppet.conf</span>
-<span class="x">[main]</span>
-<span class="x">logdir=/var/log/puppet</span>
-<span class="x">vardir=/var/lib/puppet</span>
-<span class="x">ssldir=/var/lib/puppet/ssl</span>
-<span class="x">rundir=/var/run/puppet</span>
-<span class="x">factpath=</span><span class="p">$</span><span class="nv">vardir</span><span class="x">/lib/facter</span>
-<span class="x">templatedir=</span><span class="p">$</span><span class="nv">confdir</span><span class="x">/templates</span>
-<span class="x">prerun_command=/etc/puppet/etckeeper-commit-pre</span>
-<span class="x">postrun_command=/etc/puppet/etckeeper-commit-post</span>
-<span class="x">modulepath = /etc/puppet/modules:/usr/share/puppet/modules:modules</span>
-<span class="x">storeconfigs = true</span>
+<pre class="code literal-block"><span></span><span class="err">#</span><span class="w"> </span><span class="nl">filename</span><span class="p">:</span><span class="w"> </span><span class="n">puppet</span><span class="p">.</span><span class="n">conf</span><span class="w"></span>
+<span class="o">[</span><span class="n">main</span><span class="o">]</span><span class="w"></span>
+<span class="n">logdir</span><span class="o">=/</span><span class="nf">var</span><span class="o">/</span><span class="nf">log</span><span class="o">/</span><span class="n">puppet</span><span class="w"></span>
+<span class="n">vardir</span><span class="o">=/</span><span class="nf">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">puppet</span><span class="w"></span>
+<span class="n">ssldir</span><span class="o">=/</span><span class="nf">var</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">puppet</span><span class="o">/</span><span class="n">ssl</span><span class="w"></span>
+<span class="n">rundir</span><span class="o">=/</span><span class="nf">var</span><span class="o">/</span><span class="n">run</span><span class="o">/</span><span class="n">puppet</span><span class="w"></span>
+<span class="n">factpath</span><span class="o">=</span><span class="err">$</span><span class="n">vardir</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">facter</span><span class="w"></span>
+<span class="n">templatedir</span><span class="o">=</span><span class="err">$</span><span class="n">confdir</span><span class="o">/</span><span class="n">templates</span><span class="w"></span>
+<span class="n">prerun_command</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">puppet</span><span class="o">/</span><span class="n">etckeeper</span><span class="o">-</span><span class="k">commit</span><span class="o">-</span><span class="n">pre</span><span class="w"></span>
+<span class="n">postrun_command</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">puppet</span><span class="o">/</span><span class="n">etckeeper</span><span class="o">-</span><span class="k">commit</span><span class="o">-</span><span class="n">post</span><span class="w"></span>
+<span class="n">modulepath</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">puppet</span><span class="o">/</span><span class="nl">modules</span><span class="p">:</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">puppet</span><span class="o">/</span><span class="nl">modules</span><span class="p">:</span><span class="n">modules</span><span class="w"></span>
+<span class="n">storeconfigs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span><span class="w"></span>
 
-<span class="x">dbadapter = sqlite3</span>
-<span class="x">dblocation = storeconfigs.sqlite</span>
+<span class="n">dbadapter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sqlite3</span><span class="w"></span>
+<span class="n">dblocation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">storeconfigs</span><span class="p">.</span><span class="n">sqlite</span><span class="w"></span>
 </pre>
 
 
 <p>Y ahora lo que sí hace falta, la configuración de los nodos:</p>
-<pre class="code literal-block"><span class="c1"># filename: site.pp</span>
+<pre class="code literal-block"><span></span><span class="c1"># filename: site.pp</span>
 
 <span class="no">File</span> <span class="p">{</span>
   <span class="n">owner</span> <span class="o">=&gt;</span> <span class="n">root</span><span class="p">,</span>
@@ -291,17 +291,17 @@ install puppet 3.3
 <h3 id="librarian">Librarian</h3>
 <p>Bueno, pero... ¿de dónde saco los módulos de puppet que necesito?</p>
 <p>Para eso está <a href="https://github.com/rodjek/librarian-puppet" title="Proyecto Librarian-Puppet">librarian-puppet</a>, y aquí está su configuración:</p>
-<pre class="code literal-block"># filename: Puppetfile
+<pre class="code literal-block"><span></span><span class="o">#</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Puppetfile</span>
 
-forge "http://forge.puppetlabs.com"
+<span class="n">forge</span> <span class="ss">"http://forge.puppetlabs.com"</span>
 
-mod 'example42/puppi'
-mod 'example42/ntp'
-mod 'example42/git'
-mod 'example42/mysql'
-mod 'example42/apache'
-mod 'example42/logrotate'
-mod 'example42/php'
+<span class="k">mod</span> <span class="s1">'example42/puppi'</span>
+<span class="k">mod</span> <span class="s1">'example42/ntp'</span>
+<span class="k">mod</span> <span class="s1">'example42/git'</span>
+<span class="k">mod</span> <span class="s1">'example42/mysql'</span>
+<span class="k">mod</span> <span class="s1">'example42/apache'</span>
+<span class="k">mod</span> <span class="s1">'example42/logrotate'</span>
+<span class="k">mod</span> <span class="s1">'example42/php'</span>
 </pre>
 
 
@@ -309,20 +309,20 @@ mod 'example42/php'
 <p>También se habrá creado el archivo <em>Puppetfile.lock</em>, que contiene las versiones de los módulos que se instalaron. Si metéis esta configuración en un repositorio (cosa que deberíais hacer si lo vais a usar de verdad), recomiendo subirlo también junto con <em>Puppetfile</em> a pesar de ser generado, para evitar disgustos si éstas cambian. Si os cargáis el directorio <em>modules</em>, <a href="https://github.com/rodjek/librarian-puppet" title="Proyecto Librarian-Puppet">librarian-puppet</a> tratará de reinstalar las versiones que tiene ese archivo.</p>
 <h2 id="al-lio">Al lío</h2>
 <p>Pues ya lo tenemos todo. Ahora viene lo mejor. Queremos lanzar la máquina virtual y que se configure sola, pero no tenemos los módulos de <a href="http://puppetlabs.com/" title="Web oficial de Puppet">Puppet</a>. Así que lo primero es traérselos:</p>
-<pre class="code literal-block"><span class="nv">$ </span>librarian-puppet install
+<pre class="code literal-block"><span></span>$ librarian-puppet install
 </pre>
 
 
 <p>Y con eso ya está todo. Podréis verlos en el directorio <em>modules</em>. Y ahora la magia: Descargamos, instalamos, proveemos y levantamos la máquina virtual:</p>
-<pre class="code literal-block"><span class="nv">$ </span>vagrant up example
+<pre class="code literal-block"><span></span>$ vagrant up example
 </pre>
 
 
 <p>Y podéis conectaros a <a href="http://localhost:9090/example">http://localhost:9090/example</a>, donde os está esperando la lista de tablas de la base de datos <em>mysql</em>, servida con PHP.</p>
 <p>También podéis entrar en vuestra VM con:</p>
-<pre class="code literal-block"><span class="nv">$ </span>vagrant ssh example
-example <span class="nv">$ </span>sudo su
-example <span class="c">#</span>
+<pre class="code literal-block"><span></span>$ vagrant ssh example
+example $ sudo su
+example <span class="c1">#</span>
 </pre>
 
 

@@ -8,7 +8,7 @@ article: https://ogp.me/ns/article#
 <meta name="description" content="Veremos cómo utilizar Selenium para automatizar pruebas de calidad, usando Python y Java.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Selenium y QA Automation | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -19,8 +19,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/selenium-y-qa-automation/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="description" itemprop="description" content="Veremos cómo utilizar Selenium para automatizar pruebas de calidad, usando Python y Java.">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/why-python-rocks/" title="Why Python rocks" type="text/html">
@@ -196,15 +196,15 @@ article: https://ogp.me/ns/article#
 <p># Al lío #</p>
 <p>Pues ya sabemos lo que hay, así que vamos a hacer alguna cosa. Crearemos un script que se puede ejecutar en modo <em>Hub</em> o servidor. Por simplicidad, aquí contaremos cómo usar el modo servidor.</p>
 <p>Lo primero es arrancar un servidor de selenium. Para ello, nos bajamos de la web la última versión y ejecutamos:</p>
-<pre class="code bash"><a name="rest_code_0b8fcfe4b48c456680802021914d1682-1"></a><span class="nv">$ </span>java -jar selenium-server-standalone-2.30.0.jar
-<a name="rest_code_0b8fcfe4b48c456680802021914d1682-2"></a><span class="o">[</span>...<span class="o">]</span>
-<a name="rest_code_0b8fcfe4b48c456680802021914d1682-3"></a>08:55:15.446 INFO - Started SocketListener on 0.0.0.0:4444
-<a name="rest_code_0b8fcfe4b48c456680802021914d1682-4"></a><span class="o">[</span>...<span class="o">]</span>
+<pre class="code bash"><a name="rest_code_d6167937ac254458bd970f972be7e4b6-1"></a>$ java -jar selenium-server-standalone-2.30.0.jar
+<a name="rest_code_d6167937ac254458bd970f972be7e4b6-2"></a><span class="o">[</span>...<span class="o">]</span>
+<a name="rest_code_d6167937ac254458bd970f972be7e4b6-3"></a><span class="m">08</span>:55:15.446 INFO - Started SocketListener on <span class="m">0</span>.0.0.0:4444
+<a name="rest_code_d6167937ac254458bd970f972be7e4b6-4"></a><span class="o">[</span>...<span class="o">]</span>
 </pre>
 <p>Y ahí se queda funcionando. He copiado una de las líneas de la salida para que veáis dónde estará escuchando: en <em>localhost</em>, usando el puerto 4444.</p>
 <p>Ahora necesitamos algo que probar... Lo más sencillo es levantar un servidor en nuestra máquina y así podremos navegar por los directorios. Y hacer esto con python es muy sencillo. Los que no tengáis Python instalado, podéis usar cualquier web como ejemplo:</p>
-<pre class="code bash"><a name="rest_code_997dd44c710a47daa13af437eff82bc9-1"></a><span class="nv">$ </span>python -m SimpleHTTPServer
-<a name="rest_code_997dd44c710a47daa13af437eff82bc9-2"></a>Serving HTTP on 0.0.0.0 port <span class="m">8000</span> ...
+<pre class="code bash"><a name="rest_code_056dd7370a534c6cb55ddefc8645ef90-1"></a>$ python -m SimpleHTTPServer
+<a name="rest_code_056dd7370a534c6cb55ddefc8645ef90-2"></a>Serving HTTP on <span class="m">0</span>.0.0.0 port <span class="m">8000</span> ...
 </pre>
 <p>Ale, ya tenemos un servidor sirviendo algo que podemos probar. Espero que lo hayáis ejecutado en algún directorio que tenga algún fichero XD</p>
 </div>
@@ -213,114 +213,114 @@ article: https://ogp.me/ns/article#
 <p>Vamos a hacer un script que abra un Chrome y que compruebe algo básico de la página: el título:</p>
 <div class="section" id="java">
 <h4>Java</h4>
-<pre class="code java"><a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-1"></a><span class="kn">package</span> <span class="nn">org.magmax.selenium</span><span class="o">;</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-2"></a>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-3"></a><span class="kn">import</span> <span class="nn">java.net.MalformedURLException</span><span class="o">;</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-4"></a><span class="kn">import</span> <span class="nn">java.net.URL</span><span class="o">;</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-5"></a><span class="kn">import</span> <span class="nn">java.util.HashMap</span><span class="o">;</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-6"></a><span class="kn">import</span> <span class="nn">java.util.Map</span><span class="o">;</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-7"></a>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-8"></a><span class="kn">import</span> <span class="nn">org.openqa.selenium.Capabilities</span><span class="o">;</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-9"></a><span class="kn">import</span> <span class="nn">org.openqa.selenium.firefox.FirefoxDriver</span><span class="o">;</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-10"></a><span class="kn">import</span> <span class="nn">org.openqa.selenium.remote.DesiredCapabilities</span><span class="o">;</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-11"></a><span class="kn">import</span> <span class="nn">org.openqa.selenium.remote.RemoteWebDriver</span><span class="o">;</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-12"></a>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-13"></a>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-14"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">App</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-15"></a><span class="o">{</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-16"></a>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span> <span class="n">String</span><span class="o">[]</span> <span class="n">args</span> <span class="o">)</span> <span class="kd">throws</span> <span class="n">MalformedURLException</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-17"></a>    <span class="o">{</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-18"></a>      <span class="cm">/*</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-19"></a><span class="cm">      URL url = new URL("http://localhost:4444/wd/hub");</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-20"></a><span class="cm">      Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;();</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-21"></a><span class="cm">      map.put("browserName", "firefox");</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-22"></a><span class="cm">      Capabilities capabilities = new DesiredCapabilities(map);</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-23"></a><span class="cm">      RemoteWebDriver driver = new RemoteWebDriver(url, capabilities );</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-24"></a><span class="cm">       */</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-25"></a>      <span class="n">FirefoxDriver</span> <span class="n">driver</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FirefoxDriver</span><span class="o">();</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-26"></a>      <span class="k">try</span> <span class="o">{</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-27"></a>        <span class="n">driver</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"http://localhost:8000"</span><span class="o">);</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-28"></a>        <span class="k">if</span> <span class="o">(!</span><span class="n">driver</span><span class="o">.</span><span class="na">getTitle</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="s">"Directory listing for /"</span><span class="o">))</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-29"></a>          <span class="k">throw</span> <span class="k">new</span> <span class="n">AssertionError</span><span class="o">(</span><span class="s">"The title do not match"</span><span class="o">);</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-30"></a>        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Everything OK"</span><span class="o">);</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-31"></a>      <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-32"></a>        <span class="n">driver</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-33"></a>      <span class="o">}</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-34"></a>    <span class="o">}</span>
-<a name="rest_code_6325aea8796f4b968406bfb9fb7127b8-35"></a><span class="o">}</span>
+<pre class="code java"><a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-1"></a><span class="kn">package</span> <span class="nn">org.magmax.selenium</span><span class="p">;</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-2"></a>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-3"></a><span class="kn">import</span> <span class="nn">java.net.MalformedURLException</span><span class="p">;</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-4"></a><span class="kn">import</span> <span class="nn">java.net.URL</span><span class="p">;</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-5"></a><span class="kn">import</span> <span class="nn">java.util.HashMap</span><span class="p">;</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-6"></a><span class="kn">import</span> <span class="nn">java.util.Map</span><span class="p">;</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-7"></a>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-8"></a><span class="kn">import</span> <span class="nn">org.openqa.selenium.Capabilities</span><span class="p">;</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-9"></a><span class="kn">import</span> <span class="nn">org.openqa.selenium.firefox.FirefoxDriver</span><span class="p">;</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-10"></a><span class="kn">import</span> <span class="nn">org.openqa.selenium.remote.DesiredCapabilities</span><span class="p">;</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-11"></a><span class="kn">import</span> <span class="nn">org.openqa.selenium.remote.RemoteWebDriver</span><span class="p">;</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-12"></a>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-13"></a>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-14"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">App</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-15"></a><span class="p">{</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-16"></a>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(</span> <span class="n">String</span><span class="o">[]</span> <span class="n">args</span> <span class="p">)</span> <span class="kd">throws</span> <span class="n">MalformedURLException</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-17"></a>    <span class="p">{</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-18"></a>      <span class="cm">/*</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-19"></a><span class="cm">      URL url = new URL("http://localhost:4444/wd/hub");</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-20"></a><span class="cm">      Map&lt;String, String&gt; map = new HashMap&lt;String, String&gt;();</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-21"></a><span class="cm">      map.put("browserName", "firefox");</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-22"></a><span class="cm">      Capabilities capabilities = new DesiredCapabilities(map);</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-23"></a><span class="cm">      RemoteWebDriver driver = new RemoteWebDriver(url, capabilities );</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-24"></a><span class="cm">       */</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-25"></a>      <span class="n">FirefoxDriver</span> <span class="n">driver</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FirefoxDriver</span><span class="p">();</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-26"></a>      <span class="k">try</span> <span class="p">{</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-27"></a>        <span class="n">driver</span><span class="p">.</span><span class="na">get</span><span class="p">(</span><span class="s">"http://localhost:8000"</span><span class="p">);</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-28"></a>        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">driver</span><span class="p">.</span><span class="na">getTitle</span><span class="p">().</span><span class="na">equals</span><span class="p">(</span><span class="s">"Directory listing for /"</span><span class="p">))</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-29"></a>          <span class="k">throw</span> <span class="k">new</span> <span class="n">AssertionError</span><span class="p">(</span><span class="s">"The title do not match"</span><span class="p">);</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-30"></a>        <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">"Everything OK"</span><span class="p">);</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-31"></a>      <span class="p">}</span> <span class="k">finally</span> <span class="p">{</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-32"></a>        <span class="n">driver</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-33"></a>      <span class="p">}</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-34"></a>    <span class="p">}</span>
+<a name="rest_code_6349860e0e3640fc87e4fb232eee90a5-35"></a><span class="p">}</span>
 </pre>
 <p>Y el POM si usáis Maven:</p>
-<pre class="code xml"><a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-1"></a><span class="nt">&lt;project</span> <span class="na">xmlns=</span><span class="s">"http://maven.apache.org/POM/4.0.0"</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-2"></a>  <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-3"></a>  <span class="na">xsi:schemaLocation=</span><span class="s">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="nt">&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-4"></a>  <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-5"></a>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-6"></a>  <span class="nt">&lt;groupId&gt;</span>org.magmax<span class="nt">&lt;/groupId&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-7"></a>  <span class="nt">&lt;artifactId&gt;</span>selenium<span class="nt">&lt;/artifactId&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-8"></a>  <span class="nt">&lt;version&gt;</span>0.0.1-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-9"></a>  <span class="nt">&lt;packaging&gt;</span>jar<span class="nt">&lt;/packaging&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-10"></a>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-11"></a>  <span class="nt">&lt;name&gt;</span>selenium<span class="nt">&lt;/name&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-12"></a>  <span class="nt">&lt;url&gt;</span>http://maven.apache.org<span class="nt">&lt;/url&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-13"></a>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-14"></a>  <span class="nt">&lt;properties&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-15"></a>    <span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-16"></a>  <span class="nt">&lt;/properties&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-17"></a>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-18"></a>  <span class="nt">&lt;build&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-19"></a>    <span class="nt">&lt;plugins&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-20"></a>      <span class="nt">&lt;plugin&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-21"></a>        <span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-22"></a>        <span class="nt">&lt;artifactId&gt;</span>maven-jar-plugin<span class="nt">&lt;/artifactId&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-23"></a>        <span class="nt">&lt;configuration&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-24"></a>          <span class="nt">&lt;archive&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-25"></a>            <span class="nt">&lt;manifest&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-26"></a>              <span class="nt">&lt;mainClass&gt;</span>org.magmax.selenium.Main<span class="nt">&lt;/mainClass&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-27"></a>            <span class="nt">&lt;/manifest&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-28"></a>          <span class="nt">&lt;/archive&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-29"></a>        <span class="nt">&lt;/configuration&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-30"></a>      <span class="nt">&lt;/plugin&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-31"></a>    <span class="nt">&lt;/plugins&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-32"></a>  <span class="nt">&lt;/build&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-33"></a>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-34"></a>  <span class="nt">&lt;dependencies&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-35"></a>    <span class="nt">&lt;dependency&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-36"></a>      <span class="nt">&lt;groupId&gt;</span>junit<span class="nt">&lt;/groupId&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-37"></a>      <span class="nt">&lt;artifactId&gt;</span>junit<span class="nt">&lt;/artifactId&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-38"></a>      <span class="nt">&lt;version&gt;</span>4.11<span class="nt">&lt;/version&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-39"></a>        <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-40"></a>      <span class="nt">&lt;/dependency&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-41"></a>    <span class="nt">&lt;dependency&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-42"></a>        <span class="nt">&lt;groupId&gt;</span>org.seleniumhq.selenium<span class="nt">&lt;/groupId&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-43"></a>        <span class="nt">&lt;artifactId&gt;</span>selenium-java<span class="nt">&lt;/artifactId&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-44"></a>        <span class="nt">&lt;version&gt;</span>2.31.0<span class="nt">&lt;/version&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-45"></a>    <span class="nt">&lt;/dependency&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-46"></a>    <span class="nt">&lt;dependency&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-47"></a>      <span class="nt">&lt;groupId&gt;</span>org.seleniumhq.selenium<span class="nt">&lt;/groupId&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-48"></a>      <span class="nt">&lt;artifactId&gt;</span>selenium-chrome-driver<span class="nt">&lt;/artifactId&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-49"></a>      <span class="nt">&lt;version&gt;</span>2.31.0<span class="nt">&lt;/version&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-50"></a>    <span class="nt">&lt;/dependency&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-51"></a>  <span class="nt">&lt;/dependencies&gt;</span>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-52"></a>
-<a name="rest_code_3c5b35ea74f84fc2803f8770a815efb3-53"></a><span class="nt">&lt;/project&gt;</span>
+<pre class="code xml"><a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-1"></a><span class="nt">&lt;project</span> <span class="na">xmlns=</span><span class="s">"http://maven.apache.org/POM/4.0.0"</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-2"></a>  <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-3"></a>  <span class="na">xsi:schemaLocation=</span><span class="s">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="nt">&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-4"></a>  <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-5"></a>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-6"></a>  <span class="nt">&lt;groupId&gt;</span>org.magmax<span class="nt">&lt;/groupId&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-7"></a>  <span class="nt">&lt;artifactId&gt;</span>selenium<span class="nt">&lt;/artifactId&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-8"></a>  <span class="nt">&lt;version&gt;</span>0.0.1-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-9"></a>  <span class="nt">&lt;packaging&gt;</span>jar<span class="nt">&lt;/packaging&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-10"></a>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-11"></a>  <span class="nt">&lt;name&gt;</span>selenium<span class="nt">&lt;/name&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-12"></a>  <span class="nt">&lt;url&gt;</span>http://maven.apache.org<span class="nt">&lt;/url&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-13"></a>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-14"></a>  <span class="nt">&lt;properties&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-15"></a>    <span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-16"></a>  <span class="nt">&lt;/properties&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-17"></a>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-18"></a>  <span class="nt">&lt;build&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-19"></a>    <span class="nt">&lt;plugins&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-20"></a>      <span class="nt">&lt;plugin&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-21"></a>        <span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-22"></a>        <span class="nt">&lt;artifactId&gt;</span>maven-jar-plugin<span class="nt">&lt;/artifactId&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-23"></a>        <span class="nt">&lt;configuration&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-24"></a>          <span class="nt">&lt;archive&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-25"></a>            <span class="nt">&lt;manifest&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-26"></a>              <span class="nt">&lt;mainClass&gt;</span>org.magmax.selenium.Main<span class="nt">&lt;/mainClass&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-27"></a>            <span class="nt">&lt;/manifest&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-28"></a>          <span class="nt">&lt;/archive&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-29"></a>        <span class="nt">&lt;/configuration&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-30"></a>      <span class="nt">&lt;/plugin&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-31"></a>    <span class="nt">&lt;/plugins&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-32"></a>  <span class="nt">&lt;/build&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-33"></a>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-34"></a>  <span class="nt">&lt;dependencies&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-35"></a>    <span class="nt">&lt;dependency&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-36"></a>      <span class="nt">&lt;groupId&gt;</span>junit<span class="nt">&lt;/groupId&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-37"></a>      <span class="nt">&lt;artifactId&gt;</span>junit<span class="nt">&lt;/artifactId&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-38"></a>      <span class="nt">&lt;version&gt;</span>4.11<span class="nt">&lt;/version&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-39"></a>        <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-40"></a>      <span class="nt">&lt;/dependency&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-41"></a>    <span class="nt">&lt;dependency&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-42"></a>        <span class="nt">&lt;groupId&gt;</span>org.seleniumhq.selenium<span class="nt">&lt;/groupId&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-43"></a>        <span class="nt">&lt;artifactId&gt;</span>selenium-java<span class="nt">&lt;/artifactId&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-44"></a>        <span class="nt">&lt;version&gt;</span>2.31.0<span class="nt">&lt;/version&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-45"></a>    <span class="nt">&lt;/dependency&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-46"></a>    <span class="nt">&lt;dependency&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-47"></a>      <span class="nt">&lt;groupId&gt;</span>org.seleniumhq.selenium<span class="nt">&lt;/groupId&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-48"></a>      <span class="nt">&lt;artifactId&gt;</span>selenium-chrome-driver<span class="nt">&lt;/artifactId&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-49"></a>      <span class="nt">&lt;version&gt;</span>2.31.0<span class="nt">&lt;/version&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-50"></a>    <span class="nt">&lt;/dependency&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-51"></a>  <span class="nt">&lt;/dependencies&gt;</span>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-52"></a>
+<a name="rest_code_429bfbaafd2c4653ba9b91b888270fb1-53"></a><span class="nt">&lt;/project&gt;</span>
 </pre>
 <p><strong>NOTA</strong>: El código que quería mostraros es el comentado. De esa manera sólo dependíamos de una cadena para seleccionar el Browser a utilizar, sin embargo no he conseguido hacer que funcione. Si alguien sabe por qué, le estaría muy agradecido.</p>
 </div>
 <div class="section" id="python">
 <h4>Python</h4>
 <p>En python necesitaremos instalar python-selenium, que es paquete Debian.</p>
-<pre class="code python"><a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-1"></a><span class="c">#!/usr/bin/env python</span>
-<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-2"></a>
-<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-3"></a><span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>
-<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-4"></a><span class="kn">from</span> <span class="nn">selenium.common.exceptions</span> <span class="kn">import</span> <span class="n">NoSuchElementException</span>
-<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-5"></a>
-<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-6"></a><span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Remote</span><span class="p">(</span><span class="s">'http://localhost:4444/wd/hub'</span><span class="p">,</span> <span class="p">{</span><span class="s">'browserName'</span><span class="p">:</span> <span class="s">'firefox'</span><span class="p">})</span>
-<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-7"></a><span class="k">try</span><span class="p">:</span>
-<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-8"></a>    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'http://localhost:8000'</span><span class="p">)</span>
-<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-9"></a>    <span class="k">assert</span> <span class="n">driver</span><span class="o">.</span><span class="n">title</span> <span class="o">==</span> <span class="s">"Directory listing for /"</span>
-<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-10"></a>    <span class="k">print</span> <span class="s">'Everything ok'</span>
-<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-11"></a><span class="k">finally</span><span class="p">:</span>
-<a name="rest_code_fa5ad00777f74954b2ec6a960fbb9581-12"></a>    <span class="n">driver</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_3cef45e4f9104c64925aea1759280519-1"></a><span class="ch">#!/usr/bin/env python</span>
+<a name="rest_code_3cef45e4f9104c64925aea1759280519-2"></a>
+<a name="rest_code_3cef45e4f9104c64925aea1759280519-3"></a><span class="kn">from</span> <span class="nn">selenium</span> <span class="kn">import</span> <span class="n">webdriver</span>
+<a name="rest_code_3cef45e4f9104c64925aea1759280519-4"></a><span class="kn">from</span> <span class="nn">selenium.common.exceptions</span> <span class="kn">import</span> <span class="n">NoSuchElementException</span>
+<a name="rest_code_3cef45e4f9104c64925aea1759280519-5"></a>
+<a name="rest_code_3cef45e4f9104c64925aea1759280519-6"></a><span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="o">.</span><span class="n">Remote</span><span class="p">(</span><span class="s1">'http://localhost:4444/wd/hub'</span><span class="p">,</span> <span class="p">{</span><span class="s1">'browserName'</span><span class="p">:</span> <span class="s1">'firefox'</span><span class="p">})</span>
+<a name="rest_code_3cef45e4f9104c64925aea1759280519-7"></a><span class="k">try</span><span class="p">:</span>
+<a name="rest_code_3cef45e4f9104c64925aea1759280519-8"></a>    <span class="n">driver</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'http://localhost:8000'</span><span class="p">)</span>
+<a name="rest_code_3cef45e4f9104c64925aea1759280519-9"></a>    <span class="k">assert</span> <span class="n">driver</span><span class="o">.</span><span class="n">title</span> <span class="o">==</span> <span class="s2">"Directory listing for /"</span>
+<a name="rest_code_3cef45e4f9104c64925aea1759280519-10"></a>    <span class="nb">print</span> <span class="s1">'Everything ok'</span>
+<a name="rest_code_3cef45e4f9104c64925aea1759280519-11"></a><span class="k">finally</span><span class="p">:</span>
+<a name="rest_code_3cef45e4f9104c64925aea1759280519-12"></a>    <span class="n">driver</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre>
 <p>Y ya está.</p>
 </div>

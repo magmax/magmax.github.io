@@ -7,7 +7,7 @@ article: https://ogp.me/ns/article#
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Integración contínua: BuildBot | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,8 +18,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/buildbot/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/jenkins/" title="Integración continua: Jenkins" type="text/html">
 <link rel="next" href="/blog/mea-culpa/" title="Entonando el 'Mea Culpa" type="text/html">
@@ -137,7 +137,7 @@ No es la única alternativa, pero yo sólo he trasteado con Jenki">
 <h3 id="creando-el-esclavo">Creando el esclavo</h3>
 <p>Comienzo por el esclavo porque no vamos a configurar nada, así que bastará con ejecutar:</p>
 <p>.. code:: bash</p>
-<pre class="code literal-block"><span class="nv">$ </span>buildslave create-slave -r ./example-slave localhost example-slave pass
+<pre class="code literal-block"><span></span>$ buildslave create-slave -r ./example-slave localhost example-slave pass
 mkdir ./example-slave
 chdir ./example-slave
 mkdir ./example-slave/info
@@ -146,7 +146,7 @@ Creating info/host, you need to edit it appropriately
 Not creating info/access_uri - add it <span class="k">if</span> you wish
 Please edit the files in ./example-slave/info appropriately.
 buildslave configured in ./example-slave
-<span class="err">$</span>
+$
 </pre>
 
 
@@ -156,48 +156,48 @@ buildslave configured in ./example-slave
 <h3 id="creando-el-maestro">Creando el maestro</h3>
 <p>De manera similar al esclavo, podemos crear el maestro:</p>
 <p>.. code:: bash</p>
-<pre class="code literal-block"><span class="nv">$ </span>buildbot create-master -r example-master
+<pre class="code literal-block"><span></span>$ buildbot create-master -r example-master
 mkdir ./example-master
 creating master.cfg.sample
 populating public_html/
 creating database <span class="o">(</span>sqlite:///state.sqlite<span class="o">)</span>
 buildmaster configured in ./example-master
-<span class="err">$</span>
+$
 </pre>
 
 
 <p>Como podeis observar ahora tardará un poco más, ya que tiene que crear e inicializar la base de datos. Por defecto utilizará <strong>sqlite</strong>, pero podemos configurarlo contra un <strong>mysql</strong>. Para el ejemplo, <strong>sqlite</strong> será suficiente.</p>
 <p>Veamos lo que nos ha creado aquí:</p>
 <p>.. code:: text</p>
-<pre class="code literal-block">.
-├── buildbot.tac
-├── master.cfg.sample
-├── public_html
-│   ├── bg_gradient.jpg
-│   ├── default.css
-│   ├── favicon.ico
-│   └── robots.txt
-└── state.sqlite
+<pre class="code literal-block"><span></span><span class="err">.</span>
+<span class="err">├── buildbot.tac</span>
+<span class="err">├── master.cfg.sample</span>
+<span class="err">├── public_html</span>
+<span class="err">│   ├── bg_gradient.jpg</span>
+<span class="err">│   ├── default.css</span>
+<span class="err">│   ├── favicon.ico</span>
+<span class="err">│   └── robots.txt</span>
+<span class="err">└── state.sqlite</span>
 </pre>
 
 
 <p>Lo primero es mover el archivo "<code>master.cfg.sample</code>" a "<code>master.cfg</code>". Éste será nuestra plantilla a modificar.</p>
 <p>¿Qué tendríamos que guardar en un sistema de control de versiones? Pues basta con guardar <code>buildbot.tac</code> y <code>master.cfg</code>. Nada más. El resto de los archivos podemos volver a obtenerlos con la orden (fijáos que lo ejecuto desde dentro del directorio creado):</p>
 <p>.. code:: bash</p>
-<pre class="code literal-block">example-master$ buildbot upgrade-master
-checking for running master
-checking master.cfg
-upgrading basedir
-populating public_html/
-populating ./public_html/favicon.ico
-populating ./public_html/robots.txt
-populating ./public_html/bg_gradient.jpg
-populating ./public_html/default.css
-populating ./master.cfg.sample
-upgrading database (sqlite:///state.sqlite)
+<pre class="code literal-block"><span></span><span class="n">example</span><span class="o">-</span><span class="n">master$</span> <span class="n">buildbot</span> <span class="n">upgrade</span><span class="o">-</span><span class="n">master</span>
+<span class="n">checking</span> <span class="k">for</span> <span class="n">running</span> <span class="n">master</span>
+<span class="n">checking</span> <span class="n">master</span><span class="p">.</span><span class="n">cfg</span>
+<span class="n">upgrading</span> <span class="n">basedir</span>
+<span class="n">populating</span> <span class="n">public_html</span><span class="o">/</span>
+<span class="n">populating</span> <span class="p">.</span><span class="o">/</span><span class="n">public_html</span><span class="o">/</span><span class="n">favicon</span><span class="p">.</span><span class="n">ico</span>
+<span class="n">populating</span> <span class="p">.</span><span class="o">/</span><span class="n">public_html</span><span class="o">/</span><span class="n">robots</span><span class="p">.</span><span class="n">txt</span>
+<span class="n">populating</span> <span class="p">.</span><span class="o">/</span><span class="n">public_html</span><span class="o">/</span><span class="n">bg_gradient</span><span class="p">.</span><span class="n">jpg</span>
+<span class="n">populating</span> <span class="p">.</span><span class="o">/</span><span class="n">public_html</span><span class="o">/</span><span class="k">default</span><span class="p">.</span><span class="n">css</span>
+<span class="n">populating</span> <span class="p">.</span><span class="o">/</span><span class="n">master</span><span class="p">.</span><span class="n">cfg</span><span class="p">.</span><span class="n">sample</span>
+<span class="n">upgrading</span> <span class="k">database</span> <span class="p">(</span><span class="n">sqlite</span><span class="p">:</span><span class="o">///</span><span class="k">state</span><span class="p">.</span><span class="n">sqlite</span><span class="p">)</span>
 
-upgrade complete
-example-master$
+<span class="n">upgrade</span> <span class="n">complete</span>
+<span class="n">example</span><span class="o">-</span><span class="n">master$</span>
 </pre>
 
 
@@ -208,132 +208,132 @@ example-master$
 <p>Sí, es python. Pero para hacer lo básico no es necesario saber python, sino seguir los consejos de los comentarios. La ventaja de utilizar python es que ofrece mucha versatilidad.</p>
 <p>Por defecto trae configurado el proyecto <em>pyFlakes</em>, que vamos a cambiar por <strong>pyDoubles</strong>. Veremos que no es tan complejo. Voy a pegar todo el archivo, pero si lo comparáis, veréis que sólo han cambiado las secciones "<em>ChangeSources</em>", "<em>Builders</em>" y "<em>Project Identity</em> "</p>
 <p>.. code:: python</p>
-<pre class="code literal-block"><span class="c"># -*- python -*-</span>
-<span class="c"># ex: set syntax=python:</span>
+<pre class="code literal-block"><span></span><span class="c1"># -*- python -*-</span>
+<span class="c1"># ex: set syntax=python:</span>
 
-<span class="c"># This is a sample buildmaster config file. It must be installed as</span>
-<span class="c"># 'master.cfg' in your buildmaster's base directory.</span>
+<span class="c1"># This is a sample buildmaster config file. It must be installed as</span>
+<span class="c1"># 'master.cfg' in your buildmaster's base directory.</span>
 
-<span class="c"># This is the dictionary that the buildmaster pays attention to. We also use</span>
-<span class="c"># a shorter alias to save typing.</span>
+<span class="c1"># This is the dictionary that the buildmaster pays attention to. We also use</span>
+<span class="c1"># a shorter alias to save typing.</span>
 <span class="n">c</span> <span class="o">=</span> <span class="n">BuildmasterConfig</span> <span class="o">=</span> <span class="p">{}</span>
 
-<span class="c">####### BUILDSLAVES</span>
+<span class="c1">####### BUILDSLAVES</span>
 
-<span class="c"># The 'slaves' list defines the set of recognized buildslaves. Each element is</span>
-<span class="c"># a BuildSlave object, specifying a unique slave name and password.  The same</span>
-<span class="c"># slave name and password must be configured on the slave.</span>
+<span class="c1"># The 'slaves' list defines the set of recognized buildslaves. Each element is</span>
+<span class="c1"># a BuildSlave object, specifying a unique slave name and password.  The same</span>
+<span class="c1"># slave name and password must be configured on the slave.</span>
 <span class="kn">from</span> <span class="nn">buildbot.buildslave</span> <span class="kn">import</span> <span class="n">BuildSlave</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'slaves'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">BuildSlave</span><span class="p">(</span><span class="s">"example-slave"</span><span class="p">,</span> <span class="s">"pass"</span><span class="p">)]</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'slaves'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">BuildSlave</span><span class="p">(</span><span class="s2">"example-slave"</span><span class="p">,</span> <span class="s2">"pass"</span><span class="p">)]</span>
 
-<span class="c"># 'slavePortnum' defines the TCP port to listen on for connections from slaves.</span>
-<span class="c"># This must match the value configured into the buildslaves (with their</span>
-<span class="c"># --master option)</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'slavePortnum'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">9989</span>
+<span class="c1"># 'slavePortnum' defines the TCP port to listen on for connections from slaves.</span>
+<span class="c1"># This must match the value configured into the buildslaves (with their</span>
+<span class="c1"># --master option)</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'slavePortnum'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">9989</span>
 
-<span class="c">####### CHANGESOURCES</span>
+<span class="c1">####### CHANGESOURCES</span>
 
-<span class="c"># the 'change_source' setting tells the buildmaster how it should find out</span>
-<span class="c"># about source code changes.  Here we point to the buildbot clone of pyflakes.</span>
+<span class="c1"># the 'change_source' setting tells the buildmaster how it should find out</span>
+<span class="c1"># about source code changes.  Here we point to the buildbot clone of pyflakes.</span>
 
 <span class="kn">from</span> <span class="nn">buildbot.changes.gitpoller</span> <span class="kn">import</span> <span class="n">GitPoller</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'change_source'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="c">#c['change_source'].append(GitPoller(</span>
-<span class="c">#        'git://github.com/buildbot/pyflakes.git',</span>
-<span class="c">#        workdir='gitpoller-workdir', branch='master',</span>
-<span class="c">#        pollinterval=300))</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'change_source'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1">#c['change_source'].append(GitPoller(</span>
+<span class="c1">#        'git://github.com/buildbot/pyflakes.git',</span>
+<span class="c1">#        workdir='gitpoller-workdir', branch='master',</span>
+<span class="c1">#        pollinterval=300))</span>
 
-<span class="c">####### SCHEDULERS</span>
+<span class="c1">####### SCHEDULERS</span>
 
-<span class="c"># Configure the Schedulers, which decide how to react to incoming changes.  In this</span>
-<span class="c"># case, just kick off a 'runtests' build</span>
+<span class="c1"># Configure the Schedulers, which decide how to react to incoming changes.  In this</span>
+<span class="c1"># case, just kick off a 'runtests' build</span>
 
 <span class="kn">from</span> <span class="nn">buildbot.schedulers.basic</span> <span class="kn">import</span> <span class="n">SingleBranchScheduler</span>
 <span class="kn">from</span> <span class="nn">buildbot.schedulers.forcesched</span> <span class="kn">import</span> <span class="n">ForceScheduler</span>
 <span class="kn">from</span> <span class="nn">buildbot.changes</span> <span class="kn">import</span> <span class="nb">filter</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'schedulers'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'schedulers'</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleBranchScheduler</span><span class="p">(</span>
-                            <span class="n">name</span><span class="o">=</span><span class="s">"all"</span><span class="p">,</span>
-                            <span class="n">change_filter</span><span class="o">=</span><span class="nb">filter</span><span class="o">.</span><span class="n">ChangeFilter</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="s">'master'</span><span class="p">),</span>
-                            <span class="n">treeStableTimer</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                            <span class="n">builderNames</span><span class="o">=</span><span class="p">[</span><span class="s">"runtests"</span><span class="p">]))</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'schedulers'</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ForceScheduler</span><span class="p">(</span>
-                            <span class="n">name</span><span class="o">=</span><span class="s">"force"</span><span class="p">,</span>
-                            <span class="n">builderNames</span><span class="o">=</span><span class="p">[</span><span class="s">"runtests"</span><span class="p">]))</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'schedulers'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'schedulers'</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleBranchScheduler</span><span class="p">(</span>
+                            <span class="n">name</span><span class="o">=</span><span class="s2">"all"</span><span class="p">,</span>
+                            <span class="n">change_filter</span><span class="o">=</span><span class="nb">filter</span><span class="o">.</span><span class="n">ChangeFilter</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="s1">'master'</span><span class="p">),</span>
+                            <span class="n">treeStableTimer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">builderNames</span><span class="o">=</span><span class="p">[</span><span class="s2">"runtests"</span><span class="p">]))</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'schedulers'</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ForceScheduler</span><span class="p">(</span>
+                            <span class="n">name</span><span class="o">=</span><span class="s2">"force"</span><span class="p">,</span>
+                            <span class="n">builderNames</span><span class="o">=</span><span class="p">[</span><span class="s2">"runtests"</span><span class="p">]))</span>
 
-<span class="c">####### BUILDERS</span>
+<span class="c1">####### BUILDERS</span>
 
-<span class="c"># The 'builders' list defines the Builders, which tell Buildbot how to perform a build:</span>
-<span class="c"># what steps, and which slaves can execute them.  Note that any particular build will</span>
-<span class="c"># only take place on one slave.</span>
+<span class="c1"># The 'builders' list defines the Builders, which tell Buildbot how to perform a build:</span>
+<span class="c1"># what steps, and which slaves can execute them.  Note that any particular build will</span>
+<span class="c1"># only take place on one slave.</span>
 
 <span class="kn">from</span> <span class="nn">buildbot.process.factory</span> <span class="kn">import</span> <span class="n">BuildFactory</span>
 <span class="kn">from</span> <span class="nn">buildbot.steps.source</span> <span class="kn">import</span> <span class="n">Mercurial</span>
 <span class="kn">from</span> <span class="nn">buildbot.steps.shell</span> <span class="kn">import</span> <span class="n">ShellCommand</span>
 
 <span class="n">factory</span> <span class="o">=</span> <span class="n">BuildFactory</span><span class="p">()</span>
-<span class="c"># check out the source</span>
-<span class="n">factory</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span><span class="n">Mercurial</span><span class="p">(</span><span class="n">repourl</span><span class="o">=</span><span class="s">'https://bitbucket.org/carlosble/pydoubles'</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">'copy'</span><span class="p">))</span>
-<span class="c"># run the tests (note that this will require that 'trial' is installed)</span>
-<span class="n">factory</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span><span class="n">ShellCommand</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="p">[</span><span class="s">"nosetests"</span><span class="p">,</span> <span class="s">"pyDoublesTests/unit.py"</span><span class="p">]))</span>
-<span class="n">factory</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span><span class="n">ShellCommand</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="p">[</span><span class="s">"nosetests"</span><span class="p">,</span> <span class="s">"pyDoublesTests/hamcrest_integration.py"</span><span class="p">]))</span>
+<span class="c1"># check out the source</span>
+<span class="n">factory</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span><span class="n">Mercurial</span><span class="p">(</span><span class="n">repourl</span><span class="o">=</span><span class="s1">'https://bitbucket.org/carlosble/pydoubles'</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">'copy'</span><span class="p">))</span>
+<span class="c1"># run the tests (note that this will require that 'trial' is installed)</span>
+<span class="n">factory</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span><span class="n">ShellCommand</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="p">[</span><span class="s2">"nosetests"</span><span class="p">,</span> <span class="s2">"pyDoublesTests/unit.py"</span><span class="p">]))</span>
+<span class="n">factory</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span><span class="n">ShellCommand</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="p">[</span><span class="s2">"nosetests"</span><span class="p">,</span> <span class="s2">"pyDoublesTests/hamcrest_integration.py"</span><span class="p">]))</span>
 
 <span class="kn">from</span> <span class="nn">buildbot.config</span> <span class="kn">import</span> <span class="n">BuilderConfig</span>
 
-<span class="n">c</span><span class="p">[</span><span class="s">'builders'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'builders'</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-    <span class="n">BuilderConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">"runtests"</span><span class="p">,</span>
-      <span class="n">slavenames</span><span class="o">=</span><span class="p">[</span><span class="s">"example-slave"</span><span class="p">],</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'builders'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'builders'</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+    <span class="n">BuilderConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"runtests"</span><span class="p">,</span>
+      <span class="n">slavenames</span><span class="o">=</span><span class="p">[</span><span class="s2">"example-slave"</span><span class="p">],</span>
       <span class="n">factory</span><span class="o">=</span><span class="n">factory</span><span class="p">))</span>
 
-<span class="c">####### STATUS TARGETS</span>
+<span class="c1">####### STATUS TARGETS</span>
 
-<span class="c"># 'status' is a list of Status Targets. The results of each build will be</span>
-<span class="c"># pushed to these targets. buildbot/status/*.py has a variety to choose from,</span>
-<span class="c"># including web pages, email senders, and IRC bots.</span>
+<span class="c1"># 'status' is a list of Status Targets. The results of each build will be</span>
+<span class="c1"># pushed to these targets. buildbot/status/*.py has a variety to choose from,</span>
+<span class="c1"># including web pages, email senders, and IRC bots.</span>
 
-<span class="n">c</span><span class="p">[</span><span class="s">'status'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'status'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
 <span class="kn">from</span> <span class="nn">buildbot.status</span> <span class="kn">import</span> <span class="n">html</span>
 <span class="kn">from</span> <span class="nn">buildbot.status.web</span> <span class="kn">import</span> <span class="n">authz</span><span class="p">,</span> <span class="n">auth</span>
 
 <span class="n">authz_cfg</span><span class="o">=</span><span class="n">authz</span><span class="o">.</span><span class="n">Authz</span><span class="p">(</span>
-    <span class="c"># change any of these to True to enable; see the manual for more</span>
-    <span class="c"># options</span>
-    <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="o">.</span><span class="n">BasicAuth</span><span class="p">([(</span><span class="s">"pyflakes"</span><span class="p">,</span><span class="s">"pyflakes"</span><span class="p">)]),</span>
-    <span class="n">gracefulShutdown</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
-    <span class="n">forceBuild</span> <span class="o">=</span> <span class="s">'auth'</span><span class="p">,</span> <span class="c"># use this to test your slave once it is set up</span>
-    <span class="n">forceAllBuilds</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
-    <span class="n">pingBuilder</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
-    <span class="n">stopBuild</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
-    <span class="n">stopAllBuilds</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
-    <span class="n">cancelPendingBuild</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="c1"># change any of these to True to enable; see the manual for more</span>
+    <span class="c1"># options</span>
+    <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="o">.</span><span class="n">BasicAuth</span><span class="p">([(</span><span class="s2">"pyflakes"</span><span class="p">,</span><span class="s2">"pyflakes"</span><span class="p">)]),</span>
+    <span class="n">gracefulShutdown</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">forceBuild</span> <span class="o">=</span> <span class="s1">'auth'</span><span class="p">,</span> <span class="c1"># use this to test your slave once it is set up</span>
+    <span class="n">forceAllBuilds</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">pingBuilder</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">stopBuild</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">stopAllBuilds</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">cancelPendingBuild</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'status'</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">WebStatus</span><span class="p">(</span><span class="n">http_port</span><span class="o">=</span><span class="mi">8010</span><span class="p">,</span> <span class="n">authz</span><span class="o">=</span><span class="n">authz_cfg</span><span class="p">))</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'status'</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">WebStatus</span><span class="p">(</span><span class="n">http_port</span><span class="o">=</span><span class="mi">8010</span><span class="p">,</span> <span class="n">authz</span><span class="o">=</span><span class="n">authz_cfg</span><span class="p">))</span>
 
-<span class="c">####### PROJECT IDENTITY</span>
+<span class="c1">####### PROJECT IDENTITY</span>
 
-<span class="c"># the 'title' string will appear at the top of this buildbot</span>
-<span class="c"># installation's html.WebStatus home page (linked to the</span>
-<span class="c"># 'titleURL') and is embedded in the title of the waterfall HTML page.</span>
+<span class="c1"># the 'title' string will appear at the top of this buildbot</span>
+<span class="c1"># installation's html.WebStatus home page (linked to the</span>
+<span class="c1"># 'titleURL') and is embedded in the title of the waterfall HTML page.</span>
 
-<span class="n">c</span><span class="p">[</span><span class="s">'title'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"My BuildBot Installation"</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'titleURL'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"http://www.magmax.org"</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"My BuildBot Installation"</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'titleURL'</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"http://www.magmax.org"</span>
 
-<span class="c"># the 'buildbotURL' string should point to the location where the buildbot's</span>
-<span class="c"># internal web server (usually the html.WebStatus page) is visible. This</span>
-<span class="c"># typically uses the port number set in the Waterfall 'status' entry, but</span>
-<span class="c"># with an externally-visible host name which the buildbot cannot figure out</span>
-<span class="c"># without some help.</span>
+<span class="c1"># the 'buildbotURL' string should point to the location where the buildbot's</span>
+<span class="c1"># internal web server (usually the html.WebStatus page) is visible. This</span>
+<span class="c1"># typically uses the port number set in the Waterfall 'status' entry, but</span>
+<span class="c1"># with an externally-visible host name which the buildbot cannot figure out</span>
+<span class="c1"># without some help.</span>
 
-<span class="n">c</span><span class="p">[</span><span class="s">'buildbotURL'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"http://localhost:8010/"</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'buildbotURL'</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"http://localhost:8010/"</span>
 
-<span class="c">####### DB URL</span>
+<span class="c1">####### DB URL</span>
 
-<span class="n">c</span><span class="p">[</span><span class="s">'db'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="c"># This specifies what database buildbot uses to store its state.  You can leave</span>
-    <span class="c"># this at its default for all but the largest installations.</span>
-    <span class="s">'db_url'</span> <span class="p">:</span> <span class="s">"sqlite:///state.sqlite"</span><span class="p">,</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'db'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># This specifies what database buildbot uses to store its state.  You can leave</span>
+    <span class="c1"># this at its default for all but the largest installations.</span>
+    <span class="s1">'db_url'</span> <span class="p">:</span> <span class="s2">"sqlite:///state.sqlite"</span><span class="p">,</span>
 <span class="p">}</span>
 </pre>
 
@@ -341,14 +341,14 @@ example-master$
 <h3 id="ejecutando-el-maestro">Ejecutando el maestro</h3>
 <p>Ningún misterio: desde el directorio del maestro, basta ejecutar:</p>
 <p>.. code:: bash</p>
-<pre class="code literal-block">example-master$ buildbot start
+<pre class="code literal-block"><span></span><span class="err">example-master$ buildbot start</span>
 </pre>
 
 
 <h3 id="ejecutando-el-esclavo">Ejecutando el esclavo</h3>
 <p>Tampoco tiene misterio: desde el directorio del esclavo, basta ejecutar:</p>
 <p>.. code:: bash</p>
-<pre class="code literal-block">example-slave$ buildslave start
+<pre class="code literal-block"><span></span><span class="err">example-slave$ buildslave start</span>
 </pre>
 
 

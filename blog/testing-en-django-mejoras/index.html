@@ -8,7 +8,7 @@ article: https://ogp.me/ns/article#
 <meta name="description" content="En este artículo se muestran algunas mejoras sobre el sistema de testing de Django">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Testing en django: mejoras | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -19,8 +19,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/testing-en-django-mejoras/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="description" itemprop="description" content="En este artículo se muestran algunas mejoras sobre el sistema de testing de Django">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/gist-instalando-firefox-con-salt/" title="Gist: instalando Firefox con Salt" type="text/html">
@@ -130,40 +130,40 @@ article: https://ogp.me/ns/article#
 <h2 id="entorno">Entorno</h2>
 <p>Lo primero es crear un entorno con lo que vamos a necesitar. Para ello crearemos un entorno virtual, lo que nos aislará un poco del resto. Para este artículo usaré python 2.7, aunque debería ser perfectamente compatible con python 3.</p>
 <p>Creemos el entorno:</p>
-<pre class="code literal-block"><span class="nv">$ </span>virtualenv venv
+<pre class="code literal-block"><span></span>$ virtualenv venv
 </pre>
 
 
 <p>Ahora comencemos a usarlo:</p>
-<pre class="code literal-block"><span class="nv">$ </span>. venv/bin/activate
-<span class="o">(</span>venv<span class="o">)</span><span class="err">$</span>
+<pre class="code literal-block"><span></span>$ . venv/bin/activate
+<span class="o">(</span>venv<span class="o">)</span>$
 </pre>
 
 
 <p>Lo primero es instalar todo lo que nos hará falta. Para ello, creamos el archivo <strong>requirements.txt</strong> con el siguiente contenido:</p>
-<pre class="code literal-block">Django==1.6.2
-coverage==3.7.1
-mock==1.0.1
+<pre class="code literal-block"><span></span><span class="err">Django==1.6.2</span>
+<span class="err">coverage==3.7.1</span>
+<span class="err">mock==1.0.1</span>
 </pre>
 
 
 <p>Y ahora lo instalamos:</p>
-<pre class="code literal-block">(venv)$ pip install -r requirements.txt
+<pre class="code literal-block"><span></span><span class="err">(venv)$ pip install -r requirements.txt</span>
 </pre>
 
 
 <p>Así seguro que tendréis las mismas versiones que yo.</p>
 <h3 id="proyecto">Proyecto</h3>
 <p>Vamos con un proyecto muy sencillo. Será más que eso: será mínimo:</p>
-<pre class="code literal-block">(venv)$ django-admin startproject prj
-(venv)$ cd prj
-(venv)prj$ python manage.py startapp app
+<pre class="code literal-block"><span></span><span class="err">(venv)$ django-admin startproject prj</span>
+<span class="err">(venv)$ cd prj</span>
+<span class="err">(venv)prj$ python manage.py startapp app</span>
 </pre>
 
 
 <p>De todo esto ya hablé en el artículo <a href="http://magmax.org/2011/08/20/django-sitio-basico.html">Creación de un sitio básico Django</a>, así que por eso voy rápido.</p>
 <p>A menudo necesito un par de funciones para transformar <code>datetime</code> en <code>timestamps</code> y viceversa, de manera que mis <em>javascripts</em> puedan comunicarse vía <em>REST</em>, así que éstas van a ser las funciones a probar:</p>
-<pre class="code literal-block"><span class="c"># archivo prj/app/views.py</span>
+<pre class="code literal-block"><span></span><span class="c1"># archivo prj/app/views.py</span>
 
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">time</span>
@@ -188,7 +188,7 @@ mock==1.0.1
 <p>Sin embargo, esto me molesta también, ya que es información redundante. ¿No estamos ya dentro del módulo <strong>tests</strong>?</p>
 <p>Dado que Django sólo toma como test cualquier clase que herede de <code>TestCase</code> (ya sea de <code>django.test</code> o de <code>unittest</code>), es estúpido filtrar también por el nombre del archivo.</p>
 <p>Por esa razón me gusta utilizar la opción <code>-p"*.py"</code>, de manera que me busque los tests en todos los archivos python, y no tener que preocuparme del nombre:</p>
-<pre class="code literal-block">(venv)$ manage.py test -p"*.py"
+<pre class="code literal-block"><span></span><span class="err">(venv)$ manage.py test -p"*.py"</span>
 </pre>
 
 
@@ -196,7 +196,7 @@ mock==1.0.1
 <p>Otra cosa que me mosquea es tener que esperar mucho a la ejecución de los tests. Por eso me gusta tener unos tests de ejecución ultra rápida, los unitarios, que no necesitan la base de datos ni acceso a disco. De hecho, quiero <strong>asegurarme</strong> de que éstos no pueden acceder a la base de datos de ninguna manera, con el fin de evitar cualquier despiste.</p>
 <p><a href="https://www.djangoproject.com/" title="High-level Python Web framework">Django</a> no soporta nada de esto. De hecho, si alguna <code>TestSuite</code> requiere una <em>fixture</em>, automáticamente generará una BBDD vacía e insertará los datos. No quiero eso.</p>
 <p>La solución es implementar mi propio <code>Runner</code>:</p>
-<pre class="code literal-block"><span class="c"># archivo runners/__init__.py</span>
+<pre class="code literal-block"><span></span><span class="c1"># archivo runners/__init__.py</span>
 
 <span class="kn">from</span> <span class="nn">django.test.runner</span> <span class="kn">import</span> <span class="n">DiscoverRunner</span>
 <span class="kn">from</span> <span class="nn">django.utils</span> <span class="kn">import</span> <span class="n">unittest</span>
@@ -213,7 +213,7 @@ mock==1.0.1
         <span class="k">return</span> <span class="n">filtered</span>
 
 <span class="k">class</span> <span class="nc">UnitRunner</span><span class="p">(</span><span class="n">CustomizedRunner</span><span class="p">):</span>
-    <span class="n">package</span> <span class="o">=</span> <span class="s">'.unit.'</span>
+    <span class="n">package</span> <span class="o">=</span> <span class="s1">'.unit.'</span>
 
     <span class="k">def</span> <span class="nf">setup_databases</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span>
@@ -222,10 +222,10 @@ mock==1.0.1
         <span class="k">return</span>
 
 <span class="k">class</span> <span class="nc">IntegrationRunner</span><span class="p">(</span><span class="n">CustomizedRunner</span><span class="p">):</span>
-    <span class="n">package</span> <span class="o">=</span> <span class="s">'.integration.'</span>
+    <span class="n">package</span> <span class="o">=</span> <span class="s1">'.integration.'</span>
 
 <span class="k">class</span> <span class="nc">AcceptanceRunner</span><span class="p">(</span><span class="n">CustomizedRunner</span><span class="p">):</span>
-    <span class="n">package</span> <span class="o">=</span> <span class="s">'.acceptance.'</span>
+    <span class="n">package</span> <span class="o">=</span> <span class="s1">'.acceptance.'</span>
 </pre>
 
 
@@ -233,42 +233,42 @@ mock==1.0.1
 <p>Por eso creo tres <strong>Runners</strong> distintos: <code>UnitRunner</code>, <code>IntegrationRunner</code> y <code>AcceptanceRunner</code>. Éstos, básicamente, filtran los tests que contengan cierta cadena en su nombre de módulo.</p>
 <p>La única diferencia la pone el <code>UnitRunner</code>, en el que me aseguro de que la base de datos no se toca. No es extrictamente necesario, pero no está de más.</p>
 <p>Ahora puedo crearme la siguiente estructura:</p>
-<pre class="code literal-block">tests
-├── __init__.py
-├── acceptance
-│   └── __init__.py
-├── integration
-│   └── __init__.py
-└── unit
-    └── __init__.py
+<pre class="code literal-block"><span></span><span class="err">tests</span>
+<span class="err">├── __init__.py</span>
+<span class="err">├── acceptance</span>
+<span class="err">│   └── __init__.py</span>
+<span class="err">├── integration</span>
+<span class="err">│   └── __init__.py</span>
+<span class="err">└── unit</span>
+<span class="err">    └── __init__.py</span>
 </pre>
 
 
 <p>Y podré situar los tests en el lugar adecuado.</p>
 <p>Para seleccionar los tests que quiero ejecutar, basta con cambiar el runner:</p>
-<pre class="code literal-block">(venv)$ manage.py test -p"*.py" --testrunner runners.UnitRunner
-(venv)$ manage.py test -p"*.py" --testrunner runners.IntegrationRunner
-(venv)$ manage.py test -p"*.py" --testrunner runners.AcceptanceRunner
+<pre class="code literal-block"><span></span><span class="err">(venv)$ manage.py test -p"*.py" --testrunner runners.UnitRunner</span>
+<span class="err">(venv)$ manage.py test -p"*.py" --testrunner runners.IntegrationRunner</span>
+<span class="err">(venv)$ manage.py test -p"*.py" --testrunner runners.AcceptanceRunner</span>
 </pre>
 
 
 <h2 id="cobertura">Cobertura</h2>
 <p>Esta estructura de tests me permite algo más: puedo seleccionar la cobertura en función del tipo de test. Puede parecer una tontería, pero me interesa separar la cobertura de tests unitarios de la de los de integración, y la de aceptación no me interesa en absoluto.</p>
 <p>Veamos primero cómo se ejecuta para los tests unitarios:</p>
-<pre class="code literal-block">(venv)$ coverage run --source=. --omit="manage,**/test*" \
-        manage.py test app/ --testrunner runners.UnitRunner -p"*.py"
+<pre class="code literal-block"><span></span><span class="err">(venv)$ coverage run --source=. --omit="manage,**/test*" \</span>
+<span class="err">        manage.py test app/ --testrunner runners.UnitRunner -p"*.py"</span>
 </pre>
 
 
 <p>Un poco larga la línea, pero fácil de entender. Tan solo le indico dónde están los fuentes y que no me interesa la cobertura de los archivos de test ni de los propios de <a href="https://www.djangoproject.com/" title="High-level Python Web framework">Django</a>. Ahora muestro el resultado:</p>
-<pre class="code literal-block">(venv)$ coverage report
+<pre class="code literal-block"><span></span><span class="err">(venv)$ coverage report</span>
 </pre>
 
 
 <p>Fácil, ¿eh?</p>
 <h3 id="aun-mas-facil">Aún más fácil</h3>
 <p>Yo soy muy vago y no voy a acordarme de una línea como ésa. Por eso he decidido meterlo todo en un <strong>Makefile</strong>:</p>
-<pre class="code literal-block"><span class="c"># Archivo Makefile</span>
+<pre class="code literal-block"><span></span><span class="c"># Archivo Makefile</span>
 
 <span class="nv">modules</span><span class="o">=</span>app
 
@@ -313,7 +313,7 @@ mock==1.0.1
 <p>De esta manera puedo ejecutar los tests de unit tantas veces como quiera, que serán muy rápidos.</p>
 <h2 id="los-tests">Los tests</h2>
 <p>Por si alguien desea probar todo esto con datos reales, aquí están los tests:</p>
-<pre class="code literal-block"><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<pre class="code literal-block"><span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">time</span>
 
 
@@ -331,26 +331,26 @@ mock==1.0.1
 
 
 <p>Y aquí tenéis un ejemplo de ejecución:</p>
-<pre class="code literal-block">(venv)$ make unit
-Running UNIT tests...
-....
-----------------------------------------------------------------------
-Ran 4 tests in 0.002s
+<pre class="code literal-block"><span></span><span class="p">(</span><span class="n">venv</span><span class="p">)</span><span class="err">$</span> <span class="n">make</span> <span class="n">unit</span>
+<span class="n">Running</span> <span class="n">UNIT</span> <span class="n">tests</span><span class="p">...</span>
+<span class="p">....</span>
+<span class="c1">----------------------------------------------------------------------</span>
+<span class="n">Ran</span> <span class="mi">4</span> <span class="n">tests</span> <span class="k">in</span> <span class="mi">0</span><span class="p">.</span><span class="mi">002</span><span class="n">s</span>
 
-OK
-Name           Stmts   Miss  Cover
-----------------------------------
-app/__init__       0      0   100%
-app/admin          1      1     0%
-app/models         1      1     0%
-app/views         10      0   100%
-manage             6      0   100%
-prj/__init__       0      0   100%
-prj/settings      17      0   100%
-prj/urls           4      4     0%
-prj/wsgi           4      4     0%
-----------------------------------
-TOTAL             43     10    77%
+<span class="n">OK</span>
+<span class="n">Name</span>           <span class="n">Stmts</span>   <span class="n">Miss</span>  <span class="n">Cover</span>
+<span class="c1">----------------------------------</span>
+<span class="n">app</span><span class="o">/</span><span class="n">__init__</span>       <span class="mi">0</span>      <span class="mi">0</span>   <span class="mi">100</span><span class="o">%</span>
+<span class="n">app</span><span class="o">/</span><span class="k">admin</span>          <span class="mi">1</span>      <span class="mi">1</span>     <span class="mi">0</span><span class="o">%</span>
+<span class="n">app</span><span class="o">/</span><span class="n">models</span>         <span class="mi">1</span>      <span class="mi">1</span>     <span class="mi">0</span><span class="o">%</span>
+<span class="n">app</span><span class="o">/</span><span class="n">views</span>         <span class="mi">10</span>      <span class="mi">0</span>   <span class="mi">100</span><span class="o">%</span>
+<span class="n">manage</span>             <span class="mi">6</span>      <span class="mi">0</span>   <span class="mi">100</span><span class="o">%</span>
+<span class="n">prj</span><span class="o">/</span><span class="n">__init__</span>       <span class="mi">0</span>      <span class="mi">0</span>   <span class="mi">100</span><span class="o">%</span>
+<span class="n">prj</span><span class="o">/</span><span class="n">settings</span>      <span class="mi">17</span>      <span class="mi">0</span>   <span class="mi">100</span><span class="o">%</span>
+<span class="n">prj</span><span class="o">/</span><span class="n">urls</span>           <span class="mi">4</span>      <span class="mi">4</span>     <span class="mi">0</span><span class="o">%</span>
+<span class="n">prj</span><span class="o">/</span><span class="n">wsgi</span>           <span class="mi">4</span>      <span class="mi">4</span>     <span class="mi">0</span><span class="o">%</span>
+<span class="c1">----------------------------------</span>
+<span class="n">TOTAL</span>             <span class="mi">43</span>     <span class="mi">10</span>    <span class="mi">77</span><span class="o">%</span>
 </pre>
 
 

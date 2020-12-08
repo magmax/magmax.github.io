@@ -7,7 +7,7 @@ article: https://ogp.me/ns/article#
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Apache Derby, tu base de datos relacional | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,8 +18,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/apache-derby/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/xgn/" title="Charla sobre startups en internet #XGN" type="text/html">
 <link rel="next" href="/blog/gnome3-tildes/" title="Mi gnome3 pone cosas raras en lugar de tildes y eñes" type="text/html">
@@ -139,50 +139,50 @@ Había oído hablar de "derby", pero no tenía muy claro su uso ni ventajas. Aun
 <h2>Derby para pruebas</h2>
 <p>Cuando estamos realizando pruebas, a menudo necesitamos una BBDD limpia. Derby tiene un modo "en memoria" que nos permite realizar las pruebas necesarias sin necesidad de tener una BBDD real.</p>
 <p>Para comenzar, basta seleccionar el driver:</p>
-<pre class="code java"><a name="rest_code_dd9018e2e7aa41228de636a4cda2aa92-1"></a><span class="n">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"org.apache.derby.jdbc.EmbeddedDriver"</span><span class="o">);</span>
+<pre class="code java"><a name="rest_code_d13831aa2f0f418aaf8af8665638dd1a-1"></a><span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="s">"org.apache.derby.jdbc.EmbeddedDriver"</span><span class="p">);</span>
 </pre>
 <p>Ahora, obtenemos una conexión a una BBDD en memoria:</p>
-<pre class="code java"><a name="rest_code_8bd47f156d2249459e862a30e398ed55-1"></a><span class="n">conn</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="o">.</span><span class="na">getConnection</span><span class="o">(</span><span class="s">"jdbc:derby:memory:derbyDB;create=true"</span><span class="o">);</span>
+<pre class="code java"><a name="rest_code_fc6b9e86515d4c5bbe2318ae4b7c174d-1"></a><span class="n">conn</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="s">"jdbc:derby:memory:derbyDB;create=true"</span><span class="p">);</span>
 </pre>
 <p>Y, finalmente, vamos a crearnos una tabla, que es la que vamos a probar:</p>
-<pre class="code java"><a name="rest_code_c2a0503980c4407cac5e6c1074e5a78e-1"></a><span class="n">Statement</span> <span class="n">s</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="na">createStatement</span><span class="o">();</span>
-<a name="rest_code_c2a0503980c4407cac5e6c1074e5a78e-2"></a><span class="n">s</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="s">"create table ejemplo(id int, codigo varchar(50)"</span><span class="o">);</span>
+<pre class="code java"><a name="rest_code_0f66ec7c30e94443bb9a3520e2c5d675-1"></a><span class="n">Statement</span> <span class="n">s</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="na">createStatement</span><span class="p">();</span>
+<a name="rest_code_0f66ec7c30e94443bb9a3520e2c5d675-2"></a><span class="n">s</span><span class="p">.</span><span class="na">execute</span><span class="p">(</span><span class="s">"create table ejemplo(id int, codigo varchar(50)"</span><span class="p">);</span>
 </pre>
 <p>Si estamos usando junit 4, lo podemos hacer muy sencillo:</p>
-<pre class="code java"><a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-1"></a><span class="kn">import</span> <span class="nn">java.sql.Connection</span><span class="o">;</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-2"></a><span class="kn">import</span> <span class="nn">java.sql.DriverManager</span><span class="o">;</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-3"></a><span class="kn">import</span> <span class="nn">java.sql.SQLException</span><span class="o">;</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-4"></a><span class="kn">import</span> <span class="nn">java.sql.Statement</span><span class="o">;</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-5"></a>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-6"></a><span class="kn">import</span> <span class="nn">org.junit.After</span><span class="o">;</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-7"></a><span class="kn">import</span> <span class="nn">org.junit.Before</span><span class="o">;</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-8"></a><span class="kn">import</span> <span class="nn">org.junit.Test</span><span class="o">;</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-9"></a>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-10"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyTester</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-11"></a><span class="o">{</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-12"></a>  <span class="kd">private</span> <span class="n">Connection</span> <span class="n">conn</span><span class="o">;</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-13"></a>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-14"></a>  <span class="nd">@BeforeClass</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-15"></a>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">classSetUp</span><span class="o">()</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-16"></a>  <span class="o">{</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-17"></a>    <span class="n">Class</span><span class="o">.</span><span class="na">forName</span><span class="o">(</span><span class="s">"org.apache.derby.jdbc.EmbeddedDriver"</span><span class="o">);</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-18"></a>  <span class="o">}</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-19"></a>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-20"></a>  <span class="nd">@Before</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-21"></a>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setUp</span><span class="o">()</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-22"></a>  <span class="o">{</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-23"></a>    <span class="n">conn</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="o">.</span><span class="na">getConnection</span><span class="o">(</span><span class="s">"jdbc:derby:memory:derbyDB;create=true"</span><span class="o">);</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-24"></a>    <span class="n">Statement</span> <span class="n">s</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="na">createStatement</span><span class="o">();</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-25"></a>    <span class="n">s</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="s">"create table ejemplo(id int, codigo varchar(50)"</span><span class="o">);</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-26"></a>    <span class="n">s</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-27"></a>  <span class="o">}</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-28"></a>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-29"></a>  <span class="nd">@After</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-30"></a>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">tearDown</span><span class="o">()</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-31"></a>  <span class="o">{</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-32"></a>    <span class="n">conn</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-33"></a>  <span class="o">}</span>
-<a name="rest_code_cd314b525ae14f54a8da2d5b72bb33f5-34"></a><span class="o">}</span>
+<pre class="code java"><a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-1"></a><span class="kn">import</span> <span class="nn">java.sql.Connection</span><span class="p">;</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-2"></a><span class="kn">import</span> <span class="nn">java.sql.DriverManager</span><span class="p">;</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-3"></a><span class="kn">import</span> <span class="nn">java.sql.SQLException</span><span class="p">;</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-4"></a><span class="kn">import</span> <span class="nn">java.sql.Statement</span><span class="p">;</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-5"></a>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-6"></a><span class="kn">import</span> <span class="nn">org.junit.After</span><span class="p">;</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-7"></a><span class="kn">import</span> <span class="nn">org.junit.Before</span><span class="p">;</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-8"></a><span class="kn">import</span> <span class="nn">org.junit.Test</span><span class="p">;</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-9"></a>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-10"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyTester</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-11"></a><span class="p">{</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-12"></a>  <span class="kd">private</span> <span class="n">Connection</span> <span class="n">conn</span><span class="p">;</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-13"></a>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-14"></a>  <span class="nd">@BeforeClass</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-15"></a>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">classSetUp</span><span class="p">()</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-16"></a>  <span class="p">{</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-17"></a>    <span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="s">"org.apache.derby.jdbc.EmbeddedDriver"</span><span class="p">);</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-18"></a>  <span class="p">}</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-19"></a>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-20"></a>  <span class="nd">@Before</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-21"></a>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setUp</span><span class="p">()</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-22"></a>  <span class="p">{</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-23"></a>    <span class="n">conn</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="s">"jdbc:derby:memory:derbyDB;create=true"</span><span class="p">);</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-24"></a>    <span class="n">Statement</span> <span class="n">s</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="na">createStatement</span><span class="p">();</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-25"></a>    <span class="n">s</span><span class="p">.</span><span class="na">execute</span><span class="p">(</span><span class="s">"create table ejemplo(id int, codigo varchar(50)"</span><span class="p">);</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-26"></a>    <span class="n">s</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-27"></a>  <span class="p">}</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-28"></a>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-29"></a>  <span class="nd">@After</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-30"></a>  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">tearDown</span><span class="p">()</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-31"></a>  <span class="p">{</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-32"></a>    <span class="n">conn</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-33"></a>  <span class="p">}</span>
+<a name="rest_code_6dbb4441071349c1b8b4f1829e51fb0b-34"></a><span class="p">}</span>
 </pre>
 <p>Y, con este pequeño esqueleto, comenzar a realizar las pruebas. Cada test tendrá una BBDD limpia en la que realizar sus consultas y/o modificaciones.</p>
 <p>Es más lento que probar una función que no accede a BBDD, pero más rápido que crearte una BBDD nueva cada vez.</p>
@@ -190,20 +190,20 @@ Había oído hablar de "derby", pero no tenía muy claro su uso ni ventajas. Aun
 <div class="section" id="derby-en-un-entorno-de-produccion">
 <h2>Derby en un entorno de producción</h2>
 <p>Para utilizar Derby con un archivo, basta cambiar la forma de obtener la conexión:</p>
-<pre class="code java"><a name="rest_code_9d74928d38cf4e7bbae3382542012ed2-1"></a><span class="n">conn</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="o">.</span><span class="na">getConnection</span><span class="o">(</span><span class="s">"jdbc:derby:/ruta/archivo;create=true"</span><span class="o">);</span>
+<pre class="code java"><a name="rest_code_c593c445f5ad463e923c1f938d37aba1-1"></a><span class="n">conn</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="s">"jdbc:derby:/ruta/archivo;create=true"</span><span class="p">);</span>
 </pre>
 <p>Y para usarlo en modo cliente servidor, también:</p>
-<pre class="code java"><a name="rest_code_16d3babdc3db4d0abace6b50103b2eab-1"></a><span class="n">conn</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="o">.</span><span class="na">getConnection</span><span class="o">(</span><span class="s">"jdbc:derby://localhost:1527/MyDbTest;create=true"</span><span class="o">);</span>
+<pre class="code java"><a name="rest_code_b6f4a1ccb9f346f8ac5145631643cbda-1"></a><span class="n">conn</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="s">"jdbc:derby://localhost:1527/MyDbTest;create=true"</span><span class="p">);</span>
 </pre>
 </div>
 <div class="section" id="quiero-usar-esta-maravilla">
 <h2>Quiero usar esta maravilla</h2>
 <p>Los que me conocen saben que me he vuelto un Maven-adicto, así que la manera más simple de comenzar a usarlo es añadir lo siguiente a nuestro pom.xml:</p>
-<pre class="code xml"><a name="rest_code_3afbdc43af4e47e591a39803a8e7886b-1"></a><span class="nt">&lt;dependency&gt;</span>
-<a name="rest_code_3afbdc43af4e47e591a39803a8e7886b-2"></a>  <span class="nt">&lt;groupId&gt;</span>org.apache.derby<span class="nt">&lt;/groupId&gt;</span>
-<a name="rest_code_3afbdc43af4e47e591a39803a8e7886b-3"></a>  <span class="nt">&lt;artifactId&gt;</span>derby<span class="nt">&lt;/artifactId&gt;</span>
-<a name="rest_code_3afbdc43af4e47e591a39803a8e7886b-4"></a>  <span class="nt">&lt;version&gt;</span>10.7.1.1<span class="nt">&lt;/version&gt;</span>
-<a name="rest_code_3afbdc43af4e47e591a39803a8e7886b-5"></a><span class="nt">&lt;/dependency&gt;</span>
+<pre class="code xml"><a name="rest_code_a265ff3a532840959c00cb2eb3f0d239-1"></a><span class="nt">&lt;dependency&gt;</span>
+<a name="rest_code_a265ff3a532840959c00cb2eb3f0d239-2"></a>  <span class="nt">&lt;groupId&gt;</span>org.apache.derby<span class="nt">&lt;/groupId&gt;</span>
+<a name="rest_code_a265ff3a532840959c00cb2eb3f0d239-3"></a>  <span class="nt">&lt;artifactId&gt;</span>derby<span class="nt">&lt;/artifactId&gt;</span>
+<a name="rest_code_a265ff3a532840959c00cb2eb3f0d239-4"></a>  <span class="nt">&lt;version&gt;</span>10.7.1.1<span class="nt">&lt;/version&gt;</span>
+<a name="rest_code_a265ff3a532840959c00cb2eb3f0d239-5"></a><span class="nt">&lt;/dependency&gt;</span>
 </pre>
 </div>
 <div class="section" id="referencias">

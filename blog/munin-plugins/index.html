@@ -8,7 +8,7 @@ article: https://ogp.me/ns/article#
 <meta name="description" content="Pequeña introducción a la creación de plugins para munin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Munin: creando plugins | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -19,8 +19,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/munin-plugins/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="description" itemprop="description" content="Pequeña introducción a la creación de plugins para munin">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/munin/" title="Munin" type="text/html">
@@ -135,22 +135,22 @@ article: https://ogp.me/ns/article#
 <h3 id="sin-parametros">Sin parámetros</h3>
 <p>Obligatorio. La llamada más básica es sin parámetros. <a href="http://munin-monitoring.org/" title="Munin page">Munin</a> llamará así a sus plugins cuando le interese recoger las mediciones.</p>
 <p>Su estructura es la siguiente:</p>
-<pre class="code literal-block">[métrica].value [valor]
+<pre class="code literal-block"><span></span><span class="o">[</span><span class="n">métrica</span><span class="o">]</span><span class="p">.</span><span class="k">value</span><span class="w"> </span><span class="o">[</span><span class="n">valor</span><span class="o">]</span><span class="w"></span>
 </pre>
 
 
 <p>Nuestro plugin podrá devolver varias líneas como ésa, con una métrica por línea. Ejemplo:</p>
-<pre class="code literal-block">load.value 7.8890
-memory.value 84.321
+<pre class="code literal-block"><span></span><span class="nb">load</span><span class="o">.</span><span class="n">value</span> <span class="mf">7.8890</span>
+<span class="n">memory</span><span class="o">.</span><span class="n">value</span> <span class="mf">84.321</span>
 </pre>
 
 
 <h3 id="config">config</h3>
 <p>Obligatorio. Cuando se llame a nuestro plugin con el parámetro "config", significa que munin nos pregunta qué valores vamos a devolver. La estructura básica puede ser la siguiente:</p>
-<pre class="code literal-block">graph_title [Título de nuestro gráfico]
-graph_category [Categoría en la que clasificar nuestro gráfico]
-graph_vlabel [Etiqueta del eje vertical]
-[métrica].label [Etiqueta de la métrica]
+<pre class="code literal-block"><span></span><span class="n">graph_title</span><span class="w"> </span><span class="o">[</span><span class="n">Título de nuestro gráfico</span><span class="o">]</span><span class="w"></span>
+<span class="n">graph_category</span><span class="w"> </span><span class="o">[</span><span class="n">Categoría en la que clasificar nuestro gráfico</span><span class="o">]</span><span class="w"></span>
+<span class="n">graph_vlabel</span><span class="w"> </span><span class="o">[</span><span class="n">Etiqueta del eje vertical</span><span class="o">]</span><span class="w"></span>
+<span class="o">[</span><span class="n">métrica</span><span class="o">]</span><span class="p">.</span><span class="n">label</span><span class="w"> </span><span class="o">[</span><span class="n">Etiqueta de la métrica</span><span class="o">]</span><span class="w"></span>
 </pre>
 
 
@@ -158,22 +158,22 @@ graph_vlabel [Etiqueta del eje vertical]
 <p>Opcional. Devolverá "yes" cuando el plugin detecte que se cumplen todas las condiciones para poder ejecutarse. Por ejemplo, un plugin que toma mediciones de Jenkins podría detectar si Jenkins está instalado.</p>
 <p>En caso de que no se cumplan estas condiciones, devolverá <strong>"no. [razón]"</strong>, de manera que la razón aparezca cuando ejecutemos <code>munin-node-configure</code>, como vimos en el <a href="/blog/munin" title="Munin">artículo anterior</a>.</p>
 <p>Para utilizar esta característica, debemos añadir en un comentario las cadenas:</p>
-<pre class="code literal-block">#%# family=auto
-#%# capabilities=autoconf
+<pre class="code literal-block"><span></span><span class="err">#%# family=auto</span>
+<span class="err">#%# capabilities=autoconf</span>
 </pre>
 
 
 <h3 id="suggest">suggest</h3>
 <p>Opcional. Munin suele crear un gráfico por plugin, pero en ocasiones podemos necesitar más: un plugin que comprueba un puerto podría comprobar varios; varias interfaces de red en lugar de una, etc.</p>
 <p>Para que funcione, requiere encontrar en el código la cadena "#%# capabilities=suggest", aunque podemos aprovechar la de <code>autoconf</code>, separándolo con espacios:</p>
-<pre class="code literal-block">#%# capabilities=autoconf suggest
+<pre class="code literal-block"><span></span><span class="err">#%# capabilities=autoconf suggest</span>
 </pre>
 
 
 <p>Al llamarlo con esta opción, el plugin debe imprimir qué recursos puede atender. Al llamarlo sin parámetros, el plugin tomará un parámetro extra de su propio nombre, por lo que deberemos llamarlo "plugin_parámetro". Ejemplo:</p>
-<pre class="code literal-block">if_ suggest
-eth0
-eth1
+<pre class="code literal-block"><span></span><span class="err">if_ suggest</span>
+<span class="err">eth0</span>
+<span class="err">eth1</span>
 </pre>
 
 
@@ -183,7 +183,7 @@ eth1
 <ul>
 <li>Si nuestro plugin admite "autoconf", podemos instalarlo tal y como se explicó en el <a href="/blog/munin" title="Munin">artículo anterior</a>:</li>
 </ul>
-<pre class="code literal-block"><span class="nv">$ </span>munin-node-configure --suggest --remove-also --shell <span class="p">|</span> bash
+<pre class="code literal-block"><span></span>$ munin-node-configure --suggest --remove-also --shell <span class="p">|</span> bash
 </pre>
 
 
@@ -196,7 +196,7 @@ eth1
 </ul>
 </li>
 </ul>
-<pre class="code literal-block"><span class="nv">$ </span>ls -l /etc/munin/plugins/if_*
+<pre class="code literal-block"><span></span>$ ls -l /etc/munin/plugins/if_*
 if_eth0 -&gt; /usr/share/munin/plugins/if_
 if_wlan0 -&gt; /usr/share/munin/plugins/if_
 </pre>
@@ -207,12 +207,12 @@ if_wlan0 -&gt; /usr/share/munin/plugins/if_
 <p>Para ello debemos alterar la salida de las mediciones y de la configuración, añadiendo en ambas <code>multigraph [nombre del gráfico]</code> al comienzo de cada gráfico. El "nombre del gráfico" debe coincidir en la configuración y los valores.</p>
 <h2 id="ejemplo-completo-en-bash">Ejemplo completo en bash</h2>
 <p>Veamos un ejemplo completo en bash: Un pequeño plugin que muestra el estado de la cola en Jenkins. Soportará <code>autoconf</code>:</p>
-<pre class="code literal-block"><span class="c">#!/bin/sh</span>
+<pre class="code literal-block"><span></span><span class="ch">#!/bin/sh</span>
 
 <span class="nv">JENKINS_URL</span><span class="o">=</span>http://localhost:8080
 
-<span class="c">#%# family=auto</span>
-<span class="c">#%# capabilities=autoconf</span>
+<span class="c1">#%# family=auto</span>
+<span class="c1">#%# capabilities=autoconf</span>
 
 <span class="k">case</span> <span class="nv">$1</span> in
     config<span class="o">)</span>

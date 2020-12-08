@@ -8,7 +8,7 @@ article: https://ogp.me/ns/article#
 <meta name="description" content="Cómo hacer que Django sirva estáticos en producción">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Django no encuentra las CSS del módulo Admin | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -19,8 +19,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/django-no-encuentra-las-css-del-modulo-admin/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="description" itemprop="description" content="Cómo hacer que Django sirva estáticos en producción">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/magmaxblog-newsletter/" title="MagMaxBlog Newsletter" type="text/html">
@@ -133,49 +133,49 @@ article: https://ogp.me/ns/article#
 <div class="section" id="indicar-donde-estan-los-estaticos">
 <h3>Indicar dónde están los estáticos</h3>
 <p>Lo primero es indicar dónde están los estáticos. Para ello tendremos que incluir la applicación <tt class="docutils literal">django.contrib.staticfiles</tt>:</p>
-<pre class="code python"><a name="rest_code_74de23522d8d427f8185b7fe696d6360-1"></a><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">(</span>
-<a name="rest_code_74de23522d8d427f8185b7fe696d6360-2"></a>    <span class="c"># ...</span>
-<a name="rest_code_74de23522d8d427f8185b7fe696d6360-3"></a>    <span class="s">'django.contrib.staticfiles'</span><span class="p">,</span>
-<a name="rest_code_74de23522d8d427f8185b7fe696d6360-4"></a>    <span class="c"># ...</span>
-<a name="rest_code_74de23522d8d427f8185b7fe696d6360-5"></a><span class="p">)</span>
+<pre class="code python"><a name="rest_code_9c2e436d475c4dd9a061d7cc02885484-1"></a><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">(</span>
+<a name="rest_code_9c2e436d475c4dd9a061d7cc02885484-2"></a>    <span class="c1"># ...</span>
+<a name="rest_code_9c2e436d475c4dd9a061d7cc02885484-3"></a>    <span class="s1">'django.contrib.staticfiles'</span><span class="p">,</span>
+<a name="rest_code_9c2e436d475c4dd9a061d7cc02885484-4"></a>    <span class="c1"># ...</span>
+<a name="rest_code_9c2e436d475c4dd9a061d7cc02885484-5"></a><span class="p">)</span>
 </pre>
 <p>Si hemos sobreescrito la variable <tt class="docutils literal">STATICFILES_FINDERS</tt>, será importante añadir el <strong>finder</strong> <tt class="docutils literal">AppDirectoriesFinder</tt>, con el fin de que se sirvan los estáticos de las aplicaciones:</p>
-<pre class="code python"><a name="rest_code_5fb82ceec77f4f2784702357f7f8e9ca-1"></a><span class="n">STATICFILES_FINDERS</span> <span class="o">=</span> <span class="p">[</span>
-<a name="rest_code_5fb82ceec77f4f2784702357f7f8e9ca-2"></a>    <span class="c"># ...</span>
-<a name="rest_code_5fb82ceec77f4f2784702357f7f8e9ca-3"></a>    <span class="s">"django.contrib.staticfiles.finders.AppDirectoriesFinder"</span><span class="p">,</span>
-<a name="rest_code_5fb82ceec77f4f2784702357f7f8e9ca-4"></a>    <span class="c"># ...</span>
-<a name="rest_code_5fb82ceec77f4f2784702357f7f8e9ca-5"></a><span class="p">]</span>
+<pre class="code python"><a name="rest_code_240f60e8dd574c699409768515d95327-1"></a><span class="n">STATICFILES_FINDERS</span> <span class="o">=</span> <span class="p">[</span>
+<a name="rest_code_240f60e8dd574c699409768515d95327-2"></a>    <span class="c1"># ...</span>
+<a name="rest_code_240f60e8dd574c699409768515d95327-3"></a>    <span class="s2">"django.contrib.staticfiles.finders.AppDirectoriesFinder"</span><span class="p">,</span>
+<a name="rest_code_240f60e8dd574c699409768515d95327-4"></a>    <span class="c1"># ...</span>
+<a name="rest_code_240f60e8dd574c699409768515d95327-5"></a><span class="p">]</span>
 </pre>
 </div>
 <div class="section" id="permisos">
 <h3>Permisos</h3>
 <p>Ahora debemos dar permiso de acceso a los estáticos. Bueno... Estáticos y no estáticos, ya que cuando <tt class="docutils literal">DEBUG</tt> vale <tt class="docutils literal">True</tt> podemos acceder a todo, pero cuando vale <tt class="docutils literal">False</tt> no nos dejará acceder a nada:</p>
-<pre class="code python"><a name="rest_code_402b01d1a7274881bc1e7e2f273d6511-1"></a><span class="kn">import</span> <span class="nn">os</span>
-<a name="rest_code_402b01d1a7274881bc1e7e2f273d6511-2"></a><span class="kn">from</span> <span class="nn">socket</span> <span class="kn">import</span> <span class="n">gethostname</span>
-<a name="rest_code_402b01d1a7274881bc1e7e2f273d6511-3"></a>
-<a name="rest_code_402b01d1a7274881bc1e7e2f273d6511-4"></a><span class="n">ALLOWED_HOSTS</span> <span class="o">=</span> <span class="p">[</span>
-<a name="rest_code_402b01d1a7274881bc1e7e2f273d6511-5"></a>    <span class="n">gethostname</span><span class="p">(),</span>
-<a name="rest_code_402b01d1a7274881bc1e7e2f273d6511-6"></a>    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'OPENSHIFT_APP_DNS'</span><span class="p">,</span> <span class="s">'localhost'</span><span class="p">),</span>
-<a name="rest_code_402b01d1a7274881bc1e7e2f273d6511-7"></a><span class="p">]</span>
+<pre class="code python"><a name="rest_code_c90c781b8ac54e7c80ece3353b3909f0-1"></a><span class="kn">import</span> <span class="nn">os</span>
+<a name="rest_code_c90c781b8ac54e7c80ece3353b3909f0-2"></a><span class="kn">from</span> <span class="nn">socket</span> <span class="kn">import</span> <span class="n">gethostname</span>
+<a name="rest_code_c90c781b8ac54e7c80ece3353b3909f0-3"></a>
+<a name="rest_code_c90c781b8ac54e7c80ece3353b3909f0-4"></a><span class="n">ALLOWED_HOSTS</span> <span class="o">=</span> <span class="p">[</span>
+<a name="rest_code_c90c781b8ac54e7c80ece3353b3909f0-5"></a>    <span class="n">gethostname</span><span class="p">(),</span>
+<a name="rest_code_c90c781b8ac54e7c80ece3353b3909f0-6"></a>    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'OPENSHIFT_APP_DNS'</span><span class="p">,</span> <span class="s1">'localhost'</span><span class="p">),</span>
+<a name="rest_code_c90c781b8ac54e7c80ece3353b3909f0-7"></a><span class="p">]</span>
 </pre>
 <p>Como veis, aquí permito acceder mediante el nombre de la máquina, o desde el DNS de <a href="/blog/django-no-encuentra-las-css-del-modulo-admin/#id1"><span class="problematic" id="id2">OpenShift_</span></a>, si lo estamos usando. Si no estamos en <a href="/blog/django-no-encuentra-las-css-del-modulo-admin/#id3"><span class="problematic" id="id4">OpenShift_</span></a>, entonces usa <tt class="docutils literal">localhost</tt>.</p>
 </div>
 <div class="section" id="rutas">
 <h3>Rutas</h3>
 <p>Por último, hay que modificar las rutas de acceso. Eso está en el archivo <tt class="docutils literal">urls.py</tt>, donde tendremos que incluir a mano los estáticos:</p>
-<pre class="code python"><a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-1"></a><span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
-<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-2"></a><span class="kn">from</span> <span class="nn">django.conf.urls</span> <span class="kn">import</span> <span class="n">url</span>
-<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-3"></a>
-<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-4"></a><span class="n">urlpatterns</span> <span class="o">+=</span> <span class="p">[</span>
-<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-5"></a>    <span class="n">url</span><span class="p">(</span>
-<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-6"></a>        <span class="s">r'^static/(?P&lt;path&gt;.*)$'</span><span class="p">,</span>
-<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-7"></a>        <span class="s">'django.views.static.serve'</span><span class="p">,</span>
-<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-8"></a>        <span class="p">{</span>
-<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-9"></a>            <span class="s">'document_root'</span><span class="p">:</span> <span class="n">settings</span><span class="o">.</span><span class="n">STATIC_ROOT</span><span class="p">,</span>
-<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-10"></a>            <span class="s">'show_indexes'</span><span class="p">:</span> <span class="n">settings</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
-<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-11"></a>        <span class="p">}</span>
-<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-12"></a>    <span class="p">),</span>
-<a name="rest_code_a3560e6db1e24d1897e5b2a32196782e-13"></a><span class="p">]</span>
+<pre class="code python"><a name="rest_code_8be21571c8744b3c8736c8ae7b47c356-1"></a><span class="kn">from</span> <span class="nn">django.conf</span> <span class="kn">import</span> <span class="n">settings</span>
+<a name="rest_code_8be21571c8744b3c8736c8ae7b47c356-2"></a><span class="kn">from</span> <span class="nn">django.conf.urls</span> <span class="kn">import</span> <span class="n">url</span>
+<a name="rest_code_8be21571c8744b3c8736c8ae7b47c356-3"></a>
+<a name="rest_code_8be21571c8744b3c8736c8ae7b47c356-4"></a><span class="n">urlpatterns</span> <span class="o">+=</span> <span class="p">[</span>
+<a name="rest_code_8be21571c8744b3c8736c8ae7b47c356-5"></a>    <span class="n">url</span><span class="p">(</span>
+<a name="rest_code_8be21571c8744b3c8736c8ae7b47c356-6"></a>        <span class="sa">r</span><span class="s1">'^static/(?P&lt;path&gt;.*)$'</span><span class="p">,</span>
+<a name="rest_code_8be21571c8744b3c8736c8ae7b47c356-7"></a>        <span class="s1">'django.views.static.serve'</span><span class="p">,</span>
+<a name="rest_code_8be21571c8744b3c8736c8ae7b47c356-8"></a>        <span class="p">{</span>
+<a name="rest_code_8be21571c8744b3c8736c8ae7b47c356-9"></a>            <span class="s1">'document_root'</span><span class="p">:</span> <span class="n">settings</span><span class="o">.</span><span class="n">STATIC_ROOT</span><span class="p">,</span>
+<a name="rest_code_8be21571c8744b3c8736c8ae7b47c356-10"></a>            <span class="s1">'show_indexes'</span><span class="p">:</span> <span class="n">settings</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+<a name="rest_code_8be21571c8744b3c8736c8ae7b47c356-11"></a>        <span class="p">}</span>
+<a name="rest_code_8be21571c8744b3c8736c8ae7b47c356-12"></a>    <span class="p">),</span>
+<a name="rest_code_8be21571c8744b3c8736c8ae7b47c356-13"></a><span class="p">]</span>
 </pre>
 </div>
 </div>

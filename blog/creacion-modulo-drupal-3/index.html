@@ -7,7 +7,7 @@ article: https://ogp.me/ns/article#
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Creación de un módulo Drupal III | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,8 +18,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/creacion-modulo-drupal-3/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/creacion-modulo-drupal-2/" title="Creación de un módulo Drupal II" type="text/html">
 <link rel="next" href="/blog/creacion-modulo-drupal-4/" title="Creación de un módulo Drupal IV" type="text/html">
@@ -143,25 +143,25 @@ Además, voy a añadir enlaces para eliminar los feeds (como me han solicitado) 
 <div class="section" id="modificando-la-bbdd">
 <h2>Modificando la BBDD</h2>
 <p>Añadimos el campo usermail. Además, modificamos el campo "uid" para que referencie al usuario si éste hizo login.</p>
-<pre class="code php"><a name="rest_code_adbf7f1989694b5880561ec25a4fa556-1"></a><span class="x">function feedback_update_6102() {</span>
-<a name="rest_code_adbf7f1989694b5880561ec25a4fa556-2"></a><span class="x">  $ret = array();</span>
-<a name="rest_code_adbf7f1989694b5880561ec25a4fa556-3"></a><span class="x">  db_add_field ( $ret, 'feedback_messages', 'usermail', array ( 'type' =&gt; 'text' ) );</span>
-<a name="rest_code_adbf7f1989694b5880561ec25a4fa556-4"></a><span class="x">  db_change_field ( $ret, 'feedback_messages', 'uid', 'uid', array ( 'type'=&gt; 'int', 'unsigned'=&gt;TRUE ) );</span>
-<a name="rest_code_adbf7f1989694b5880561ec25a4fa556-5"></a><span class="x">  return $ret;</span>
-<a name="rest_code_adbf7f1989694b5880561ec25a4fa556-6"></a><span class="x">}</span>
+<pre class="code php"><a name="rest_code_0c06ceb6f6ba4b52954a85c76977f4a8-1"></a><span class="x">function feedback_update_6102() {</span>
+<a name="rest_code_0c06ceb6f6ba4b52954a85c76977f4a8-2"></a><span class="x">  $ret = array();</span>
+<a name="rest_code_0c06ceb6f6ba4b52954a85c76977f4a8-3"></a><span class="x">  db_add_field ( $ret, 'feedback_messages', 'usermail', array ( 'type' =&gt; 'text' ) );</span>
+<a name="rest_code_0c06ceb6f6ba4b52954a85c76977f4a8-4"></a><span class="x">  db_change_field ( $ret, 'feedback_messages', 'uid', 'uid', array ( 'type'=&gt; 'int', 'unsigned'=&gt;TRUE ) );</span>
+<a name="rest_code_0c06ceb6f6ba4b52954a85c76977f4a8-5"></a><span class="x">  return $ret;</span>
+<a name="rest_code_0c06ceb6f6ba4b52954a85c76977f4a8-6"></a><span class="x">}</span>
 </pre>
 </div>
 <div class="section" id="fe-de-erratas">
 <h2>Fe de erratas</h2>
 <p>El primer error fue la contabilización de feeds. Si miráis el tutorial <a class="reference external" href="/blog/creacion-modulo-drupal-2">Creación de un módulo Drupal (II)</a>, veréis la siguiente línea (función <code>_feedback_count</code>):</p>
-<pre class="code php"><a name="rest_code_a96dc27b5b664c279032604e5357e9c9-1"></a><span class="x">$query = "SELECT count(id) as total from {feedback_messages} fm where fm.read != 1";</span>
+<pre class="code php"><a name="rest_code_7afda662c5d8490d8c9144a2f6f5bb63-1"></a><span class="x">$query = "SELECT count(id) as total from {feedback_messages} fm where fm.read != 1";</span>
 </pre>
 <p>Bueno, pues está <em>mal</em>. Lo correcto es lo siguiente:</p>
-<pre class="code php"><a name="rest_code_87e1a68de429406f98d7945368159feb-1"></a><span class="x">$query = "select count(*) from drupal6.feedback_messages fm where isnull (fm.read) or fm.read != 1";</span>
+<pre class="code php"><a name="rest_code_d6d723df67b144aca233fc86efb1e02f-1"></a><span class="x">$query = "select count(*) from drupal6.feedback_messages fm where isnull (fm.read) or fm.read != 1";</span>
 </pre>
 <p>Como véis, comprobamos que no sea nulo, ya que en ese caso no estaba contabilizando correctamente.</p>
 <p>El segundo error cometido es que los <code>set_error</code> deben realizarse sobre un campo. Así, en el primer tutorial, donde aparecen los <code>set_error</code>, están mal. Realmente no veremos la diferencia si no la conocemos: Si lo hacemos bien, los campos indicados se marcarán en rojo (depende del tema) indicando que el problema se encuentra en ése campo. De esta manera, quedarían así (función <code>feedback_message_form_submit</code>):</p>
-<pre class="code php"><a name="rest_code_4a6635c57b684fa3a98854a2e39d456b-1"></a><span class="x">form_set_error ( 'feedback', t( "An error has happened. Your feedback has not been sent." ) );</span>
+<pre class="code php"><a name="rest_code_ac855f4cd5a94d199afdfd07775827f5-1"></a><span class="x">form_set_error ( 'feedback', t( "An error has happened. Your feedback has not been sent." ) );</span>
 </pre>
 <p>Veremos la función completa cuando añadamos más cosas.</p>
 <p>Y ya, como error menor, deciros que las etiquetas 'Date' y 'User' estaban cambiadas en la función <code>feedback_admin</code>.</p>
@@ -170,61 +170,61 @@ Además, voy a añadir enlaces para eliminar los feeds (como me han solicitado) 
 <div class="section" id="modificando-funciones">
 <h2>Modificando funciones</h2>
 <p>Primero vamos con lo más sencillo de todo: Queremos que cuando alguien meta un feed, que vuelva a la pantalla de inicio. Asumiré que la página de inicio es <code>?q=node</code>, por lo que basta con indicarle:</p>
-<pre class="code php"><a name="rest_code_68f4d11f3e79454e980605689dd7ede2-1"></a><span class="x">drupal_goto ( 'node' );</span>
+<pre class="code php"><a name="rest_code_1781f1bf4b79403997fc06187c21cee3-1"></a><span class="x">drupal_goto ( 'node' );</span>
 </pre>
 <p>A continuación, no sé si notásteis que la tabla con todos los mensajes no se ordena al pulsar las columnas. Esto nos puede venir bien para poder agrupar los mensajes no leídos, para ordenar por fecha, para agrupar los mensajes sin contenido, etc. ¡¡ Y es tan sencillo !! Basta con realizar un cambio durante la consulta, así que en <code>feedback_admin</code>:</p>
-<pre class="code php"><a name="rest_code_05c656e6d84d4442909022707e5bf33e-1"></a><span class="x">$query = "SELECT fm.id, u.name, fm.indate, fm.message FROM {feedback_messages} fm, {users} u WHERE fm.uid=u.uid";</span>
-<a name="rest_code_05c656e6d84d4442909022707e5bf33e-2"></a><span class="x">$query .= tablesort_sql ( $header );</span>
-<a name="rest_code_05c656e6d84d4442909022707e5bf33e-3"></a><span class="x">$queryResult =  db_query ( $query );</span>
+<pre class="code php"><a name="rest_code_df99566b19cf45eb9b81edbd8f6cbaaf-1"></a><span class="x">$query = "SELECT fm.id, u.name, fm.indate, fm.message FROM {feedback_messages} fm, {users} u WHERE fm.uid=u.uid";</span>
+<a name="rest_code_df99566b19cf45eb9b81edbd8f6cbaaf-2"></a><span class="x">$query .= tablesort_sql ( $header );</span>
+<a name="rest_code_df99566b19cf45eb9b81edbd8f6cbaaf-3"></a><span class="x">$queryResult =  db_query ( $query );</span>
 </pre>
 <p>Con eso le decimos a drupal que nos ordene la tabla. Ésa es una de las gracias de usar los headers en una tabla a parte, y por eso los definimos antes de realizar la consulta.</p>
 </div>
 <div class="section" id="anadiendo-un-mail">
 <h2>Añadiendo un mail</h2>
 <p>En las modificaciones de la base de datos, añadimos el campo <code>usermail</code>. Ahora vamos a usarlo. Necesitaremos que el usuario lo inserte, así que tenemos que modificar <code>feedback_message_form</code>:</p>
-<pre class="code php"><a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-1"></a><span class="x">function feedback_message_form ()</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-2"></a><span class="x">{</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-3"></a><span class="x">  global $user;</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-4"></a><span class="x">  $mail = "";</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-5"></a>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-6"></a><span class="x">  if ( $user-&gt;uid != 0 )</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-7"></a><span class="x">    $mail = $user-&gt;mail;</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-8"></a>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-9"></a><span class="x">  $form = array</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-10"></a><span class="x">  (</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-11"></a><span class="x">    'feedback' =&gt; array</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-12"></a><span class="x">    (</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-13"></a><span class="x">      '#type' =&gt; 'fieldset',</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-14"></a><span class="x">      '#title' =&gt; t( 'Feedback' ),</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-15"></a><span class="x">      'mail' =&gt; array ('#type' =&gt; 'textfield', "#title"=&gt;"E-Mail", "#default_value" =&gt; $mail,</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-16"></a><span class="x">                "#description"=&gt;"If you want any answer, please, tell me your mail. It would not be shown anywhere." ),</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-17"></a><span class="x">      'message' =&gt; array ( '#type' =&gt; 'textarea', "#description"=&gt;"Write here your message" ),</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-18"></a><span class="x">      'submit' =&gt; array ( '#type' =&gt; 'submit',  '#value' =&gt; t('Submit'),  ),</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-19"></a><span class="x">    ),</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-20"></a><span class="x">  );</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-21"></a>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-22"></a><span class="x">  return $form;</span>
-<a name="rest_code_5309e598b6b1405fad3aa25d03e769c8-23"></a><span class="x">}</span>
+<pre class="code php"><a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-1"></a><span class="x">function feedback_message_form ()</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-2"></a><span class="x">{</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-3"></a><span class="x">  global $user;</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-4"></a><span class="x">  $mail = "";</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-5"></a>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-6"></a><span class="x">  if ( $user-&gt;uid != 0 )</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-7"></a><span class="x">    $mail = $user-&gt;mail;</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-8"></a>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-9"></a><span class="x">  $form = array</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-10"></a><span class="x">  (</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-11"></a><span class="x">    'feedback' =&gt; array</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-12"></a><span class="x">    (</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-13"></a><span class="x">      '#type' =&gt; 'fieldset',</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-14"></a><span class="x">      '#title' =&gt; t( 'Feedback' ),</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-15"></a><span class="x">      'mail' =&gt; array ('#type' =&gt; 'textfield', "#title"=&gt;"E-Mail", "#default_value" =&gt; $mail,</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-16"></a><span class="x">                "#description"=&gt;"If you want any answer, please, tell me your mail. It would not be shown anywhere." ),</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-17"></a><span class="x">      'message' =&gt; array ( '#type' =&gt; 'textarea', "#description"=&gt;"Write here your message" ),</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-18"></a><span class="x">      'submit' =&gt; array ( '#type' =&gt; 'submit',  '#value' =&gt; t('Submit'),  ),</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-19"></a><span class="x">    ),</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-20"></a><span class="x">  );</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-21"></a>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-22"></a><span class="x">  return $form;</span>
+<a name="rest_code_0b7323249d2c4a7c8a02ba188ea5354b-23"></a><span class="x">}</span>
 </pre>
 <p>Como veréis, esta función tiene un añadido: si el usuario ha hecho <em>login</em>, rellenamos el campo con el mail que puso para su usuario. Así le ahorramos trabajo. El UID del usuario no es necesario que lo metamos en el formulario, ya que podemos recuperarlo directamente de la variable global.</p>
 <p>Las validaciones también cambian, ya que no sólo vamos a comprobar que el mensaje no esté vacío, sino que queremos hacer más cosas. Queremos que, si el usuario hizo <em>login</em>, entonces el campo de e-mail no es obligatorio. Si no lo hizo, entonces sí que lo es. Y el e-mail tiene que parecer un e-mail, es decir, tener su arroba y demás:</p>
-<pre class="code php"><a name="rest_code_3e0c1602e39f40d89afeb48290759e2f-1"></a><span class="x">function feedback_message_form_validate ( $form, &amp;$form_state )</span>
-<a name="rest_code_3e0c1602e39f40d89afeb48290759e2f-2"></a><span class="x">{</span>
-<a name="rest_code_3e0c1602e39f40d89afeb48290759e2f-3"></a><span class="x">  global $user;</span>
-<a name="rest_code_3e0c1602e39f40d89afeb48290759e2f-4"></a>
-<a name="rest_code_3e0c1602e39f40d89afeb48290759e2f-5"></a><span class="x">  $message = $form_state['values']['message'];</span>
-<a name="rest_code_3e0c1602e39f40d89afeb48290759e2f-6"></a><span class="x">  $mail    = $form_state['values']['mail'];</span>
-<a name="rest_code_3e0c1602e39f40d89afeb48290759e2f-7"></a><span class="x">  $validmail = preg_match ("/^[^0-9][A-z0-9_]+([.][A-z0-9_]+)*[@][A-z0-9_]+([.][A-z0-9_]+)*[.][A-z]{2,4}$/" , $mail );</span>
-<a name="rest_code_3e0c1602e39f40d89afeb48290759e2f-8"></a>
-<a name="rest_code_3e0c1602e39f40d89afeb48290759e2f-9"></a><span class="x">  if ( $mail == '' &amp;&amp; $user-&gt;uid == 0 )</span>
-<a name="rest_code_3e0c1602e39f40d89afeb48290759e2f-10"></a><span class="x">    form_set_error ( 'mail', t('You are not a registered user. Please, insert your e-mail.') );</span>
-<a name="rest_code_3e0c1602e39f40d89afeb48290759e2f-11"></a><span class="x">  if ( $mail != '' &amp;&amp; ! $validmail )</span>
-<a name="rest_code_3e0c1602e39f40d89afeb48290759e2f-12"></a><span class="x">    form_set_error ( 'mail', t('The mail does not like an e-mail address.') );</span>
-<a name="rest_code_3e0c1602e39f40d89afeb48290759e2f-13"></a><span class="x">  if ( $message == '' )</span>
-<a name="rest_code_3e0c1602e39f40d89afeb48290759e2f-14"></a><span class="x">    form_set_error ( 'message', t('Message cannot be empty.'));</span>
-<a name="rest_code_3e0c1602e39f40d89afeb48290759e2f-15"></a>
-<a name="rest_code_3e0c1602e39f40d89afeb48290759e2f-16"></a><span class="x">  return $form;</span>
-<a name="rest_code_3e0c1602e39f40d89afeb48290759e2f-17"></a><span class="x">}</span>
+<pre class="code php"><a name="rest_code_968005f7cfab4254a996f98c8d0496d9-1"></a><span class="x">function feedback_message_form_validate ( $form, &amp;$form_state )</span>
+<a name="rest_code_968005f7cfab4254a996f98c8d0496d9-2"></a><span class="x">{</span>
+<a name="rest_code_968005f7cfab4254a996f98c8d0496d9-3"></a><span class="x">  global $user;</span>
+<a name="rest_code_968005f7cfab4254a996f98c8d0496d9-4"></a>
+<a name="rest_code_968005f7cfab4254a996f98c8d0496d9-5"></a><span class="x">  $message = $form_state['values']['message'];</span>
+<a name="rest_code_968005f7cfab4254a996f98c8d0496d9-6"></a><span class="x">  $mail    = $form_state['values']['mail'];</span>
+<a name="rest_code_968005f7cfab4254a996f98c8d0496d9-7"></a><span class="x">  $validmail = preg_match ("/^[^0-9][A-z0-9_]+([.][A-z0-9_]+)*[@][A-z0-9_]+([.][A-z0-9_]+)*[.][A-z]{2,4}$/" , $mail );</span>
+<a name="rest_code_968005f7cfab4254a996f98c8d0496d9-8"></a>
+<a name="rest_code_968005f7cfab4254a996f98c8d0496d9-9"></a><span class="x">  if ( $mail == '' &amp;&amp; $user-&gt;uid == 0 )</span>
+<a name="rest_code_968005f7cfab4254a996f98c8d0496d9-10"></a><span class="x">    form_set_error ( 'mail', t('You are not a registered user. Please, insert your e-mail.') );</span>
+<a name="rest_code_968005f7cfab4254a996f98c8d0496d9-11"></a><span class="x">  if ( $mail != '' &amp;&amp; ! $validmail )</span>
+<a name="rest_code_968005f7cfab4254a996f98c8d0496d9-12"></a><span class="x">    form_set_error ( 'mail', t('The mail does not like an e-mail address.') );</span>
+<a name="rest_code_968005f7cfab4254a996f98c8d0496d9-13"></a><span class="x">  if ( $message == '' )</span>
+<a name="rest_code_968005f7cfab4254a996f98c8d0496d9-14"></a><span class="x">    form_set_error ( 'message', t('Message cannot be empty.'));</span>
+<a name="rest_code_968005f7cfab4254a996f98c8d0496d9-15"></a>
+<a name="rest_code_968005f7cfab4254a996f98c8d0496d9-16"></a><span class="x">  return $form;</span>
+<a name="rest_code_968005f7cfab4254a996f98c8d0496d9-17"></a><span class="x">}</span>
 </pre>
 <p>Aquí hemos introducido la creación de una expresión regular. Explicada brevemente, estamos comprobando si encaja el mail con un patrón dado. La expresión regular es bastante compleja, así que sólo comentaré lo más básico de todo:</p>
 <ul class="simple">
@@ -237,68 +237,68 @@ Además, voy a añadir enlaces para eliminar los feeds (como me han solicitado) 
 </ul>
 <p>Habitualmente, crear una expresión regular es mucho más sencillo de lo que parece, pero modificar una que ya existe suele ser bastante complicadete :-D</p>
 <p>Bueno, y nos queda la inserción:</p>
-<pre class="code php"><a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-1"></a><span class="x">function feedback_message_form_submit ( $form, &amp;$form_state )</span>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-2"></a><span class="x">{</span>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-3"></a><span class="x">  global $user;</span>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-4"></a><span class="x">  $userid = NULL;</span>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-5"></a><span class="x">  if ( $user )</span>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-6"></a><span class="x">    $userid = $user-&gt;uid;</span>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-7"></a><span class="x">  $message = $form_state['values']['message'];</span>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-8"></a><span class="x">  $mail = $form_state['values']['mail'];</span>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-9"></a>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-10"></a><span class="x">  $query = "INSERT into {feedback_messages} ( uid, message, indate, usermail ) values ( %d, '%s', now(), '%s' ) ";</span>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-11"></a><span class="x">  $queryResult = db_query ( $query, $userid, $message, $mail );</span>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-12"></a>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-13"></a><span class="x">  if ( db_affected_rows() )</span>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-14"></a><span class="x">  {</span>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-15"></a><span class="x">    drupal_set_message ( t ( "Thank you for your feedback." ) );</span>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-16"></a><span class="x">    drupal_goto ( 'node' );</span>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-17"></a><span class="x">  }</span>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-18"></a><span class="x">  else</span>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-19"></a><span class="x">    form_set_error ( 'feedback', t( "An error has happened. Your feedback has not been sent." ) );</span>
-<a name="rest_code_bd28cf8cc6704ac79eb27873a4f36b30-20"></a><span class="x">}</span>
+<pre class="code php"><a name="rest_code_471bec2bb00f488ab4eb4eec58232169-1"></a><span class="x">function feedback_message_form_submit ( $form, &amp;$form_state )</span>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-2"></a><span class="x">{</span>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-3"></a><span class="x">  global $user;</span>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-4"></a><span class="x">  $userid = NULL;</span>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-5"></a><span class="x">  if ( $user )</span>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-6"></a><span class="x">    $userid = $user-&gt;uid;</span>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-7"></a><span class="x">  $message = $form_state['values']['message'];</span>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-8"></a><span class="x">  $mail = $form_state['values']['mail'];</span>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-9"></a>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-10"></a><span class="x">  $query = "INSERT into {feedback_messages} ( uid, message, indate, usermail ) values ( %d, '%s', now(), '%s' ) ";</span>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-11"></a><span class="x">  $queryResult = db_query ( $query, $userid, $message, $mail );</span>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-12"></a>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-13"></a><span class="x">  if ( db_affected_rows() )</span>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-14"></a><span class="x">  {</span>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-15"></a><span class="x">    drupal_set_message ( t ( "Thank you for your feedback." ) );</span>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-16"></a><span class="x">    drupal_goto ( 'node' );</span>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-17"></a><span class="x">  }</span>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-18"></a><span class="x">  else</span>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-19"></a><span class="x">    form_set_error ( 'feedback', t( "An error has happened. Your feedback has not been sent." ) );</span>
+<a name="rest_code_471bec2bb00f488ab4eb4eec58232169-20"></a><span class="x">}</span>
 </pre>
 <p>Como ya sabemos redirigir, si todo va bien, nos iremos a la página principal :-D</p>
 <p>Ya que tenemos el mail, lo suyo es que lo veamos desde la tabla principal de feeds:</p>
-<pre class="code php"><a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-1"></a><span class="x">function feedback_admin ( $messageid=null )</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-2"></a><span class="x">{</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-3"></a><span class="x">  $content = '';</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-4"></a>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-5"></a><span class="x">  if ( $messageid != null )</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-6"></a><span class="x">  {</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-7"></a><span class="x">    $content .= drupal_get_form ( 'feedback_messageadmin_form', $messageid );</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-8"></a><span class="x">    $content .= "";</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-9"></a><span class="x">  }</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-10"></a>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-11"></a><span class="x">  $header = array</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-12"></a><span class="x">  (</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-13"></a><span class="x">    array('data' =&gt; t('Date'), 'field' =&gt; 'indate', 'sort' =&gt; 'desc'),</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-14"></a><span class="x">    array('data' =&gt; t('User'), 'field' =&gt; 'name'),</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-15"></a><span class="x">    array('data' =&gt; t('email'), 'field'=&gt;'mail'),</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-16"></a><span class="x">    array('data' =&gt; t('Message'), 'field' =&gt; 'message'),</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-17"></a><span class="x">    array('data' =&gt; t('Read'), 'field'=&gt;'fm.read'),</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-18"></a><span class="x">  );</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-19"></a>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-20"></a><span class="x">  $query = "SELECT fm.id, u.uid as uid, u.name, fm.usermail, fm.indate, fm.message, fm.read FROM {feedback_messages} fm, {users} u WHERE fm.uid=u.uid";</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-21"></a><span class="x">  $query .= tablesort_sql ( $header );</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-22"></a><span class="x">  $queryResult =  db_query ( $query );</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-23"></a>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-24"></a><span class="x">  $rows = array ();</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-25"></a><span class="x">  while ( $message = db_fetch_object ( $queryResult ) )</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-26"></a><span class="x">  {</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-27"></a><span class="x">    $row = array ();</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-28"></a><span class="x">    $row['indate'] = $message-&gt;indate;</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-29"></a><span class="x">    $row['name'] = $message-&gt;uid != 0 ? '' . $message-&gt;name . '' : $message-&gt;name;</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-30"></a><span class="x">    $row['mail'] = $message-&gt;usermail;</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-31"></a><span class="x">    $row['message'] = $message-&gt;message;</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-32"></a><span class="x">    $row['read'] = $message-&gt;read;</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-33"></a><span class="x">    $row['edit'] = l ( t('edit'), "feedback/adminmessages/" . $message-&gt;id );</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-34"></a><span class="x">    $rows[] = $row;</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-35"></a><span class="x">  }</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-36"></a>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-37"></a><span class="x">  $content .= theme_table($header, $rows);</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-38"></a><span class="x">  return $content;</span>
-<a name="rest_code_6474e3f742ad4dd0a558e94cd7d5eeb6-39"></a><span class="x">}</span>
+<pre class="code php"><a name="rest_code_c71740de45214d5ea6412771f661aef9-1"></a><span class="x">function feedback_admin ( $messageid=null )</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-2"></a><span class="x">{</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-3"></a><span class="x">  $content = '';</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-4"></a>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-5"></a><span class="x">  if ( $messageid != null )</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-6"></a><span class="x">  {</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-7"></a><span class="x">    $content .= drupal_get_form ( 'feedback_messageadmin_form', $messageid );</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-8"></a><span class="x">    $content .= "";</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-9"></a><span class="x">  }</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-10"></a>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-11"></a><span class="x">  $header = array</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-12"></a><span class="x">  (</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-13"></a><span class="x">    array('data' =&gt; t('Date'), 'field' =&gt; 'indate', 'sort' =&gt; 'desc'),</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-14"></a><span class="x">    array('data' =&gt; t('User'), 'field' =&gt; 'name'),</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-15"></a><span class="x">    array('data' =&gt; t('email'), 'field'=&gt;'mail'),</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-16"></a><span class="x">    array('data' =&gt; t('Message'), 'field' =&gt; 'message'),</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-17"></a><span class="x">    array('data' =&gt; t('Read'), 'field'=&gt;'fm.read'),</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-18"></a><span class="x">  );</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-19"></a>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-20"></a><span class="x">  $query = "SELECT fm.id, u.uid as uid, u.name, fm.usermail, fm.indate, fm.message, fm.read FROM {feedback_messages} fm, {users} u WHERE fm.uid=u.uid";</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-21"></a><span class="x">  $query .= tablesort_sql ( $header );</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-22"></a><span class="x">  $queryResult =  db_query ( $query );</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-23"></a>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-24"></a><span class="x">  $rows = array ();</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-25"></a><span class="x">  while ( $message = db_fetch_object ( $queryResult ) )</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-26"></a><span class="x">  {</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-27"></a><span class="x">    $row = array ();</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-28"></a><span class="x">    $row['indate'] = $message-&gt;indate;</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-29"></a><span class="x">    $row['name'] = $message-&gt;uid != 0 ? '' . $message-&gt;name . '' : $message-&gt;name;</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-30"></a><span class="x">    $row['mail'] = $message-&gt;usermail;</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-31"></a><span class="x">    $row['message'] = $message-&gt;message;</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-32"></a><span class="x">    $row['read'] = $message-&gt;read;</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-33"></a><span class="x">    $row['edit'] = l ( t('edit'), "feedback/adminmessages/" . $message-&gt;id );</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-34"></a><span class="x">    $rows[] = $row;</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-35"></a><span class="x">  }</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-36"></a>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-37"></a><span class="x">  $content .= theme_table($header, $rows);</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-38"></a><span class="x">  return $content;</span>
+<a name="rest_code_c71740de45214d5ea6412771f661aef9-39"></a><span class="x">}</span>
 </pre>
 <p>¡¡¡ Mucho ojo, porque a esta función aún tenemos que añadirle una línea para el borrado !!!</p>
 <p>Además he añadido una cosa nueva. Si pulsáis sobre el nombre de uno de los usuarios, os redirigirá a la página personal del mismo.</p>
@@ -308,72 +308,72 @@ Además, voy a añadir enlaces para eliminar los feeds (como me han solicitado) 
 <p>La forma de realizarlo va a ser similar a como está hecha la edición, con la diferencia de que vamos a cambiar el botón por uno de "eliminar". Así que resulta fácil realizar este paso, aunque tendrá sus inconvenientes :-D</p>
 <p>Comenzamos como siempre: permisos, menú, función principal y formularios.</p>
 <p>No necesitamos más permisos de los que ya tenemos, así que en la función de menú (<code>feedback_menu</code>), añadimos lo siguiente:</p>
-<pre class="code php"><a name="rest_code_4cdb7662bdd343d585d8915b18bfcd5a-1"></a><span class="x">$items['feedback/delete/%'] = array</span>
-<a name="rest_code_4cdb7662bdd343d585d8915b18bfcd5a-2"></a><span class="x">  (</span>
-<a name="rest_code_4cdb7662bdd343d585d8915b18bfcd5a-3"></a><span class="x">    'title' =&gt; 'Feedback delete',</span>
-<a name="rest_code_4cdb7662bdd343d585d8915b18bfcd5a-4"></a><span class="x">    'page callback' =&gt; 'feedback_delete',</span>
-<a name="rest_code_4cdb7662bdd343d585d8915b18bfcd5a-5"></a><span class="x">    'access arguments' =&gt; array('view messages'),</span>
-<a name="rest_code_4cdb7662bdd343d585d8915b18bfcd5a-6"></a><span class="x">    'page arguments' =&gt; array ( 2 ),</span>
-<a name="rest_code_4cdb7662bdd343d585d8915b18bfcd5a-7"></a><span class="x">    'type' =&gt; MENU_CALLBACK,</span>
-<a name="rest_code_4cdb7662bdd343d585d8915b18bfcd5a-8"></a><span class="x">  );</span>
+<pre class="code php"><a name="rest_code_b03ecfc0fcef4d4184c5ba7865b8f621-1"></a><span class="x">$items['feedback/delete/%'] = array</span>
+<a name="rest_code_b03ecfc0fcef4d4184c5ba7865b8f621-2"></a><span class="x">  (</span>
+<a name="rest_code_b03ecfc0fcef4d4184c5ba7865b8f621-3"></a><span class="x">    'title' =&gt; 'Feedback delete',</span>
+<a name="rest_code_b03ecfc0fcef4d4184c5ba7865b8f621-4"></a><span class="x">    'page callback' =&gt; 'feedback_delete',</span>
+<a name="rest_code_b03ecfc0fcef4d4184c5ba7865b8f621-5"></a><span class="x">    'access arguments' =&gt; array('view messages'),</span>
+<a name="rest_code_b03ecfc0fcef4d4184c5ba7865b8f621-6"></a><span class="x">    'page arguments' =&gt; array ( 2 ),</span>
+<a name="rest_code_b03ecfc0fcef4d4184c5ba7865b8f621-7"></a><span class="x">    'type' =&gt; MENU_CALLBACK,</span>
+<a name="rest_code_b03ecfc0fcef4d4184c5ba7865b8f621-8"></a><span class="x">  );</span>
 </pre>
 <p>Ahora creamos la función principal:</p>
-<pre class="code php"><a name="rest_code_e6db148eb51a4fe182436bbd30857dee-1"></a><span class="x">function feedback_delete ( $messageid=null )</span>
-<a name="rest_code_e6db148eb51a4fe182436bbd30857dee-2"></a><span class="x">{</span>
-<a name="rest_code_e6db148eb51a4fe182436bbd30857dee-3"></a><span class="x">  $content = '';</span>
-<a name="rest_code_e6db148eb51a4fe182436bbd30857dee-4"></a><span class="x">  $content .= drupal_get_form ( 'feedback_delete_form', $messageid );</span>
-<a name="rest_code_e6db148eb51a4fe182436bbd30857dee-5"></a>
-<a name="rest_code_e6db148eb51a4fe182436bbd30857dee-6"></a><span class="x">  return $content;</span>
-<a name="rest_code_e6db148eb51a4fe182436bbd30857dee-7"></a><span class="x">}</span>
+<pre class="code php"><a name="rest_code_fdd6c502e8734dac9b5292599dd35583-1"></a><span class="x">function feedback_delete ( $messageid=null )</span>
+<a name="rest_code_fdd6c502e8734dac9b5292599dd35583-2"></a><span class="x">{</span>
+<a name="rest_code_fdd6c502e8734dac9b5292599dd35583-3"></a><span class="x">  $content = '';</span>
+<a name="rest_code_fdd6c502e8734dac9b5292599dd35583-4"></a><span class="x">  $content .= drupal_get_form ( 'feedback_delete_form', $messageid );</span>
+<a name="rest_code_fdd6c502e8734dac9b5292599dd35583-5"></a>
+<a name="rest_code_fdd6c502e8734dac9b5292599dd35583-6"></a><span class="x">  return $content;</span>
+<a name="rest_code_fdd6c502e8734dac9b5292599dd35583-7"></a><span class="x">}</span>
 </pre>
 <p>Muy similar a <code>feedback_message</code>. Y también creamos el formulario:</p>
-<pre class="code php"><a name="rest_code_7bd06a2e1db74232846a10a4eb442542-1"></a><span class="x">function feedback_delete_form ( $form, $messageid )</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-2"></a><span class="x">{</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-3"></a><span class="x">  $query = "SELECT fm.message, fm.read, fm.indate, u.name FROM {feedback_messages} fm, {users} u WHERE fm.id=%d and u.uid=fm.uid";</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-4"></a><span class="x">  $queryResult = db_query ( $query, $messageid );</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-5"></a><span class="x">  $message = db_fetch_object ( $queryResult );</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-6"></a>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-7"></a><span class="x">  $form = array</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-8"></a><span class="x">    (</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-9"></a><span class="x">      'feedback' =&gt; array</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-10"></a><span class="x">      (</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-11"></a><span class="x">        '#type' =&gt; 'fieldset',</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-12"></a><span class="x">        '#title' =&gt; t( 'Feedback from ' . $message-&gt;name .' sended on ' . $message-&gt;indate ),</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-13"></a><span class="x">        'messageid' =&gt; array ( '#type' =&gt; 'hidden', "#default_value" =&gt; $messageid ),</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-14"></a><span class="x">        'message' =&gt; array ( '#type' =&gt; 'textarea', "#default_value" =&gt; $message-&gt;message, "#disabled" =&gt; TRUE ),</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-15"></a><span class="x">        'read'  =&gt; array ( '#type'=&gt; 'checkbox', "#title" =&gt; "Read","#default_value" =&gt; $message-&gt;read, "#disabled" =&gt; TRUE ),</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-16"></a><span class="x">        'submit' =&gt; array ( '#type' =&gt; 'submit',  '#value' =&gt; t('Delete forever'),  ),</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-17"></a><span class="x">      ),</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-18"></a><span class="x">    );</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-19"></a><span class="x">    return $form;</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-20"></a><span class="x">}</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-21"></a>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-22"></a><span class="x">function feedback_delete_form_submit ( $form, &amp;$form_state )</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-23"></a><span class="x">{</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-24"></a><span class="x">  $messageid = $form_state['values']['messageid'];</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-25"></a>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-26"></a><span class="x">  $query = "DELETE FROM {feedback_messages} where id=%d";</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-27"></a><span class="x">  $queryResult = db_query ( $query, $messageid );</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-28"></a>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-29"></a><span class="x">  if(db_affected_rows()){</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-30"></a><span class="x">    drupal_set_message ( t ( "Message deleted" ) );</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-31"></a><span class="x">  }</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-32"></a>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-33"></a><span class="x">  drupal_goto ('/feedback/adminmessages');</span>
-<a name="rest_code_7bd06a2e1db74232846a10a4eb442542-34"></a><span class="x">}</span>
+<pre class="code php"><a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-1"></a><span class="x">function feedback_delete_form ( $form, $messageid )</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-2"></a><span class="x">{</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-3"></a><span class="x">  $query = "SELECT fm.message, fm.read, fm.indate, u.name FROM {feedback_messages} fm, {users} u WHERE fm.id=%d and u.uid=fm.uid";</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-4"></a><span class="x">  $queryResult = db_query ( $query, $messageid );</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-5"></a><span class="x">  $message = db_fetch_object ( $queryResult );</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-6"></a>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-7"></a><span class="x">  $form = array</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-8"></a><span class="x">    (</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-9"></a><span class="x">      'feedback' =&gt; array</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-10"></a><span class="x">      (</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-11"></a><span class="x">        '#type' =&gt; 'fieldset',</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-12"></a><span class="x">        '#title' =&gt; t( 'Feedback from ' . $message-&gt;name .' sended on ' . $message-&gt;indate ),</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-13"></a><span class="x">        'messageid' =&gt; array ( '#type' =&gt; 'hidden', "#default_value" =&gt; $messageid ),</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-14"></a><span class="x">        'message' =&gt; array ( '#type' =&gt; 'textarea', "#default_value" =&gt; $message-&gt;message, "#disabled" =&gt; TRUE ),</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-15"></a><span class="x">        'read'  =&gt; array ( '#type'=&gt; 'checkbox', "#title" =&gt; "Read","#default_value" =&gt; $message-&gt;read, "#disabled" =&gt; TRUE ),</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-16"></a><span class="x">        'submit' =&gt; array ( '#type' =&gt; 'submit',  '#value' =&gt; t('Delete forever'),  ),</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-17"></a><span class="x">      ),</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-18"></a><span class="x">    );</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-19"></a><span class="x">    return $form;</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-20"></a><span class="x">}</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-21"></a>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-22"></a><span class="x">function feedback_delete_form_submit ( $form, &amp;$form_state )</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-23"></a><span class="x">{</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-24"></a><span class="x">  $messageid = $form_state['values']['messageid'];</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-25"></a>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-26"></a><span class="x">  $query = "DELETE FROM {feedback_messages} where id=%d";</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-27"></a><span class="x">  $queryResult = db_query ( $query, $messageid );</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-28"></a>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-29"></a><span class="x">  if(db_affected_rows()){</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-30"></a><span class="x">    drupal_set_message ( t ( "Message deleted" ) );</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-31"></a><span class="x">  }</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-32"></a>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-33"></a><span class="x">  drupal_goto ('/feedback/adminmessages');</span>
+<a name="rest_code_4c4e3277fdd84c99a4d9b732f83a2357-34"></a><span class="x">}</span>
 </pre>
 <p>Como véis, me he saltado la validación, ya que no hay nada que validar. El formulario es muy parecido al de <code>feedback_messageadmin_form</code>, pero con la diferencia de que el campo "read" también es de sólo lectura.</p>
 <p>Lo que nos queda es poder llegar a este formulario. Para llegar, dijimos que usaríamos un sistema similar al del botón "edit", así que eso mismo vamos a hacer: En la función <code>feedback_admin</code>, el final quedará así:</p>
-<pre class="code php"><a name="rest_code_410c6cc2affc4587bc19fdfbe697dd15-1"></a><span class="x">function feedback_admin( $messageid=null ) {</span>
-<a name="rest_code_410c6cc2affc4587bc19fdfbe697dd15-2"></a><span class="x">    [...]</span>
-<a name="rest_code_410c6cc2affc4587bc19fdfbe697dd15-3"></a><span class="x">    $row['edit'] = l ( t('edit'), "feedback/adminmessages/" . $message-&gt;id );</span>
-<a name="rest_code_410c6cc2affc4587bc19fdfbe697dd15-4"></a><span class="x">    $row['delete'] = l ( t('delete'), "feedback/delete/" . $message-&gt;id );</span>
-<a name="rest_code_410c6cc2affc4587bc19fdfbe697dd15-5"></a><span class="x">    $rows[] = $row;</span>
-<a name="rest_code_410c6cc2affc4587bc19fdfbe697dd15-6"></a><span class="x">  }</span>
-<a name="rest_code_410c6cc2affc4587bc19fdfbe697dd15-7"></a>
-<a name="rest_code_410c6cc2affc4587bc19fdfbe697dd15-8"></a><span class="x">  $content .= theme_table($header, $rows);</span>
-<a name="rest_code_410c6cc2affc4587bc19fdfbe697dd15-9"></a><span class="x">  return $content;</span>
-<a name="rest_code_410c6cc2affc4587bc19fdfbe697dd15-10"></a><span class="x">}</span>
+<pre class="code php"><a name="rest_code_1264817588d84b76ad463b5a24db25fd-1"></a><span class="x">function feedback_admin( $messageid=null ) {</span>
+<a name="rest_code_1264817588d84b76ad463b5a24db25fd-2"></a><span class="x">    [...]</span>
+<a name="rest_code_1264817588d84b76ad463b5a24db25fd-3"></a><span class="x">    $row['edit'] = l ( t('edit'), "feedback/adminmessages/" . $message-&gt;id );</span>
+<a name="rest_code_1264817588d84b76ad463b5a24db25fd-4"></a><span class="x">    $row['delete'] = l ( t('delete'), "feedback/delete/" . $message-&gt;id );</span>
+<a name="rest_code_1264817588d84b76ad463b5a24db25fd-5"></a><span class="x">    $rows[] = $row;</span>
+<a name="rest_code_1264817588d84b76ad463b5a24db25fd-6"></a><span class="x">  }</span>
+<a name="rest_code_1264817588d84b76ad463b5a24db25fd-7"></a>
+<a name="rest_code_1264817588d84b76ad463b5a24db25fd-8"></a><span class="x">  $content .= theme_table($header, $rows);</span>
+<a name="rest_code_1264817588d84b76ad463b5a24db25fd-9"></a><span class="x">  return $content;</span>
+<a name="rest_code_1264817588d84b76ad463b5a24db25fd-10"></a><span class="x">}</span>
 </pre>
 </div>
 </div>
@@ -399,421 +399,421 @@ Además, voy a añadir enlaces para eliminar los feeds (como me han solicitado) 
 <p>Aquí tenéis todo el código necesario:</p>
 <div class="section" id="feedback-info">
 <h3>feedback.info</h3>
-<pre class="code php"><a name="rest_code_7c50ab1aef0a4f72871281ca671fe2ec-1"></a><span class="x">; $Id$</span>
-<a name="rest_code_7c50ab1aef0a4f72871281ca671fe2ec-2"></a><span class="x">name = "MagMax Feedback"</span>
-<a name="rest_code_7c50ab1aef0a4f72871281ca671fe2ec-3"></a><span class="x">description = "Proporciona un sistema de feedbacks fácil para drupal"</span>
-<a name="rest_code_7c50ab1aef0a4f72871281ca671fe2ec-4"></a><span class="x">core = 6.x</span>
+<pre class="code php"><a name="rest_code_d2b5e2f78c3a4dc09cdd386a2f3f593e-1"></a><span class="x">; $Id$</span>
+<a name="rest_code_d2b5e2f78c3a4dc09cdd386a2f3f593e-2"></a><span class="x">name = "MagMax Feedback"</span>
+<a name="rest_code_d2b5e2f78c3a4dc09cdd386a2f3f593e-3"></a><span class="x">description = "Proporciona un sistema de feedbacks fácil para drupal"</span>
+<a name="rest_code_d2b5e2f78c3a4dc09cdd386a2f3f593e-4"></a><span class="x">core = 6.x</span>
 </pre>
 </div>
 <div class="section" id="feedback-install">
 <h3>feedback.install</h3>
-<pre class="code php"><a name="rest_code_664dbc6adaab43578c266db4858c5607-1"></a><span class="cp">&lt;?php</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-2"></a><span class="cm">/*</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-3"></a><span class="cm">Copyright 2009 Miguel Ángel García Martínez</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-4"></a>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-5"></a><span class="cm">  'Feedback' is free software; you can redistribute it and/or modify</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-6"></a><span class="cm">it under the terms of the GNU General Public License as published by</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-7"></a><span class="cm">the Free Software Foundation; either version 3 of the License, or</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-8"></a><span class="cm">(at your option) any later version.</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-9"></a>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-10"></a><span class="cm">  'Feedback' is distributed in the hope that it will be useful,</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-11"></a><span class="cm">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-12"></a><span class="cm">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-13"></a><span class="cm">GNU General Public License for more details.</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-14"></a>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-15"></a><span class="cm">  You should have received a copy of the GNU General Public License</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-16"></a><span class="cm">along with 'Feedback' (maybe in file "COPYING"); if not, write to the Free Software</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-17"></a><span class="cm">Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-18"></a><span class="cm">*/</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-19"></a>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-20"></a>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-21"></a><span class="k">function</span> <span class="nf">feedback_schema</span> <span class="p">()</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-22"></a><span class="p">{</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-23"></a>  <span class="nv">$schema</span><span class="p">[</span><span class="s1">'feedback_messages'</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-24"></a>  <span class="p">(</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-25"></a>    <span class="s1">'description'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Tabla para mensajes de retroalimentacion'</span><span class="p">),</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-26"></a>    <span class="s1">'fields'</span> <span class="o">=&gt;</span> <span class="k">array</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-27"></a>    <span class="p">(</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-28"></a>      <span class="s1">'id'</span> <span class="o">=&gt;</span> <span class="k">array</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-29"></a>      <span class="p">(</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-30"></a>        <span class="s1">'description'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Identificador de mensaje'</span><span class="p">),</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-31"></a>        <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="s1">'serial'</span><span class="p">,</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-32"></a>        <span class="s1">'unsigned'</span> <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-33"></a>        <span class="s1">'not null'</span> <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-34"></a>      <span class="p">),</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-35"></a>      <span class="s1">'uid'</span> <span class="o">=&gt;</span> <span class="k">array</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-36"></a>      <span class="p">(</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-37"></a>        <span class="s1">'description'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Identificador del usuario que realiza el feedback'</span><span class="p">),</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-38"></a>        <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="s1">'int'</span><span class="p">,</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-39"></a>        <span class="s1">'unsigned'</span> <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-40"></a>        <span class="s1">'not null'</span> <span class="o">=&gt;</span> <span class="k">FALSE</span><span class="p">,</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-41"></a>      <span class="p">),</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-42"></a>      <span class="s1">'message'</span> <span class="o">=&gt;</span> <span class="k">array</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-43"></a>      <span class="p">(</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-44"></a>        <span class="s1">'description'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Mensaje de feedback'</span><span class="p">),</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-45"></a>        <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="s1">'text'</span><span class="p">,</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-46"></a>        <span class="s1">'not null'</span> <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-47"></a>      <span class="p">),</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-48"></a>      <span class="s1">'indate'</span> <span class="o">=&gt;</span> <span class="k">array</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-49"></a>      <span class="p">(</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-50"></a>        <span class="s1">'description'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Fecha en la que se crea el comentario'</span><span class="p">),</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-51"></a>        <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="s1">'datetime'</span><span class="p">,</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-52"></a>        <span class="s1">'not null'</span> <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-53"></a>      <span class="p">),</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-54"></a>    <span class="p">),</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-55"></a>    <span class="s1">'primary key'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'id'</span><span class="p">),</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-56"></a>  <span class="p">);</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-57"></a>  <span class="k">return</span> <span class="nv">$schema</span><span class="p">;</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-58"></a><span class="p">}</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-59"></a>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-60"></a><span class="k">function</span> <span class="nf">feedback_update_6100</span><span class="p">()</span> <span class="p">{</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-61"></a>  <span class="nv">$ret</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-62"></a>  <span class="nx">db_add_field</span><span class="p">(</span><span class="nv">$ret</span><span class="p">,</span> <span class="s1">'feedback_messages'</span><span class="p">,</span> <span class="s1">'read'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="s1">'int'</span><span class="p">,</span> <span class="s1">'size'</span> <span class="o">=&gt;</span> <span class="s1">'tiny'</span><span class="p">));</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-63"></a>  <span class="k">return</span> <span class="nv">$ret</span><span class="p">;</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-64"></a><span class="p">}</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-65"></a>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-66"></a><span class="k">function</span> <span class="nf">feedback_update_6103</span><span class="p">()</span> <span class="p">{</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-67"></a>  <span class="nv">$ret</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-68"></a>  <span class="nx">db_add_field</span> <span class="p">(</span> <span class="nv">$ret</span><span class="p">,</span> <span class="s1">'feedback_messages'</span><span class="p">,</span> <span class="s1">'usermail'</span><span class="p">,</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="s1">'text'</span> <span class="p">)</span> <span class="p">);</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-69"></a>  <span class="nx">db_change_field</span> <span class="p">(</span> <span class="nv">$ret</span><span class="p">,</span> <span class="s1">'feedback_messages'</span><span class="p">,</span> <span class="s1">'uid'</span><span class="p">,</span> <span class="s1">'uid'</span><span class="p">,</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'type'</span><span class="o">=&gt;</span> <span class="s1">'int'</span><span class="p">,</span> <span class="s1">'unsigned'</span><span class="o">=&gt;</span><span class="k">TRUE</span> <span class="p">)</span> <span class="p">);</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-70"></a>  <span class="k">return</span> <span class="nv">$ret</span><span class="p">;</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-71"></a><span class="p">}</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-72"></a>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-73"></a><span class="k">function</span> <span class="nf">feedback_install</span><span class="p">()</span> <span class="p">{</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-74"></a>  <span class="c1">// Create my tables.</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-75"></a>  <span class="nx">drupal_install_schema</span><span class="p">(</span><span class="s1">'feedback'</span><span class="p">);</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-76"></a><span class="p">}</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-77"></a>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-78"></a><span class="k">function</span> <span class="nf">feedback_uninstall</span><span class="p">()</span> <span class="p">{</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-79"></a>  <span class="c1">// Drop my tables.</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-80"></a>  <span class="nx">drupal_uninstall_schema</span><span class="p">(</span><span class="s1">'feedback'</span><span class="p">);</span>
-<a name="rest_code_664dbc6adaab43578c266db4858c5607-81"></a><span class="p">}</span>
+<pre class="code php"><a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-1"></a><span class="cp">&lt;?php</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-2"></a><span class="cm">/*</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-3"></a><span class="cm">Copyright 2009 Miguel Ángel García Martínez</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-4"></a>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-5"></a><span class="cm">  'Feedback' is free software; you can redistribute it and/or modify</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-6"></a><span class="cm">it under the terms of the GNU General Public License as published by</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-7"></a><span class="cm">the Free Software Foundation; either version 3 of the License, or</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-8"></a><span class="cm">(at your option) any later version.</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-9"></a>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-10"></a><span class="cm">  'Feedback' is distributed in the hope that it will be useful,</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-11"></a><span class="cm">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-12"></a><span class="cm">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-13"></a><span class="cm">GNU General Public License for more details.</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-14"></a>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-15"></a><span class="cm">  You should have received a copy of the GNU General Public License</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-16"></a><span class="cm">along with 'Feedback' (maybe in file "COPYING"); if not, write to the Free Software</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-17"></a><span class="cm">Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-18"></a><span class="cm">*/</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-19"></a>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-20"></a>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-21"></a><span class="k">function</span> <span class="nf">feedback_schema</span> <span class="p">()</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-22"></a><span class="p">{</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-23"></a>  <span class="nv">$schema</span><span class="p">[</span><span class="s1">'feedback_messages'</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-24"></a>  <span class="p">(</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-25"></a>    <span class="s1">'description'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Tabla para mensajes de retroalimentacion'</span><span class="p">),</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-26"></a>    <span class="s1">'fields'</span> <span class="o">=&gt;</span> <span class="k">array</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-27"></a>    <span class="p">(</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-28"></a>      <span class="s1">'id'</span> <span class="o">=&gt;</span> <span class="k">array</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-29"></a>      <span class="p">(</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-30"></a>        <span class="s1">'description'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Identificador de mensaje'</span><span class="p">),</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-31"></a>        <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="s1">'serial'</span><span class="p">,</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-32"></a>        <span class="s1">'unsigned'</span> <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-33"></a>        <span class="s1">'not null'</span> <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-34"></a>      <span class="p">),</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-35"></a>      <span class="s1">'uid'</span> <span class="o">=&gt;</span> <span class="k">array</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-36"></a>      <span class="p">(</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-37"></a>        <span class="s1">'description'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Identificador del usuario que realiza el feedback'</span><span class="p">),</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-38"></a>        <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="s1">'int'</span><span class="p">,</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-39"></a>        <span class="s1">'unsigned'</span> <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-40"></a>        <span class="s1">'not null'</span> <span class="o">=&gt;</span> <span class="k">FALSE</span><span class="p">,</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-41"></a>      <span class="p">),</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-42"></a>      <span class="s1">'message'</span> <span class="o">=&gt;</span> <span class="k">array</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-43"></a>      <span class="p">(</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-44"></a>        <span class="s1">'description'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Mensaje de feedback'</span><span class="p">),</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-45"></a>        <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="s1">'text'</span><span class="p">,</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-46"></a>        <span class="s1">'not null'</span> <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-47"></a>      <span class="p">),</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-48"></a>      <span class="s1">'indate'</span> <span class="o">=&gt;</span> <span class="k">array</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-49"></a>      <span class="p">(</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-50"></a>        <span class="s1">'description'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Fecha en la que se crea el comentario'</span><span class="p">),</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-51"></a>        <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="s1">'datetime'</span><span class="p">,</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-52"></a>        <span class="s1">'not null'</span> <span class="o">=&gt;</span> <span class="k">TRUE</span><span class="p">,</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-53"></a>      <span class="p">),</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-54"></a>    <span class="p">),</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-55"></a>    <span class="s1">'primary key'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'id'</span><span class="p">),</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-56"></a>  <span class="p">);</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-57"></a>  <span class="k">return</span> <span class="nv">$schema</span><span class="p">;</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-58"></a><span class="p">}</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-59"></a>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-60"></a><span class="k">function</span> <span class="nf">feedback_update_6100</span><span class="p">()</span> <span class="p">{</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-61"></a>  <span class="nv">$ret</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-62"></a>  <span class="nx">db_add_field</span><span class="p">(</span><span class="nv">$ret</span><span class="p">,</span> <span class="s1">'feedback_messages'</span><span class="p">,</span> <span class="s1">'read'</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="s1">'int'</span><span class="p">,</span> <span class="s1">'size'</span> <span class="o">=&gt;</span> <span class="s1">'tiny'</span><span class="p">));</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-63"></a>  <span class="k">return</span> <span class="nv">$ret</span><span class="p">;</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-64"></a><span class="p">}</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-65"></a>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-66"></a><span class="k">function</span> <span class="nf">feedback_update_6103</span><span class="p">()</span> <span class="p">{</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-67"></a>  <span class="nv">$ret</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-68"></a>  <span class="nx">db_add_field</span> <span class="p">(</span> <span class="nv">$ret</span><span class="p">,</span> <span class="s1">'feedback_messages'</span><span class="p">,</span> <span class="s1">'usermail'</span><span class="p">,</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="s1">'text'</span> <span class="p">)</span> <span class="p">);</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-69"></a>  <span class="nx">db_change_field</span> <span class="p">(</span> <span class="nv">$ret</span><span class="p">,</span> <span class="s1">'feedback_messages'</span><span class="p">,</span> <span class="s1">'uid'</span><span class="p">,</span> <span class="s1">'uid'</span><span class="p">,</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'type'</span><span class="o">=&gt;</span> <span class="s1">'int'</span><span class="p">,</span> <span class="s1">'unsigned'</span><span class="o">=&gt;</span><span class="k">TRUE</span> <span class="p">)</span> <span class="p">);</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-70"></a>  <span class="k">return</span> <span class="nv">$ret</span><span class="p">;</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-71"></a><span class="p">}</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-72"></a>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-73"></a><span class="k">function</span> <span class="nf">feedback_install</span><span class="p">()</span> <span class="p">{</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-74"></a>  <span class="c1">// Create my tables.</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-75"></a>  <span class="nx">drupal_install_schema</span><span class="p">(</span><span class="s1">'feedback'</span><span class="p">);</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-76"></a><span class="p">}</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-77"></a>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-78"></a><span class="k">function</span> <span class="nf">feedback_uninstall</span><span class="p">()</span> <span class="p">{</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-79"></a>  <span class="c1">// Drop my tables.</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-80"></a>  <span class="nx">drupal_uninstall_schema</span><span class="p">(</span><span class="s1">'feedback'</span><span class="p">);</span>
+<a name="rest_code_435793a9caff48a2b42ca18dc9e8ea0b-81"></a><span class="p">}</span>
 </pre>
 </div>
 <div class="section" id="feedback-module">
 <h3>feedback.module</h3>
-<pre class="code php"><a name="rest_code_f5b794ed7f624af4af0869d85dca6209-1"></a><span class="cp">&lt;?php</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-2"></a><span class="cm">/*</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-3"></a><span class="cm">Copyright 2009 Miguel Ángel García Martínez</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-4"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-5"></a><span class="cm">  'Feedback' is free software; you can redistribute it and/or modify</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-6"></a><span class="cm">it under the terms of the GNU General Public License as published by</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-7"></a><span class="cm">the Free Software Foundation; either version 3 of the License, or</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-8"></a><span class="cm">(at your option) any later version.</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-9"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-10"></a><span class="cm">  'Feedback' is distributed in the hope that it will be useful,</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-11"></a><span class="cm">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-12"></a><span class="cm">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-13"></a><span class="cm">GNU General Public License for more details.</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-14"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-15"></a><span class="cm">  You should have received a copy of the GNU General Public License</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-16"></a><span class="cm">along with 'Feedback' (maybe in file "COPYING"); if not, write to the Free Software</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-17"></a><span class="cm">Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-18"></a><span class="cm">*/</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-19"></a><span class="sd">/**</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-20"></a><span class="sd">* Implements hook_help().</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-21"></a><span class="sd">*/</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-22"></a><span class="k">function</span> <span class="nf">feedback_help</span> <span class="p">(</span> <span class="nv">$path</span><span class="p">,</span> <span class="nv">$arg</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-23"></a><span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-24"></a>  <span class="nv">$output</span><span class="o">=</span><span class="s1">''</span><span class="p">;</span> <span class="c1">// para construir la salida</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-25"></a>  <span class="k">switch</span> <span class="p">(</span> <span class="nx">path</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-26"></a>  <span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-27"></a>    <span class="k">case</span> <span class="s1">'admin/help#feedback'</span><span class="o">:</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-28"></a>      <span class="nv">$output</span> <span class="o">.=</span> <span class="s1">''</span> <span class="o">.</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Módulo que permite la inserción de mensajes de feedback.'</span><span class="p">)</span> <span class="o">.</span> <span class="s1">''</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-29"></a>      <span class="k">break</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-30"></a>  <span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-31"></a>  <span class="k">return</span> <span class="nv">$output</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-32"></a><span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-33"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-34"></a><span class="sd">/**</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-35"></a><span class="sd">* Implements hook_perm().</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-36"></a><span class="sd">*/</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-37"></a><span class="k">function</span> <span class="nf">feedback_perm</span> <span class="p">()</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-38"></a><span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-39"></a>  <span class="k">return</span> <span class="k">array</span> <span class="p">(</span><span class="s1">'send message'</span><span class="p">,</span> <span class="s1">'view messages'</span><span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-40"></a><span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-41"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-42"></a><span class="sd">/**</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-43"></a><span class="sd">* Implementation of hook_block().</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-44"></a><span class="sd">*/</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-45"></a><span class="k">function</span> <span class="nf">feedback_block</span> <span class="p">(</span> <span class="nv">$op</span> <span class="o">=</span> <span class="s1">'list'</span><span class="p">,</span> <span class="nv">$delta</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$edit</span> <span class="o">=</span> <span class="k">array</span><span class="p">()</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-46"></a><span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-47"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nv">$op</span> <span class="o">==</span> <span class="s2">"list"</span><span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-48"></a>  <span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-49"></a>      <span class="nv">$blocks</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-50"></a>      <span class="nv">$blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"info"</span><span class="p">]</span> <span class="o">=</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Feedback'</span><span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-51"></a>      <span class="nv">$blocks</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s2">"info"</span><span class="p">]</span> <span class="o">=</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'New Feedbacks'</span><span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-52"></a>      <span class="k">return</span> <span class="nv">$blocks</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-53"></a>  <span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-54"></a>  <span class="k">else</span> <span class="k">if</span> <span class="p">(</span> <span class="nv">$op</span> <span class="o">==</span> <span class="s2">"view"</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-55"></a>  <span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-56"></a>      <span class="nv">$content</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-57"></a>      <span class="nv">$block</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-58"></a>      <span class="k">switch</span> <span class="p">(</span> <span class="nv">$delta</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-59"></a>      <span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-60"></a>        <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-61"></a>          <span class="nv">$block</span><span class="p">[</span><span class="s1">'subject'</span><span class="p">]</span> <span class="o">=</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Feedback'</span><span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-62"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-63"></a>          <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span> <span class="s2">"attributes"</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s2">"title"</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s2">"Sends a feedback message"</span><span class="p">)</span> <span class="p">)</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-64"></a>          <span class="nv">$link</span> <span class="o">=</span> <span class="nx">l</span><span class="p">(</span> <span class="nx">t</span><span class="p">(</span><span class="s2">"New Feedback"</span><span class="p">),</span> <span class="s2">"feedback/message"</span><span class="p">,</span> <span class="nv">$options</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-65"></a>          <span class="nv">$content</span> <span class="o">.=</span> <span class="s1">''</span> <span class="o">.</span> <span class="nv">$link</span> <span class="o">.</span> <span class="s2">""</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-66"></a>          <span class="k">break</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-67"></a>        <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-68"></a>          <span class="nv">$block</span><span class="p">[</span><span class="s1">'subject'</span><span class="p">]</span> <span class="o">=</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Feedback Messages'</span><span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-69"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-70"></a>          <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span> <span class="s2">"attributes"</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s2">"title"</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s2">"Shows feedback messages"</span><span class="p">)</span> <span class="p">)</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-71"></a>          <span class="nv">$title</span> <span class="o">=</span> <span class="nx">t</span><span class="p">(</span><span class="s2">"There are @total new feeds"</span><span class="p">,</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'@total'</span> <span class="o">=&gt;</span> <span class="nx">_feedback_count</span><span class="p">()</span> <span class="p">)</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-72"></a>          <span class="nv">$link</span> <span class="o">=</span> <span class="nx">l</span><span class="p">(</span> <span class="nv">$title</span> <span class="p">,</span> <span class="s2">"feedback/adminmessages"</span><span class="p">,</span> <span class="nv">$options</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-73"></a>          <span class="nv">$content</span> <span class="o">.=</span> <span class="s1">''</span> <span class="o">.</span> <span class="nv">$link</span> <span class="o">.</span> <span class="s2">""</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-74"></a>          <span class="k">break</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-75"></a>      <span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-76"></a>      <span class="nv">$block</span><span class="p">[</span><span class="s1">'content'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$content</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-77"></a>      <span class="k">return</span> <span class="nv">$block</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-78"></a>  <span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-79"></a><span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-80"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-81"></a><span class="sd">/**</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-82"></a><span class="sd">* Implementation of hook_menu().</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-83"></a><span class="sd">*/</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-84"></a><span class="k">function</span> <span class="nf">feedback_menu</span> <span class="p">(</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-85"></a><span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-86"></a>  <span class="nv">$items</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-87"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-88"></a>  <span class="nv">$items</span><span class="p">[</span><span class="s1">'feedback/message'</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-89"></a>  <span class="p">(</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-90"></a>    <span class="s1">'title'</span> <span class="o">=&gt;</span> <span class="s1">'Feedback'</span><span class="p">,</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-91"></a>    <span class="s1">'page callback'</span> <span class="o">=&gt;</span> <span class="s1">'feedback_message'</span><span class="p">,</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-92"></a>    <span class="s1">'access arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'send message'</span><span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-93"></a>    <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="nx">MENU_CALLBACK</span><span class="p">,</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-94"></a>  <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-95"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-96"></a>  <span class="nv">$items</span><span class="p">[</span><span class="s1">'feedback/adminmessages/%'</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-97"></a>  <span class="p">(</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-98"></a>    <span class="s1">'title'</span> <span class="o">=&gt;</span> <span class="s1">'Feedback admin'</span><span class="p">,</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-99"></a>    <span class="s1">'page callback'</span> <span class="o">=&gt;</span> <span class="s1">'feedback_admin'</span><span class="p">,</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-100"></a>    <span class="s1">'page arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="mi">2</span> <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-101"></a>    <span class="s1">'access arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'view messages'</span><span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-102"></a>    <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="nx">MENU_CALLBACK</span><span class="p">,</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-103"></a>  <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-104"></a>  <span class="nv">$items</span><span class="p">[</span><span class="s1">'feedback/adminmessages'</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-105"></a>  <span class="p">(</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-106"></a>    <span class="s1">'title'</span> <span class="o">=&gt;</span> <span class="s1">'Feedback admin'</span><span class="p">,</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-107"></a>    <span class="s1">'page callback'</span> <span class="o">=&gt;</span> <span class="s1">'feedback_admin'</span><span class="p">,</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-108"></a>    <span class="s1">'access arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'view messages'</span><span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-109"></a>    <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="nx">MENU_CALLBACK</span><span class="p">,</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-110"></a>  <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-111"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-112"></a>  <span class="nv">$items</span><span class="p">[</span><span class="s1">'feedback/delete/%'</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-113"></a>  <span class="p">(</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-114"></a>    <span class="s1">'title'</span> <span class="o">=&gt;</span> <span class="s1">'Feedback delete'</span><span class="p">,</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-115"></a>    <span class="s1">'page callback'</span> <span class="o">=&gt;</span> <span class="s1">'feedback_delete'</span><span class="p">,</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-116"></a>    <span class="s1">'page arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="mi">2</span> <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-117"></a>    <span class="s1">'access arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'view messages'</span><span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-118"></a>    <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="nx">MENU_CALLBACK</span><span class="p">,</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-119"></a>  <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-120"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-121"></a>  <span class="k">return</span> <span class="nv">$items</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-122"></a><span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-123"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-124"></a><span class="k">function</span> <span class="nf">feedback_message</span> <span class="p">()</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-125"></a><span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-126"></a>  <span class="nv">$content</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-127"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-128"></a>  <span class="nv">$content</span> <span class="o">.=</span> <span class="nx">drupal_get_form</span> <span class="p">(</span> <span class="s1">'feedback_message_form'</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-129"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-130"></a>  <span class="k">return</span> <span class="nv">$content</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-131"></a><span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-132"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-133"></a><span class="k">function</span> <span class="nf">feedback_message_form</span> <span class="p">()</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-134"></a><span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-135"></a>  <span class="k">global</span> <span class="nv">$user</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-136"></a>  <span class="nv">$mail</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-137"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-138"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">uid</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-139"></a>    <span class="nv">$mail</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">mail</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-140"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-141"></a>  <span class="nv">$form</span> <span class="o">=</span> <span class="k">array</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-142"></a>  <span class="p">(</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-143"></a>    <span class="s1">'feedback'</span> <span class="o">=&gt;</span> <span class="k">array</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-144"></a>    <span class="p">(</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-145"></a>      <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'fieldset'</span><span class="p">,</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-146"></a>      <span class="s1">'#title'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span> <span class="s1">'Feedback'</span> <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-147"></a>      <span class="s1">'mail'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span><span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'textfield'</span><span class="p">,</span> <span class="s2">"#title"</span><span class="o">=&gt;</span><span class="s2">"E-Mail"</span><span class="p">,</span> <span class="s2">"#description"</span><span class="o">=&gt;</span><span class="s2">"If you want any answer, please, tell me your mail. It would not be shown anywhere."</span><span class="p">,</span> <span class="s2">"#default_value"</span> <span class="o">=&gt;</span> <span class="nv">$mail</span> <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-148"></a>      <span class="s1">'message'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'textarea'</span><span class="p">,</span> <span class="s2">"#description"</span><span class="o">=&gt;</span><span class="s2">"Write here your message"</span> <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-149"></a>      <span class="s1">'submit'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'submit'</span><span class="p">,</span>  <span class="s1">'#value'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Submit'</span><span class="p">),</span>  <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-150"></a>    <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-151"></a>  <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-152"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-153"></a>  <span class="k">return</span> <span class="nv">$form</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-154"></a><span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-155"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-156"></a><span class="k">function</span> <span class="nf">feedback_message_form_validate</span> <span class="p">(</span> <span class="nv">$form</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$form_state</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-157"></a><span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-158"></a>  <span class="k">global</span> <span class="nv">$user</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-159"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-160"></a>  <span class="nv">$message</span> <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'message'</span><span class="p">];</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-161"></a>  <span class="nv">$mail</span>    <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'mail'</span><span class="p">];</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-162"></a>  <span class="nv">$validmail</span> <span class="o">=</span> <span class="nb">preg_match</span> <span class="p">(</span><span class="s2">"/^[^0-9][A-z0-9_]+([.][A-z0-9_]+)*[@][A-z0-9_]+([.][A-z0-9_]+)*[.][A-z]{2,4}$/"</span> <span class="p">,</span> <span class="nv">$mail</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-163"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-164"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nv">$mail</span> <span class="o">==</span> <span class="s1">''</span> <span class="o">&amp;&amp;</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">uid</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-165"></a>    <span class="nx">form_set_error</span> <span class="p">(</span> <span class="s1">'mail'</span><span class="p">,</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'You are not a registered user. Please, insert your e-mail.'</span><span class="p">)</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-166"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nv">$mail</span> <span class="o">!=</span> <span class="s1">''</span> <span class="o">&amp;&amp;</span> <span class="o">!</span> <span class="nv">$validmail</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-167"></a>    <span class="nx">form_set_error</span> <span class="p">(</span> <span class="s1">'mail'</span><span class="p">,</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'The mail does not like an e-mail address.'</span><span class="p">)</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-168"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nv">$message</span> <span class="o">==</span> <span class="s1">''</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-169"></a>    <span class="nx">form_set_error</span> <span class="p">(</span> <span class="s1">'message'</span><span class="p">,</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Message cannot be empty.'</span><span class="p">));</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-170"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-171"></a>  <span class="k">return</span> <span class="nv">$form</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-172"></a><span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-173"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-174"></a><span class="k">function</span> <span class="nf">feedback_message_form_submit</span> <span class="p">(</span> <span class="nv">$form</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$form_state</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-175"></a><span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-176"></a>  <span class="k">global</span> <span class="nv">$user</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-177"></a>  <span class="nv">$userid</span> <span class="o">=</span> <span class="k">NULL</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-178"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nv">$user</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-179"></a>    <span class="nv">$userid</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">uid</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-180"></a>  <span class="nv">$message</span> <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'message'</span><span class="p">];</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-181"></a>  <span class="nv">$mail</span> <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'mail'</span><span class="p">];</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-182"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-183"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"INSERT into {feedback_messages} ( uid, message, indate, usermail ) values ( %d, '%s', now(), '%s' ) "</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-184"></a>  <span class="nv">$queryResult</span> <span class="o">=</span> <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span><span class="p">,</span> <span class="nv">$userid</span><span class="p">,</span> <span class="nv">$message</span><span class="p">,</span> <span class="nv">$mail</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-185"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-186"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nx">db_affected_rows</span><span class="p">()</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-187"></a>  <span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-188"></a>    <span class="nx">drupal_set_message</span> <span class="p">(</span> <span class="nx">t</span> <span class="p">(</span> <span class="s2">"Thank you for your feedback."</span> <span class="p">)</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-189"></a>    <span class="nx">drupal_goto</span> <span class="p">(</span> <span class="s1">'node'</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-190"></a>  <span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-191"></a>  <span class="k">else</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-192"></a>    <span class="nx">form_set_error</span> <span class="p">(</span> <span class="s1">'feedback'</span><span class="p">,</span> <span class="nx">t</span><span class="p">(</span> <span class="s2">"An error has happened. Your feedback has not been sent."</span> <span class="p">)</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-193"></a><span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-194"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-195"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-196"></a><span class="k">function</span> <span class="nf">feedback_admin</span> <span class="p">(</span> <span class="nv">$messageid</span><span class="o">=</span><span class="k">null</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-197"></a><span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-198"></a>  <span class="nv">$content</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-199"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-200"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nv">$messageid</span> <span class="o">!=</span> <span class="k">null</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-201"></a>  <span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-202"></a>    <span class="nv">$content</span> <span class="o">.=</span> <span class="nx">drupal_get_form</span> <span class="p">(</span> <span class="s1">'feedback_messageadmin_form'</span><span class="p">,</span> <span class="nv">$messageid</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-203"></a>    <span class="nv">$content</span> <span class="o">.=</span> <span class="s2">""</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-204"></a>  <span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-205"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-206"></a>  <span class="nv">$header</span> <span class="o">=</span> <span class="k">array</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-207"></a>  <span class="p">(</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-208"></a>    <span class="k">array</span><span class="p">(</span><span class="s1">'data'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Date'</span><span class="p">),</span> <span class="s1">'field'</span> <span class="o">=&gt;</span> <span class="s1">'indate'</span><span class="p">,</span> <span class="s1">'sort'</span> <span class="o">=&gt;</span> <span class="s1">'desc'</span><span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-209"></a>    <span class="k">array</span><span class="p">(</span><span class="s1">'data'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'User'</span><span class="p">),</span> <span class="s1">'field'</span> <span class="o">=&gt;</span> <span class="s1">'name'</span><span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-210"></a>    <span class="k">array</span><span class="p">(</span><span class="s1">'data'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'email'</span><span class="p">),</span> <span class="s1">'field'</span><span class="o">=&gt;</span><span class="s1">'mail'</span><span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-211"></a>    <span class="k">array</span><span class="p">(</span><span class="s1">'data'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Message'</span><span class="p">),</span> <span class="s1">'field'</span> <span class="o">=&gt;</span> <span class="s1">'message'</span><span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-212"></a>    <span class="k">array</span><span class="p">(</span><span class="s1">'data'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Read'</span><span class="p">),</span> <span class="s1">'field'</span><span class="o">=&gt;</span><span class="s1">'fm.read'</span><span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-213"></a>  <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-214"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-215"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"SELECT fm.id, u.uid as uid, u.name, fm.usermail, fm.indate, fm.message, fm.read FROM {feedback_messages} fm, {users} u WHERE fm.uid=u.uid"</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-216"></a>  <span class="nv">$query</span> <span class="o">.=</span> <span class="nx">tablesort_sql</span> <span class="p">(</span> <span class="nv">$header</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-217"></a>  <span class="nv">$queryResult</span> <span class="o">=</span>  <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-218"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-219"></a>  <span class="nv">$rows</span> <span class="o">=</span> <span class="k">array</span> <span class="p">();</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-220"></a>  <span class="k">while</span> <span class="p">(</span> <span class="nv">$message</span> <span class="o">=</span> <span class="nx">db_fetch_object</span> <span class="p">(</span> <span class="nv">$queryResult</span> <span class="p">)</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-221"></a>  <span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-222"></a>    <span class="nv">$row</span> <span class="o">=</span> <span class="k">array</span> <span class="p">();</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-223"></a>    <span class="nv">$row</span><span class="p">[</span><span class="s1">'indate'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">indate</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-224"></a>    <span class="nv">$row</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">uid</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">?</span> <span class="s1">''</span> <span class="o">.</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">.</span> <span class="s1">''</span> <span class="o">:</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-225"></a>    <span class="nv">$row</span><span class="p">[</span><span class="s1">'mail'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">usermail</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-226"></a>    <span class="nv">$row</span><span class="p">[</span><span class="s1">'message'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">message</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-227"></a>    <span class="nv">$row</span><span class="p">[</span><span class="s1">'read'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">read</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-228"></a>    <span class="nv">$row</span><span class="p">[</span><span class="s1">'edit'</span><span class="p">]</span> <span class="o">=</span> <span class="nx">l</span> <span class="p">(</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'edit'</span><span class="p">),</span> <span class="s2">"feedback/adminmessages/"</span> <span class="o">.</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">id</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-229"></a>    <span class="nv">$row</span><span class="p">[</span><span class="s1">'delete'</span><span class="p">]</span> <span class="o">=</span> <span class="nx">l</span> <span class="p">(</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'delete'</span><span class="p">),</span> <span class="s2">"feedback/delete/"</span> <span class="o">.</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">id</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-230"></a>    <span class="nv">$rows</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$row</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-231"></a>  <span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-232"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-233"></a>  <span class="nv">$content</span> <span class="o">.=</span> <span class="nx">theme_table</span><span class="p">(</span><span class="nv">$header</span><span class="p">,</span> <span class="nv">$rows</span><span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-234"></a>  <span class="k">return</span> <span class="nv">$content</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-235"></a><span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-236"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-237"></a><span class="sd">/** Devuelve el número de feeds creados en la última semana</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-238"></a><span class="sd">*/</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-239"></a><span class="k">function</span> <span class="nf">_feedback_count</span> <span class="p">()</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-240"></a><span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-241"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"SELECT count(id) as total from {feedback_messages} fm where fm.read != 1 or isnull(fm.read)"</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-242"></a>  <span class="nv">$queryResult</span> <span class="o">=</span>  <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-243"></a>  <span class="nv">$result</span> <span class="o">=</span> <span class="nx">db_fetch_object</span> <span class="p">(</span> <span class="nv">$queryResult</span> <span class="p">)</span> <span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-244"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-245"></a>  <span class="k">return</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">total</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-246"></a><span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-247"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-248"></a><span class="k">function</span> <span class="nf">feedback_messageadmin_form</span> <span class="p">(</span> <span class="nv">$form</span><span class="p">,</span> <span class="nv">$messageid</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-249"></a><span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-250"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"SELECT fm.message, fm.read, fm.indate, u.name FROM {feedback_messages} fm, {users} u WHERE fm.id=%d and u.uid=fm.uid"</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-251"></a>  <span class="nv">$queryResult</span> <span class="o">=</span> <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span><span class="p">,</span> <span class="nv">$messageid</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-252"></a>  <span class="nv">$message</span> <span class="o">=</span> <span class="nx">db_fetch_object</span> <span class="p">(</span> <span class="nv">$queryResult</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-253"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-254"></a>  <span class="nv">$form</span> <span class="o">=</span> <span class="k">array</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-255"></a>    <span class="p">(</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-256"></a>      <span class="s1">'feedback'</span> <span class="o">=&gt;</span> <span class="k">array</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-257"></a>      <span class="p">(</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-258"></a>        <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'fieldset'</span><span class="p">,</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-259"></a>        <span class="s1">'#title'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span> <span class="s1">'Feedback from '</span> <span class="o">.</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">.</span><span class="s1">' sended on '</span> <span class="o">.</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">indate</span> <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-260"></a>        <span class="s1">'messageid'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'hidden'</span><span class="p">,</span> <span class="s2">"#default_value"</span> <span class="o">=&gt;</span> <span class="nv">$messageid</span> <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-261"></a>        <span class="s1">'message'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'textarea'</span><span class="p">,</span> <span class="s2">"#default_value"</span> <span class="o">=&gt;</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">message</span><span class="p">,</span> <span class="s2">"#disabled"</span> <span class="o">=&gt;</span> <span class="k">TRUE</span> <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-262"></a>        <span class="s1">'read'</span>  <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span><span class="o">=&gt;</span> <span class="s1">'checkbox'</span><span class="p">,</span> <span class="s2">"#title"</span> <span class="o">=&gt;</span> <span class="s2">"Read"</span><span class="p">,</span><span class="s2">"#default_value"</span> <span class="o">=&gt;</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">read</span> <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-263"></a>        <span class="s1">'submit'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'submit'</span><span class="p">,</span>  <span class="s1">'#value'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Submit'</span><span class="p">),</span>  <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-264"></a>      <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-265"></a>    <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-266"></a>    <span class="k">return</span> <span class="nv">$form</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-267"></a><span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-268"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-269"></a><span class="k">function</span> <span class="nf">feedback_messageadmin_form_submit</span> <span class="p">(</span> <span class="nv">$form</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$form_state</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-270"></a><span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-271"></a>  <span class="nv">$messageid</span> <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'messageid'</span><span class="p">];</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-272"></a>  <span class="nv">$read</span>      <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'read'</span><span class="p">];</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-273"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-274"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"UPDATE {feedback_messages} fm set fm.read=%d where fm.id=%d"</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-275"></a>  <span class="nv">$queryResult</span> <span class="o">=</span> <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span><span class="p">,</span> <span class="nv">$read</span><span class="p">,</span> <span class="nv">$messageid</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-276"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-277"></a>  <span class="nx">drupal_goto</span> <span class="p">(</span><span class="s1">'/feedback/adminmessages'</span><span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-278"></a><span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-279"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-280"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-281"></a><span class="k">function</span> <span class="nf">feedback_delete</span> <span class="p">(</span> <span class="nv">$messageid</span><span class="o">=</span><span class="k">null</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-282"></a><span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-283"></a>  <span class="nv">$content</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-284"></a>  <span class="nv">$content</span> <span class="o">.=</span> <span class="nx">drupal_get_form</span> <span class="p">(</span> <span class="s1">'feedback_delete_form'</span><span class="p">,</span> <span class="nv">$messageid</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-285"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-286"></a>  <span class="k">return</span> <span class="nv">$content</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-287"></a><span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-288"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-289"></a><span class="k">function</span> <span class="nf">feedback_delete_form</span> <span class="p">(</span> <span class="nv">$form</span><span class="p">,</span> <span class="nv">$messageid</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-290"></a><span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-291"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"SELECT fm.message, fm.read, fm.indate, u.name FROM {feedback_messages} fm, {users} u WHERE fm.id=%d and u.uid=fm.uid"</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-292"></a>  <span class="nv">$queryResult</span> <span class="o">=</span> <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span><span class="p">,</span> <span class="nv">$messageid</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-293"></a>  <span class="nv">$message</span> <span class="o">=</span> <span class="nx">db_fetch_object</span> <span class="p">(</span> <span class="nv">$queryResult</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-294"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-295"></a>  <span class="nv">$form</span> <span class="o">=</span> <span class="k">array</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-296"></a>    <span class="p">(</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-297"></a>      <span class="s1">'feedback'</span> <span class="o">=&gt;</span> <span class="k">array</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-298"></a>      <span class="p">(</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-299"></a>        <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'fieldset'</span><span class="p">,</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-300"></a>        <span class="s1">'#title'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span> <span class="s1">'Feedback from '</span> <span class="o">.</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">.</span><span class="s1">' sended on '</span> <span class="o">.</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">indate</span> <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-301"></a>        <span class="s1">'messageid'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'hidden'</span><span class="p">,</span> <span class="s2">"#default_value"</span> <span class="o">=&gt;</span> <span class="nv">$messageid</span> <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-302"></a>        <span class="s1">'message'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'textarea'</span><span class="p">,</span> <span class="s2">"#default_value"</span> <span class="o">=&gt;</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">message</span><span class="p">,</span> <span class="s2">"#disabled"</span> <span class="o">=&gt;</span> <span class="k">TRUE</span> <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-303"></a>        <span class="s1">'read'</span>  <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span><span class="o">=&gt;</span> <span class="s1">'checkbox'</span><span class="p">,</span> <span class="s2">"#title"</span> <span class="o">=&gt;</span> <span class="s2">"Read"</span><span class="p">,</span><span class="s2">"#default_value"</span> <span class="o">=&gt;</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">read</span><span class="p">,</span> <span class="s2">"#disabled"</span> <span class="o">=&gt;</span> <span class="k">TRUE</span> <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-304"></a>        <span class="s1">'submit'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'submit'</span><span class="p">,</span>  <span class="s1">'#value'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Delete forever'</span><span class="p">),</span>  <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-305"></a>      <span class="p">),</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-306"></a>    <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-307"></a>    <span class="k">return</span> <span class="nv">$form</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-308"></a><span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-309"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-310"></a><span class="k">function</span> <span class="nf">feedback_delete_form_submit</span> <span class="p">(</span> <span class="nv">$form</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$form_state</span> <span class="p">)</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-311"></a><span class="p">{</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-312"></a>  <span class="nv">$messageid</span> <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'messageid'</span><span class="p">];</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-313"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-314"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"DELETE FROM {feedback_messages} where id=%d"</span><span class="p">;</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-315"></a>  <span class="nv">$queryResult</span> <span class="o">=</span> <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span><span class="p">,</span> <span class="nv">$messageid</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-316"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-317"></a>  <span class="k">if</span><span class="p">(</span><span class="nx">db_affected_rows</span><span class="p">()){</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-318"></a>    <span class="nx">drupal_set_message</span> <span class="p">(</span> <span class="nx">t</span> <span class="p">(</span> <span class="s2">"Message deleted"</span> <span class="p">)</span> <span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-319"></a>  <span class="p">}</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-320"></a>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-321"></a>  <span class="nx">drupal_goto</span> <span class="p">(</span><span class="s1">'/feedback/adminmessages'</span><span class="p">);</span>
-<a name="rest_code_f5b794ed7f624af4af0869d85dca6209-322"></a><span class="p">}</span>
+<pre class="code php"><a name="rest_code_a722a671434b47fc94c7ae7db3565af4-1"></a><span class="cp">&lt;?php</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-2"></a><span class="cm">/*</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-3"></a><span class="cm">Copyright 2009 Miguel Ángel García Martínez</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-4"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-5"></a><span class="cm">  'Feedback' is free software; you can redistribute it and/or modify</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-6"></a><span class="cm">it under the terms of the GNU General Public License as published by</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-7"></a><span class="cm">the Free Software Foundation; either version 3 of the License, or</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-8"></a><span class="cm">(at your option) any later version.</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-9"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-10"></a><span class="cm">  'Feedback' is distributed in the hope that it will be useful,</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-11"></a><span class="cm">but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-12"></a><span class="cm">MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-13"></a><span class="cm">GNU General Public License for more details.</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-14"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-15"></a><span class="cm">  You should have received a copy of the GNU General Public License</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-16"></a><span class="cm">along with 'Feedback' (maybe in file "COPYING"); if not, write to the Free Software</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-17"></a><span class="cm">Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-18"></a><span class="cm">*/</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-19"></a><span class="sd">/**</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-20"></a><span class="sd">* Implements hook_help().</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-21"></a><span class="sd">*/</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-22"></a><span class="k">function</span> <span class="nf">feedback_help</span> <span class="p">(</span> <span class="nv">$path</span><span class="p">,</span> <span class="nv">$arg</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-23"></a><span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-24"></a>  <span class="nv">$output</span><span class="o">=</span><span class="s1">''</span><span class="p">;</span> <span class="c1">// para construir la salida</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-25"></a>  <span class="k">switch</span> <span class="p">(</span> <span class="nx">path</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-26"></a>  <span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-27"></a>    <span class="k">case</span> <span class="s1">'admin/help#feedback'</span><span class="o">:</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-28"></a>      <span class="nv">$output</span> <span class="o">.=</span> <span class="s1">''</span> <span class="o">.</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Módulo que permite la inserción de mensajes de feedback.'</span><span class="p">)</span> <span class="o">.</span> <span class="s1">''</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-29"></a>      <span class="k">break</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-30"></a>  <span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-31"></a>  <span class="k">return</span> <span class="nv">$output</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-32"></a><span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-33"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-34"></a><span class="sd">/**</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-35"></a><span class="sd">* Implements hook_perm().</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-36"></a><span class="sd">*/</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-37"></a><span class="k">function</span> <span class="nf">feedback_perm</span> <span class="p">()</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-38"></a><span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-39"></a>  <span class="k">return</span> <span class="k">array</span> <span class="p">(</span><span class="s1">'send message'</span><span class="p">,</span> <span class="s1">'view messages'</span><span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-40"></a><span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-41"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-42"></a><span class="sd">/**</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-43"></a><span class="sd">* Implementation of hook_block().</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-44"></a><span class="sd">*/</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-45"></a><span class="k">function</span> <span class="nf">feedback_block</span> <span class="p">(</span> <span class="nv">$op</span> <span class="o">=</span> <span class="s1">'list'</span><span class="p">,</span> <span class="nv">$delta</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$edit</span> <span class="o">=</span> <span class="k">array</span><span class="p">()</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-46"></a><span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-47"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nv">$op</span> <span class="o">==</span> <span class="s2">"list"</span><span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-48"></a>  <span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-49"></a>      <span class="nv">$blocks</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-50"></a>      <span class="nv">$blocks</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"info"</span><span class="p">]</span> <span class="o">=</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Feedback'</span><span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-51"></a>      <span class="nv">$blocks</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s2">"info"</span><span class="p">]</span> <span class="o">=</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'New Feedbacks'</span><span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-52"></a>      <span class="k">return</span> <span class="nv">$blocks</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-53"></a>  <span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-54"></a>  <span class="k">else</span> <span class="k">if</span> <span class="p">(</span> <span class="nv">$op</span> <span class="o">==</span> <span class="s2">"view"</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-55"></a>  <span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-56"></a>      <span class="nv">$content</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-57"></a>      <span class="nv">$block</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-58"></a>      <span class="k">switch</span> <span class="p">(</span> <span class="nv">$delta</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-59"></a>      <span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-60"></a>        <span class="k">case</span> <span class="mi">0</span><span class="o">:</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-61"></a>          <span class="nv">$block</span><span class="p">[</span><span class="s1">'subject'</span><span class="p">]</span> <span class="o">=</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Feedback'</span><span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-62"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-63"></a>          <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span> <span class="s2">"attributes"</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s2">"title"</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s2">"Sends a feedback message"</span><span class="p">)</span> <span class="p">)</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-64"></a>          <span class="nv">$link</span> <span class="o">=</span> <span class="nx">l</span><span class="p">(</span> <span class="nx">t</span><span class="p">(</span><span class="s2">"New Feedback"</span><span class="p">),</span> <span class="s2">"feedback/message"</span><span class="p">,</span> <span class="nv">$options</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-65"></a>          <span class="nv">$content</span> <span class="o">.=</span> <span class="s1">''</span> <span class="o">.</span> <span class="nv">$link</span> <span class="o">.</span> <span class="s2">""</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-66"></a>          <span class="k">break</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-67"></a>        <span class="k">case</span> <span class="mi">1</span><span class="o">:</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-68"></a>          <span class="nv">$block</span><span class="p">[</span><span class="s1">'subject'</span><span class="p">]</span> <span class="o">=</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Feedback Messages'</span><span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-69"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-70"></a>          <span class="nv">$options</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span> <span class="s2">"attributes"</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s2">"title"</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s2">"Shows feedback messages"</span><span class="p">)</span> <span class="p">)</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-71"></a>          <span class="nv">$title</span> <span class="o">=</span> <span class="nx">t</span><span class="p">(</span><span class="s2">"There are @total new feeds"</span><span class="p">,</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'@total'</span> <span class="o">=&gt;</span> <span class="nx">_feedback_count</span><span class="p">()</span> <span class="p">)</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-72"></a>          <span class="nv">$link</span> <span class="o">=</span> <span class="nx">l</span><span class="p">(</span> <span class="nv">$title</span> <span class="p">,</span> <span class="s2">"feedback/adminmessages"</span><span class="p">,</span> <span class="nv">$options</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-73"></a>          <span class="nv">$content</span> <span class="o">.=</span> <span class="s1">''</span> <span class="o">.</span> <span class="nv">$link</span> <span class="o">.</span> <span class="s2">""</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-74"></a>          <span class="k">break</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-75"></a>      <span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-76"></a>      <span class="nv">$block</span><span class="p">[</span><span class="s1">'content'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$content</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-77"></a>      <span class="k">return</span> <span class="nv">$block</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-78"></a>  <span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-79"></a><span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-80"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-81"></a><span class="sd">/**</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-82"></a><span class="sd">* Implementation of hook_menu().</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-83"></a><span class="sd">*/</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-84"></a><span class="k">function</span> <span class="nf">feedback_menu</span> <span class="p">(</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-85"></a><span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-86"></a>  <span class="nv">$items</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-87"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-88"></a>  <span class="nv">$items</span><span class="p">[</span><span class="s1">'feedback/message'</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-89"></a>  <span class="p">(</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-90"></a>    <span class="s1">'title'</span> <span class="o">=&gt;</span> <span class="s1">'Feedback'</span><span class="p">,</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-91"></a>    <span class="s1">'page callback'</span> <span class="o">=&gt;</span> <span class="s1">'feedback_message'</span><span class="p">,</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-92"></a>    <span class="s1">'access arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'send message'</span><span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-93"></a>    <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="nx">MENU_CALLBACK</span><span class="p">,</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-94"></a>  <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-95"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-96"></a>  <span class="nv">$items</span><span class="p">[</span><span class="s1">'feedback/adminmessages/%'</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-97"></a>  <span class="p">(</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-98"></a>    <span class="s1">'title'</span> <span class="o">=&gt;</span> <span class="s1">'Feedback admin'</span><span class="p">,</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-99"></a>    <span class="s1">'page callback'</span> <span class="o">=&gt;</span> <span class="s1">'feedback_admin'</span><span class="p">,</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-100"></a>    <span class="s1">'page arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="mi">2</span> <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-101"></a>    <span class="s1">'access arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'view messages'</span><span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-102"></a>    <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="nx">MENU_CALLBACK</span><span class="p">,</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-103"></a>  <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-104"></a>  <span class="nv">$items</span><span class="p">[</span><span class="s1">'feedback/adminmessages'</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-105"></a>  <span class="p">(</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-106"></a>    <span class="s1">'title'</span> <span class="o">=&gt;</span> <span class="s1">'Feedback admin'</span><span class="p">,</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-107"></a>    <span class="s1">'page callback'</span> <span class="o">=&gt;</span> <span class="s1">'feedback_admin'</span><span class="p">,</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-108"></a>    <span class="s1">'access arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'view messages'</span><span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-109"></a>    <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="nx">MENU_CALLBACK</span><span class="p">,</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-110"></a>  <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-111"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-112"></a>  <span class="nv">$items</span><span class="p">[</span><span class="s1">'feedback/delete/%'</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-113"></a>  <span class="p">(</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-114"></a>    <span class="s1">'title'</span> <span class="o">=&gt;</span> <span class="s1">'Feedback delete'</span><span class="p">,</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-115"></a>    <span class="s1">'page callback'</span> <span class="o">=&gt;</span> <span class="s1">'feedback_delete'</span><span class="p">,</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-116"></a>    <span class="s1">'page arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="mi">2</span> <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-117"></a>    <span class="s1">'access arguments'</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s1">'view messages'</span><span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-118"></a>    <span class="s1">'type'</span> <span class="o">=&gt;</span> <span class="nx">MENU_CALLBACK</span><span class="p">,</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-119"></a>  <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-120"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-121"></a>  <span class="k">return</span> <span class="nv">$items</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-122"></a><span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-123"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-124"></a><span class="k">function</span> <span class="nf">feedback_message</span> <span class="p">()</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-125"></a><span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-126"></a>  <span class="nv">$content</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-127"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-128"></a>  <span class="nv">$content</span> <span class="o">.=</span> <span class="nx">drupal_get_form</span> <span class="p">(</span> <span class="s1">'feedback_message_form'</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-129"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-130"></a>  <span class="k">return</span> <span class="nv">$content</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-131"></a><span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-132"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-133"></a><span class="k">function</span> <span class="nf">feedback_message_form</span> <span class="p">()</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-134"></a><span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-135"></a>  <span class="k">global</span> <span class="nv">$user</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-136"></a>  <span class="nv">$mail</span> <span class="o">=</span> <span class="s2">""</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-137"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-138"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">uid</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-139"></a>    <span class="nv">$mail</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">mail</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-140"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-141"></a>  <span class="nv">$form</span> <span class="o">=</span> <span class="k">array</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-142"></a>  <span class="p">(</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-143"></a>    <span class="s1">'feedback'</span> <span class="o">=&gt;</span> <span class="k">array</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-144"></a>    <span class="p">(</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-145"></a>      <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'fieldset'</span><span class="p">,</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-146"></a>      <span class="s1">'#title'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span> <span class="s1">'Feedback'</span> <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-147"></a>      <span class="s1">'mail'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span><span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'textfield'</span><span class="p">,</span> <span class="s2">"#title"</span><span class="o">=&gt;</span><span class="s2">"E-Mail"</span><span class="p">,</span> <span class="s2">"#description"</span><span class="o">=&gt;</span><span class="s2">"If you want any answer, please, tell me your mail. It would not be shown anywhere."</span><span class="p">,</span> <span class="s2">"#default_value"</span> <span class="o">=&gt;</span> <span class="nv">$mail</span> <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-148"></a>      <span class="s1">'message'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'textarea'</span><span class="p">,</span> <span class="s2">"#description"</span><span class="o">=&gt;</span><span class="s2">"Write here your message"</span> <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-149"></a>      <span class="s1">'submit'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'submit'</span><span class="p">,</span>  <span class="s1">'#value'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Submit'</span><span class="p">),</span>  <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-150"></a>    <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-151"></a>  <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-152"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-153"></a>  <span class="k">return</span> <span class="nv">$form</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-154"></a><span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-155"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-156"></a><span class="k">function</span> <span class="nf">feedback_message_form_validate</span> <span class="p">(</span> <span class="nv">$form</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$form_state</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-157"></a><span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-158"></a>  <span class="k">global</span> <span class="nv">$user</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-159"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-160"></a>  <span class="nv">$message</span> <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'message'</span><span class="p">];</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-161"></a>  <span class="nv">$mail</span>    <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'mail'</span><span class="p">];</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-162"></a>  <span class="nv">$validmail</span> <span class="o">=</span> <span class="nb">preg_match</span> <span class="p">(</span><span class="s2">"/^[^0-9][A-z0-9_]+([.][A-z0-9_]+)*[@][A-z0-9_]+([.][A-z0-9_]+)*[.][A-z]{2,4}$/"</span> <span class="p">,</span> <span class="nv">$mail</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-163"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-164"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nv">$mail</span> <span class="o">==</span> <span class="s1">''</span> <span class="o">&amp;&amp;</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">uid</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-165"></a>    <span class="nx">form_set_error</span> <span class="p">(</span> <span class="s1">'mail'</span><span class="p">,</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'You are not a registered user. Please, insert your e-mail.'</span><span class="p">)</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-166"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nv">$mail</span> <span class="o">!=</span> <span class="s1">''</span> <span class="o">&amp;&amp;</span> <span class="o">!</span> <span class="nv">$validmail</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-167"></a>    <span class="nx">form_set_error</span> <span class="p">(</span> <span class="s1">'mail'</span><span class="p">,</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'The mail does not like an e-mail address.'</span><span class="p">)</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-168"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nv">$message</span> <span class="o">==</span> <span class="s1">''</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-169"></a>    <span class="nx">form_set_error</span> <span class="p">(</span> <span class="s1">'message'</span><span class="p">,</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Message cannot be empty.'</span><span class="p">));</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-170"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-171"></a>  <span class="k">return</span> <span class="nv">$form</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-172"></a><span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-173"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-174"></a><span class="k">function</span> <span class="nf">feedback_message_form_submit</span> <span class="p">(</span> <span class="nv">$form</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$form_state</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-175"></a><span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-176"></a>  <span class="k">global</span> <span class="nv">$user</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-177"></a>  <span class="nv">$userid</span> <span class="o">=</span> <span class="k">NULL</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-178"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nv">$user</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-179"></a>    <span class="nv">$userid</span> <span class="o">=</span> <span class="nv">$user</span><span class="o">-&gt;</span><span class="na">uid</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-180"></a>  <span class="nv">$message</span> <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'message'</span><span class="p">];</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-181"></a>  <span class="nv">$mail</span> <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'mail'</span><span class="p">];</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-182"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-183"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"INSERT into {feedback_messages} ( uid, message, indate, usermail ) values ( %d, '%s', now(), '%s' ) "</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-184"></a>  <span class="nv">$queryResult</span> <span class="o">=</span> <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span><span class="p">,</span> <span class="nv">$userid</span><span class="p">,</span> <span class="nv">$message</span><span class="p">,</span> <span class="nv">$mail</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-185"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-186"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nx">db_affected_rows</span><span class="p">()</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-187"></a>  <span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-188"></a>    <span class="nx">drupal_set_message</span> <span class="p">(</span> <span class="nx">t</span> <span class="p">(</span> <span class="s2">"Thank you for your feedback."</span> <span class="p">)</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-189"></a>    <span class="nx">drupal_goto</span> <span class="p">(</span> <span class="s1">'node'</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-190"></a>  <span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-191"></a>  <span class="k">else</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-192"></a>    <span class="nx">form_set_error</span> <span class="p">(</span> <span class="s1">'feedback'</span><span class="p">,</span> <span class="nx">t</span><span class="p">(</span> <span class="s2">"An error has happened. Your feedback has not been sent."</span> <span class="p">)</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-193"></a><span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-194"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-195"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-196"></a><span class="k">function</span> <span class="nf">feedback_admin</span> <span class="p">(</span> <span class="nv">$messageid</span><span class="o">=</span><span class="k">null</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-197"></a><span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-198"></a>  <span class="nv">$content</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-199"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-200"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nv">$messageid</span> <span class="o">!=</span> <span class="k">null</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-201"></a>  <span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-202"></a>    <span class="nv">$content</span> <span class="o">.=</span> <span class="nx">drupal_get_form</span> <span class="p">(</span> <span class="s1">'feedback_messageadmin_form'</span><span class="p">,</span> <span class="nv">$messageid</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-203"></a>    <span class="nv">$content</span> <span class="o">.=</span> <span class="s2">""</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-204"></a>  <span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-205"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-206"></a>  <span class="nv">$header</span> <span class="o">=</span> <span class="k">array</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-207"></a>  <span class="p">(</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-208"></a>    <span class="k">array</span><span class="p">(</span><span class="s1">'data'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Date'</span><span class="p">),</span> <span class="s1">'field'</span> <span class="o">=&gt;</span> <span class="s1">'indate'</span><span class="p">,</span> <span class="s1">'sort'</span> <span class="o">=&gt;</span> <span class="s1">'desc'</span><span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-209"></a>    <span class="k">array</span><span class="p">(</span><span class="s1">'data'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'User'</span><span class="p">),</span> <span class="s1">'field'</span> <span class="o">=&gt;</span> <span class="s1">'name'</span><span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-210"></a>    <span class="k">array</span><span class="p">(</span><span class="s1">'data'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'email'</span><span class="p">),</span> <span class="s1">'field'</span><span class="o">=&gt;</span><span class="s1">'mail'</span><span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-211"></a>    <span class="k">array</span><span class="p">(</span><span class="s1">'data'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Message'</span><span class="p">),</span> <span class="s1">'field'</span> <span class="o">=&gt;</span> <span class="s1">'message'</span><span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-212"></a>    <span class="k">array</span><span class="p">(</span><span class="s1">'data'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Read'</span><span class="p">),</span> <span class="s1">'field'</span><span class="o">=&gt;</span><span class="s1">'fm.read'</span><span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-213"></a>  <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-214"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-215"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"SELECT fm.id, u.uid as uid, u.name, fm.usermail, fm.indate, fm.message, fm.read FROM {feedback_messages} fm, {users} u WHERE fm.uid=u.uid"</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-216"></a>  <span class="nv">$query</span> <span class="o">.=</span> <span class="nx">tablesort_sql</span> <span class="p">(</span> <span class="nv">$header</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-217"></a>  <span class="nv">$queryResult</span> <span class="o">=</span>  <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-218"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-219"></a>  <span class="nv">$rows</span> <span class="o">=</span> <span class="k">array</span> <span class="p">();</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-220"></a>  <span class="k">while</span> <span class="p">(</span> <span class="nv">$message</span> <span class="o">=</span> <span class="nx">db_fetch_object</span> <span class="p">(</span> <span class="nv">$queryResult</span> <span class="p">)</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-221"></a>  <span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-222"></a>    <span class="nv">$row</span> <span class="o">=</span> <span class="k">array</span> <span class="p">();</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-223"></a>    <span class="nv">$row</span><span class="p">[</span><span class="s1">'indate'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">indate</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-224"></a>    <span class="nv">$row</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">uid</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">?</span> <span class="s1">''</span> <span class="o">.</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">.</span> <span class="s1">''</span> <span class="o">:</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-225"></a>    <span class="nv">$row</span><span class="p">[</span><span class="s1">'mail'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">usermail</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-226"></a>    <span class="nv">$row</span><span class="p">[</span><span class="s1">'message'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">message</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-227"></a>    <span class="nv">$row</span><span class="p">[</span><span class="s1">'read'</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">read</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-228"></a>    <span class="nv">$row</span><span class="p">[</span><span class="s1">'edit'</span><span class="p">]</span> <span class="o">=</span> <span class="nx">l</span> <span class="p">(</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'edit'</span><span class="p">),</span> <span class="s2">"feedback/adminmessages/"</span> <span class="o">.</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">id</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-229"></a>    <span class="nv">$row</span><span class="p">[</span><span class="s1">'delete'</span><span class="p">]</span> <span class="o">=</span> <span class="nx">l</span> <span class="p">(</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'delete'</span><span class="p">),</span> <span class="s2">"feedback/delete/"</span> <span class="o">.</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">id</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-230"></a>    <span class="nv">$rows</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$row</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-231"></a>  <span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-232"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-233"></a>  <span class="nv">$content</span> <span class="o">.=</span> <span class="nx">theme_table</span><span class="p">(</span><span class="nv">$header</span><span class="p">,</span> <span class="nv">$rows</span><span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-234"></a>  <span class="k">return</span> <span class="nv">$content</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-235"></a><span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-236"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-237"></a><span class="sd">/** Devuelve el número de feeds creados en la última semana</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-238"></a><span class="sd">*/</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-239"></a><span class="k">function</span> <span class="nf">_feedback_count</span> <span class="p">()</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-240"></a><span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-241"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"SELECT count(id) as total from {feedback_messages} fm where fm.read != 1 or isnull(fm.read)"</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-242"></a>  <span class="nv">$queryResult</span> <span class="o">=</span>  <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-243"></a>  <span class="nv">$result</span> <span class="o">=</span> <span class="nx">db_fetch_object</span> <span class="p">(</span> <span class="nv">$queryResult</span> <span class="p">)</span> <span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-244"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-245"></a>  <span class="k">return</span> <span class="nv">$result</span><span class="o">-&gt;</span><span class="na">total</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-246"></a><span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-247"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-248"></a><span class="k">function</span> <span class="nf">feedback_messageadmin_form</span> <span class="p">(</span> <span class="nv">$form</span><span class="p">,</span> <span class="nv">$messageid</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-249"></a><span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-250"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"SELECT fm.message, fm.read, fm.indate, u.name FROM {feedback_messages} fm, {users} u WHERE fm.id=%d and u.uid=fm.uid"</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-251"></a>  <span class="nv">$queryResult</span> <span class="o">=</span> <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span><span class="p">,</span> <span class="nv">$messageid</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-252"></a>  <span class="nv">$message</span> <span class="o">=</span> <span class="nx">db_fetch_object</span> <span class="p">(</span> <span class="nv">$queryResult</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-253"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-254"></a>  <span class="nv">$form</span> <span class="o">=</span> <span class="k">array</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-255"></a>    <span class="p">(</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-256"></a>      <span class="s1">'feedback'</span> <span class="o">=&gt;</span> <span class="k">array</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-257"></a>      <span class="p">(</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-258"></a>        <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'fieldset'</span><span class="p">,</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-259"></a>        <span class="s1">'#title'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span> <span class="s1">'Feedback from '</span> <span class="o">.</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">.</span><span class="s1">' sended on '</span> <span class="o">.</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">indate</span> <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-260"></a>        <span class="s1">'messageid'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'hidden'</span><span class="p">,</span> <span class="s2">"#default_value"</span> <span class="o">=&gt;</span> <span class="nv">$messageid</span> <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-261"></a>        <span class="s1">'message'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'textarea'</span><span class="p">,</span> <span class="s2">"#default_value"</span> <span class="o">=&gt;</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">message</span><span class="p">,</span> <span class="s2">"#disabled"</span> <span class="o">=&gt;</span> <span class="k">TRUE</span> <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-262"></a>        <span class="s1">'read'</span>  <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span><span class="o">=&gt;</span> <span class="s1">'checkbox'</span><span class="p">,</span> <span class="s2">"#title"</span> <span class="o">=&gt;</span> <span class="s2">"Read"</span><span class="p">,</span><span class="s2">"#default_value"</span> <span class="o">=&gt;</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">read</span> <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-263"></a>        <span class="s1">'submit'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'submit'</span><span class="p">,</span>  <span class="s1">'#value'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Submit'</span><span class="p">),</span>  <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-264"></a>      <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-265"></a>    <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-266"></a>    <span class="k">return</span> <span class="nv">$form</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-267"></a><span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-268"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-269"></a><span class="k">function</span> <span class="nf">feedback_messageadmin_form_submit</span> <span class="p">(</span> <span class="nv">$form</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$form_state</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-270"></a><span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-271"></a>  <span class="nv">$messageid</span> <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'messageid'</span><span class="p">];</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-272"></a>  <span class="nv">$read</span>      <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'read'</span><span class="p">];</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-273"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-274"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"UPDATE {feedback_messages} fm set fm.read=%d where fm.id=%d"</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-275"></a>  <span class="nv">$queryResult</span> <span class="o">=</span> <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span><span class="p">,</span> <span class="nv">$read</span><span class="p">,</span> <span class="nv">$messageid</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-276"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-277"></a>  <span class="nx">drupal_goto</span> <span class="p">(</span><span class="s1">'/feedback/adminmessages'</span><span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-278"></a><span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-279"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-280"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-281"></a><span class="k">function</span> <span class="nf">feedback_delete</span> <span class="p">(</span> <span class="nv">$messageid</span><span class="o">=</span><span class="k">null</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-282"></a><span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-283"></a>  <span class="nv">$content</span> <span class="o">=</span> <span class="s1">''</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-284"></a>  <span class="nv">$content</span> <span class="o">.=</span> <span class="nx">drupal_get_form</span> <span class="p">(</span> <span class="s1">'feedback_delete_form'</span><span class="p">,</span> <span class="nv">$messageid</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-285"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-286"></a>  <span class="k">return</span> <span class="nv">$content</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-287"></a><span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-288"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-289"></a><span class="k">function</span> <span class="nf">feedback_delete_form</span> <span class="p">(</span> <span class="nv">$form</span><span class="p">,</span> <span class="nv">$messageid</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-290"></a><span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-291"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"SELECT fm.message, fm.read, fm.indate, u.name FROM {feedback_messages} fm, {users} u WHERE fm.id=%d and u.uid=fm.uid"</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-292"></a>  <span class="nv">$queryResult</span> <span class="o">=</span> <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span><span class="p">,</span> <span class="nv">$messageid</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-293"></a>  <span class="nv">$message</span> <span class="o">=</span> <span class="nx">db_fetch_object</span> <span class="p">(</span> <span class="nv">$queryResult</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-294"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-295"></a>  <span class="nv">$form</span> <span class="o">=</span> <span class="k">array</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-296"></a>    <span class="p">(</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-297"></a>      <span class="s1">'feedback'</span> <span class="o">=&gt;</span> <span class="k">array</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-298"></a>      <span class="p">(</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-299"></a>        <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'fieldset'</span><span class="p">,</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-300"></a>        <span class="s1">'#title'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span> <span class="s1">'Feedback from '</span> <span class="o">.</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">.</span><span class="s1">' sended on '</span> <span class="o">.</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">indate</span> <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-301"></a>        <span class="s1">'messageid'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'hidden'</span><span class="p">,</span> <span class="s2">"#default_value"</span> <span class="o">=&gt;</span> <span class="nv">$messageid</span> <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-302"></a>        <span class="s1">'message'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'textarea'</span><span class="p">,</span> <span class="s2">"#default_value"</span> <span class="o">=&gt;</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">message</span><span class="p">,</span> <span class="s2">"#disabled"</span> <span class="o">=&gt;</span> <span class="k">TRUE</span> <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-303"></a>        <span class="s1">'read'</span>  <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span><span class="o">=&gt;</span> <span class="s1">'checkbox'</span><span class="p">,</span> <span class="s2">"#title"</span> <span class="o">=&gt;</span> <span class="s2">"Read"</span><span class="p">,</span><span class="s2">"#default_value"</span> <span class="o">=&gt;</span> <span class="nv">$message</span><span class="o">-&gt;</span><span class="na">read</span><span class="p">,</span> <span class="s2">"#disabled"</span> <span class="o">=&gt;</span> <span class="k">TRUE</span> <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-304"></a>        <span class="s1">'submit'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'submit'</span><span class="p">,</span>  <span class="s1">'#value'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Delete forever'</span><span class="p">),</span>  <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-305"></a>      <span class="p">),</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-306"></a>    <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-307"></a>    <span class="k">return</span> <span class="nv">$form</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-308"></a><span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-309"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-310"></a><span class="k">function</span> <span class="nf">feedback_delete_form_submit</span> <span class="p">(</span> <span class="nv">$form</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$form_state</span> <span class="p">)</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-311"></a><span class="p">{</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-312"></a>  <span class="nv">$messageid</span> <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'messageid'</span><span class="p">];</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-313"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-314"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"DELETE FROM {feedback_messages} where id=%d"</span><span class="p">;</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-315"></a>  <span class="nv">$queryResult</span> <span class="o">=</span> <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span><span class="p">,</span> <span class="nv">$messageid</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-316"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-317"></a>  <span class="k">if</span><span class="p">(</span><span class="nx">db_affected_rows</span><span class="p">()){</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-318"></a>    <span class="nx">drupal_set_message</span> <span class="p">(</span> <span class="nx">t</span> <span class="p">(</span> <span class="s2">"Message deleted"</span> <span class="p">)</span> <span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-319"></a>  <span class="p">}</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-320"></a>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-321"></a>  <span class="nx">drupal_goto</span> <span class="p">(</span><span class="s1">'/feedback/adminmessages'</span><span class="p">);</span>
+<a name="rest_code_a722a671434b47fc94c7ae7db3565af4-322"></a><span class="p">}</span>
 </pre>
 </div>
 </div>

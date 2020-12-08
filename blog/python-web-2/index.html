@@ -7,7 +7,7 @@ article: https://ogp.me/ns/article#
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Python: tu directorio en la web | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,8 +18,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/python-web-2/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/no-somos-islas/" title="No somos islas" type="text/html">
 <link rel="next" href="/blog/dataproviders/" title="Pruebas Unitarias: Proveedores de datos" type="text/html">
@@ -128,33 +128,33 @@ Resulta que quiero realizar pruebas '>
 <p>Tal y como ya escribí en el artículo "Python en la web":link://slug/python-web, Python dispone de las clases SocketServer y SimpleHTTPServer que nos permiten crear un servidor web en dos minutos.</p>
 <p>Pero lo que no dije, porque no lo sabía, es que SimpleHTTPServer.SimpleHTTPRequestHandler ya tiene una implementación por defecto que, directamente, sirve el directorio actual.</p>
 <p>Dicho de otra manera:</p>
-<pre class="code python"><a name="rest_code_a673c940b3b946e2b5affa42b99f066e-1"></a><span class="kn">import</span> <span class="nn">SimpleHTTPServer</span>
-<a name="rest_code_a673c940b3b946e2b5affa42b99f066e-2"></a><span class="kn">import</span> <span class="nn">SocketServer</span>
-<a name="rest_code_a673c940b3b946e2b5affa42b99f066e-3"></a>
-<a name="rest_code_a673c940b3b946e2b5affa42b99f066e-4"></a><span class="n">PORT</span> <span class="o">=</span> <span class="mi">9876</span>
-<a name="rest_code_a673c940b3b946e2b5affa42b99f066e-5"></a>
-<a name="rest_code_a673c940b3b946e2b5affa42b99f066e-6"></a><span class="n">httpd</span> <span class="o">=</span> <span class="n">SocketServer</span><span class="o">.</span><span class="n">TCPServer</span><span class="p">((</span><span class="s">""</span><span class="p">,</span> <span class="n">PORT</span><span class="p">),</span> <span class="n">SimpleHTTPServer</span><span class="o">.</span><span class="n">SimpleHTTPRequestHandler</span><span class="p">)</span>
-<a name="rest_code_a673c940b3b946e2b5affa42b99f066e-7"></a>
-<a name="rest_code_a673c940b3b946e2b5affa42b99f066e-8"></a><span class="k">print</span> <span class="s">"serving at port"</span><span class="p">,</span> <span class="n">PORT</span>
-<a name="rest_code_a673c940b3b946e2b5affa42b99f066e-9"></a><span class="n">httpd</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_c4186ea03f3c45efb6372e9ab5dd1f80-1"></a><span class="kn">import</span> <span class="nn">SimpleHTTPServer</span>
+<a name="rest_code_c4186ea03f3c45efb6372e9ab5dd1f80-2"></a><span class="kn">import</span> <span class="nn">SocketServer</span>
+<a name="rest_code_c4186ea03f3c45efb6372e9ab5dd1f80-3"></a>
+<a name="rest_code_c4186ea03f3c45efb6372e9ab5dd1f80-4"></a><span class="n">PORT</span> <span class="o">=</span> <span class="mi">9876</span>
+<a name="rest_code_c4186ea03f3c45efb6372e9ab5dd1f80-5"></a>
+<a name="rest_code_c4186ea03f3c45efb6372e9ab5dd1f80-6"></a><span class="n">httpd</span> <span class="o">=</span> <span class="n">SocketServer</span><span class="o">.</span><span class="n">TCPServer</span><span class="p">((</span><span class="s2">""</span><span class="p">,</span> <span class="n">PORT</span><span class="p">),</span> <span class="n">SimpleHTTPServer</span><span class="o">.</span><span class="n">SimpleHTTPRequestHandler</span><span class="p">)</span>
+<a name="rest_code_c4186ea03f3c45efb6372e9ab5dd1f80-7"></a>
+<a name="rest_code_c4186ea03f3c45efb6372e9ab5dd1f80-8"></a><span class="nb">print</span> <span class="s2">"serving at port"</span><span class="p">,</span> <span class="n">PORT</span>
+<a name="rest_code_c4186ea03f3c45efb6372e9ab5dd1f80-9"></a><span class="n">httpd</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
 </pre>
 <p>Éste es mi pequeño servidor web. Podría decirse que son dos líneas :D</p>
 <p>Tras ejecutarlo, el directorio actual se comparte en el puerto indicado. Y es rápido. Muy rápido.</p>
 <div class="section" id="mejorandolo-un-poquitin">
 <h3>Mejorándolo un poquitín</h3>
 <p>Claro, yo lo que quiero hacer es lanzar el servidor una vez tras otra, y ese pequeño programita me deja el puerto abierto. Pero es que no hay nada más sencillo:</p>
-<pre class="code python"><a name="rest_code_7b7590c2a5984f3992d557f1d9621ead-1"></a><span class="kn">import</span> <span class="nn">SimpleHTTPServer</span>
-<a name="rest_code_7b7590c2a5984f3992d557f1d9621ead-2"></a><span class="kn">import</span> <span class="nn">SocketServer</span>
-<a name="rest_code_7b7590c2a5984f3992d557f1d9621ead-3"></a>
-<a name="rest_code_7b7590c2a5984f3992d557f1d9621ead-4"></a><span class="n">PORT</span> <span class="o">=</span> <span class="mi">9876</span>
-<a name="rest_code_7b7590c2a5984f3992d557f1d9621ead-5"></a>
-<a name="rest_code_7b7590c2a5984f3992d557f1d9621ead-6"></a><span class="n">httpd</span> <span class="o">=</span> <span class="n">SocketServer</span><span class="o">.</span><span class="n">TCPServer</span><span class="p">((</span><span class="s">""</span><span class="p">,</span> <span class="n">PORT</span><span class="p">),</span> <span class="n">SimpleHTTPServer</span><span class="o">.</span><span class="n">SimpleHTTPRequestHandler</span><span class="p">)</span>
-<a name="rest_code_7b7590c2a5984f3992d557f1d9621ead-7"></a>
-<a name="rest_code_7b7590c2a5984f3992d557f1d9621ead-8"></a><span class="k">print</span> <span class="s">"serving at port"</span><span class="p">,</span> <span class="n">PORT</span>
-<a name="rest_code_7b7590c2a5984f3992d557f1d9621ead-9"></a><span class="k">try</span><span class="p">:</span>
-<a name="rest_code_7b7590c2a5984f3992d557f1d9621ead-10"></a>    <span class="n">httpd</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
-<a name="rest_code_7b7590c2a5984f3992d557f1d9621ead-11"></a><span class="k">finally</span><span class="p">:</span>
-<a name="rest_code_7b7590c2a5984f3992d557f1d9621ead-12"></a>    <span class="n">httpd</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_ceceb2eef1114732aa0b1d501e46d180-1"></a><span class="kn">import</span> <span class="nn">SimpleHTTPServer</span>
+<a name="rest_code_ceceb2eef1114732aa0b1d501e46d180-2"></a><span class="kn">import</span> <span class="nn">SocketServer</span>
+<a name="rest_code_ceceb2eef1114732aa0b1d501e46d180-3"></a>
+<a name="rest_code_ceceb2eef1114732aa0b1d501e46d180-4"></a><span class="n">PORT</span> <span class="o">=</span> <span class="mi">9876</span>
+<a name="rest_code_ceceb2eef1114732aa0b1d501e46d180-5"></a>
+<a name="rest_code_ceceb2eef1114732aa0b1d501e46d180-6"></a><span class="n">httpd</span> <span class="o">=</span> <span class="n">SocketServer</span><span class="o">.</span><span class="n">TCPServer</span><span class="p">((</span><span class="s2">""</span><span class="p">,</span> <span class="n">PORT</span><span class="p">),</span> <span class="n">SimpleHTTPServer</span><span class="o">.</span><span class="n">SimpleHTTPRequestHandler</span><span class="p">)</span>
+<a name="rest_code_ceceb2eef1114732aa0b1d501e46d180-7"></a>
+<a name="rest_code_ceceb2eef1114732aa0b1d501e46d180-8"></a><span class="nb">print</span> <span class="s2">"serving at port"</span><span class="p">,</span> <span class="n">PORT</span>
+<a name="rest_code_ceceb2eef1114732aa0b1d501e46d180-9"></a><span class="k">try</span><span class="p">:</span>
+<a name="rest_code_ceceb2eef1114732aa0b1d501e46d180-10"></a>    <span class="n">httpd</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
+<a name="rest_code_ceceb2eef1114732aa0b1d501e46d180-11"></a><span class="k">finally</span><span class="p">:</span>
+<a name="rest_code_ceceb2eef1114732aa0b1d501e46d180-12"></a>    <span class="n">httpd</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
 </pre>
 <p>Y ya lo tengo funcionando.</p>
 </div>

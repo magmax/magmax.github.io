@@ -7,7 +7,7 @@ article: https://ogp.me/ns/article#
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Colorit | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,8 +18,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/colorit/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/no-lo-llames-helper/" title="No lo llames 'util', llámalo 'helper" type="text/html">
 <link rel="next" href="/blog/programarsinifs/" title="Programar sin condicionales" type="text/html">
@@ -126,69 +126,69 @@ article: https://ogp.me/ns/article#
 <p>En realidad no colorea nada, sino que reemplaza expresiones regulares, añadiéndoles un encabezado y un pie. Por eso trae un archivo de configuración con algunas macros para seleccionar los colores.</p>
 <p>Por desgracia, este archivo de configuración es un poco enrevesado y tiene pocas reglas, pero puede valer como punto de inicio. De hecho, será necesario que nos lo copiemos, para así aprovecharnos de sus macros.</p>
 <p>Otro problema es que no busca ningún archivo de configuración en el directorio local, sino únicamente en el home y el estándar. Copiémonos el estándar, que se encuentra en @/etc/dictd/colorit.conf@:</p>
-<pre class="code bash"><a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-1"></a>dnl /etc/dictd/colorit.conf   vim:ft<span class="o">=</span>m4
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-2"></a>dnl
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-3"></a>dnl Sample configuration file <span class="k">for</span> colorit<span class="o">(</span>1<span class="o">)</span> program
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-4"></a>dnl
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-5"></a>divert<span class="o">(</span>-1<span class="o">)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-6"></a>dnl
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-7"></a>dnl Define some useful color variables
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-8"></a>dnl
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-9"></a>define<span class="o">(</span><span class="sb">`</span>black<span class="s1">',   `0'</span><span class="o">)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-10"></a>define<span class="o">(</span><span class="sb">`</span>red<span class="s1">',         `1'</span><span class="o">)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-11"></a>define<span class="o">(</span><span class="sb">`</span>green<span class="s1">',   `2'</span><span class="o">)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-12"></a>define<span class="o">(</span><span class="sb">`</span>brown<span class="s1">',   `3'</span><span class="o">)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-13"></a>define<span class="o">(</span><span class="sb">`</span>blue<span class="s1">',        `4'</span><span class="o">)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-14"></a>define<span class="o">(</span><span class="sb">`</span>magenta<span class="s1">', `5'</span><span class="o">)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-15"></a>define<span class="o">(</span><span class="sb">`</span>cyan<span class="s1">',    `6'</span><span class="o">)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-16"></a>define<span class="o">(</span><span class="sb">`</span>white<span class="s1">',   `7'</span><span class="o">)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-17"></a>dnl
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-18"></a>dnl Mark macro arguments: regexp foreground-color <span class="o">[</span>background-color<span class="o">]</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-19"></a>dnl
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-20"></a>define<span class="o">(</span><span class="sb">`</span>mark<span class="s1">', ``mark "$1"''  `ifelse(`$#'</span>, <span class="sb">`</span>3<span class="s1">', ``"\033[3$2;4$3m"'', ``"\033[3$2m"'')'</span> <span class="sb">`</span><span class="s2">"\033[m"</span><span class="s1">')</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-21"></a><span class="s1">dnl</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-22"></a><span class="s1">divert</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-23"></a><span class="s1">mark(`^From.*$'</span>,red,cyan<span class="o">)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-24"></a>mark<span class="o">(</span><span class="sb">`</span>^  <span class="o">[</span>^ <span class="o">]</span>+<span class="s1">',green)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-25"></a><span class="s1">mark(`^ *Note:'</span>,red<span class="o">)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-26"></a>mark<span class="o">(</span><span class="sb">`</span><span class="o">{[</span>^<span class="o">{]</span>+<span class="o">}</span><span class="s1">',green)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-27"></a><span class="s1">mark(`^ *\[[^\[]+\]'</span>, cyan<span class="o">)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-28"></a>mark<span class="o">(</span><span class="sb">`</span>^<span class="o">[</span>    <span class="o">]</span>*<span class="o">(</span>adj<span class="p">|</span>n<span class="p">|</span>v<span class="p">|</span>adv<span class="o">)</span>? *<span class="o">[</span>0-9<span class="o">]</span>+<span class="o">[</span><span class="se">\.</span>:<span class="o">]</span><span class="s1">',cyan)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-29"></a><span class="s1">mark(`^ *\([a-z]+\)'</span>,cyan<span class="o">)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-30"></a>mark<span class="o">(</span><span class="sb">`</span><span class="o">(</span>Syn<span class="p">|</span>Ant<span class="p">|</span>syn<span class="p">|</span>ant<span class="o">)</span>:<span class="s1">', blue, white)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-31"></a><span class="s1">mark(` (t|i|a|adj|adv|n|v)\. '</span>,cyan<span class="o">)</span>
-<a name="rest_code_da7cd8400ba4440db3dafeead98c30f1-32"></a>mark<span class="o">(</span><span class="sb">`</span> <span class="o">(</span>t<span class="p">|</span>i<span class="p">|</span>a<span class="p">|</span>adj<span class="p">|</span>adv<span class="p">|</span>n<span class="p">|</span>v<span class="o">)</span><span class="se">\.</span><span class="nv">$'</span>,cyan<span class="o">)</span>
+<pre class="code bash"><a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-1"></a>dnl /etc/dictd/colorit.conf   vim:ft<span class="o">=</span>m4
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-2"></a>dnl
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-3"></a>dnl Sample configuration file <span class="k">for</span> colorit<span class="o">(</span><span class="m">1</span><span class="o">)</span> program
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-4"></a>dnl
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-5"></a>divert<span class="o">(</span>-1<span class="o">)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-6"></a>dnl
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-7"></a>dnl Define some useful color variables
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-8"></a>dnl
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-9"></a>define<span class="o">(</span><span class="sb">`</span>black<span class="s1">',   `0'</span><span class="o">)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-10"></a>define<span class="o">(</span><span class="sb">`</span>red<span class="s1">',         `1'</span><span class="o">)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-11"></a>define<span class="o">(</span><span class="sb">`</span>green<span class="s1">',   `2'</span><span class="o">)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-12"></a>define<span class="o">(</span><span class="sb">`</span>brown<span class="s1">',   `3'</span><span class="o">)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-13"></a>define<span class="o">(</span><span class="sb">`</span>blue<span class="s1">',        `4'</span><span class="o">)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-14"></a>define<span class="o">(</span><span class="sb">`</span>magenta<span class="s1">', `5'</span><span class="o">)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-15"></a>define<span class="o">(</span><span class="sb">`</span>cyan<span class="s1">',    `6'</span><span class="o">)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-16"></a>define<span class="o">(</span><span class="sb">`</span>white<span class="s1">',   `7'</span><span class="o">)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-17"></a>dnl
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-18"></a>dnl Mark macro arguments: regexp foreground-color <span class="o">[</span>background-color<span class="o">]</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-19"></a>dnl
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-20"></a>define<span class="o">(</span><span class="sb">`</span>mark<span class="s1">', ``mark "$1"''  `ifelse(`$#'</span>, <span class="sb">`</span><span class="m">3</span><span class="s1">', ``"\033[3$2;4$3m"'', ``"\033[3$2m"'')'</span> <span class="sb">`</span><span class="s2">"\033[m"</span><span class="s1">')</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-21"></a><span class="s1">dnl</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-22"></a><span class="s1">divert</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-23"></a><span class="s1">mark(`^From.*$'</span>,red,cyan<span class="o">)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-24"></a>mark<span class="o">(</span><span class="sb">`</span>^  <span class="o">[</span>^ <span class="o">]</span>+<span class="s1">',green)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-25"></a><span class="s1">mark(`^ *Note:'</span>,red<span class="o">)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-26"></a>mark<span class="o">(</span><span class="sb">`</span><span class="o">{[</span>^<span class="o">{]</span>+<span class="o">}</span><span class="s1">',green)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-27"></a><span class="s1">mark(`^ *\[[^\[]+\]'</span>, cyan<span class="o">)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-28"></a>mark<span class="o">(</span><span class="sb">`</span>^<span class="o">[</span>    <span class="o">]</span>*<span class="o">(</span>adj<span class="p">|</span>n<span class="p">|</span>v<span class="p">|</span>adv<span class="o">)</span>? *<span class="o">[</span><span class="m">0</span>-9<span class="o">]</span>+<span class="o">[</span><span class="se">\.</span>:<span class="o">]</span><span class="s1">',cyan)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-29"></a><span class="s1">mark(`^ *\([a-z]+\)'</span>,cyan<span class="o">)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-30"></a>mark<span class="o">(</span><span class="sb">`</span><span class="o">(</span>Syn<span class="p">|</span>Ant<span class="p">|</span>syn<span class="p">|</span>ant<span class="o">)</span>:<span class="s1">', blue, white)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-31"></a><span class="s1">mark(` (t|i|a|adj|adv|n|v)\. '</span>,cyan<span class="o">)</span>
+<a name="rest_code_52c730dcb1544e7cb89df62cc633c8e7-32"></a>mark<span class="o">(</span><span class="sb">`</span> <span class="o">(</span>t<span class="p">|</span>i<span class="p">|</span>a<span class="p">|</span>adj<span class="p">|</span>adv<span class="p">|</span>n<span class="p">|</span>v<span class="o">)</span><span class="se">\.</span>$<span class="err">'</span>,cyan<span class="o">)</span>
 </pre>
 <p>No os asustéis por el formato tan absurdo. Fijaos únicamente en las últimas líneas, que serán las que tocaremos. Podemos crear nuestras propias expresiones regulares para nuestras salidas favoritas.</p>
 </div>
 <div class="section" id="adaptandolo">
 <h2>Adaptándolo</h2>
 <p>En mi caso, estoy utilizando <a class="reference external" href="https://github.com/nose-devs/nose">nose</a>  junto con <a class="reference external" href="https://github.com/rlisagor/freshen">freshen</a> . Así que mi archivo de configuración (aún mejorable) pinta así:</p>
-<pre class="code bash"><a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-1"></a>define<span class="o">(</span><span class="sb">`</span>black<span class="s1">',   `0'</span><span class="o">)</span>
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-2"></a>define<span class="o">(</span><span class="sb">`</span>red<span class="s1">',         `1'</span><span class="o">)</span>
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-3"></a>define<span class="o">(</span><span class="sb">`</span>green<span class="s1">',   `2'</span><span class="o">)</span>
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-4"></a>define<span class="o">(</span><span class="sb">`</span>brown<span class="s1">',   `3'</span><span class="o">)</span>
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-5"></a>define<span class="o">(</span><span class="sb">`</span>blue<span class="s1">',        `4'</span><span class="o">)</span>
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-6"></a>define<span class="o">(</span><span class="sb">`</span>magenta<span class="s1">', `5'</span><span class="o">)</span>
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-7"></a>define<span class="o">(</span><span class="sb">`</span>cyan<span class="s1">',    `6'</span><span class="o">)</span>
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-8"></a>define<span class="o">(</span><span class="sb">`</span>white<span class="s1">',   `7'</span><span class="o">)</span>
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-9"></a>dnl
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-10"></a>dnl Mark macro arguments: regexp foreground-color <span class="o">[</span>background-color<span class="o">]</span>
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-11"></a>dnl
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-12"></a>define<span class="o">(</span><span class="sb">`</span>mark<span class="s1">', ``mark "$1"''  `ifelse(`$#'</span>, <span class="sb">`</span>3<span class="s1">', ``"\033[3$2;4$3m"'', ``"\033[3$2m"'')'</span> <span class="sb">`</span><span class="s2">"\033[m"</span><span class="s1">')</span>
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-13"></a><span class="s1">dnl</span>
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-14"></a><span class="s1">divert</span>
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-15"></a><span class="s1">mark(`^FAIL(ED)?'</span>, white, red<span class="o">)</span>
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-16"></a>mark<span class="o">(</span><span class="sb">`</span><span class="nv">failures</span><span class="o">=[</span>0-9<span class="o">]</span>*<span class="s1">', red)</span>
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-17"></a><span class="s1">mark(`===(=)*'</span>, brown<span class="o">)</span>
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-18"></a>mark<span class="o">(</span><span class="sb">`</span>^<span class="o">[</span><span class="se">\.</span>F<span class="o">]</span>+<span class="s1">$', cyan)</span>
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-19"></a><span class="s1">mark(`^(AssertionError:)|(Exception:) .*$'</span>, red<span class="o">)</span>
-<a name="rest_code_3621aca1cd8c46adb06c71ef2f276c3c-20"></a>mark<span class="o">(</span><span class="sb">`</span>^OK<span class="nv">$'</span>, white, green
+<pre class="code bash"><a name="rest_code_d1c256c2b5614277a92d5a26269556b4-1"></a>define<span class="o">(</span><span class="sb">`</span>black<span class="s1">',   `0'</span><span class="o">)</span>
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-2"></a>define<span class="o">(</span><span class="sb">`</span>red<span class="s1">',         `1'</span><span class="o">)</span>
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-3"></a>define<span class="o">(</span><span class="sb">`</span>green<span class="s1">',   `2'</span><span class="o">)</span>
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-4"></a>define<span class="o">(</span><span class="sb">`</span>brown<span class="s1">',   `3'</span><span class="o">)</span>
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-5"></a>define<span class="o">(</span><span class="sb">`</span>blue<span class="s1">',        `4'</span><span class="o">)</span>
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-6"></a>define<span class="o">(</span><span class="sb">`</span>magenta<span class="s1">', `5'</span><span class="o">)</span>
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-7"></a>define<span class="o">(</span><span class="sb">`</span>cyan<span class="s1">',    `6'</span><span class="o">)</span>
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-8"></a>define<span class="o">(</span><span class="sb">`</span>white<span class="s1">',   `7'</span><span class="o">)</span>
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-9"></a>dnl
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-10"></a>dnl Mark macro arguments: regexp foreground-color <span class="o">[</span>background-color<span class="o">]</span>
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-11"></a>dnl
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-12"></a>define<span class="o">(</span><span class="sb">`</span>mark<span class="s1">', ``mark "$1"''  `ifelse(`$#'</span>, <span class="sb">`</span><span class="m">3</span><span class="s1">', ``"\033[3$2;4$3m"'', ``"\033[3$2m"'')'</span> <span class="sb">`</span><span class="s2">"\033[m"</span><span class="s1">')</span>
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-13"></a><span class="s1">dnl</span>
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-14"></a><span class="s1">divert</span>
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-15"></a><span class="s1">mark(`^FAIL(ED)?'</span>, white, red<span class="o">)</span>
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-16"></a>mark<span class="o">(</span><span class="sb">`</span><span class="nv">failures</span><span class="o">=[</span><span class="m">0</span>-9<span class="o">]</span>*<span class="s1">', red)</span>
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-17"></a><span class="s1">mark(`===(=)*'</span>, brown<span class="o">)</span>
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-18"></a>mark<span class="o">(</span><span class="sb">`</span>^<span class="o">[</span><span class="se">\.</span>F<span class="o">]</span>+<span class="s1">$', cyan)</span>
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-19"></a><span class="s1">mark(`^(AssertionError:)|(Exception:) .*$'</span>, red<span class="o">)</span>
+<a name="rest_code_d1c256c2b5614277a92d5a26269556b4-20"></a>mark<span class="o">(</span><span class="sb">`</span>^OK$<span class="err">'</span>, white, green
 </pre>
 <p>Y así me colorea la salida y puedo ver el VERDE o el ROJO, según funcionen o no los tests.</p>
 <p>Hay un problema... Y es que <em>nose</em> utiliza la salia de errores en lugar de la salida estándar. Por eso he tenido que rebuscar un <em>pipe</em> que no conocía: "<em>|&amp;</em>", que premite redireccionar tanto la salida estándar como la de errores.</p>
 <p>De esta manera, mi invocación es algo así:</p>
-<pre class="code bash"><a name="rest_code_f5bb6e0b00b4493d9bb499c281b34db6-1"></a><span class="nv">$ </span>nosetests --with-freshen tests -s -v <span class="p">|&amp;</span> colorit -c colorit.conf
+<pre class="code bash"><a name="rest_code_e5f22117be274c6294fc69ddff084b31-1"></a>$ nosetests --with-freshen tests -s -v <span class="p">|&amp;</span> colorit -c colorit.conf
 </pre>
 <p>Y el resultado queda perfectamente coloreado :D</p>
 <p>¡Una gran ayuda!</p>

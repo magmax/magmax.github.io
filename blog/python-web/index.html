@@ -7,7 +7,7 @@ article: https://ogp.me/ns/article#
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Python en la web | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,8 +18,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/python-web/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/python-pruebas-2/" title="Python: Cómo hacer pruebas 2: unittest" type="text/html">
 <link rel="next" href="/blog/scrum-pfc/" title="Scrum para Proyectos Fin de Carrera" type="text/html">
@@ -134,51 +134,51 @@ article: https://ogp.me/ns/article#
 <div class="section" id="el-servidor">
 <h2>El servidor</h2>
 <p>Primero el código y luego lo vemos:</p>
-<pre class="code python"><a name="rest_code_577ebb644b6747baa635512dfa1355fc-1"></a><span class="c">#!/usr/bin/python</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-2"></a><span class="c"># -*- coding:utf-8; tab-width:4; mode:python -*-</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-3"></a><span class="kn">import</span> <span class="nn">SimpleHTTPServer</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-4"></a><span class="kn">import</span> <span class="nn">SocketServer</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-5"></a>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-6"></a><span class="k">class</span> <span class="nc">MyServer</span><span class="p">(</span><span class="n">SimpleHTTPServer</span><span class="o">.</span><span class="n">SimpleHTTPRequestHandler</span><span class="p">):</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-7"></a>    <span class="k">def</span> <span class="nf">do_POST</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-8"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">()</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-9"></a>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-10"></a>    <span class="k">def</span> <span class="nf">do_GET</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-11"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">()</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-12"></a>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-13"></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-14"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-15"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">end_headers</span><span class="p">()</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-16"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__response_body</span><span class="p">())</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-17"></a>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-18"></a>    <span class="k">def</span> <span class="nf">__response_body</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-19"></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__read_body</span><span class="p">()))</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-20"></a>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-21"></a>    <span class="k">def</span> <span class="nf">__read_body</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-22"></a>        <span class="n">length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s">'content-length'</span><span class="p">))</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-23"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-24"></a>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-25"></a><span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s">"__main__"</span><span class="p">:</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-26"></a>    <span class="n">port</span> <span class="o">=</span> <span class="mi">2349</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-27"></a>    <span class="n">s</span><span class="o">=</span><span class="n">SocketServer</span><span class="o">.</span><span class="n">TCPServer</span><span class="p">((</span><span class="s">''</span><span class="p">,</span><span class="n">port</span><span class="p">),</span><span class="n">MyServer</span><span class="p">)</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-28"></a>    <span class="k">print</span> <span class="s">"ScriptServer running on port"</span><span class="p">,</span> <span class="n">port</span>
-<a name="rest_code_577ebb644b6747baa635512dfa1355fc-29"></a>    <span class="n">s</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-1"></a><span class="ch">#!/usr/bin/python</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-2"></a><span class="c1"># -*- coding:utf-8; tab-width:4; mode:python -*-</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-3"></a><span class="kn">import</span> <span class="nn">SimpleHTTPServer</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-4"></a><span class="kn">import</span> <span class="nn">SocketServer</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-5"></a>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-6"></a><span class="k">class</span> <span class="nc">MyServer</span><span class="p">(</span><span class="n">SimpleHTTPServer</span><span class="o">.</span><span class="n">SimpleHTTPRequestHandler</span><span class="p">):</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-7"></a>    <span class="k">def</span> <span class="nf">do_POST</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-8"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">()</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-9"></a>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-10"></a>    <span class="k">def</span> <span class="nf">do_GET</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-11"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="p">()</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-12"></a>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-13"></a>    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-14"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-15"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">end_headers</span><span class="p">()</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-16"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__response_body</span><span class="p">())</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-17"></a>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-18"></a>    <span class="k">def</span> <span class="nf">__response_body</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-19"></a>        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__read_body</span><span class="p">()))</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-20"></a>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-21"></a>    <span class="k">def</span> <span class="nf">__read_body</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-22"></a>        <span class="n">length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s1">'content-length'</span><span class="p">))</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-23"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-24"></a>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-25"></a><span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s2">"__main__"</span><span class="p">:</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-26"></a>    <span class="n">port</span> <span class="o">=</span> <span class="mi">2349</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-27"></a>    <span class="n">s</span><span class="o">=</span><span class="n">SocketServer</span><span class="o">.</span><span class="n">TCPServer</span><span class="p">((</span><span class="s1">''</span><span class="p">,</span><span class="n">port</span><span class="p">),</span><span class="n">MyServer</span><span class="p">)</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-28"></a>    <span class="nb">print</span> <span class="s2">"ScriptServer running on port"</span><span class="p">,</span> <span class="n">port</span>
+<a name="rest_code_89b3a0bd2260449e8059d013178cdb9f-29"></a>    <span class="n">s</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
 </pre>
 <p>Vamos con la parte principal: selecciono un puerto (el 2349) y me creo un <em>SocketServer</em>, indicándole que use como <em>backend</em> mi clase principal. Por razones estéticas, me imprimo el puerto y me pongo a escuchar (lo que se conoce como un "bucle de eventos").</p>
 <p>Mi clase principal hereda de <em>SimpleHTTPRequestHandler</em>, lo que me da resueltos casi todos mis problemas. Como soy muy indeciso, decido implementar tanto el método GET como el POST, llamando ambos a "process".</p>
 <p>Vamos a fijarnos en la parte más importante: mi método <em>process</em>. Sólo tiene 3 líneas pero son muy matonas. Copiémoslo de nuevo:</p>
-<pre class="code python"><a name="rest_code_7ff514b9397244cdb6f00265aebfe9be-1"></a><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_7ff514b9397244cdb6f00265aebfe9be-2"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
-<a name="rest_code_7ff514b9397244cdb6f00265aebfe9be-3"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">end_headers</span><span class="p">()</span>
-<a name="rest_code_7ff514b9397244cdb6f00265aebfe9be-4"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__response_body</span><span class="p">())</span>
+<pre class="code python"><a name="rest_code_d6ec344a7e924f4a9d8a30ce794888e0-1"></a><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_d6ec344a7e924f4a9d8a30ce794888e0-2"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+<a name="rest_code_d6ec344a7e924f4a9d8a30ce794888e0-3"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">end_headers</span><span class="p">()</span>
+<a name="rest_code_d6ec344a7e924f4a9d8a30ce794888e0-4"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">wfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__response_body</span><span class="p">())</span>
 </pre>
 <p>En estas 3 líneas estamos construyendo la respuesta. Primero indico el código de respuesta (200 viene a ser un "todo va bien").</p>
 <p>Después indico que se han acabado las cabeceras. Las cabeceras se separan del cuerpo por un salto de línea, así que esta línea está imprimiendo un 'n' nada más, pero es indispensable.</p>
 <p>Finalmente, escribo en el buffer de salida la respuesta que quiero dar.</p>
 <p>También es importante la lectura del cuerpo del mensaje. Lo copio de nuevo:</p>
-<pre class="code python"><a name="rest_code_25367a5fa807414880c4b128800c747b-1"></a><span class="k">def</span> <span class="nf">__read_body</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_25367a5fa807414880c4b128800c747b-2"></a>        <span class="n">length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s">'content-length'</span><span class="p">))</span>
-<a name="rest_code_25367a5fa807414880c4b128800c747b-3"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_c670846c4b3d40ec837db211ea00d3a2-1"></a><span class="k">def</span> <span class="nf">__read_body</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_c670846c4b3d40ec837db211ea00d3a2-2"></a>        <span class="n">length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">getheader</span><span class="p">(</span><span class="s1">'content-length'</span><span class="p">))</span>
+<a name="rest_code_c670846c4b3d40ec837db211ea00d3a2-3"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rfile</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
 </pre>
 <p>Primero tengo que obtener la longitud del stream y luego leerla. Al ser un stream abierto, si tratamos de leerlo entero nunca terminará, ya que el <em>socket</em> sigue abierto.</p>
 <p>El resto es la implementación de mi "calculadora", que veréis que no es más que una llamada a "eval". No tiene mayor misterio.</p>
@@ -186,43 +186,43 @@ article: https://ogp.me/ns/article#
 <div class="section" id="el-cliente">
 <h2>El cliente</h2>
 <p>Y ahora vamos con el cliente. Primero el código:</p>
-<pre class="code python"><a name="rest_code_770ab532e2b042a9a7374e3243592d30-1"></a><span class="c">#!/usr/bin/python</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-2"></a><span class="c"># -*- coding:utf-8; tab-width:4; mode:python -*-</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-3"></a>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-4"></a><span class="kn">import</span> <span class="nn">httplib</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-5"></a><span class="kn">import</span> <span class="nn">unittest</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-6"></a>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-7"></a><span class="k">class</span> <span class="nc">server_tester</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-8"></a>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-9"></a>    <span class="k">def</span> <span class="nf">send_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">):</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-10"></a>        <span class="n">connection</span> <span class="o">=</span> <span class="n">httplib</span><span class="o">.</span><span class="n">HTTPConnection</span><span class="p">(</span><span class="s">'localhost'</span><span class="p">,</span> <span class="mi">2349</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-11"></a>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-12"></a>        <span class="n">connection</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s">'GET'</span><span class="p">,</span> <span class="s">'/'</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-13"></a>        <span class="n">response</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">getresponse</span><span class="p">()</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-14"></a>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-15"></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-16"></a>        <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-17"></a>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-18"></a>        <span class="k">return</span> <span class="n">result</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-19"></a>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-20"></a>    <span class="k">def</span> <span class="nf">test_number</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-21"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s">'2'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_operation</span><span class="p">(</span><span class="s">'2'</span><span class="p">))</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-22"></a>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-23"></a>    <span class="k">def</span> <span class="nf">test_sum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-24"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s">'5'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_operation</span><span class="p">(</span><span class="s">'2+3'</span><span class="p">))</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-25"></a>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-26"></a>    <span class="k">def</span> <span class="nf">test_pow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-27"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s">'256'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_operation</span><span class="p">(</span><span class="s">'2**8'</span><span class="p">))</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-28"></a>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-29"></a>    <span class="k">def</span> <span class="nf">test_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-30"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s">''</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_operation</span><span class="p">(</span><span class="s">'esto no se puede calcular'</span><span class="p">))</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-31"></a>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-32"></a>    <span class="k">def</span> <span class="nf">test_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-33"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s">'hello, world'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_operation</span><span class="p">(</span><span class="s">'"hello, " + "world"'</span><span class="p">))</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-34"></a>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-35"></a>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-36"></a><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
-<a name="rest_code_770ab532e2b042a9a7374e3243592d30-37"></a>    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-1"></a><span class="ch">#!/usr/bin/python</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-2"></a><span class="c1"># -*- coding:utf-8; tab-width:4; mode:python -*-</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-3"></a>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-4"></a><span class="kn">import</span> <span class="nn">httplib</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-5"></a><span class="kn">import</span> <span class="nn">unittest</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-6"></a>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-7"></a><span class="k">class</span> <span class="nc">server_tester</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-8"></a>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-9"></a>    <span class="k">def</span> <span class="nf">send_operation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">):</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-10"></a>        <span class="n">connection</span> <span class="o">=</span> <span class="n">httplib</span><span class="o">.</span><span class="n">HTTPConnection</span><span class="p">(</span><span class="s1">'localhost'</span><span class="p">,</span> <span class="mi">2349</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-11"></a>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-12"></a>        <span class="n">connection</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s1">'GET'</span><span class="p">,</span> <span class="s1">'/'</span><span class="p">,</span> <span class="n">operation</span><span class="p">)</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-13"></a>        <span class="n">response</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">getresponse</span><span class="p">()</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-14"></a>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-15"></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-16"></a>        <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-17"></a>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-18"></a>        <span class="k">return</span> <span class="n">result</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-19"></a>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-20"></a>    <span class="k">def</span> <span class="nf">test_number</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-21"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">'2'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_operation</span><span class="p">(</span><span class="s1">'2'</span><span class="p">))</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-22"></a>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-23"></a>    <span class="k">def</span> <span class="nf">test_sum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-24"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">'5'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_operation</span><span class="p">(</span><span class="s1">'2+3'</span><span class="p">))</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-25"></a>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-26"></a>    <span class="k">def</span> <span class="nf">test_pow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-27"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">'256'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_operation</span><span class="p">(</span><span class="s1">'2**8'</span><span class="p">))</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-28"></a>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-29"></a>    <span class="k">def</span> <span class="nf">test_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-30"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">''</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_operation</span><span class="p">(</span><span class="s1">'esto no se puede calcular'</span><span class="p">))</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-31"></a>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-32"></a>    <span class="k">def</span> <span class="nf">test_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-33"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="s1">'hello, world'</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_operation</span><span class="p">(</span><span class="s1">'"hello, " + "world"'</span><span class="p">))</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-34"></a>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-35"></a>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-36"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+<a name="rest_code_f3a6e3b53c1b401c99bf4925e5c6d840-37"></a>    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
 </pre>
 <p>Sí, como habéis observado estoy probando mi servidor :D</p>
 <p>Lo más importante de este código es la función <em>send&amp;#95;operation</em>, donde conecto con mi servidor, le envío una solicitud y devuelvo el body. No hace nada más.</p>

@@ -8,7 +8,7 @@ article: https://ogp.me/ns/article#
 <meta name="description" content="Creación de un entorno LAMP (Linux + Apache + MySQL + Php) con puppet en una máquina virtual Vagrant">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>LAMP con Salt | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -19,8 +19,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/lamp-con-salt/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="description" itemprop="description" content="Creación de un entorno LAMP (Linux + Apache + MySQL + Php) con puppet en una máquina virtual Vagrant">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/primeros-pasos-en-angularjs/" title="Primeros pasos en AngularJS" type="text/html">
@@ -140,26 +140,26 @@ article: https://ogp.me/ns/article#
 
 <h2 id="jerarquia">Jerarquía</h2>
 <p>Para facilitaros la vida, ésta es la jerarquía de archivos que vamos a usar:</p>
-<pre class="code literal-block">.
-├── salt
-│   ├── minion
-│   └── roots
-│       └── salt
-│           ├── apache
-│           │   └── init.sls
-│           ├── logrotate
-│           │   └── init.sls
-│           ├── mysql
-│           │   ├── client.sls
-│           │   └── server.sls
-│           ├── ntp
-│           │   └── init.sls
-│           ├── php
-│           │   └── init.sls
-│           ├── php-example
-│           │   └── init.sls
-│           └── top.sls
-└── Vagrantfile
+<pre class="code literal-block"><span></span><span class="err">.</span>
+<span class="err">├── salt</span>
+<span class="err">│   ├── minion</span>
+<span class="err">│   └── roots</span>
+<span class="err">│       └── salt</span>
+<span class="err">│           ├── apache</span>
+<span class="err">│           │   └── init.sls</span>
+<span class="err">│           ├── logrotate</span>
+<span class="err">│           │   └── init.sls</span>
+<span class="err">│           ├── mysql</span>
+<span class="err">│           │   ├── client.sls</span>
+<span class="err">│           │   └── server.sls</span>
+<span class="err">│           ├── ntp</span>
+<span class="err">│           │   └── init.sls</span>
+<span class="err">│           ├── php</span>
+<span class="err">│           │   └── init.sls</span>
+<span class="err">│           ├── php-example</span>
+<span class="err">│           │   └── init.sls</span>
+<span class="err">│           └── top.sls</span>
+<span class="err">└── Vagrantfile</span>
 </pre>
 
 
@@ -169,7 +169,7 @@ article: https://ogp.me/ns/article#
 <p>Sé que muchos de mis lectores agradecen artículos pequeños, así que podéis usar el repositorio y saltar directamente a la sección "Al lío". Si queréis ver en detalle alguno de los archivos, podéis ir a su sección más adelante, si lo creéis necesario.</p>
 <h2 id="vagrant">Vagrant</h2>
 <p>Éste es el contenido del archivo <strong>Vagrantfile</strong>:</p>
-<pre class="code literal-block"><span class="c1"># -*- coding:utf-8; tab-width:4; mode:ruby -*-</span>
+<pre class="code literal-block"><span></span><span class="c1"># -*- coding:utf-8; tab-width:4; mode:ruby -*-</span>
 <span class="c1"># vi: set ft=ruby :</span>
 
 <span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="s2">"2"</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
@@ -214,13 +214,13 @@ article: https://ogp.me/ns/article#
 <p>Se pueden contar muchas más cosas, pero dejémoslo aquí. Es suficiente para una primera toma de contacto.</p>
 <p>Ahora describiré cada uno de los archivos. Son pequeños y sencillos. Estos archivos son plantillas <a href="http://jinja.pocoo.org/">jinja2</a> que generarán un archivo <a href="http://www.yaml.org/">Yaml</a>, que es la propia configuración. Parece complicado, pero veremos que no lo es tanto.</p>
 <p>El primer archivo a tener en cuenta es <strong>salt/minion</strong>, donde está la configuración genérica:</p>
-<pre class="code literal-block"><span class="n">file_client</span><span class="o">:</span> <span class="n">local</span>
+<pre class="code literal-block"><span></span><span class="n">file_client</span><span class="o">:</span> <span class="n">local</span>
 </pre>
 
 
 <p>Este archivo contiene configuración básica. En este caso se indica que la configuración es local (no hay estructura cliente-servidor).</p>
 <p>El siguiente archivo importante es <strong>salt/roots/salt/top.sls</strong>, que describe cada uno de los <strong>minion</strong>:</p>
-<pre class="code literal-block"><span class="ss">base</span><span class="p">:</span>
+<pre class="code literal-block"><span></span><span class="ss">base</span><span class="p">:</span>
   <span class="s1">'salt-example'</span><span class="p">:</span>
     <span class="o">-</span> <span class="n">ntp</span>
     <span class="o">-</span> <span class="n">mysql</span><span class="o">.</span><span class="n">client</span>
@@ -235,7 +235,7 @@ article: https://ogp.me/ns/article#
 <p>Aquí se han indicado cada uno de los módulos que se van a instalar en la máquina <strong>salt-example</strong>.</p>
 <h3 id="logrotate">logrotate</h3>
 <p>comencemos por uno de los módulos más sencillos, que se encuentra en <strong>salt/roots/salt/logrotate/init.sls</strong>. Lo primero, aclarar que el archivo <strong>init.sls</strong> es el que se buscará por defecto dentro del módulo. Luego veremos cómo utilizar otros. Éste es el contenido:</p>
-<pre class="code literal-block"><span class="ss">logrotate</span><span class="p">:</span>
+<pre class="code literal-block"><span></span><span class="ss">logrotate</span><span class="p">:</span>
   <span class="ss">pkg</span><span class="p">:</span>
     <span class="o">-</span> <span class="n">installed</span>
 </pre>
@@ -244,7 +244,7 @@ article: https://ogp.me/ns/article#
 <p>Realmente estamos seteando propiedades, tales como <code>logrotate.pkg.installed = True</code>. Estas simples instrucciones crean un estado: el paquete <code>logrotate</code> (cogido del nombre del módulo) debe estar instalado.</p>
 <h3 id="ntp">ntp</h3>
 <p>Vamos con algo un poco más difícil, ya que contiene un servicio y el paquete debian no se llama igual que el módulo. El archivo es <strong>salt/roots/salt/ntp/init.sls</strong>:</p>
-<pre class="code literal-block"><span class="ss">ntp</span><span class="p">:</span>
+<pre class="code literal-block"><span></span><span class="ss">ntp</span><span class="p">:</span>
   <span class="ss">pkg</span><span class="p">:</span>
     <span class="o">-</span> <span class="n">installed</span>
     <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">ntpdate</span>
@@ -259,7 +259,7 @@ article: https://ogp.me/ns/article#
 <p>Veremos que este mismo esquema se repite para cada uno de nuestros módulos.</p>
 <h3 id="php">php</h3>
 <p>Archivo: <strong>salt/roots/salt/php/init.sls</strong></p>
-<pre class="code literal-block"><span class="ss">php5</span><span class="p">:</span>
+<pre class="code literal-block"><span></span><span class="ss">php5</span><span class="p">:</span>
   <span class="ss">pkg</span><span class="p">:</span>
     <span class="o">-</span> <span class="n">installed</span>
 
@@ -269,7 +269,7 @@ article: https://ogp.me/ns/article#
 
 <span class="sr">/etc/</span><span class="n">php5</span><span class="o">/</span><span class="n">apache2</span><span class="o">/</span><span class="n">php</span><span class="o">.</span><span class="n">ini</span><span class="p">:</span>
   <span class="n">file</span><span class="o">.</span><span class="n">replace</span><span class="p">:</span>
-    <span class="o">-</span> <span class="ss">pattern</span><span class="p">:</span> <span class="s1">';\s*extension=msql.so'</span>
+    <span class="o">-</span> <span class="ss">pattern</span><span class="p">:</span> <span class="s1">';</span><span class="se">\s</span><span class="s1">*extension=msql.so'</span>
     <span class="o">-</span> <span class="ss">repl</span><span class="p">:</span> <span class="s1">'extension=msql.so'</span>
 
   <span class="nb">require</span><span class="p">:</span>
@@ -280,7 +280,7 @@ article: https://ogp.me/ns/article#
 <p>La primera parte ya la hemos visto: se asegura de que tanto los paquetes <code>php5</code> como <code>php5-mysql</code> estén instalados. El último apartado lo que hace es asegurarse de que esté habilitada la extensión de mysql en apache. Para ello reemplaza la extensión comentada por la no comentada. Es un poco <em>tricky</em>, pero funcional.</p>
 <h3 id="apache">apache</h3>
 <p>Vamos con el archivo <strong>salt/roots/salt/apache/init.sls</strong>:</p>
-<pre class="code literal-block"><span class="ss">apache</span><span class="p">:</span>
+<pre class="code literal-block"><span></span><span class="ss">apache</span><span class="p">:</span>
   <span class="ss">pkg</span><span class="p">:</span>
     <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="s1">'apache2'</span>
     <span class="o">-</span> <span class="n">installed</span>
@@ -304,7 +304,7 @@ article: https://ogp.me/ns/article#
 <p>He dividido mysql en dos partes: una que instalará el cliente y otra el servidor. Por eso el módulo no tiene el archivo <strong>init.sls</strong>, sino dos:</p>
 <h4 id="mysqlclient">mysql.client</h4>
 <p>El archivo <strong>salt/roots/salt/mysql/client.sls</strong>:</p>
-<pre class="code literal-block"><span class="n">mysql</span><span class="o">-</span><span class="ss">client</span><span class="p">:</span>
+<pre class="code literal-block"><span></span><span class="n">mysql</span><span class="o">-</span><span class="ss">client</span><span class="p">:</span>
   <span class="ss">pkg</span><span class="p">:</span>
     <span class="o">-</span> <span class="n">installed</span>
 </pre>
@@ -313,7 +313,7 @@ article: https://ogp.me/ns/article#
 <p>Se asegura de que el cliente mysql esté instalado.</p>
 <h4 id="mysqlserver">mysql.server</h4>
 <p>El archivo <strong>salt/roots/salt/mysql/server.sls</strong>:</p>
-<pre class="code literal-block"><span class="n">mysql</span><span class="o">-</span><span class="ss">server</span><span class="p">:</span>
+<pre class="code literal-block"><span></span><span class="n">mysql</span><span class="o">-</span><span class="ss">server</span><span class="p">:</span>
   <span class="ss">pkg</span><span class="p">:</span>
     <span class="o">-</span> <span class="n">installed</span>
     <span class="o">-</span> <span class="ss">pkgs</span><span class="p">:</span>
@@ -340,7 +340,7 @@ article: https://ogp.me/ns/article#
 <p>Es, quizá, el módulo más complejo de todos. La primera parte ya la hemos visto. La sección <code>set-mysql-root-password</code> lo que hace es establecer la password de root del servidor de mysql. Es muy <em>tricky</em>, pero no he encontrado nada más sencillo.</p>
 <h3 id="php-example">php-example</h3>
 <p>Finalmente, descargamos nuestra página web. Es la misma que usé en el artículo <a href="/blog/lamp-con-puppet">LAMP con Puppet</a> (archivo <strong>salt/roots/salt/mysql/client.sls</strong>):</p>
-<pre class="code literal-block"><span class="ss">https</span><span class="p">:</span><span class="sr">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">magmax</span><span class="o">/</span><span class="n">small_php_example</span><span class="o">.</span><span class="n">git</span><span class="p">:</span>
+<pre class="code literal-block"><span></span><span class="ss">https</span><span class="p">:</span><span class="sr">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">magmax</span><span class="o">/</span><span class="n">small_php_example</span><span class="o">.</span><span class="n">git</span><span class="p">:</span>
   <span class="n">git</span><span class="o">.</span><span class="n">latest</span><span class="p">:</span>
     <span class="o">-</span> <span class="ss">target</span><span class="p">:</span> <span class="sr">/var/</span><span class="n">www</span><span class="o">/</span><span class="n">example</span>
 </pre>
@@ -349,14 +349,14 @@ article: https://ogp.me/ns/article#
 <p>Debo decir que esto es lo que me parece más impresionante de todo el artículo: la sencillez para trabajar con <a href="http://git-scm.com/">Git</a>. Estas tres líneas se descargan el repositorio y comprueban que esté actualizado. Así, sin más.</p>
 <h2 id="al-lio">Al lío</h2>
 <p>Bien, ahora es cuando lanzamos todo:</p>
-<pre class="code literal-block"><span class="nv">$ </span>vagrant up example
+<pre class="code literal-block"><span></span>$ vagrant up example
 </pre>
 
 
 <p>Y de nuevo podéis conectaros a <a href="http://localhost:10080/example">http://localhost:10080/example</a>, donde os está esperando la lista de tablas de la base de datos <em>mysql</em>, servida con PHP.</p>
 <h3 id="bug-bug">¡Bug! ¡Bug!</h3>
 <p>Supongo que lo corregirán, pero debo advertiros de un bug actual: El provisionamiento <a href="http://www.saltstack.com/">Salt</a> en <a href="http://www.vagrantup.com/" title="Web oficial de Vagrant">Vagrant</a> está un poco verde, y no os mostrará el resultado, ni cuando sea un error. Esto me trajo de cabeza bastante tiempo. La solución es provisionar desde la propia máquina:</p>
-<pre class="code literal-block">salt-example# salt-call --local state.highstate -l info
+<pre class="code literal-block"><span></span>salt-example# salt-call --local state.highstate -l info
 </pre>
 
 

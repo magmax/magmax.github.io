@@ -8,7 +8,7 @@ article: https://ogp.me/ns/article#
 <meta name="description" content="Hay poca documentación sobre buildbot, así que trataré de explicar la organización básica de este maravilloso servidor de integración contínua">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Buildbot: cómo se organiza | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -19,8 +19,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/buildbot-organization/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="description" itemprop="description" content="Hay poca documentación sobre buildbot, así que trataré de explicar la organización básica de este maravilloso servidor de integración contínua">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/porque-make-mola/" title="Por qué make mola" type="text/html">
@@ -164,45 +164,45 @@ article: https://ogp.me/ns/article#
 14
 15</pre></div></td>
 <td class="code">
-<pre class="code literal-block"><span class="c">#!/usr/bin/env python</span>
-<span class="c"># -*- coding: utf-8 -*-</span>
+<pre class="code literal-block"><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="c"># imports</span>
+<span class="c1"># imports</span>
 <span class="kn">from</span> <span class="nn">buildbot.buildslave</span> <span class="kn">import</span> <span class="n">BuildSlave</span>
 <span class="kn">from</span> <span class="nn">buildbot.schedulers.forcesched</span> <span class="kn">import</span> <span class="n">ForceScheduler</span>
 <span class="kn">from</span> <span class="nn">buildbot.steps.shell</span> <span class="kn">import</span> <span class="n">ShellCommand</span>
 <span class="kn">from</span> <span class="nn">buildbot.process.factory</span> <span class="kn">import</span> <span class="n">BuildFactory</span>
 <span class="kn">from</span> <span class="nn">buildbot.config</span> <span class="kn">import</span> <span class="n">BuilderConfig</span>
 
-<span class="c"># inicializaciones</span>
+<span class="c1"># inicializaciones</span>
 <span class="n">c</span> <span class="o">=</span> <span class="n">BuildmasterConfig</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'slaves'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'builders'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'schedulers'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'slaves'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'builders'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'schedulers'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 </pre>
 </td>
 </tr></table>
 <p>Y ahora el código que realmente añade valor:</p>
 <p>.. code:: python</p>
-<pre class="code literal-block"># creamos el slave
-c['slaves'].append(BuildSlave("my slave", "shared secret"))
+<pre class="code literal-block"><span></span><span class="err">#</span><span class="w"> </span><span class="n">creamos</span><span class="w"> </span><span class="n">el</span><span class="w"> </span><span class="n">slave</span><span class="w"></span>
+<span class="n">c</span><span class="o">[</span><span class="n">'slaves'</span><span class="o">]</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">BuildSlave</span><span class="p">(</span><span class="ss">"my slave"</span><span class="p">,</span><span class="w"> </span><span class="ss">"shared secret"</span><span class="p">))</span><span class="w"></span>
 
-# creamos un step y con él una fábrica
-my_step = ShellCommand(name="Dormir", command=["sleep", "60"])
-my_factory = BuildFactory([my_step])
+<span class="err">#</span><span class="w"> </span><span class="n">creamos</span><span class="w"> </span><span class="n">un</span><span class="w"> </span><span class="n">step</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="n">con</span><span class="w"> </span><span class="n">él</span><span class="w"> </span><span class="n">una</span><span class="w"> </span><span class="n">fábrica</span><span class="w"></span>
+<span class="n">my_step</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ShellCommand</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="ss">"Dormir"</span><span class="p">,</span><span class="w"> </span><span class="n">command</span><span class="o">=[</span><span class="n">"sleep", "60"</span><span class="o">]</span><span class="p">)</span><span class="w"></span>
+<span class="n">my_factory</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BuildFactory</span><span class="p">(</span><span class="o">[</span><span class="n">my_step</span><span class="o">]</span><span class="p">)</span><span class="w"></span>
 
-# Ahora creamos el builder y lo añadimos a la lista
-my_builder = BuilderConfig(
-    name="my builder",
-        descriptionDone="built", # se muestra en el waterfall cuando ha terminado
-    slavenames=['my slave'],
-    factory=my_factory)
-c['builders'].append(my_builder)
+<span class="err">#</span><span class="w"> </span><span class="n">Ahora</span><span class="w"> </span><span class="n">creamos</span><span class="w"> </span><span class="n">el</span><span class="w"> </span><span class="n">builder</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="n">lo</span><span class="w"> </span><span class="n">añadimos</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">la</span><span class="w"> </span><span class="n">lista</span><span class="w"></span>
+<span class="n">my_builder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BuilderConfig</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">name</span><span class="o">=</span><span class="ss">"my builder"</span><span class="p">,</span><span class="w"></span>
+<span class="w">        </span><span class="n">descriptionDone</span><span class="o">=</span><span class="ss">"built"</span><span class="p">,</span><span class="w"> </span><span class="err">#</span><span class="w"> </span><span class="n">se</span><span class="w"> </span><span class="n">muestra</span><span class="w"> </span><span class="n">en</span><span class="w"> </span><span class="n">el</span><span class="w"> </span><span class="n">waterfall</span><span class="w"> </span><span class="n">cuando</span><span class="w"> </span><span class="n">ha</span><span class="w"> </span><span class="n">terminado</span><span class="w"></span>
+<span class="w">    </span><span class="n">slavenames</span><span class="o">=[</span><span class="n">'my slave'</span><span class="o">]</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">factory</span><span class="o">=</span><span class="n">my_factory</span><span class="p">)</span><span class="w"></span>
+<span class="n">c</span><span class="o">[</span><span class="n">'builders'</span><span class="o">]</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">my_builder</span><span class="p">)</span><span class="w"></span>
 
-# Finalmente, creamos el scheduler (se lanzará con un click en la web)
-c['schedulers'].append(ForceScheduler(
-    name="ejecutar",
-    builderNames=["my builder"]))
+<span class="err">#</span><span class="w"> </span><span class="n">Finalmente</span><span class="p">,</span><span class="w"> </span><span class="n">creamos</span><span class="w"> </span><span class="n">el</span><span class="w"> </span><span class="n">scheduler</span><span class="w"> </span><span class="p">(</span><span class="n">se</span><span class="w"> </span><span class="n">lanzará</span><span class="w"> </span><span class="n">con</span><span class="w"> </span><span class="n">un</span><span class="w"> </span><span class="n">click</span><span class="w"> </span><span class="n">en</span><span class="w"> </span><span class="n">la</span><span class="w"> </span><span class="n">web</span><span class="p">)</span><span class="w"></span>
+<span class="n">c</span><span class="o">[</span><span class="n">'schedulers'</span><span class="o">]</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">ForceScheduler</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">name</span><span class="o">=</span><span class="ss">"ejecutar"</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">builderNames</span><span class="o">=[</span><span class="n">"my builder"</span><span class="o">]</span><span class="p">))</span><span class="w"></span>
 </pre>
 
 
@@ -211,18 +211,18 @@ c['schedulers'].append(ForceScheduler(
 <p>Hay ciertos parámetros extra que también se indican aquí, como el puerto por defecto en el que se va a escuchar, la base de datos, etc. Me he centrado exclusivamente en la definición de un trabajo sencillo, con el objetivo de enseñar cómo funciona.</p>
 <p>Esta información es la siguiente:</p>
 <p>.. code:: python</p>
-<pre class="code literal-block"><span class="c"># Configuración:</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'slavePortnum'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">9989</span>  <span class="c"># igual en los esclavos</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'title'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"Titulo en la web"</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'titleURL'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"http://magmax.org"</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'buildbotURL'</span><span class="p">]</span> <span class="o">=</span> <span class="s">"http://localhost:8010/"</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'db'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">'db_url'</span> <span class="p">:</span> <span class="s">"sqlite:///state.sqlite"</span><span class="p">,</span>
+<pre class="code literal-block"><span></span><span class="c1"># Configuración:</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'slavePortnum'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">9989</span>  <span class="c1"># igual en los esclavos</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'title'</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Titulo en la web"</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'titleURL'</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"http://magmax.org"</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'buildbotURL'</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"http://localhost:8010/"</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'db'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'db_url'</span> <span class="p">:</span> <span class="s2">"sqlite:///state.sqlite"</span><span class="p">,</span>
 <span class="p">}</span>
 
-<span class="c"># Añadiendo la web por defecto:</span>
+<span class="c1"># Añadiendo la web por defecto:</span>
 <span class="kn">from</span> <span class="nn">buildbot.status</span> <span class="kn">import</span> <span class="n">html</span>
-<span class="n">c</span><span class="p">[</span><span class="s">'status'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="n">html</span><span class="o">.</span><span class="n">WebStatus</span><span class="p">(</span><span class="n">http_port</span><span class="o">=</span><span class="mi">8010</span><span class="p">)</span> <span class="p">]</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">'status'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="n">html</span><span class="o">.</span><span class="n">WebStatus</span><span class="p">(</span><span class="n">http_port</span><span class="o">=</span><span class="mi">8010</span><span class="p">)</span> <span class="p">]</span>
 </pre>
 
 

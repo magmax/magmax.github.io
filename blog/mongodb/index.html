@@ -7,7 +7,7 @@ article: https://ogp.me/ns/article#
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>MongoDB | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,8 +18,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/mongodb/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/porque_c_mola/" title="Por qué C mola" type="text/html">
 <link rel="next" href="/blog/porque-ruby-mola/" title="Por qué Ruby mola" type="text/html">
@@ -134,34 +134,34 @@ article: https://ogp.me/ns/article#
 <h3 id="comenzando-definir-lo-que-queremos">Comenzando: definir lo que queremos</h3>
 <p>El primer paso es decidir qué es lo que quiero. Veamos... Lo que quiero es buscar un libro por el título. Eso es lo más importante. Pero no puedo buscar nada si no indico el título o el autor. Así que comenzaré por ahí:</p>
 <p>.. code:: text</p>
-<pre class="code literal-block"># file: ./tests/library.feature
-Feature:
-  In order to store my library reference
-  As a book lover
-  I want to be sure my library works
+<pre class="code literal-block"><span></span><span class="o">#</span> <span class="n">file</span><span class="p">:</span> <span class="p">.</span><span class="o">/</span><span class="n">tests</span><span class="o">/</span><span class="n">library</span><span class="p">.</span><span class="n">feature</span>
+<span class="n">Feature</span><span class="p">:</span>
+  <span class="k">In</span> <span class="k">order</span> <span class="k">to</span> <span class="n">store</span> <span class="n">my</span> <span class="n">library</span> <span class="n">reference</span>
+  <span class="k">As</span> <span class="n">a</span> <span class="n">book</span> <span class="n">lover</span>
+  <span class="n">I</span> <span class="n">want</span> <span class="k">to</span> <span class="n">be</span> <span class="n">sure</span> <span class="n">my</span> <span class="n">library</span> <span class="n">works</span>
 
-  Scenario: Author or title is necessary to search a book
-    When I search a book without parameters
-    Then output contains "You should ask for a title or an author"
+  <span class="n">Scenario</span><span class="p">:</span> <span class="n">Author</span> <span class="k">or</span> <span class="n">title</span> <span class="k">is</span> <span class="n">necessary</span> <span class="k">to</span> <span class="k">search</span> <span class="n">a</span> <span class="n">book</span>
+    <span class="k">When</span> <span class="n">I</span> <span class="k">search</span> <span class="n">a</span> <span class="n">book</span> <span class="k">without</span> <span class="k">parameters</span>
+    <span class="k">Then</span> <span class="k">output</span> <span class="k">contains</span> <span class="ss">"You should ask for a title or an author"</span>
 </pre>
 
 
 <p>Ahora trato de ejecutarlo:</p>
 <p>.. code:: bash</p>
-<pre class="code literal-block"><span class="nv">$ </span>nosetests --with-freshen tests/library.feature
+<pre class="code literal-block"><span></span>$ nosetests --with-freshen tests/library.feature
 </pre>
 
 
 <h3 id="preparando-el-entorno-de-pruebas">Preparando el entorno de pruebas</h3>
 <p>Evidentemente tengo un error. <a href="https://github.com/rlisagor/freshen">Freshen</a> me está diciendo que no encuentra la manera de ejecutar los pasos del escenario. Por eso tengo que escribir el archivo <em>steps.py</em>.</p>
 <p>.. code:: python</p>
-<pre class="code literal-block"><span class="c"># file ./tests/steps.py</span>
+<pre class="code literal-block"><span></span><span class="c1"># file ./tests/steps.py</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">freshen</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">freshen.checks</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="n">DATABASE_FILE</span><span class="o">=</span><span class="s">'test_db'</span>
+<span class="n">DATABASE_FILE</span><span class="o">=</span><span class="s1">'test_db'</span>
 
 <span class="k">def</span> <span class="nf">before</span><span class="p">(</span><span class="n">sc</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">DATABASE_FILE</span><span class="p">):</span>
@@ -170,7 +170,7 @@ Feature:
     <span class="n">scc</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="bp">None</span>
 
 <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s">'./library.py'</span><span class="p">,</span> <span class="s">'-d'</span><span class="p">,</span> <span class="n">DATABASE_FILE</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'./library.py'</span><span class="p">,</span> <span class="s1">'-d'</span><span class="p">,</span> <span class="n">DATABASE_FILE</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span>
     <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span>
     <span class="n">output</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span>
@@ -180,13 +180,13 @@ Feature:
     <span class="n">scc</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">scc</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">process</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
 
-<span class="nd">@When</span><span class="p">(</span><span class="s">'^I search a book without parameters$'</span><span class="p">)</span>
+<span class="nd">@When</span><span class="p">(</span><span class="s1">'^I search a book without parameters$'</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">exec_search_without_parameters</span><span class="p">():</span>
-    <span class="n">execute</span><span class="p">([</span><span class="s">'--action=show'</span><span class="p">])</span>
+    <span class="n">execute</span><span class="p">([</span><span class="s1">'--action=show'</span><span class="p">])</span>
 
-<span class="nd">@Then</span><span class="p">(</span><span class="s">'^output contains "(.*)"$'</span><span class="p">)</span>
+<span class="nd">@Then</span><span class="p">(</span><span class="s1">'^output contains "(.*)"$'</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">check_output_contains</span><span class="p">(</span><span class="n">expected</span><span class="p">):</span>
-    <span class="n">assert_true</span><span class="p">(</span><span class="n">expected</span> <span class="ow">in</span> <span class="n">scc</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s">'Text "{}", was not found in "{}"'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">scc</span><span class="o">.</span><span class="n">output</span><span class="p">))</span>
+    <span class="n">assert_true</span><span class="p">(</span><span class="n">expected</span> <span class="ow">in</span> <span class="n">scc</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s1">'Text "{}", was not found in "{}"'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">scc</span><span class="o">.</span><span class="n">output</span><span class="p">))</span>
 </pre>
 
 
@@ -243,33 +243,33 @@ Feature:
 40
 41</pre></div></td>
 <td class="code">
-<pre class="code literal-block"><span class="c">#!/usr/bin/env python</span>
-<span class="c">#File: ./library.py</span>
+<pre class="code literal-block"><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#File: ./library.py</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
 
 
 <span class="k">class</span> <span class="nc">Library</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_db</span> <span class="o">=</span> <span class="n">db</span>
 
-    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">author</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s">'You should ask for a title or an author'</span>
+            <span class="nb">print</span> <span class="s1">'You should ask for a title or an author'</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">parse_args</span><span class="p">():</span>
-    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s">'My library!'</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'--action'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">'action'</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s">'add'</span><span class="p">,</span> <span class="s">'remove'</span><span class="p">,</span> <span class="s">'show'</span><span class="p">],</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">'indicates the action to be performed'</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'-a'</span><span class="p">,</span> <span class="s">'--author'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">'author'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">'The author of the book'</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'-t'</span><span class="p">,</span> <span class="s">'--title'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">'title'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">'The title of the book'</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'-d'</span><span class="p">,</span> <span class="s">'--database'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">'database'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">'library.db'</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">'Path to the database file'</span><span class="p">)</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">'My library!'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">'--action'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">'action'</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s1">'add'</span><span class="p">,</span> <span class="s1">'remove'</span><span class="p">,</span> <span class="s1">'show'</span><span class="p">],</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">'indicates the action to be performed'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">'-a'</span><span class="p">,</span> <span class="s1">'--author'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">'author'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">'The author of the book'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">'-t'</span><span class="p">,</span> <span class="s1">'--title'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">'title'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">'The title of the book'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">'-d'</span><span class="p">,</span> <span class="s1">'--database'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">'database'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">'library.db'</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">'Path to the database file'</span><span class="p">)</span>
 
     <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">args</span>
@@ -278,10 +278,10 @@ Feature:
     <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
 
     <span class="n">library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">database</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">action</span> <span class="o">==</span> <span class="s">'show'</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">action</span> <span class="o">==</span> <span class="s1">'show'</span><span class="p">:</span>
         <span class="n">library</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">author</span><span class="p">)</span>
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </pre>
@@ -293,49 +293,49 @@ Feature:
 <h3 id="creando-mas-tests-de-aceptacion">Creando más tests de aceptación</h3>
 <p>Con el fin de no alargar mucho el artículo, voy a escribir todo el programa del tirón, aunque en realidad lo he ido escribiendo escenario a escenario.</p>
 <p>.. code:: text</p>
-<pre class="code literal-block"># file: ./tests/library.feature
-Feature:
-  In order to store my library reference
-  As a book lover
-  I want to be sure my library works
+<pre class="code literal-block"><span></span><span class="o">#</span> <span class="n">file</span><span class="p">:</span> <span class="p">.</span><span class="o">/</span><span class="n">tests</span><span class="o">/</span><span class="n">library</span><span class="p">.</span><span class="n">feature</span>
+<span class="n">Feature</span><span class="p">:</span>
+  <span class="k">In</span> <span class="k">order</span> <span class="k">to</span> <span class="n">store</span> <span class="n">my</span> <span class="n">library</span> <span class="n">reference</span>
+  <span class="k">As</span> <span class="n">a</span> <span class="n">book</span> <span class="n">lover</span>
+  <span class="n">I</span> <span class="n">want</span> <span class="k">to</span> <span class="n">be</span> <span class="n">sure</span> <span class="n">my</span> <span class="n">library</span> <span class="n">works</span>
 
-  Scenario: Author or title is necessary to search a book
-    When I search a book without parameters
-    Then output contains "You should ask for a title or an author"
+  <span class="n">Scenario</span><span class="p">:</span> <span class="n">Author</span> <span class="k">or</span> <span class="n">title</span> <span class="k">is</span> <span class="n">necessary</span> <span class="k">to</span> <span class="k">search</span> <span class="n">a</span> <span class="n">book</span>
+    <span class="k">When</span> <span class="n">I</span> <span class="k">search</span> <span class="n">a</span> <span class="n">book</span> <span class="k">without</span> <span class="k">parameters</span>
+    <span class="k">Then</span> <span class="k">output</span> <span class="k">contains</span> <span class="ss">"You should ask for a title or an author"</span>
 
-  Scenario: Searching an inexistent book
-    When I search the book "inexistent"
-    Then output contains "Book not found"
-    And my library do not contains the title "inexistent"
+  <span class="n">Scenario</span><span class="p">:</span> <span class="n">Searching</span> <span class="n">an</span> <span class="n">inexistent</span> <span class="n">book</span>
+    <span class="k">When</span> <span class="n">I</span> <span class="k">search</span> <span class="n">the</span> <span class="n">book</span> <span class="ss">"inexistent"</span>
+    <span class="k">Then</span> <span class="k">output</span> <span class="k">contains</span> <span class="ss">"Book not found"</span>
+    <span class="k">And</span> <span class="n">my</span> <span class="n">library</span> <span class="k">do</span> <span class="k">not</span> <span class="k">contains</span> <span class="n">the</span> <span class="n">title</span> <span class="ss">"inexistent"</span>
 
-  Scenario: Adding a title
-    When I add the book "Fundation" written by "Assimov, Isaac"
-    Then output contains "Book added"
-    And my library contains the title "Fundation"
+  <span class="n">Scenario</span><span class="p">:</span> <span class="n">Adding</span> <span class="n">a</span> <span class="n">title</span>
+    <span class="k">When</span> <span class="n">I</span> <span class="k">add</span> <span class="n">the</span> <span class="n">book</span> <span class="ss">"Fundation"</span> <span class="n">written</span> <span class="k">by</span> <span class="ss">"Assimov, Isaac"</span>
+    <span class="k">Then</span> <span class="k">output</span> <span class="k">contains</span> <span class="ss">"Book added"</span>
+    <span class="k">And</span> <span class="n">my</span> <span class="n">library</span> <span class="k">contains</span> <span class="n">the</span> <span class="n">title</span> <span class="ss">"Fundation"</span>
 
-  Scenario: Searching an existent a title
-    Given the book "I, Robot", written by "Assimov, Isaac"
-    When I search the book "I, Robot"
-    Then output contains "Assimov, Isaac"
+  <span class="n">Scenario</span><span class="p">:</span> <span class="n">Searching</span> <span class="n">an</span> <span class="n">existent</span> <span class="n">a</span> <span class="n">title</span>
+    <span class="n">Given</span> <span class="n">the</span> <span class="n">book</span> <span class="ss">"I, Robot"</span><span class="p">,</span> <span class="n">written</span> <span class="k">by</span> <span class="ss">"Assimov, Isaac"</span>
+    <span class="k">When</span> <span class="n">I</span> <span class="k">search</span> <span class="n">the</span> <span class="n">book</span> <span class="ss">"I, Robot"</span>
+    <span class="k">Then</span> <span class="k">output</span> <span class="k">contains</span> <span class="ss">"Assimov, Isaac"</span>
 
-  Scenario: Removing a title
-    Given the book "I, Robot", written by "Assimov, Isaac"
-    When I remove the book "I, Robot"
-    Then output contains "Book removed"
-    And my library do not contains the title "I, Robot"
+  <span class="n">Scenario</span><span class="p">:</span> <span class="n">Removing</span> <span class="n">a</span> <span class="n">title</span>
+    <span class="n">Given</span> <span class="n">the</span> <span class="n">book</span> <span class="ss">"I, Robot"</span><span class="p">,</span> <span class="n">written</span> <span class="k">by</span> <span class="ss">"Assimov, Isaac"</span>
+    <span class="k">When</span> <span class="n">I</span> <span class="n">remove</span> <span class="n">the</span> <span class="n">book</span> <span class="ss">"I, Robot"</span>
+    <span class="k">Then</span> <span class="k">output</span> <span class="k">contains</span> <span class="ss">"Book removed"</span>
+    <span class="k">And</span> <span class="n">my</span> <span class="n">library</span> <span class="k">do</span> <span class="k">not</span> <span class="k">contains</span> <span class="n">the</span> <span class="n">title</span> <span class="ss">"I, Robot"</span>
 </pre>
 
 
 <p>Lo que fallará estrepitosamente porque <em>freshen</em> no encuentra la mayoría de las frases. Vamos a solucionarlo:</p>
 <p>.. code:: python</p>
-<pre class="code literal-block"><span class="c">#File: ./tests/steps.py</span>
+<pre class="code literal-block"><span></span><span class="c1">#File: ./tests/steps.py</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">from</span> <span class="nn">freshen</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">freshen.checks</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
 
-<span class="n">DATABASE_FILE</span><span class="o">=</span><span class="s">'test.db'</span>
+<span class="n">DATABASE_FILE</span><span class="o">=</span><span class="s1">'test.db'</span>
 
 <span class="k">def</span> <span class="nf">before</span><span class="p">(</span><span class="n">sc</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">DATABASE_FILE</span><span class="p">):</span>
@@ -344,7 +344,7 @@ Feature:
     <span class="n">scc</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="bp">None</span>
 
 <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s">'./library.py'</span><span class="p">,</span> <span class="s">'-d'</span><span class="p">,</span> <span class="n">DATABASE_FILE</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'./library.py'</span><span class="p">,</span> <span class="s1">'-d'</span><span class="p">,</span> <span class="n">DATABASE_FILE</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span>
     <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span>
     <span class="n">output</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
     <span class="n">status</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span>
@@ -354,37 +354,37 @@ Feature:
     <span class="n">scc</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="n">scc</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">process</span> <span class="o">=</span> <span class="n">run</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
 
-<span class="nd">@Given</span><span class="p">(</span><span class="s">'^the book "(.*)", written by "(.*)"$'</span><span class="p">)</span>
+<span class="nd">@Given</span><span class="p">(</span><span class="s1">'^the book "(.*)", written by "(.*)"$'</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">initialize_library</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="p">):</span>
-    <span class="n">execute</span><span class="p">([</span><span class="s">'--action=add'</span><span class="p">,</span> <span class="s">'-t'</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="s">'-a'</span><span class="p">,</span> <span class="n">author</span><span class="p">])</span>
+    <span class="n">execute</span><span class="p">([</span><span class="s1">'--action=add'</span><span class="p">,</span> <span class="s1">'-t'</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="s1">'-a'</span><span class="p">,</span> <span class="n">author</span><span class="p">])</span>
 
-<span class="nd">@When</span><span class="p">(</span><span class="s">'^I search the book "(.*)"$'</span><span class="p">)</span>
+<span class="nd">@When</span><span class="p">(</span><span class="s1">'^I search the book "(.*)"$'</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">exec_search_by_title</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
-    <span class="n">execute</span><span class="p">([</span><span class="s">'--action=show'</span><span class="p">,</span> <span class="s">'--title'</span><span class="p">,</span> <span class="n">title</span><span class="p">])</span>
+    <span class="n">execute</span><span class="p">([</span><span class="s1">'--action=show'</span><span class="p">,</span> <span class="s1">'--title'</span><span class="p">,</span> <span class="n">title</span><span class="p">])</span>
 
-<span class="nd">@When</span><span class="p">(</span><span class="s">'^I search a book without parameters$'</span><span class="p">)</span>
+<span class="nd">@When</span><span class="p">(</span><span class="s1">'^I search a book without parameters$'</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">exec_search_without_parameters</span><span class="p">():</span>
-    <span class="n">execute</span><span class="p">([</span><span class="s">'--action=show'</span><span class="p">])</span>
+    <span class="n">execute</span><span class="p">([</span><span class="s1">'--action=show'</span><span class="p">])</span>
 
-<span class="nd">@When</span><span class="p">(</span><span class="s">'I add the book "(.*)" written by "(.*)"'</span><span class="p">)</span>
+<span class="nd">@When</span><span class="p">(</span><span class="s1">'I add the book "(.*)" written by "(.*)"'</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">exec_add_book</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="p">):</span>
-    <span class="n">execute</span><span class="p">([</span><span class="s">'--action=add'</span><span class="p">,</span> <span class="s">'-t'</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="s">'-a'</span><span class="p">,</span> <span class="n">author</span><span class="p">])</span>
+    <span class="n">execute</span><span class="p">([</span><span class="s1">'--action=add'</span><span class="p">,</span> <span class="s1">'-t'</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="s1">'-a'</span><span class="p">,</span> <span class="n">author</span><span class="p">])</span>
 
-<span class="nd">@When</span><span class="p">(</span><span class="s">'I remove the book "(.*)"'</span><span class="p">)</span>
+<span class="nd">@When</span><span class="p">(</span><span class="s1">'I remove the book "(.*)"'</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">exec_remove_book</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
-    <span class="n">execute</span><span class="p">([</span><span class="s">'--action=remove'</span><span class="p">,</span> <span class="s">'-t'</span><span class="p">,</span> <span class="n">title</span><span class="p">])</span>
+    <span class="n">execute</span><span class="p">([</span><span class="s1">'--action=remove'</span><span class="p">,</span> <span class="s1">'-t'</span><span class="p">,</span> <span class="n">title</span><span class="p">])</span>
 
-<span class="nd">@Then</span><span class="p">(</span><span class="s">'^output contains "(.*)"$'</span><span class="p">)</span>
+<span class="nd">@Then</span><span class="p">(</span><span class="s1">'^output contains "(.*)"$'</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">check_output_contains</span><span class="p">(</span><span class="n">expected</span><span class="p">):</span>
-    <span class="n">assert_true</span><span class="p">(</span><span class="n">expected</span> <span class="ow">in</span> <span class="n">scc</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s">'Text "{}", was not found in "{}"'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">scc</span><span class="o">.</span><span class="n">output</span><span class="p">))</span>
+    <span class="n">assert_true</span><span class="p">(</span><span class="n">expected</span> <span class="ow">in</span> <span class="n">scc</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s1">'Text "{}", was not found in "{}"'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">scc</span><span class="o">.</span><span class="n">output</span><span class="p">))</span>
 
-<span class="nd">@Then</span><span class="p">(</span><span class="s">'^my library( do not|) contains the title "(.*)"$'</span><span class="p">)</span>
+<span class="nd">@Then</span><span class="p">(</span><span class="s1">'^my library( do not|) contains the title "(.*)"$'</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">check_contains_title</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">run</span><span class="p">([</span><span class="s">'--action=show'</span><span class="p">,</span> <span class="s">'-t'</span><span class="p">,</span> <span class="n">title</span><span class="p">])</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">rc</span> <span class="o">=</span> <span class="n">run</span><span class="p">([</span><span class="s1">'--action=show'</span><span class="p">,</span> <span class="s1">'-t'</span><span class="p">,</span> <span class="n">title</span><span class="p">])</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">condition</span><span class="p">:</span>
-        <span class="n">assert_equals</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rc</span><span class="p">,</span> <span class="s">'The book "{}" is not in the collection'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">title</span><span class="p">))</span>
+        <span class="n">assert_equals</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rc</span><span class="p">,</span> <span class="s1">'The book "{}" is not in the collection'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">title</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">assert_equals</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rc</span><span class="p">,</span> <span class="s">'The book "{}" is in the collection but it shouldnot'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">title</span><span class="p">))</span>
+        <span class="n">assert_equals</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rc</span><span class="p">,</span> <span class="s1">'The book "{}" is in the collection but it shouldnot'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">title</span><span class="p">))</span>
 </pre>
 
 
@@ -472,8 +472,8 @@ Feature:
 77
 78</pre></div></td>
 <td class="code">
-<pre class="code literal-block"><span class="c">#!/usr/bin/env python</span>
-<span class="c">#File: ./library.py</span>
+<pre class="code literal-block"><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1">#File: ./library.py</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
@@ -481,57 +481,57 @@ Feature:
 
 
 <span class="k">class</span> <span class="nc">Library</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_db</span> <span class="o">=</span> <span class="n">db</span>
 
-    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">author</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s">'You should ask for a title or an author'</span>
+            <span class="nb">print</span> <span class="s1">'You should ask for a title or an author'</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_file</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">db</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
-            <span class="k">print</span> <span class="s">'Book not found'</span>
+            <span class="nb">print</span> <span class="s1">'Book not found'</span>
             <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">print</span> <span class="s">'{} -&gt; {}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">db</span><span class="p">[</span><span class="n">title</span><span class="p">])</span>
+        <span class="nb">print</span> <span class="s1">'</span><span class="si">{}</span><span class="s1"> -&gt; </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">db</span><span class="p">[</span><span class="n">title</span><span class="p">])</span>
         <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 
     <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">author</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s">'You should introduce the title and author'</span>
+            <span class="nb">print</span> <span class="s1">'You should introduce the title and author'</span>
             <span class="k">return</span>
 
         <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_file</span><span class="p">()</span>
         <span class="n">db</span><span class="p">[</span><span class="n">title</span><span class="p">]</span> <span class="o">=</span> <span class="n">author</span>
         <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">print</span> <span class="s">'Book added'</span>
+        <span class="nb">print</span> <span class="s1">'Book added'</span>
 
     <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s">'You should introduce the title to remove'</span>
+            <span class="nb">print</span> <span class="s1">'You should introduce the title to remove'</span>
             <span class="k">return</span>
 
         <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_file</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">db</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">title</span><span class="p">):</span>
             <span class="k">del</span> <span class="n">db</span><span class="p">[</span><span class="n">title</span><span class="p">]</span>
         <span class="n">db</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">print</span> <span class="s">'Book removed'</span>
+        <span class="nb">print</span> <span class="s1">'Book removed'</span>
 
     <span class="k">def</span> <span class="nf">_db_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">parse_args</span><span class="p">():</span>
-    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s">'My library!'</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'--action'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">'action'</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s">'add'</span><span class="p">,</span> <span class="s">'remove'</span><span class="p">,</span> <span class="s">'show'</span><span class="p">],</span> <span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">'indicates the action to be performed'</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'-a'</span><span class="p">,</span> <span class="s">'--author'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">'author'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">'The author of the book'</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'-t'</span><span class="p">,</span> <span class="s">'--title'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">'title'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">'The title of the book'</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">'-d'</span><span class="p">,</span> <span class="s">'--database'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s">'database'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">'library.db'</span><span class="p">,</span>
-                        <span class="n">help</span><span class="o">=</span><span class="s">'Path to the database file'</span><span class="p">)</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">'My library!'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">'--action'</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">'action'</span><span class="p">,</span> <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s1">'add'</span><span class="p">,</span> <span class="s1">'remove'</span><span class="p">,</span> <span class="s1">'show'</span><span class="p">],</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">'indicates the action to be performed'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">'-a'</span><span class="p">,</span> <span class="s1">'--author'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">'author'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">'The author of the book'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">'-t'</span><span class="p">,</span> <span class="s1">'--title'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">'title'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">'The title of the book'</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">'-d'</span><span class="p">,</span> <span class="s1">'--database'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">'database'</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">"store"</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">'library.db'</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s1">'Path to the database file'</span><span class="p">)</span>
 
     <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">args</span>
@@ -540,14 +540,14 @@ Feature:
     <span class="n">args</span> <span class="o">=</span> <span class="n">parse_args</span><span class="p">()</span>
 
     <span class="n">library</span> <span class="o">=</span> <span class="n">Library</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">database</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">action</span> <span class="o">==</span> <span class="s">'show'</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">action</span> <span class="o">==</span> <span class="s1">'show'</span><span class="p">:</span>
         <span class="n">library</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">author</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">action</span> <span class="o">==</span> <span class="s">'add'</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">action</span> <span class="o">==</span> <span class="s1">'add'</span><span class="p">:</span>
         <span class="n">library</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">author</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">action</span> <span class="o">==</span> <span class="s">'remove'</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">action</span> <span class="o">==</span> <span class="s1">'remove'</span><span class="p">:</span>
         <span class="n">library</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </pre>
@@ -624,8 +624,8 @@ Feature:
 60
 61</pre></div></td>
 <td class="code">
-<pre class="code literal-block"><span class="c">#!/usr/bin/env python</span>
-<span class="c"># file: ./library.py</span>
+<pre class="code literal-block"><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># file: ./library.py</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
@@ -633,58 +633,58 @@ Feature:
 
 
 <span class="k">class</span> <span class="nc">Library</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_db</span> <span class="o">=</span> <span class="n">db</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">author</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s">'You should ask for a title or an author'</span>
+            <span class="nb">print</span> <span class="s1">'You should ask for a title or an author'</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_books_collection</span><span class="p">()</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">find_one</span><span class="p">({</span><span class="s">'_id'</span><span class="p">:</span> <span class="n">title</span><span class="p">})</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">find_one</span><span class="p">({</span><span class="s1">'_id'</span><span class="p">:</span> <span class="n">title</span><span class="p">})</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s">'Book not found'</span>
+            <span class="nb">print</span> <span class="s1">'Book not found'</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_disconnect</span><span class="p">()</span>
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">print</span> <span class="n">result</span>
+        <span class="nb">print</span> <span class="n">result</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_disconnect</span><span class="p">()</span>
 
 
     <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">author</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">author</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s">'You should introduce the title and author'</span>
+            <span class="nb">print</span> <span class="s1">'You should introduce the title and author'</span>
             <span class="k">return</span>
 
         <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_books_collection</span><span class="p">()</span>
-        <span class="n">db</span><span class="o">.</span><span class="n">save</span><span class="p">({</span><span class="s">'_id'</span><span class="p">:</span><span class="n">title</span><span class="p">,</span> <span class="s">'author'</span><span class="p">:</span><span class="n">author</span><span class="p">})</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">save</span><span class="p">({</span><span class="s1">'_id'</span><span class="p">:</span><span class="n">title</span><span class="p">,</span> <span class="s1">'author'</span><span class="p">:</span><span class="n">author</span><span class="p">})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_disconnect</span><span class="p">()</span>
-        <span class="k">print</span> <span class="s">'Book added'</span>
+        <span class="nb">print</span> <span class="s1">'Book added'</span>
 
     <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span><span class="p">:</span>
-            <span class="k">print</span> <span class="s">'You should introduce the title to remove'</span>
+            <span class="nb">print</span> <span class="s1">'You should introduce the title to remove'</span>
             <span class="k">return</span>
 
         <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_books_collection</span><span class="p">()</span>
-        <span class="n">db</span><span class="o">.</span><span class="n">remove</span><span class="p">({</span><span class="s">'_id'</span><span class="p">:</span> <span class="n">title</span><span class="p">})</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">remove</span><span class="p">({</span><span class="s1">'_id'</span><span class="p">:</span> <span class="n">title</span><span class="p">})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_disconnect</span><span class="p">()</span>
-        <span class="k">print</span> <span class="s">'Book removed'</span>
+        <span class="nb">print</span> <span class="s1">'Book removed'</span>
 
     <span class="k">def</span> <span class="nf">_db_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_books_collection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">Connection</span><span class="p">(</span><span class="s">'localhost'</span><span class="p">,</span> <span class="mi">27017</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">Connection</span><span class="p">(</span><span class="s1">'localhost'</span><span class="p">,</span> <span class="mi">27017</span><span class="p">)</span>
         <span class="n">db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">db</span><span class="p">[</span><span class="s">'books'</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">db</span><span class="p">[</span><span class="s1">'books'</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_conn</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="c"># ...</span>
+<span class="c1"># ...</span>
 </pre>
 </td>
 </tr></table>

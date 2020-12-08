@@ -7,7 +7,7 @@ article: https://ogp.me/ns/article#
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Llenar un Select con datos Dinámicos | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,8 +18,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/select-datos-dinamicos/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/patrones-sistema-log/" title="Patrones 1: Sistema de log" type="text/html">
 <link rel="next" href="/blog/concordion/" title="Pruebas de sistema: Concordion" type="text/html">
@@ -125,68 +125,68 @@ He aquí la historia, gracias al maestro Miguel Ángel, me esclareció en un tem
 <!-- TEASER_END -->
 <p>He aquí la historia, gracias al maestro Miguel Ángel, me esclareció en un tema que me tenía trabado. Soy programador PHP pero no soy muy experto en objetos PHP, por lo que me mareo fácilmente, así cuando debía rellenar un select en un formulario con datos que provenían de una base de datos en drupal, me encontraba con que no podía, mis conocimientos no bastaban, así que le solicité asistencia al maestro y aquí pego la solución:</p>
 <p>"Hace tiempo que implementé una especie de "frigorífico virtual". De ahí te saco el siguiente código (si lo quieres, lo publico entero en la web, ya que debería estar ahí desde hace siglos):"</p>
-<pre class="code php"><a name="rest_code_417ebae4163641988f159530ba1fd711-1"></a><span class="cp">&lt;?php</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-2"></a><span class="k">function</span> <span class="nf">virtualcoin_putbackedit_form</span> <span class="p">(</span> <span class="nv">$data</span><span class="p">,</span> <span class="nv">$putbackid</span><span class="o">=</span><span class="k">NULL</span> <span class="p">)</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-3"></a><span class="p">{</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-4"></a>  <span class="cm">/* Lista de productos */</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-5"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"SELECT id, name FROM {virtualcoin_products} p order by name"</span><span class="p">;</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-6"></a>  <span class="nv">$queryResult</span> <span class="o">=</span>  <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span><span class="p">,</span> <span class="nv">$putbackid</span> <span class="p">);</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-7"></a>  <span class="nv">$products</span> <span class="o">=</span> <span class="k">array</span> <span class="p">();</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-8"></a>  <span class="k">while</span> <span class="p">(</span> <span class="nv">$p</span> <span class="o">=</span> <span class="nx">db_fetch_object</span> <span class="p">(</span> <span class="nv">$queryResult</span> <span class="p">)</span> <span class="p">)</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-9"></a>  <span class="p">{</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-10"></a>    <span class="nv">$products</span><span class="p">[</span><span class="nv">$p</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$p</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-11"></a>  <span class="p">}</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-12"></a>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-13"></a>  <span class="cm">/* Datos del putback */</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-14"></a>  <span class="nv">$title</span> <span class="o">=</span> <span class="nx">t</span><span class="p">(</span><span class="s2">"Editar una reposición"</span><span class="p">);</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-15"></a>  <span class="nv">$button</span> <span class="o">=</span> <span class="nx">t</span> <span class="p">(</span><span class="s2">"Guardar cambios"</span><span class="p">);</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-16"></a>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-17"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"SELECT p.name, b.productid, b.prizeunit, b.quantity FROM {virtualcoin_products} p, {virtualcoin_putbacks} b WHERE b.id=%d and p.id = b.productid"</span><span class="p">;</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-18"></a>  <span class="nv">$queryResult</span> <span class="o">=</span>  <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span><span class="p">,</span> <span class="nv">$putbackid</span> <span class="p">);</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-19"></a>  <span class="nv">$putback</span> <span class="o">=</span> <span class="nx">db_fetch_object</span> <span class="p">(</span> <span class="nv">$queryResult</span> <span class="p">);</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-20"></a>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-21"></a>  <span class="nv">$name</span> <span class="o">=</span> <span class="nv">$putback</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-22"></a>  <span class="nv">$prizeunit</span> <span class="o">=</span> <span class="nv">$putback</span><span class="o">-&gt;</span><span class="na">prizeunit</span><span class="p">;</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-23"></a>  <span class="nv">$quantity</span> <span class="o">=</span> <span class="nv">$putback</span><span class="o">-&gt;</span><span class="na">quantity</span><span class="p">;</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-24"></a>  <span class="nv">$productid</span> <span class="o">=</span> <span class="nv">$putback</span><span class="o">-&gt;</span><span class="na">productid</span><span class="p">;</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-25"></a>  <span class="nv">$form</span> <span class="o">=</span> <span class="k">array</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-26"></a>  <span class="p">(</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-27"></a>    <span class="s1">'purchase'</span> <span class="o">=&gt;</span> <span class="k">array</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-28"></a>    <span class="p">(</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-29"></a>      <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'fieldset'</span><span class="p">,</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-30"></a>      <span class="s1">'#title'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span> <span class="nv">$title</span> <span class="p">),</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-31"></a>      <span class="s1">'putbackid'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'hidden'</span><span class="p">,</span> <span class="s1">'#value'</span> <span class="o">=&gt;</span> <span class="nv">$putbackid</span> <span class="p">),</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-32"></a>      <span class="s1">'product'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'select'</span><span class="p">,</span> <span class="s1">'#title'</span> <span class="o">=&gt;</span> <span class="s1">'Producto'</span> <span class="p">,</span><span class="s1">'#options'</span> <span class="o">=&gt;</span> <span class="nv">$products</span><span class="p">,</span> <span class="s1">'#default_value'</span> <span class="o">=&gt;</span>  <span class="nv">$productid</span> <span class="p">),</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-33"></a>      <span class="s1">'prizeunit'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'textfield'</span><span class="p">,</span> <span class="s1">'#title'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Precio por unidad'</span><span class="p">),</span> <span class="s1">'#default_value'</span> <span class="o">=&gt;</span> <span class="nv">$prizeunit</span><span class="p">),</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-34"></a>      <span class="s1">'quantity'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'textfield'</span><span class="p">,</span> <span class="s1">'#title'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Cantidad'</span><span class="p">),</span> <span class="s1">'#default_value'</span> <span class="o">=&gt;</span> <span class="nv">$quantity</span><span class="p">),</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-35"></a>      <span class="s1">'submit'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'submit'</span><span class="p">,</span>  <span class="s1">'#value'</span> <span class="o">=&gt;</span> <span class="nv">$button</span><span class="p">,</span>  <span class="p">),</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-36"></a>    <span class="p">),</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-37"></a>  <span class="p">);</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-38"></a>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-39"></a>  <span class="k">return</span> <span class="nv">$form</span><span class="p">;</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-40"></a><span class="p">}</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-41"></a>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-42"></a><span class="sd">/**</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-43"></a><span class="sd">* Implementation of hook_submit().</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-44"></a><span class="sd">*/</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-45"></a><span class="k">function</span> <span class="nf">virtualcoin_putbackedit_form_submit</span> <span class="p">(</span> <span class="nv">$form</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$form_state</span> <span class="p">)</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-46"></a><span class="p">{</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-47"></a>  <span class="nv">$putbackid</span>  <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'putbackid'</span><span class="p">];</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-48"></a>  <span class="nv">$productid</span>  <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'product'</span><span class="p">];</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-49"></a>  <span class="nv">$prizeunit</span>  <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'prizeunit'</span><span class="p">];</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-50"></a>  <span class="nv">$quantity</span>   <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'quantity'</span><span class="p">];</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-51"></a>  <span class="k">global</span> <span class="nv">$user</span><span class="p">;</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-52"></a>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-53"></a>  <span class="nv">$query</span>     <span class="o">=</span> <span class="s2">"UPDATE {virtualcoin_putbacks} set productid=%d, prizeunit=%f, quantity=%d where id = %d "</span><span class="p">;</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-54"></a>  <span class="nv">$queryResult</span> <span class="o">=</span> <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span><span class="p">,</span> <span class="nv">$productid</span><span class="p">,</span> <span class="nv">$prizeunit</span><span class="p">,</span> <span class="nv">$quantity</span><span class="p">,</span> <span class="nv">$putbackid</span> <span class="p">);</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-55"></a>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-56"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nv">$queryResult</span> <span class="p">)</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-57"></a>    <span class="nx">drupal_set_message</span> <span class="p">(</span> <span class="nx">t</span> <span class="p">(</span> <span class="s2">"Se ha modificado el producto "</span> <span class="o">.</span> <span class="nv">$name</span> <span class="p">)</span> <span class="p">);</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-58"></a>  <span class="k">else</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-59"></a>    <span class="nx">form_set_error</span> <span class="p">(</span> <span class="s1">''</span><span class="p">,</span> <span class="nx">t</span> <span class="p">(</span><span class="s1">'Error durante el guardado.'</span><span class="p">)</span> <span class="p">);</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-60"></a>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-61"></a><span class="p">}</span>
-<a name="rest_code_417ebae4163641988f159530ba1fd711-62"></a><span class="cp">?&gt;</span><span class="x"></span>
+<pre class="code php"><a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-1"></a><span class="cp">&lt;?php</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-2"></a><span class="k">function</span> <span class="nf">virtualcoin_putbackedit_form</span> <span class="p">(</span> <span class="nv">$data</span><span class="p">,</span> <span class="nv">$putbackid</span><span class="o">=</span><span class="k">NULL</span> <span class="p">)</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-3"></a><span class="p">{</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-4"></a>  <span class="cm">/* Lista de productos */</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-5"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"SELECT id, name FROM {virtualcoin_products} p order by name"</span><span class="p">;</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-6"></a>  <span class="nv">$queryResult</span> <span class="o">=</span>  <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span><span class="p">,</span> <span class="nv">$putbackid</span> <span class="p">);</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-7"></a>  <span class="nv">$products</span> <span class="o">=</span> <span class="k">array</span> <span class="p">();</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-8"></a>  <span class="k">while</span> <span class="p">(</span> <span class="nv">$p</span> <span class="o">=</span> <span class="nx">db_fetch_object</span> <span class="p">(</span> <span class="nv">$queryResult</span> <span class="p">)</span> <span class="p">)</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-9"></a>  <span class="p">{</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-10"></a>    <span class="nv">$products</span><span class="p">[</span><span class="nv">$p</span><span class="o">-&gt;</span><span class="na">id</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$p</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-11"></a>  <span class="p">}</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-12"></a>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-13"></a>  <span class="cm">/* Datos del putback */</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-14"></a>  <span class="nv">$title</span> <span class="o">=</span> <span class="nx">t</span><span class="p">(</span><span class="s2">"Editar una reposición"</span><span class="p">);</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-15"></a>  <span class="nv">$button</span> <span class="o">=</span> <span class="nx">t</span> <span class="p">(</span><span class="s2">"Guardar cambios"</span><span class="p">);</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-16"></a>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-17"></a>  <span class="nv">$query</span> <span class="o">=</span> <span class="s2">"SELECT p.name, b.productid, b.prizeunit, b.quantity FROM {virtualcoin_products} p, {virtualcoin_putbacks} b WHERE b.id=%d and p.id = b.productid"</span><span class="p">;</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-18"></a>  <span class="nv">$queryResult</span> <span class="o">=</span>  <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span><span class="p">,</span> <span class="nv">$putbackid</span> <span class="p">);</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-19"></a>  <span class="nv">$putback</span> <span class="o">=</span> <span class="nx">db_fetch_object</span> <span class="p">(</span> <span class="nv">$queryResult</span> <span class="p">);</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-20"></a>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-21"></a>  <span class="nv">$name</span> <span class="o">=</span> <span class="nv">$putback</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-22"></a>  <span class="nv">$prizeunit</span> <span class="o">=</span> <span class="nv">$putback</span><span class="o">-&gt;</span><span class="na">prizeunit</span><span class="p">;</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-23"></a>  <span class="nv">$quantity</span> <span class="o">=</span> <span class="nv">$putback</span><span class="o">-&gt;</span><span class="na">quantity</span><span class="p">;</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-24"></a>  <span class="nv">$productid</span> <span class="o">=</span> <span class="nv">$putback</span><span class="o">-&gt;</span><span class="na">productid</span><span class="p">;</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-25"></a>  <span class="nv">$form</span> <span class="o">=</span> <span class="k">array</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-26"></a>  <span class="p">(</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-27"></a>    <span class="s1">'purchase'</span> <span class="o">=&gt;</span> <span class="k">array</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-28"></a>    <span class="p">(</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-29"></a>      <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'fieldset'</span><span class="p">,</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-30"></a>      <span class="s1">'#title'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span> <span class="nv">$title</span> <span class="p">),</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-31"></a>      <span class="s1">'putbackid'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'hidden'</span><span class="p">,</span> <span class="s1">'#value'</span> <span class="o">=&gt;</span> <span class="nv">$putbackid</span> <span class="p">),</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-32"></a>      <span class="s1">'product'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'select'</span><span class="p">,</span> <span class="s1">'#title'</span> <span class="o">=&gt;</span> <span class="s1">'Producto'</span> <span class="p">,</span><span class="s1">'#options'</span> <span class="o">=&gt;</span> <span class="nv">$products</span><span class="p">,</span> <span class="s1">'#default_value'</span> <span class="o">=&gt;</span>  <span class="nv">$productid</span> <span class="p">),</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-33"></a>      <span class="s1">'prizeunit'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'textfield'</span><span class="p">,</span> <span class="s1">'#title'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Precio por unidad'</span><span class="p">),</span> <span class="s1">'#default_value'</span> <span class="o">=&gt;</span> <span class="nv">$prizeunit</span><span class="p">),</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-34"></a>      <span class="s1">'quantity'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'textfield'</span><span class="p">,</span> <span class="s1">'#title'</span> <span class="o">=&gt;</span> <span class="nx">t</span><span class="p">(</span><span class="s1">'Cantidad'</span><span class="p">),</span> <span class="s1">'#default_value'</span> <span class="o">=&gt;</span> <span class="nv">$quantity</span><span class="p">),</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-35"></a>      <span class="s1">'submit'</span> <span class="o">=&gt;</span> <span class="k">array</span> <span class="p">(</span> <span class="s1">'#type'</span> <span class="o">=&gt;</span> <span class="s1">'submit'</span><span class="p">,</span>  <span class="s1">'#value'</span> <span class="o">=&gt;</span> <span class="nv">$button</span><span class="p">,</span>  <span class="p">),</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-36"></a>    <span class="p">),</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-37"></a>  <span class="p">);</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-38"></a>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-39"></a>  <span class="k">return</span> <span class="nv">$form</span><span class="p">;</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-40"></a><span class="p">}</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-41"></a>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-42"></a><span class="sd">/**</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-43"></a><span class="sd">* Implementation of hook_submit().</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-44"></a><span class="sd">*/</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-45"></a><span class="k">function</span> <span class="nf">virtualcoin_putbackedit_form_submit</span> <span class="p">(</span> <span class="nv">$form</span><span class="p">,</span> <span class="o">&amp;</span><span class="nv">$form_state</span> <span class="p">)</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-46"></a><span class="p">{</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-47"></a>  <span class="nv">$putbackid</span>  <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'putbackid'</span><span class="p">];</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-48"></a>  <span class="nv">$productid</span>  <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'product'</span><span class="p">];</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-49"></a>  <span class="nv">$prizeunit</span>  <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'prizeunit'</span><span class="p">];</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-50"></a>  <span class="nv">$quantity</span>   <span class="o">=</span> <span class="nv">$form_state</span><span class="p">[</span><span class="s1">'values'</span><span class="p">][</span><span class="s1">'quantity'</span><span class="p">];</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-51"></a>  <span class="k">global</span> <span class="nv">$user</span><span class="p">;</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-52"></a>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-53"></a>  <span class="nv">$query</span>     <span class="o">=</span> <span class="s2">"UPDATE {virtualcoin_putbacks} set productid=%d, prizeunit=%f, quantity=%d where id = %d "</span><span class="p">;</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-54"></a>  <span class="nv">$queryResult</span> <span class="o">=</span> <span class="nx">db_query</span> <span class="p">(</span> <span class="nv">$query</span><span class="p">,</span> <span class="nv">$productid</span><span class="p">,</span> <span class="nv">$prizeunit</span><span class="p">,</span> <span class="nv">$quantity</span><span class="p">,</span> <span class="nv">$putbackid</span> <span class="p">);</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-55"></a>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-56"></a>  <span class="k">if</span> <span class="p">(</span> <span class="nv">$queryResult</span> <span class="p">)</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-57"></a>    <span class="nx">drupal_set_message</span> <span class="p">(</span> <span class="nx">t</span> <span class="p">(</span> <span class="s2">"Se ha modificado el producto "</span> <span class="o">.</span> <span class="nv">$name</span> <span class="p">)</span> <span class="p">);</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-58"></a>  <span class="k">else</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-59"></a>    <span class="nx">form_set_error</span> <span class="p">(</span> <span class="s1">''</span><span class="p">,</span> <span class="nx">t</span> <span class="p">(</span><span class="s1">'Error durante el guardado.'</span><span class="p">)</span> <span class="p">);</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-60"></a>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-61"></a><span class="p">}</span>
+<a name="rest_code_dec50f5cbcee4e5bac3ef678d760e27d-62"></a><span class="cp">?&gt;</span><span class="x"></span>
 </pre>
 <p>Fíjense qué fácil era!</p>
 <p>Y qué prolijo, caramba, si pudiera yo trabajar (laburar para este hemisferio) así...</p>

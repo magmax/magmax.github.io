@@ -8,7 +8,7 @@ article: https://ogp.me/ns/article#
 <meta name="description" content="Pequeño módulo Salt (o SaltStack) para instalar Firefox.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Gist: instalando Firefox con Salt | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -19,8 +19,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/gist-instalando-firefox-con-salt/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="description" itemprop="description" content="Pequeño módulo Salt (o SaltStack) para instalar Firefox.">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/fracasos/" title="Fracasos" type="text/html">
@@ -129,30 +129,30 @@ article: https://ogp.me/ns/article#
 
 <h2 id="obteniendo-el-md5">Obteniendo el MD5</h2>
 <p>Lo primero que necesitamos es la URL para descargarnos <a href="http://www.mozilla.org/es-ES/firefox/new/">Firefox</a>. Dependerá, claro, de la versión a descargarnos. En este momento la última versión es la 28.0, por lo que la URL es:</p>
-<pre class="code literal-block">https://download-installer.cdn.mozilla.net/pub/firefox/releases/28.0/linux-x86_64/en-US/firefox-28.0.tar.bz2
+<pre class="code literal-block"><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">download</span><span class="o">-</span><span class="n">installer</span><span class="o">.</span><span class="n">cdn</span><span class="o">.</span><span class="n">mozilla</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">pub</span><span class="o">/</span><span class="n">firefox</span><span class="o">/</span><span class="n">releases</span><span class="o">/</span><span class="mf">28.0</span><span class="o">/</span><span class="n">linux</span><span class="o">-</span><span class="n">x86_64</span><span class="o">/</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="o">/</span><span class="n">firefox</span><span class="o">-</span><span class="mf">28.0</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">bz2</span>
 </pre>
 
 
 <p>Lo segundo es obtener el MD5 del binario a instalar. Para ello podemos ejecutar la siguiente orden:</p>
-<pre class="code literal-block">wget -O - https://download-installer.cdn.mozilla.net/pub/firefox/releases/28.0/linux-x86_64/en-US/firefox-28.0.tar.bz2 | md5sum
+<pre class="code literal-block"><span></span><span class="n">wget</span> <span class="o">-</span><span class="n">O</span> <span class="o">-</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">download</span><span class="o">-</span><span class="n">installer</span><span class="o">.</span><span class="n">cdn</span><span class="o">.</span><span class="n">mozilla</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">pub</span><span class="o">/</span><span class="n">firefox</span><span class="o">/</span><span class="n">releases</span><span class="o">/</span><span class="mf">28.0</span><span class="o">/</span><span class="n">linux</span><span class="o">-</span><span class="n">x86_64</span><span class="o">/</span><span class="n">en</span><span class="o">-</span><span class="n">US</span><span class="o">/</span><span class="n">firefox</span><span class="o">-</span><span class="mf">28.0</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">bz2</span> <span class="o">|</span> <span class="n">md5sum</span>
 </pre>
 
 
 <p>Pues ya tenemos todo lo que necesitamos.</p>
 <h2 id="modulo-salt">Módulo Salt</h2>
 <p>Éste es el módulo Salt:</p>
-<pre class="code literal-block">firefox-bin:
-  archive.extracted:
-    - name: /srv/
-    - source: "https://download-installer.cdn.mozilla.net/pub/firefox/releases/28.0/linux-x86_64/en-US/firefox-28.0.tar.bz2"
-    - source_hash: md5=8264fda486828d925aa094de902eb182
-    - archive_format: tar
-    - tar_options: j
-    - if_missing: /srv/firefox/
+<pre class="code literal-block"><span></span><span class="n">firefox</span><span class="o">-</span><span class="n">bin</span><span class="p">:</span>
+  <span class="n">archive</span><span class="o">.</span><span class="n">extracted</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span>
+    <span class="o">-</span> <span class="n">source</span><span class="p">:</span> <span class="s2">"https://download-installer.cdn.mozilla.net/pub/firefox/releases/28.0/linux-x86_64/en-US/firefox-28.0.tar.bz2"</span>
+    <span class="o">-</span> <span class="n">source_hash</span><span class="p">:</span> <span class="n">md5</span><span class="o">=</span><span class="mi">8264</span><span class="n">fda486828d925aa094de902eb182</span>
+    <span class="o">-</span> <span class="n">archive_format</span><span class="p">:</span> <span class="n">tar</span>
+    <span class="o">-</span> <span class="n">tar_options</span><span class="p">:</span> <span class="n">j</span>
+    <span class="o">-</span> <span class="n">if_missing</span><span class="p">:</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">firefox</span><span class="o">/</span>
 
-/usr/local/bin/firefox:
-  file.symlink:
-    - target: /srv/firefox/firefox
+<span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">firefox</span><span class="p">:</span>
+  <span class="n">file</span><span class="o">.</span><span class="n">symlink</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">target</span><span class="p">:</span> <span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">firefox</span><span class="o">/</span><span class="n">firefox</span>
 </pre>
 
 

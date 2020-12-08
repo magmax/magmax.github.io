@@ -8,7 +8,7 @@ article: https://ogp.me/ns/article#
 <meta name="description" content="Tutorial de git tercera parte: Cómo funciona Git">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Usando Git(3): Internals | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -19,8 +19,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/usando-git3/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="description" itemprop="description" content="Tutorial de git tercera parte: Cómo funciona Git">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/webdriver-practico/" title="Webdriver: crackeando la web de Renfe" type="text/html">
@@ -153,26 +153,26 @@ article: https://ogp.me/ns/article#
 <p>Así mismo, para ahorrar espacio se guarda la información comprimida en <a href="http://es.wikipedia.org/wiki/Formato_de_compresi%C3%B3n_ZIP" title="Compresión Zip, en la wikipedia">Zip</a>.</p>
 <p>A los archivos cuyo nombre coincide con el <a href="http://es.wikipedia.org/wiki/Secure_Hash_Algorithm" title="Secure Hash Algorithm, en la wikipedia">Sha1</a> y contienen algún tipo de elemento de <a href="http://git-scm.com/" title="Official Git page">Git</a> se les denomina <strong>objetos</strong> y se guardarán en el directorio <code>.git/objects</code>.</p>
 <p>Esto es un <strong>Blob</strong>:</p>
-<pre class="code literal-block">-------------------------
-| a1ad5...              |
-|-----------------------|
-| Blob           | size |
-|------------------------
-| Zipped content        |
-| example               |
--------------------------
+<pre class="code literal-block"><span></span><span class="nb">-------------------------</span><span class="c"></span>
+<span class="c">| a1ad5</span><span class="nt">...</span><span class="c">              |</span>
+<span class="c">|</span><span class="nb">-----------------------</span><span class="c">|</span>
+<span class="c">| Blob           | size |</span>
+<span class="c">|</span><span class="nb">------------------------</span><span class="c"></span>
+<span class="c">| Zipped content        |</span>
+<span class="c">| example               |</span>
+<span class="nb">-------------------------</span><span class="c"></span>
 </pre>
 
 
 <p>Ejemplo:</p>
-<pre class="code literal-block"><span class="nv">$ </span>ls .git/objects/a1/ad5a63324b733e8caf056f5167d4ee9957bf79
+<pre class="code literal-block"><span></span>$ ls .git/objects/a1/ad5a63324b733e8caf056f5167d4ee9957bf79
 .git/objects/a1/ad5a63324b733e8caf056f5167d4ee9957bf79
-<span class="nv">$ </span>git cat-file -t a1ad5a63324b733e8caf056f5167d4ee9957bf79
+$ git cat-file -t a1ad5a63324b733e8caf056f5167d4ee9957bf79
 blob
-<span class="nv">$ </span>git cat-file -p a1ad5a63324b733e8caf056f5167d4ee9957bf79
+$ git cat-file -p a1ad5a63324b733e8caf056f5167d4ee9957bf79
 Zipped content
 example
-<span class="err">$</span>
+$
 </pre>
 
 
@@ -183,24 +183,24 @@ example
 <p>Al contrario que en <a href="http://es.wikipedia.org/wiki/Ext2" title="Ext2, en la wikipedia">Ext2</a>, los objetos <strong>Tree</strong> pueden contener referencias a <strong>Blobs</strong> y a otros <strong>Trees</strong>, por lo que no hay distinción real entre "Archivos" y "Directorios".</p>
 <p>Como veis, lo único que tenemos de momento son un montón de archivos con nombres de 40 bytes (su <a href="http://es.wikipedia.org/wiki/Secure_Hash_Algorithm" title="Secure Hash Algorithm, en la wikipedia">Sha1</a>), aunque el significado de éstos puede ser distinto para <a href="http://git-scm.com/" title="Official Git page">Git</a>.</p>
 <p>Esto es un <strong>Tree</strong>:</p>
-<pre class="code literal-block">---------------------------
-| a1975...                |
-|-------------------------|
-| Tree           | size   |
-|--------------------------
-| perms, type, sha1, name |
-| perms, type, sha1, name |
-| ...                     |
----------------------------
+<pre class="code literal-block"><span></span><span class="nb">---------------------------</span><span class="c"></span>
+<span class="c">| a1975</span><span class="nt">...</span><span class="c">                |</span>
+<span class="c">|</span><span class="nb">-------------------------</span><span class="c">|</span>
+<span class="c">| Tree           | size   |</span>
+<span class="c">|</span><span class="nb">--------------------------</span><span class="c"></span>
+<span class="c">| perms</span><span class="nt">,</span><span class="c"> type</span><span class="nt">,</span><span class="c"> sha1</span><span class="nt">,</span><span class="c"> name |</span>
+<span class="c">| perms</span><span class="nt">,</span><span class="c"> type</span><span class="nt">,</span><span class="c"> sha1</span><span class="nt">,</span><span class="c"> name |</span>
+<span class="c">| </span><span class="nt">...</span><span class="c">                     |</span>
+<span class="nb">---------------------------</span><span class="c"></span>
 </pre>
 
 
 <p>Ejemplo:</p>
-<pre class="code literal-block"><span class="nv">$ </span>ls .git/objects/a1/a1975049511402aac1e2710bd4762ba7d15b74d1
+<pre class="code literal-block"><span></span>$ ls .git/objects/a1/a1975049511402aac1e2710bd4762ba7d15b74d1
 .git/objects/a1/a1975049511402aac1e2710bd4762ba7d15b74d1
-<span class="nv">$ </span>git cat-file -t a1975049511402aac1e2710bd4762ba7d15b74d1
+$ git cat-file -t a1975049511402aac1e2710bd4762ba7d15b74d1
 tree
-<span class="nv">$ </span>git cat-file -p a1975049511402aac1e2710bd4762ba7d15b74d1
+$ git cat-file -p a1975049511402aac1e2710bd4762ba7d15b74d1
 <span class="m">040000</span> tree ef67b9c831b2a669b8d8508cc5a9ed052d05e613    folder1
 <span class="m">040000</span> tree 0a546f747dd82b6b765cf272867f2d04c60fd8dd    folder2
 <span class="m">040000</span> tree 9194aeb855a27f7aec885eeeff32c88e26c8ee1c    folder3
@@ -215,28 +215,28 @@ tree
 <p>La implementación es sencilla: Cuando alguien hace <code>git add</code>, <a href="http://git-scm.com/" title="Official Git page">Git</a> se guarda el <strong>objeto</strong>(contenido + sha1) en un directorio distinto, de la forma que vimos arriba (bueno, esto no es del todo cierto... realmente guarda diffs, pero eso no importa ahora). Así, al hacer un <code>git commit</code> basta crear un nuevo objeto <strong>Commit</strong> con sus características y la lista de <strong>Trees</strong> que contuviera el <strong>commit</strong> anterior más los cambios almacenados. Después se cogen todos los <strong>objetos</strong> generados y se guardan con los demás.</p>
 <p>Esta configuración hace que también sea muy sencillo implementar un <code>git push</code> o <code>git pull</code>, ya que basta con sincronizar el directorio con todos los <strong>objects</strong> (bueno... y alguna cosilla más).</p>
 <p>Esto es un <strong>Commit</strong>:</p>
-<pre class="code literal-block">---------------------------
-| b52b8...                |
-|-------------------------|
-| Commit         | size   |
-|--------------------------
-| tree a2e96...           |
-| parent 0e443...         |
-| author MagMax           |
-| timestamp               |
-| commiter MagMax         |
-| timestamp               |
-| description             |
----------------------------
+<pre class="code literal-block"><span></span><span class="nb">---------------------------</span><span class="c"></span>
+<span class="c">| b52b8</span><span class="nt">...</span><span class="c">                |</span>
+<span class="c">|</span><span class="nb">-------------------------</span><span class="c">|</span>
+<span class="c">| Commit         | size   |</span>
+<span class="c">|</span><span class="nb">--------------------------</span><span class="c"></span>
+<span class="c">| tree a2e96</span><span class="nt">...</span><span class="c">           |</span>
+<span class="c">| parent 0e443</span><span class="nt">...</span><span class="c">         |</span>
+<span class="c">| author MagMax           |</span>
+<span class="c">| timestamp               |</span>
+<span class="c">| commiter MagMax         |</span>
+<span class="c">| timestamp               |</span>
+<span class="c">| description             |</span>
+<span class="nb">---------------------------</span><span class="c"></span>
 </pre>
 
 
 <p>Ejemplo:</p>
-<pre class="code literal-block"><span class="nv">$ </span>ls .git/objects/b5/2b8ec9e4784cc0ce458d13d8868bc5255e5ce7
+<pre class="code literal-block"><span></span>$ ls .git/objects/b5/2b8ec9e4784cc0ce458d13d8868bc5255e5ce7
 .git/objects/b5/2b8ec9e4784cc0ce458d13d8868bc5255e5ce7
-<span class="nv">$ </span>git cat-file -t b52b8ec9e4784cc0ce458d13d8868bc5255e5ce7
+$ git cat-file -t b52b8ec9e4784cc0ce458d13d8868bc5255e5ce7
 commit
-<span class="nv">$ </span>git cat-file -p b52b8ec9e4784cc0ce458d13d8868bc5255e5ce7
+$ git cat-file -p b52b8ec9e4784cc0ce458d13d8868bc5255e5ce7
 tree a2e96967bbb39652ecb6a5d0fee882eeb8d7f829
 parent 0e4432bf3cb667dbc9a99afcc3601696e8c110af
 author MagMax &lt;miguelangel@magmax.org&gt; <span class="m">1371385169</span> +0200
@@ -264,7 +264,7 @@ The description of this commit.
 <p>A <a href="http://git-scm.com/" title="Official Git page">Git</a> le gustan las cosas inmutables, lo que no cambia. Un <strong>Tag</strong> no cambia nunca. Podemos borrarlo y crear otro diferente, pero el mismo <strong>Tag</strong> es inmutable. Lo mismo ocurre con <strong>Archivos</strong>, <strong>Árboles</strong> y <strong>Commits</strong>.</p>
 <p>Sin embargo, en <a href="http://git-scm.com/" title="Official Git page">Git</a> el concepto de "rama" es efímero. Consiste en una referencia a un <strong>commit</strong>, pero irá cambiando frecuentemente, con cada <strong>commit</strong>. Además, no es un concepto indispensable. Así, una <strong>working copy</strong> por defecto sólo <em>trackea</em> una rama (habitualmente, <em>"master"</em>).</p>
 <p>Las ramas son, en realidad, referencias. Es decir, punteros. Sólo eso y nada más. Y puedo demostrarlo:</p>
-<pre class="code literal-block"><span class="nv">$ </span>cat .git/refs/heads/master
+<pre class="code literal-block"><span></span>$ cat .git/refs/heads/master
 00ce77b5f13e7750ba87e091e8df5df0956101fb
 </pre>
 
@@ -272,7 +272,7 @@ The description of this commit.
 <p>Vaya... Está apuntando al mismo <strong>changeset</strong> que vimos antes :D</p>
 <p>Por lo tanto, en <a href="http://git-scm.com/" title="Official Git page">Git</a> <strong>las ramas no son objetos</strong>. Al no ser <strong>objetos</strong>, no se copian con un <code>git fetch</code>.</p>
 <p>Pensemos en los punteros de C o C++: podemos tener dos punteros apuntando a la misma variable. Cada puntero tendrá un nombre, y puede ser diferente o igual (en el caso de C y C++, sólo si están en distinto ámbito). Con <a href="http://git-scm.com/" title="Official Git page">Git</a> ocurre lo mismo: lo que importa es el <strong>commit</strong>, no el nombre que se le ha puesto. Por eso los nombres de las ramas son locales. Podemos referirnos a una rama en el servidor, indicando que está allí:</p>
-<pre class="code literal-block"><span class="nv">$ </span>cat .git/refs/remotes/origin/master
+<pre class="code literal-block"><span></span>$ cat .git/refs/remotes/origin/master
 e2bf849e1c09ad79e04e7f6c0fcdcea8e5dd5175
 </pre>
 

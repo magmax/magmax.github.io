@@ -7,7 +7,7 @@ article: https://ogp.me/ns/article#
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Python: Cómo hacer pruebas 4: pyDoubles | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,8 +18,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/python-pruebas-4/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/python-pruebas-3/" title="Python: Cómo hacer pruebas 3: nose y hamcrest" type="text/html">
 <link rel="next" href="/blog/python-tokenizer/" title="Crea tu propio lenguaje de programación con... python" type="text/html">
@@ -148,12 +148,12 @@ Es la continuación del artículo "Python: Cómo hacer pruebas (3)":link://slug/
 <div class="section" id="archivos">
 <h2>Archivos</h2>
 <p>Como he dicho, no queremos meternos en la implementación de archivos, así que esto es lo que vamos a necesitar (lo copio aquí para no estar repitiéndolo todo el rato):</p>
-<pre class="code python"><a name="rest_code_6d97c94413834c37b440316d5c688bac-1"></a><span class="k">class</span> <span class="nc">Archivo</span><span class="p">:</span>
-<a name="rest_code_6d97c94413834c37b440316d5c688bac-2"></a>    <span class="k">def</span> <span class="nf">borrar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_6d97c94413834c37b440316d5c688bac-3"></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">"no lo vamos a necesitar"</span><span class="p">)</span>
-<a name="rest_code_6d97c94413834c37b440316d5c688bac-4"></a>
-<a name="rest_code_6d97c94413834c37b440316d5c688bac-5"></a>    <span class="k">def</span> <span class="nf">cambiar_permisos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permisos</span><span class="p">):</span>
-<a name="rest_code_6d97c94413834c37b440316d5c688bac-6"></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">"no lo vamos a necesitar"</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_5969233a0a244497b609e709b85a6675-1"></a><span class="k">class</span> <span class="nc">Archivo</span><span class="p">:</span>
+<a name="rest_code_5969233a0a244497b609e709b85a6675-2"></a>    <span class="k">def</span> <span class="nf">borrar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_5969233a0a244497b609e709b85a6675-3"></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"no lo vamos a necesitar"</span><span class="p">)</span>
+<a name="rest_code_5969233a0a244497b609e709b85a6675-4"></a>
+<a name="rest_code_5969233a0a244497b609e709b85a6675-5"></a>    <span class="k">def</span> <span class="nf">cambiar_permisos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permisos</span><span class="p">):</span>
+<a name="rest_code_5969233a0a244497b609e709b85a6675-6"></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"no lo vamos a necesitar"</span><span class="p">)</span>
 </pre>
 <p>Como véis, si llegáramos a entrar en alguna de las funciones, nuestros tests fallarían estrepitosamente. Tenemos que ser capaces de probarlo sin usar el archivo real.</p>
 </div>
@@ -165,20 +165,20 @@ Es la continuación del artículo "Python: Cómo hacer pruebas (3)":link://slug/
 <div class="section" id="directorios">
 <h2>Directorios</h2>
 <p>Asumamos que nuestro código es <em>legacy</em> y ya teníamos las clases escritas... Así me ahorro bastante tiempo XD. Ahí va la clase Directorio:</p>
-<pre class="code python"><a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-1"></a><span class="k">class</span> <span class="nc">Directorio</span><span class="p">:</span>
-<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-2"></a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-3"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span> <span class="o">=</span> <span class="p">[]</span>
-<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-4"></a>
-<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-5"></a>    <span class="k">def</span> <span class="nf">borrar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-6"></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="p">:</span>
-<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-7"></a>            <span class="n">x</span><span class="o">.</span><span class="n">borrar</span><span class="p">()</span>
-<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-8"></a>
-<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-9"></a>    <span class="k">def</span> <span class="nf">anadir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objeto</span><span class="p">):</span>
-<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-10"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objeto</span><span class="p">)</span>
-<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-11"></a>
-<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-12"></a>    <span class="k">def</span> <span class="nf">cambiar_permisos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permisos</span><span class="p">):</span>
-<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-13"></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="p">:</span>
-<a name="rest_code_651798e0bbc848b79fcb598f5b90ef17-14"></a>            <span class="n">x</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="n">permisos</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_b9222f91c3b1428bb7367d7ac77a455b-1"></a><span class="k">class</span> <span class="nc">Directorio</span><span class="p">:</span>
+<a name="rest_code_b9222f91c3b1428bb7367d7ac77a455b-2"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_b9222f91c3b1428bb7367d7ac77a455b-3"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span> <span class="o">=</span> <span class="p">[]</span>
+<a name="rest_code_b9222f91c3b1428bb7367d7ac77a455b-4"></a>
+<a name="rest_code_b9222f91c3b1428bb7367d7ac77a455b-5"></a>    <span class="k">def</span> <span class="nf">borrar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_b9222f91c3b1428bb7367d7ac77a455b-6"></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="p">:</span>
+<a name="rest_code_b9222f91c3b1428bb7367d7ac77a455b-7"></a>            <span class="n">x</span><span class="o">.</span><span class="n">borrar</span><span class="p">()</span>
+<a name="rest_code_b9222f91c3b1428bb7367d7ac77a455b-8"></a>
+<a name="rest_code_b9222f91c3b1428bb7367d7ac77a455b-9"></a>    <span class="k">def</span> <span class="nf">anadir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objeto</span><span class="p">):</span>
+<a name="rest_code_b9222f91c3b1428bb7367d7ac77a455b-10"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objeto</span><span class="p">)</span>
+<a name="rest_code_b9222f91c3b1428bb7367d7ac77a455b-11"></a>
+<a name="rest_code_b9222f91c3b1428bb7367d7ac77a455b-12"></a>    <span class="k">def</span> <span class="nf">cambiar_permisos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permisos</span><span class="p">):</span>
+<a name="rest_code_b9222f91c3b1428bb7367d7ac77a455b-13"></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="p">:</span>
+<a name="rest_code_b9222f91c3b1428bb7367d7ac77a455b-14"></a>            <span class="n">x</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="n">permisos</span><span class="p">)</span>
 </pre>
 </div>
 <div class="section" id="probando-que-es-gerundio">
@@ -186,18 +186,18 @@ Es la continuación del artículo "Python: Cómo hacer pruebas (3)":link://slug/
 <div class="section" id="anadiendo">
 <h3>Añadiendo</h3>
 <p>Pues ya tenemos nuestros Directorios, (no) tenemos nuestros Archivos... ¡¡Vamos a probarlo!! Voy a necesitar una prueba de la que no os he hablado, y es que para probar que borramos, necesitamos añadir. ¿Estará funcionando correctamente este método? (nuevamente recuerdo que los tests deben ir al principio del archivo para que <em>nose</em> funcione):</p>
-<pre class="code python"><a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-1"></a><span class="kn">import</span> <span class="nn">unittest</span>
-<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-2"></a><span class="kn">from</span> <span class="nn">pyDoubles.framework</span> <span class="kn">import</span> <span class="o">*</span>
-<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-3"></a>
-<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-4"></a>
-<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-5"></a><span class="k">class</span> <span class="nc">testSeBorrarDirectorios</span> <span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
-<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-6"></a>    <span class="k">def</span> <span class="nf">test_probamos_que_anadimos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-7"></a>        <span class="n">archivo</span> <span class="o">=</span> <span class="n">stub</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
-<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-8"></a>        <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
-<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-9"></a>
-<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-10"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
-<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-11"></a>
-<a name="rest_code_bfe606d30b50439b9a290033a61ba5a7-12"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span> <span class="p">(</span><span class="n">archivo</span> <span class="ow">in</span> <span class="n">sut</span><span class="o">.</span><span class="n">contenido</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_a4735c02cf4442d1a4a81d9b9ab1b045-1"></a><span class="kn">import</span> <span class="nn">unittest</span>
+<a name="rest_code_a4735c02cf4442d1a4a81d9b9ab1b045-2"></a><span class="kn">from</span> <span class="nn">pyDoubles.framework</span> <span class="kn">import</span> <span class="o">*</span>
+<a name="rest_code_a4735c02cf4442d1a4a81d9b9ab1b045-3"></a>
+<a name="rest_code_a4735c02cf4442d1a4a81d9b9ab1b045-4"></a>
+<a name="rest_code_a4735c02cf4442d1a4a81d9b9ab1b045-5"></a><span class="k">class</span> <span class="nc">testSeBorrarDirectorios</span> <span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<a name="rest_code_a4735c02cf4442d1a4a81d9b9ab1b045-6"></a>    <span class="k">def</span> <span class="nf">test_probamos_que_anadimos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_a4735c02cf4442d1a4a81d9b9ab1b045-7"></a>        <span class="n">archivo</span> <span class="o">=</span> <span class="n">stub</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
+<a name="rest_code_a4735c02cf4442d1a4a81d9b9ab1b045-8"></a>        <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
+<a name="rest_code_a4735c02cf4442d1a4a81d9b9ab1b045-9"></a>
+<a name="rest_code_a4735c02cf4442d1a4a81d9b9ab1b045-10"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
+<a name="rest_code_a4735c02cf4442d1a4a81d9b9ab1b045-11"></a>
+<a name="rest_code_a4735c02cf4442d1a4a81d9b9ab1b045-12"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span> <span class="p">(</span><span class="n">archivo</span> <span class="ow">in</span> <span class="n">sut</span><span class="o">.</span><span class="n">contenido</span><span class="p">)</span>
 </pre>
 <p>¿Qué ha ocurrido aquí? ¿Qué es todo eso?</p>
 <p>Bueno, es más sencillo de lo que parece. Lo que hacemos es usar pyDoubles, y por eso importamos todo lo que hay en el framework. Además, creamos una clase que hereda de <em>TestCase</em> para que se ejecuten las pruebas, y será en esta clase donde meteremos todos los tests.</p>
@@ -209,14 +209,14 @@ Es la continuación del artículo "Python: Cómo hacer pruebas (3)":link://slug/
 <div class="section" id="borrando">
 <h3>Borrando</h3>
 <p>En este caso vamos a borrar. Evidentemente, se tratará de un borrado recursivo, ya que si no pierde la gracia.</p>
-<pre class="code python"><a name="rest_code_a671a5f5ad884b24a8bb71f4696cba18-1"></a><span class="k">def</span> <span class="nf">test_probamos_que_borramos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_a671a5f5ad884b24a8bb71f4696cba18-2"></a>    <span class="n">archivo</span> <span class="o">=</span> <span class="n">spy</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
-<a name="rest_code_a671a5f5ad884b24a8bb71f4696cba18-3"></a>    <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
-<a name="rest_code_a671a5f5ad884b24a8bb71f4696cba18-4"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
-<a name="rest_code_a671a5f5ad884b24a8bb71f4696cba18-5"></a>
-<a name="rest_code_a671a5f5ad884b24a8bb71f4696cba18-6"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">borrar</span><span class="p">()</span>
-<a name="rest_code_a671a5f5ad884b24a8bb71f4696cba18-7"></a>
-<a name="rest_code_a671a5f5ad884b24a8bb71f4696cba18-8"></a>    <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">borrar</span><span class="p">)</span><span class="o">.</span><span class="n">was_called</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_ac0dea1f5cf04625b163e8ae23a4107e-1"></a><span class="k">def</span> <span class="nf">test_probamos_que_borramos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_ac0dea1f5cf04625b163e8ae23a4107e-2"></a>    <span class="n">archivo</span> <span class="o">=</span> <span class="n">spy</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
+<a name="rest_code_ac0dea1f5cf04625b163e8ae23a4107e-3"></a>    <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
+<a name="rest_code_ac0dea1f5cf04625b163e8ae23a4107e-4"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
+<a name="rest_code_ac0dea1f5cf04625b163e8ae23a4107e-5"></a>
+<a name="rest_code_ac0dea1f5cf04625b163e8ae23a4107e-6"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">borrar</span><span class="p">()</span>
+<a name="rest_code_ac0dea1f5cf04625b163e8ae23a4107e-7"></a>
+<a name="rest_code_ac0dea1f5cf04625b163e8ae23a4107e-8"></a>    <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">borrar</span><span class="p">)</span><span class="o">.</span><span class="n">was_called</span><span class="p">()</span>
 </pre>
 <p>Aquí no he usado un <em>stub</em>, sino un <em>spy</em>, un espía.</p>
 <p>Los <em>SPY</em> o <em>spies</em> son dobles de prueba como los <em>stub</em>, solo que tienen post-condiciones. Es decir: se crean, se usan y después se comprueba que se usaron correctamente.</p>
@@ -226,27 +226,27 @@ Es la continuación del artículo "Python: Cómo hacer pruebas (3)":link://slug/
 <div class="section" id="cambiando-permisos">
 <h3>Cambiando permisos</h3>
 <p>Ahora vamos con la segunda parte: comprobar que el cambio de permisos es recursivo. Es igual que el borrado, con la diferencia de que tenemos que pasar un parámetro:</p>
-<pre class="code python"><a name="rest_code_76881821e423434f863965a6dd1c7756-1"></a><span class="k">def</span> <span class="nf">test_cambiar_permisos_llama_con_valores_adecuados</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_76881821e423434f863965a6dd1c7756-2"></a>    <span class="n">archivo</span> <span class="o">=</span> <span class="n">spy</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
-<a name="rest_code_76881821e423434f863965a6dd1c7756-3"></a>    <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
-<a name="rest_code_76881821e423434f863965a6dd1c7756-4"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
-<a name="rest_code_76881821e423434f863965a6dd1c7756-5"></a>
-<a name="rest_code_76881821e423434f863965a6dd1c7756-6"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="mo">0777</span><span class="p">)</span>
-<a name="rest_code_76881821e423434f863965a6dd1c7756-7"></a>
-<a name="rest_code_76881821e423434f863965a6dd1c7756-8"></a>    <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">)</span><span class="o">.</span><span class="n">was_called</span><span class="p">()</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="mo">0777</span><span class="p">)</span>
-<a name="rest_code_76881821e423434f863965a6dd1c7756-9"></a>    <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">borrar</span><span class="p">)</span><span class="o">.</span><span class="n">was_never_called</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_87739aefaf564b71a86c627a0d44e860-1"></a><span class="k">def</span> <span class="nf">test_cambiar_permisos_llama_con_valores_adecuados</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_87739aefaf564b71a86c627a0d44e860-2"></a>    <span class="n">archivo</span> <span class="o">=</span> <span class="n">spy</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
+<a name="rest_code_87739aefaf564b71a86c627a0d44e860-3"></a>    <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
+<a name="rest_code_87739aefaf564b71a86c627a0d44e860-4"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
+<a name="rest_code_87739aefaf564b71a86c627a0d44e860-5"></a>
+<a name="rest_code_87739aefaf564b71a86c627a0d44e860-6"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="mi">0777</span><span class="p">)</span>
+<a name="rest_code_87739aefaf564b71a86c627a0d44e860-7"></a>
+<a name="rest_code_87739aefaf564b71a86c627a0d44e860-8"></a>    <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">)</span><span class="o">.</span><span class="n">was_called</span><span class="p">()</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="mi">0777</span><span class="p">)</span>
+<a name="rest_code_87739aefaf564b71a86c627a0d44e860-9"></a>    <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">borrar</span><span class="p">)</span><span class="o">.</span><span class="n">was_never_called</span><span class="p">()</span>
 </pre>
 <p>Como podemos observar, en este caso hemos vuelto a utilizar un espía. Aquí comprobamos que el método se llamó con los permisos indicados, y también que el método borrar no se llamó nunca. Esto no es ni necesario, pero lo he puesto por mostrar más capacidades de pyDoubles.</p>
 <p>Lo mismo se podría hacer de otra manera ligeramente diferente:</p>
-<pre class="code python"><a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-1"></a><span class="k">def</span> <span class="nf">test_cambiar_permisos_con_mock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-2"></a>    <span class="n">archivo</span> <span class="o">=</span> <span class="n">mock</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
-<a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-3"></a>    <span class="n">expect_call</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">)</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="mo">0777</span><span class="p">)</span>
-<a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-4"></a>    <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
-<a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-5"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
-<a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-6"></a>
-<a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-7"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="mo">0777</span><span class="p">)</span>
-<a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-8"></a>
-<a name="rest_code_4416a0bcc45741d7a7ce97f166387f39-9"></a>    <span class="n">archivo</span><span class="o">.</span><span class="n">assert_that_is_satisfied</span><span class="p">()</span>
+<pre class="code python"><a name="rest_code_57f603da32d64e389dcdc1e3d55bd8fa-1"></a><span class="k">def</span> <span class="nf">test_cambiar_permisos_con_mock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_57f603da32d64e389dcdc1e3d55bd8fa-2"></a>    <span class="n">archivo</span> <span class="o">=</span> <span class="n">mock</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
+<a name="rest_code_57f603da32d64e389dcdc1e3d55bd8fa-3"></a>    <span class="n">expect_call</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">)</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="mi">0777</span><span class="p">)</span>
+<a name="rest_code_57f603da32d64e389dcdc1e3d55bd8fa-4"></a>    <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
+<a name="rest_code_57f603da32d64e389dcdc1e3d55bd8fa-5"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
+<a name="rest_code_57f603da32d64e389dcdc1e3d55bd8fa-6"></a>
+<a name="rest_code_57f603da32d64e389dcdc1e3d55bd8fa-7"></a>    <span class="n">sut</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="mi">0777</span><span class="p">)</span>
+<a name="rest_code_57f603da32d64e389dcdc1e3d55bd8fa-8"></a>
+<a name="rest_code_57f603da32d64e389dcdc1e3d55bd8fa-9"></a>    <span class="n">archivo</span><span class="o">.</span><span class="n">assert_that_is_satisfied</span><span class="p">()</span>
 </pre>
 <p>Aquí he utilizado un <em>mock</em>. Un <em>mock</em> es un <em>stub</em> con precondiciones. Es decir: primero digo lo que va a pasar, ejecuto, y compruebo que ha pasado.</p>
 <p>Tan solo nos quedaría ver los "<em>proxyspy</em>", que son espías que llaman al objeto real.</p>
@@ -254,81 +254,81 @@ Es la continuación del artículo "Python: Cómo hacer pruebas (3)":link://slug/
 <div class="section" id="todo-junto">
 <h3>Todo junto</h3>
 <p>Aquí tenéis todo el código de un tirón:</p>
-<pre class="code python"><a name="rest_code_1bd59454413c4250b69db018133a5a7b-1"></a><span class="kn">import</span> <span class="nn">unittest</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-2"></a><span class="kn">from</span> <span class="nn">pyDoubles.framework</span> <span class="kn">import</span> <span class="o">*</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-3"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-4"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-5"></a><span class="k">class</span> <span class="nc">testSeBorrarDirectorios</span> <span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-6"></a>    <span class="k">def</span> <span class="nf">test_probamos_que_anadimos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-7"></a>        <span class="n">archivo</span> <span class="o">=</span> <span class="n">stub</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-8"></a>        <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-9"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-10"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-11"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-12"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span> <span class="p">(</span><span class="n">archivo</span> <span class="ow">in</span> <span class="n">sut</span><span class="o">.</span><span class="n">contenido</span><span class="p">)</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-13"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-14"></a>    <span class="k">def</span> <span class="nf">test_probamos_que_borramos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-15"></a>        <span class="n">archivo</span> <span class="o">=</span> <span class="n">spy</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-16"></a>        <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-17"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-18"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-19"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">borrar</span><span class="p">()</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-20"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-21"></a>        <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">borrar</span><span class="p">)</span><span class="o">.</span><span class="n">was_called</span><span class="p">()</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-22"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-23"></a>    <span class="k">def</span> <span class="nf">test_cambiar_permisos_llama_con_valores_adecuados</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-24"></a>        <span class="n">archivo</span> <span class="o">=</span> <span class="n">spy</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-25"></a>        <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-26"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-27"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-28"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="mo">0777</span><span class="p">)</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-29"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-30"></a>        <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">)</span><span class="o">.</span><span class="n">was_called</span><span class="p">()</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="mo">0777</span><span class="p">)</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-31"></a>        <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">borrar</span><span class="p">)</span><span class="o">.</span><span class="n">was_never_called</span><span class="p">()</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-32"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-33"></a>    <span class="k">def</span> <span class="nf">test_cambiar_permisos_con_mock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-34"></a>        <span class="n">archivo</span> <span class="o">=</span> <span class="n">mock</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-35"></a>        <span class="n">expect_call</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">)</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="mo">0777</span><span class="p">)</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-36"></a>        <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-37"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-38"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-39"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="mo">0777</span><span class="p">)</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-40"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-41"></a>        <span class="n">archivo</span><span class="o">.</span><span class="n">assert_that_is_satisfied</span><span class="p">()</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-42"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-43"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-44"></a><span class="k">class</span> <span class="nc">Archivo</span><span class="p">:</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-45"></a>    <span class="k">def</span> <span class="nf">borrar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-46"></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">"no lo vamos a necesitar"</span><span class="p">)</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-47"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-48"></a>    <span class="k">def</span> <span class="nf">cambiar_permisos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permisos</span><span class="p">):</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-49"></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">"no lo vamos a necesitar"</span><span class="p">)</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-50"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-51"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-52"></a><span class="k">class</span> <span class="nc">Directorio</span><span class="p">:</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-53"></a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-54"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span> <span class="o">=</span> <span class="p">[]</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-55"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-56"></a>    <span class="k">def</span> <span class="nf">borrar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-57"></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="p">:</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-58"></a>            <span class="n">x</span><span class="o">.</span><span class="n">borrar</span><span class="p">()</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-59"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-60"></a>    <span class="k">def</span> <span class="nf">anadir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objeto</span><span class="p">):</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-61"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objeto</span><span class="p">)</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-62"></a>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-63"></a>    <span class="k">def</span> <span class="nf">cambiar_permisos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permisos</span><span class="p">):</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-64"></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="p">:</span>
-<a name="rest_code_1bd59454413c4250b69db018133a5a7b-65"></a>            <span class="n">x</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="n">permisos</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-1"></a><span class="kn">import</span> <span class="nn">unittest</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-2"></a><span class="kn">from</span> <span class="nn">pyDoubles.framework</span> <span class="kn">import</span> <span class="o">*</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-3"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-4"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-5"></a><span class="k">class</span> <span class="nc">testSeBorrarDirectorios</span> <span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-6"></a>    <span class="k">def</span> <span class="nf">test_probamos_que_anadimos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-7"></a>        <span class="n">archivo</span> <span class="o">=</span> <span class="n">stub</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-8"></a>        <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-9"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-10"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-11"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-12"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span> <span class="p">(</span><span class="n">archivo</span> <span class="ow">in</span> <span class="n">sut</span><span class="o">.</span><span class="n">contenido</span><span class="p">)</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-13"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-14"></a>    <span class="k">def</span> <span class="nf">test_probamos_que_borramos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-15"></a>        <span class="n">archivo</span> <span class="o">=</span> <span class="n">spy</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-16"></a>        <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-17"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-18"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-19"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">borrar</span><span class="p">()</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-20"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-21"></a>        <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">borrar</span><span class="p">)</span><span class="o">.</span><span class="n">was_called</span><span class="p">()</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-22"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-23"></a>    <span class="k">def</span> <span class="nf">test_cambiar_permisos_llama_con_valores_adecuados</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-24"></a>        <span class="n">archivo</span> <span class="o">=</span> <span class="n">spy</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-25"></a>        <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-26"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-27"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-28"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="mi">0777</span><span class="p">)</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-29"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-30"></a>        <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">)</span><span class="o">.</span><span class="n">was_called</span><span class="p">()</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="mi">0777</span><span class="p">)</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-31"></a>        <span class="n">assert_that_method</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">borrar</span><span class="p">)</span><span class="o">.</span><span class="n">was_never_called</span><span class="p">()</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-32"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-33"></a>    <span class="k">def</span> <span class="nf">test_cambiar_permisos_con_mock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-34"></a>        <span class="n">archivo</span> <span class="o">=</span> <span class="n">mock</span><span class="p">(</span><span class="n">Archivo</span><span class="p">())</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-35"></a>        <span class="n">expect_call</span><span class="p">(</span><span class="n">archivo</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">)</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="mi">0777</span><span class="p">)</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-36"></a>        <span class="n">sut</span> <span class="o">=</span> <span class="n">Directorio</span><span class="p">()</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-37"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">anadir</span><span class="p">(</span><span class="n">archivo</span><span class="p">)</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-38"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-39"></a>        <span class="n">sut</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="mi">0777</span><span class="p">)</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-40"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-41"></a>        <span class="n">archivo</span><span class="o">.</span><span class="n">assert_that_is_satisfied</span><span class="p">()</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-42"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-43"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-44"></a><span class="k">class</span> <span class="nc">Archivo</span><span class="p">:</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-45"></a>    <span class="k">def</span> <span class="nf">borrar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-46"></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"no lo vamos a necesitar"</span><span class="p">)</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-47"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-48"></a>    <span class="k">def</span> <span class="nf">cambiar_permisos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permisos</span><span class="p">):</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-49"></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"no lo vamos a necesitar"</span><span class="p">)</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-50"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-51"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-52"></a><span class="k">class</span> <span class="nc">Directorio</span><span class="p">:</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-53"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-54"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span> <span class="o">=</span> <span class="p">[]</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-55"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-56"></a>    <span class="k">def</span> <span class="nf">borrar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-57"></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="p">:</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-58"></a>            <span class="n">x</span><span class="o">.</span><span class="n">borrar</span><span class="p">()</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-59"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-60"></a>    <span class="k">def</span> <span class="nf">anadir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objeto</span><span class="p">):</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-61"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objeto</span><span class="p">)</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-62"></a>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-63"></a>    <span class="k">def</span> <span class="nf">cambiar_permisos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">permisos</span><span class="p">):</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-64"></a>        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">contenido</span><span class="p">:</span>
+<a name="rest_code_cd3f9cab5ab34c1c88478f78c88c5dc6-65"></a>            <span class="n">x</span><span class="o">.</span><span class="n">cambiar_permisos</span><span class="p">(</span><span class="n">permisos</span><span class="p">)</span>
 </pre>
 </div>
 </div>
 <div class="section" id="respuestas-predefinidas">
 <h2>Respuestas predefinidas</h2>
 <p>Habrá casos en los que necesitemos una respuesta determinada cuando se llame a un método, de manera que el algoritmo que estamos probando pueda continuar. Para ello podemos "prediseñar" métodos; ahí van diferentes maneras diferentes de hacerlo:</p>
-<pre class="code python"><a name="rest_code_2d60cda6b6cf46489564e1b9f4979a6f-1"></a><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span> <span class="o">=</span> <span class="n">method_returning</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
-<a name="rest_code_2d60cda6b6cf46489564e1b9f4979a6f-2"></a><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span> <span class="o">=</span> <span class="n">method_raising</span><span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">)</span>
-<a name="rest_code_2d60cda6b6cf46489564e1b9f4979a6f-3"></a><span class="n">when</span><span class="p">(</span><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span><span class="p">)</span><span class="o">.</span><span class="n">then_return</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
-<a name="rest_code_2d60cda6b6cf46489564e1b9f4979a6f-4"></a><span class="n">when</span><span class="p">(</span><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span><span class="p">)</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">then_return</span><span class="p">(</span><span class="mi">25</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_8dd538228efd4e1c9e04852214498763-1"></a><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span> <span class="o">=</span> <span class="n">method_returning</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+<a name="rest_code_8dd538228efd4e1c9e04852214498763-2"></a><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span> <span class="o">=</span> <span class="n">method_raising</span><span class="p">(</span><span class="ne">NotImplementedError</span><span class="p">)</span>
+<a name="rest_code_8dd538228efd4e1c9e04852214498763-3"></a><span class="n">when</span><span class="p">(</span><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span><span class="p">)</span><span class="o">.</span><span class="n">then_return</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span>
+<a name="rest_code_8dd538228efd4e1c9e04852214498763-4"></a><span class="n">when</span><span class="p">(</span><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span><span class="p">)</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">then_return</span><span class="p">(</span><span class="mi">25</span><span class="p">)</span>
 </pre>
 </div>
 <div class="section" id="cuestion-de-nomenclatura">
@@ -347,8 +347,8 @@ Es la continuación del artículo "Python: Cómo hacer pruebas (3)":link://slug/
 <div class="section" id="hamcrest-y-pydoubles">
 <h2>Hamcrest y pyDoubles</h2>
 <p>Resulta que escribí el artículo anterior sabiendo lo que me hacía, y que podemos combinar los <em>matchers</em> de <a class="reference external" href="http://code.google.com/p/hamcrest/">Hamcrest</a>  junto a pyDoubles... ¿Cómo? Pues, por ejemplo, en el método <em>with&amp;#95;args</em>:</p>
-<pre class="code python"><a name="rest_code_4e5a4944e9744e3294ac216dcb2e0e4d-1"></a><span class="n">when</span><span class="p">(</span><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span><span class="p">)</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="n">instance_of</span><span class="p">(</span><span class="n">objeto</span><span class="p">))</span><span class="o">.</span><span class="n">then_return</span><span class="p">(</span><span class="s">'hola, mundo'</span><span class="p">)</span>
-<a name="rest_code_4e5a4944e9744e3294ac216dcb2e0e4d-2"></a><span class="n">when</span><span class="p">(</span><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span><span class="p">)</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="n">any_of</span><span class="p">(</span><span class="n">starts_with</span><span class="p">(</span><span class="s">'hola'</span><span class="p">),</span> <span class="n">ends_with</span><span class="p">(</span><span class="s">'mundo'</span><span class="p">))</span><span class="o">.</span><span class="n">then_return</span><span class="p">(</span><span class="s">'hola, mundo'</span><span class="p">)</span>
+<pre class="code python"><a name="rest_code_8557d53b255944769a5a6296a1f90e26-1"></a><span class="n">when</span><span class="p">(</span><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span><span class="p">)</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="n">instance_of</span><span class="p">(</span><span class="n">objeto</span><span class="p">))</span><span class="o">.</span><span class="n">then_return</span><span class="p">(</span><span class="s1">'hola, mundo'</span><span class="p">)</span>
+<a name="rest_code_8557d53b255944769a5a6296a1f90e26-2"></a><span class="n">when</span><span class="p">(</span><span class="n">objeto</span><span class="o">.</span><span class="n">metodo</span><span class="p">)</span><span class="o">.</span><span class="n">with_args</span><span class="p">(</span><span class="n">any_of</span><span class="p">(</span><span class="n">starts_with</span><span class="p">(</span><span class="s1">'hola'</span><span class="p">),</span> <span class="n">ends_with</span><span class="p">(</span><span class="s1">'mundo'</span><span class="p">))</span><span class="o">.</span><span class="n">then_return</span><span class="p">(</span><span class="s1">'hola, mundo'</span><span class="p">)</span>
 </pre>
 <p>Como véis, hemos usado <tt class="docutils literal">instance_of</tt>, <tt class="docutils literal">any_of</tt>, <tt class="docutils literal">starts_with</tt> y <tt class="docutils literal">ends_with</tt>, que son <em>matchers</em> de <em>Hamcrest</em>.</p>
 </div>

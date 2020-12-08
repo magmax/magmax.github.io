@@ -8,7 +8,7 @@ article: https://ogp.me/ns/article#
 <meta name="description" content="Configurar la monitorización completa basada en ElasticSearch.">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Monitorización con ElasticSearch, Kibana y TopBeat | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -19,8 +19,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/monitorizacion-con-elasticsearch-kibana-y-topbeat/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="description" itemprop="description" content="Configurar la monitorización completa basada en ElasticSearch.">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/sistemas-distribuidos-modernos/" title="Sistemas distribuidos modernos" type="text/html">
@@ -131,13 +131,13 @@ article: https://ogp.me/ns/article#
 <h2>¿Tienes prisa?</h2>
 <p>Si tenéis prisa y no queréis leer todo el artículo, aquí podéis ver cómo monto todo el sistema, sin editar los archivos de configuración y en modo <em>localhost</em>, en tan solo 4 minutos, pifias incluídas:</p>
 <iframe width="425" height="344" src="//www.youtube.com/embed/y42z9oToi4k?rel=0&amp;hd=1&amp;wmode=transparent"></iframe><p>Aquí tenéis el script del vídeo, aunque no aseguro que siga funcionando:</p>
-<pre class="code text"><a name="rest_code_d4fdbca022b64f76a67df005990b4e5d-1"></a>#!/bin/bash
-<a name="rest_code_d4fdbca022b64f76a67df005990b4e5d-2"></a>
-<a name="rest_code_d4fdbca022b64f76a67df005990b4e5d-3"></a>wget https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/zip/elasticsearch/2.1.1/elasticsearch-2.1.1.zip
-<a name="rest_code_d4fdbca022b64f76a67df005990b4e5d-4"></a>wget https://download.elastic.co/beats/topbeat/topbeat-1.0.1-x86_64.tar.gz
-<a name="rest_code_d4fdbca022b64f76a67df005990b4e5d-5"></a>wget https://download.elastic.co/kibana/kibana/kibana-4.3.1-linux-x64.tar.gz
-<a name="rest_code_d4fdbca022b64f76a67df005990b4e5d-6"></a>
-<a name="rest_code_d4fdbca022b64f76a67df005990b4e5d-7"></a>git clone https://github.com/elastic/beats-dashboards.git
+<pre class="code text"><a name="rest_code_c1b973422d7e4063bc59f0a8b1f6aba5-1"></a>#!/bin/bash
+<a name="rest_code_c1b973422d7e4063bc59f0a8b1f6aba5-2"></a>
+<a name="rest_code_c1b973422d7e4063bc59f0a8b1f6aba5-3"></a>wget https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/zip/elasticsearch/2.1.1/elasticsearch-2.1.1.zip
+<a name="rest_code_c1b973422d7e4063bc59f0a8b1f6aba5-4"></a>wget https://download.elastic.co/beats/topbeat/topbeat-1.0.1-x86_64.tar.gz
+<a name="rest_code_c1b973422d7e4063bc59f0a8b1f6aba5-5"></a>wget https://download.elastic.co/kibana/kibana/kibana-4.3.1-linux-x64.tar.gz
+<a name="rest_code_c1b973422d7e4063bc59f0a8b1f6aba5-6"></a>
+<a name="rest_code_c1b973422d7e4063bc59f0a8b1f6aba5-7"></a>git clone https://github.com/elastic/beats-dashboards.git
 </pre>
 </div>
 <div class="section" id="elasticsearch">
@@ -146,16 +146,16 @@ article: https://ogp.me/ns/article#
 <p>Será el cerebro de nuestra estructura, y por ello irá en el servidor.</p>
 <p>Para desplegarla, basta con descargarnos el <em>zip</em>, editar la configuración y lanzar.</p>
 <p>La configuración básica que necesitaremos será la siguiente (archivo <tt class="docutils literal">config/elasticsearch.yml</tt>):</p>
-<pre class="code yaml"><a name="rest_code_fbfaf6890a024294ab3277ac36f77a76-1"></a><span class="l-Scalar-Plain">network.host</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">123.123.123.123</span>
+<pre class="code yaml"><a name="rest_code_9b80e44ad5a34bd1ba8dc00a0d4ea0aa-1"></a><span class="nt">network.host</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">123.123.123.123</span>
 </pre>
 <p>Sí, es la IP externa del servidor. Por defecto sólo escucharía en localhost y no podríamos conectar <a class="reference external" href="https://www.elastic.co/products/beats/topbeat">TopBeat</a> externos.
 Si queremos montra varios en <em>cluster</em>, además tendríamos que modificar:</p>
-<pre class="code yaml"><a name="rest_code_21b1f575bb1c4a259ea423a7bdb0430a-1"></a><span class="l-Scalar-Plain">discovery.zen.ping.unicast.hosts</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">"host1"</span><span class="p-Indicator">,</span> <span class="s">"host2"</span><span class="p-Indicator">]</span>
+<pre class="code yaml"><a name="rest_code_b2d71e7460bb4f7e8373ba5604d50312-1"></a><span class="nt">discovery.zen.ping.unicast.hosts</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">"host1"</span><span class="p p-Indicator">,</span> <span class="s">"host2"</span><span class="p p-Indicator">]</span>
 </pre>
 <p>Evidentemente, con la lista de hosts que forman el <em>cluster</em>.</p>
 <p>Echad un ojo al resto de la configuración si queréis añadir seguridad o algo.</p>
 <p>A continuación lo lanzamos:</p>
-<pre class="code text"><a name="rest_code_4e6cb5e167d544dea795c7264989cea7-1"></a>$ bin/elasticsearch
+<pre class="code text"><a name="rest_code_0d2a43a0ff0c4a4baba0a407562deb65-1"></a>$ bin/elasticsearch
 </pre>
 <p>Y se quedará ejecutando en esa ventana. Elegirá un nombre aleatorio de algún villano de Marvel y escuchará en el puerto 9200.</p>
 </div>
@@ -165,14 +165,14 @@ Si queremos montra varios en <em>cluster</em>, además tendríamos que modificar
 <p>Si <a class="reference external" href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a> es el cerebro, <a class="reference external" href="https://www.elastic.co/products/beats/topbeat">TopBeat</a> son los nervios. <a class="reference external" href="https://www.elastic.co/products/beats/topbeat">TopBeat</a> es un programa que consume muy pocos recursos, pensado para alterar lo mínimo posible la máquina en la que se ejecuta.</p>
 <p>El procedimiento de instalación es similar: descargar el zip, configurar y lanzar. En este caso, instalaremos en la máquina remota que queremos monitorizar.</p>
 <p>La configuración es un archivo <strong>yaml</strong> que se suele encontrar en <tt class="docutils literal">/etc/topbeat/topbeat.yml</tt>, aunque podemos cambiar la ubicación, como haremos. Dejad la configuración como está y cambiad sólo lo siguiente:</p>
-<pre class="code yaml"><a name="rest_code_dba32f1c178c44c4a43e9d19f95a311d-1"></a><span class="l-Scalar-Plain">output</span><span class="p-Indicator">:</span>
-<a name="rest_code_dba32f1c178c44c4a43e9d19f95a311d-2"></a>    <span class="l-Scalar-Plain">elasticsearch</span><span class="p-Indicator">:</span>
-<a name="rest_code_dba32f1c178c44c4a43e9d19f95a311d-3"></a>        <span class="l-Scalar-Plain">hosts</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">"whatever:9200"</span><span class="p-Indicator">]</span>
+<pre class="code yaml"><a name="rest_code_dabf0b4db4d24562a182d2a21b951165-1"></a><span class="nt">output</span><span class="p">:</span>
+<a name="rest_code_dabf0b4db4d24562a182d2a21b951165-2"></a>    <span class="nt">elasticsearch</span><span class="p">:</span>
+<a name="rest_code_dabf0b4db4d24562a182d2a21b951165-3"></a>        <span class="nt">hosts</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="s">"whatever:9200"</span><span class="p p-Indicator">]</span>
 </pre>
 <p>Evidentemente, la variable <tt class="docutils literal">output.elasticsearch.hosts</tt> contiene la lista de nodos que forman el <em>cluster</em>. Si estáis usando sólo uno, pues ponded ése (si usasteis la IP externa, debeis usar la misma; si elegisteis <tt class="docutils literal">localhost</tt>, pues <tt class="docutils literal">localhost</tt>).</p>
 <p>Y lanzar:</p>
-<pre class="code text"><a name="rest_code_49530b86aa0944fba838f04f7ca9acaf-1"></a>$ ./topbeat -c topbeat.yml # usando el archivo de configuración local
-<a name="rest_code_49530b86aa0944fba838f04f7ca9acaf-2"></a>$ ./topbeat   # usando el archivo de configuración por defecto
+<pre class="code text"><a name="rest_code_46346f9790114be1b12c1a4869e5b3fa-1"></a>$ ./topbeat -c topbeat.yml # usando el archivo de configuración local
+<a name="rest_code_46346f9790114be1b12c1a4869e5b3fa-2"></a>$ ./topbeat   # usando el archivo de configuración por defecto
 </pre>
 <p>Y nuestro sistema de monitorización está terminado. Repetid la instalación de <a class="reference external" href="https://www.elastic.co/products/beats/topbeat">TopBeat</a> en todos los nodos que queráis.</p>
 <div class="section" id="que-estamos-monitorizando">
@@ -192,13 +192,13 @@ Si queremos montra varios en <em>cluster</em>, además tendríamos que modificar
 <p>Podríamos decir que <a class="reference external" href="https://www.elastic.co/products/kibana">Kibana</a> es la piel de nuestro sistema.</p>
 <p>El procedimiento es el mismo: descargar, configurar y lanzar.</p>
 <p>La configuración mínima vuelve a ser indicar el host en el que está <a class="reference external" href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a>, y se encuentra en el directorio relativo <tt class="docutils literal">config/kibana.yml</tt>:</p>
-<pre class="code yaml"><a name="rest_code_a25c70b655664412923a45ecb6c297d4-1"></a><span class="l-Scalar-Plain">server.host</span><span class="p-Indicator">:</span> <span class="s">"0.0.0.0"</span>
-<a name="rest_code_a25c70b655664412923a45ecb6c297d4-2"></a><span class="l-Scalar-Plain">elasticsearch.url</span><span class="p-Indicator">:</span> <span class="s">"http://123.123.123.123:9200"</span>
-<a name="rest_code_a25c70b655664412923a45ecb6c297d4-3"></a><span class="l-Scalar-Plain">kibana.index</span><span class="p-Indicator">:</span> <span class="s">".kibana"</span>
+<pre class="code yaml"><a name="rest_code_35333981d5d3465a9ed2d2082550caa5-1"></a><span class="nt">server.host</span><span class="p">:</span> <span class="s">"0.0.0.0"</span>
+<a name="rest_code_35333981d5d3465a9ed2d2082550caa5-2"></a><span class="nt">elasticsearch.url</span><span class="p">:</span> <span class="s">"http://123.123.123.123:9200"</span>
+<a name="rest_code_35333981d5d3465a9ed2d2082550caa5-3"></a><span class="nt">kibana.index</span><span class="p">:</span> <span class="s">".kibana"</span>
 </pre>
 <p>En este caso sólo se atacará una instancia de <a class="reference external" href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a>, y tendremos que indicar también dónde escucha el propio <a class="reference external" href="https://www.elastic.co/products/kibana">Kibana</a>. Además hay que indicar un nombre para sus índices.</p>
 <p>A continuación lanzamos:</p>
-<pre class="code text"><a name="rest_code_c31bc32291e54e5cb45900720b8fa924-1"></a>$ ./bin/kibana
+<pre class="code text"><a name="rest_code_eeb6aa0ff5a54709a03ddef2fbbe5f1d-1"></a>$ ./bin/kibana
 </pre>
 <p>Y ya tendremos <a class="reference external" href="https://www.elastic.co/products/kibana">Kibana</a> disponible en el puerto 5601. Cuando entréis hará un <strong>auto-check</strong> para comprobar que está todo bien y os preguntará un índice por defecto. Cualquiera está bien, pero yo pondría <tt class="docutils literal"><span class="pre">topbeat-*</span></tt> o simplemente <tt class="docutils literal">*</tt>. Si hacéis esto, al crear el índice veréis que tiene un montón de datos.</p>
 <p>Sin embargo, crear los paneles para <a class="reference external" href="https://www.elastic.co/products/beats/topbeat">TopBeat</a> puede ser insufrible, así que vamos a hacerlo de forma automática:</p>
@@ -206,9 +206,9 @@ Si queremos montra varios en <em>cluster</em>, además tendríamos que modificar
 <h3>Creando los Dashboards</h3>
 <p>Hay un proyecto que guarda los <em>dashboards a mostrar</em>: <a class="reference external" href="https://github.com/elastic/beats-dashboards">Beats Dashboard</a>.</p>
 <p>No tiene pérdida: descargar y ejecutar:</p>
-<pre class="code text"><a name="rest_code_28e2687acb804ae184689a2cde99af75-1"></a>$ git clone https://github.com/elastic/beats-dashboards.git
-<a name="rest_code_28e2687acb804ae184689a2cde99af75-2"></a>$ cd beats-dashboards
-<a name="rest_code_28e2687acb804ae184689a2cde99af75-3"></a>$ ./load.sh -l http://123.123.123.123:9200
+<pre class="code text"><a name="rest_code_4583ef25940145d5bd8abb24d919455d-1"></a>$ git clone https://github.com/elastic/beats-dashboards.git
+<a name="rest_code_4583ef25940145d5bd8abb24d919455d-2"></a>$ cd beats-dashboards
+<a name="rest_code_4583ef25940145d5bd8abb24d919455d-3"></a>$ ./load.sh -l http://123.123.123.123:9200
 </pre>
 <p>Si no indicáis URL, usará <tt class="docutils literal">localhost</tt>. Ojo, porque es la URL de un nodo del <em>cluster</em> de <a class="reference external" href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a>.</p>
 <p>Ahora podéis pulsar la pestaña <tt class="docutils literal">Dashboard</tt> de la web de <a class="reference external" href="https://www.elastic.co/products/kibana">Kibana</a> y a la derecha, arriba, tendréis un pequeño panel de control. Seleccionad <tt class="docutils literal">Load Saved Dashboard</tt> y a continuación cualquiera de ellos.</p>

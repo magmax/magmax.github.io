@@ -7,7 +7,7 @@ article: https://ogp.me/ns/article#
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Tablas GTK: realizar una acción al cambiar la selección | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,8 +18,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/tablas-gtk-cambio-seleccion/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/drupal-no-muestra-comentarios/" title="Drupal no me muestra los comentarios" type="text/html">
 <link rel="next" href="/blog/hibernate-netbeans/" title="Hibernate con Netbeans" type="text/html">
@@ -130,14 +130,14 @@ Tengo la típica tabla con los botones de añadir, editar y eliminar. Quiero que
 <p>¿Es un error de GTK?</p>
 <p>Yo creo que no. Realmente lo que ocurre es que nos estamos perdiendo señales que necesitamos. Por ello, lo mejor es olvidarnos del <code>TreeView</code> y atacar directamente a la fuente del problema: el <code>TreeSelection</code>.</p>
 <p>Podemos obtener el <code>TreeSelection</code> de manera sencilla, y conectarlo con un evento. En Python, queda así:</p>
-<pre class="code literal-block"><span class="n">treeview</span><span class="o">.</span><span class="n">get_selection</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span> <span class="p">(</span> <span class="s">"changed"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_selection_changed</span><span class="p">)</span>
+<pre class="code literal-block"><span></span><span class="n">treeview</span><span class="o">.</span><span class="n">get_selection</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span> <span class="p">(</span> <span class="s2">"changed"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_selection_changed</span><span class="p">)</span>
 </pre>
 
 
 <p>Ahora, en la función de selección sólo tenemos que comprobar cuándo se tiene que activar:</p>
-<pre class="code literal-block"><span class="k">def</span> <span class="nf">on_selection_changed</span> <span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">selection</span> <span class="p">):</span>
-        <span class="n">editbutton</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="o">.</span><span class="n">get_widget</span> <span class="p">(</span> <span class="s">"buttonEdit"</span> <span class="p">)</span>
-        <span class="n">delbutton</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="o">.</span><span class="n">get_widget</span> <span class="p">(</span> <span class="s">"buttonDel"</span> <span class="p">)</span>
+<pre class="code literal-block"><span></span><span class="k">def</span> <span class="nf">on_selection_changed</span> <span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">selection</span> <span class="p">):</span>
+        <span class="n">editbutton</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="o">.</span><span class="n">get_widget</span> <span class="p">(</span> <span class="s2">"buttonEdit"</span> <span class="p">)</span>
+        <span class="n">delbutton</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xml</span><span class="o">.</span><span class="n">get_widget</span> <span class="p">(</span> <span class="s2">"buttonDel"</span> <span class="p">)</span>
         <span class="n">activate</span> <span class="o">=</span> <span class="n">selection</span><span class="o">.</span><span class="n">count_selected_rows</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span>
         <span class="n">editbutton</span><span class="o">.</span><span class="n">set_sensitive</span> <span class="p">(</span> <span class="n">activate</span> <span class="p">)</span>
         <span class="n">delbutton</span><span class="o">.</span><span class="n">set_sensitive</span> <span class="p">(</span> <span class="n">activate</span> <span class="p">)</span>

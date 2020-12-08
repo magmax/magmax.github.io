@@ -7,7 +7,7 @@ article: https://ogp.me/ns/article#
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Java Swing: Cerrando un Dialog. | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,8 +18,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/swing-cerrar-dialog/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/pasos-django/" title="Pasos para crear un proyecto en Django" type="text/html">
 <link rel="next" href="/blog/python-pruebas-5/" title="Python: Cómo hacer pruebas 5: freshen" type="text/html">
@@ -126,8 +126,8 @@ article: https://ogp.me/ns/article#
 <div class="section" id="paso-1-ocultarlo">
 <h2>Paso 1: ocultarlo</h2>
 <p>Hasta ahora siempre había realizado la siguiente acción:</p>
-<pre class="code java"><a name="rest_code_f1f7b94d21814567a122acaa726bb3be-1"></a><span class="k">this</span><span class="o">.</span><span class="na">setVisible</span><span class="o">(</span><span class="n">False</span><span class="o">);</span>
-<a name="rest_code_f1f7b94d21814567a122acaa726bb3be-2"></a><span class="k">this</span><span class="o">.</span><span class="na">dispose</span><span class="o">();</span>
+<pre class="code java"><a name="rest_code_ad5aa495d1f5441396024ef6fc87762f-1"></a><span class="k">this</span><span class="p">.</span><span class="na">setVisible</span><span class="p">(</span><span class="n">False</span><span class="p">);</span>
+<a name="rest_code_ad5aa495d1f5441396024ef6fc87762f-2"></a><span class="k">this</span><span class="p">.</span><span class="na">dispose</span><span class="p">();</span>
 </pre>
 <p>Esta manera está esencialmente bien, pero... Hay un problema. Es posible que el botón que estamos creando se comporte de forma distinta a la X de la ventana, ya que:</p>
 <ul class="simple">
@@ -139,7 +139,7 @@ article: https://ogp.me/ns/article#
 <div class="section" id="forma-correcta">
 <h2>Forma correcta</h2>
 <p>Así que parece que cerrar la ventana a lo bestia no es el <em>camino Zen</em> más adecuado. Tras mucho buscar, encontré esto:</p>
-<pre class="code java"><a name="rest_code_f0208bc8bfda4e69a0af5c45c8d913da-1"></a><span class="k">this</span><span class="o">.</span><span class="na">processWindowEvent</span><span class="o">(</span><span class="k">new</span> <span class="n">WindowEvent</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">WindowEvent</span><span class="o">.</span><span class="na">WINDOW_CLOSING</span><span class="o">));</span>
+<pre class="code java"><a name="rest_code_741052219dc442d0ae3dc09ad3b470ff-1"></a><span class="k">this</span><span class="p">.</span><span class="na">processWindowEvent</span><span class="p">(</span><span class="k">new</span> <span class="n">WindowEvent</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="n">WindowEvent</span><span class="p">.</span><span class="na">WINDOW_CLOSING</span><span class="p">));</span>
 </pre>
 <p>Lo que se hace así es solicitar que se ejecuten los eventos de cerrar la ventana, lo que desencadenará los eventos que deba desencadenar, y provocará que se ejecute la acción por defecto en la ventana, de manera que se comporte igual que la "X" de la ventana.</p>
 <p>Como, personalmente, lo veo horrible y poco intuitivo, suelo encapsularlo en la función "<em>fireCloseWindow</em>", aunque no me termina de convencer el nombre. Dice mucho de lo que hace (lanzar un evento). ¿Sería mejor un simple "<em>closeWindow</em>"? Quizá.</p>

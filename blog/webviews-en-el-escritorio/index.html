@@ -8,7 +8,7 @@ article: https://ogp.me/ns/article#
 <meta name="description" content="Veremos cómo aplicar WebViews en aplicaciones de escritorio">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>WebViews en el escritorio | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -19,8 +19,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/webviews-en-el-escritorio/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="description" itemprop="description" content="Veremos cómo aplicar WebViews en aplicaciones de escritorio">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/micro-web-framework-en-python/" title="Micro-framework web en Python" type="text/html">
@@ -129,7 +129,7 @@ article: https://ogp.me/ns/article#
 
 <h2 id="la-idea">La idea</h2>
 <p>El diseño es sencillo: Necesitamos al menos dos hilos, uno para gestionar el servidor web y otro para la interfaz. Dado que la interfaz debe estar en el hilo principal por necesidades de <a href="http://www.gtk.org/">GTK</a>, es lógico pensar que lo fácil es lanzar el servidor web en segundo plano. Por eso aquí está el código principal, que es lo más importante de todo:</p>
-<pre class="code literal-block"><span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="n">ignorable</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<pre class="code literal-block"><span></span><span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="n">ignorable</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">gtk</span><span class="o">.</span><span class="n">main_quit</span><span class="p">()</span>
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -139,14 +139,14 @@ article: https://ogp.me/ns/article#
     <span class="n">web</span> <span class="o">=</span> <span class="n">WebServer</span><span class="p">()</span>
     <span class="n">web</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
-    <span class="n">uri</span> <span class="o">=</span> <span class="s">'http://localhost:{}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">web</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
-    <span class="k">print</span> <span class="s">'serving at'</span><span class="p">,</span> <span class="n">web</span><span class="o">.</span><span class="n">port</span>
-    <span class="k">print</span> <span class="s">'connecting to '</span><span class="p">,</span> <span class="n">uri</span>
+    <span class="n">uri</span> <span class="o">=</span> <span class="s1">'http://localhost:</span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">web</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+    <span class="nb">print</span> <span class="s1">'serving at'</span><span class="p">,</span> <span class="n">web</span><span class="o">.</span><span class="n">port</span>
+    <span class="nb">print</span> <span class="s1">'connecting to '</span><span class="p">,</span> <span class="n">uri</span>
     <span class="n">run_gui</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
 
     <span class="n">gtk</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </pre>
 
@@ -155,7 +155,7 @@ article: https://ogp.me/ns/article#
 <p>A partir de este punto tendremos dos aplicaciones: El servidor web y la GUI, comunicándose por HTTP.</p>
 <h3 id="el-servidor-web">El servidor web</h3>
 <p>El servidor web está basado en el <a href="/blog/micro-web-framework-en-python">micro-framework web</a> que ya comenté:</p>
-<pre class="code literal-block"><span class="kn">import</span> <span class="nn">sys</span>
+<pre class="code literal-block"><span></span><span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">httplib</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
@@ -167,7 +167,7 @@ article: https://ogp.me/ns/article#
 
 
 <span class="k">class</span> <span class="nc">Handler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">request</span> <span class="o">=</span> <span class="n">request</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">write</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">write</span>
@@ -177,8 +177,8 @@ article: https://ogp.me/ns/article#
         <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="n">httplib</span><span class="o">.</span><span class="n">OK</span><span class="p">)</span>
         <span class="n">encoding</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getfilesystemencoding</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s">"Content-type"</span><span class="p">,</span> <span class="s">"text/html; charset=</span><span class="si">%s</span><span class="s">"</span> <span class="o">%</span> <span class="n">encoding</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s">"Content-Length"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">length</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s2">"Content-type"</span><span class="p">,</span> <span class="s2">"text/html; charset=</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">encoding</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s2">"Content-Length"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">length</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">end_headers</span><span class="p">()</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">wfile</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -190,26 +190,26 @@ article: https://ogp.me/ns/article#
 <span class="k">class</span> <span class="nc">MainHandler</span><span class="p">(</span><span class="n">Handler</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="s">'&lt;html&gt;'</span>
-            <span class="s">'  &lt;body&gt;'</span>
-            <span class="s">'    &lt;form action="/greet" method="GET"&gt;'</span>
-            <span class="s">'      &lt;input name="name" placeholder="Your name"/&gt;'</span>
-            <span class="s">'      &lt;input type="submit" value="Greet"/&gt;'</span>
-            <span class="s">'    &lt;/form&gt;'</span>
-            <span class="s">'  &lt;/body&gt;'</span>
-            <span class="s">'&lt;/html&gt;'</span>
+            <span class="s1">'&lt;html&gt;'</span>
+            <span class="s1">'  &lt;body&gt;'</span>
+            <span class="s1">'    &lt;form action="/greet" method="GET"&gt;'</span>
+            <span class="s1">'      &lt;input name="name" placeholder="Your name"/&gt;'</span>
+            <span class="s1">'      &lt;input type="submit" value="Greet"/&gt;'</span>
+            <span class="s1">'    &lt;/form&gt;'</span>
+            <span class="s1">'  &lt;/body&gt;'</span>
+            <span class="s1">'&lt;/html&gt;'</span>
         <span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">GreetingsHandler</span><span class="p">(</span><span class="n">Handler</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">'&lt;h1&gt;Cheers, {name[0]}!&lt;/h1&gt;&lt;br/&gt;&lt;br/&gt;&lt;a href="/"&gt;Go back&lt;/a&gt;'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'&lt;h1&gt;Cheers, </span><span class="si">{name[0]}</span><span class="s1">!&lt;/h1&gt;&lt;br/&gt;&lt;br/&gt;&lt;a href="/"&gt;Go back&lt;/a&gt;'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
 
 <span class="k">class</span> <span class="nc">HTTPRequestHandler</span><span class="p">(</span><span class="n">BaseHTTPRequestHandler</span><span class="p">):</span>
     <span class="n">HANDLERS</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">'/greet'</span><span class="p">),</span> <span class="n">GreetingsHandler</span><span class="p">),</span>
-        <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">'/'</span><span class="p">),</span> <span class="n">MainHandler</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">'/greet'</span><span class="p">),</span> <span class="n">GreetingsHandler</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">'/'</span><span class="p">),</span> <span class="n">MainHandler</span><span class="p">),</span>
         <span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">do_GET</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -218,7 +218,7 @@ article: https://ogp.me/ns/article#
         <span class="k">for</span> <span class="n">regex</span><span class="p">,</span> <span class="n">clazz</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">HANDLERS</span><span class="p">:</span>
             <span class="n">m</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
-                <span class="n">params</span> <span class="o">=</span> <span class="n">parse_qs</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="n">parse_qs</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
                 <span class="n">handler</span> <span class="o">=</span> <span class="n">clazz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
                 <span class="n">handler</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
@@ -227,8 +227,8 @@ article: https://ogp.me/ns/article#
 
 
 <span class="k">class</span> <span class="nc">WebServer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">address</span> <span class="o">=</span> <span class="p">(</span><span class="s">''</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="p">(</span><span class="s1">''</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_httpd</span> <span class="o">=</span> <span class="n">HTTPServer</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">HTTPRequestHandler</span><span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -252,17 +252,17 @@ article: https://ogp.me/ns/article#
 <p>El HTML que se muestra es muy cutre... Perdonad, pero no quería ensuciar el código con más HTML y he pretendido que se parezca lo máximo posible al del artículo <a href="/blog/micro-web-framework-en-python">micro-framework web</a>.</p>
 <h3 id="la-gui">La GUI</h3>
 <p>Ahora vamos con la interfaz gráfica. Uno de los problemas aquí es ver qué motor se va a usar. Podemos elegir <a href="http://es.wikipedia.org/wiki/Gecko_(motor_de_renderizado)" title="Motor de renderizado Gecko, de Mozilla">Gecko</a> o bien <a href="http://es.wikipedia.org/wiki/WebKit" title="Motor de renderizado WebKit">WebKit</a>. La mejor opción es soportar ambos:</p>
-<pre class="code literal-block"><span class="k">try</span><span class="p">:</span>
+<pre class="code literal-block"><span></span><span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">webkit</span>
 <span class="k">except</span><span class="p">:</span>
-    <span class="n">webkit</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">webkit</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">gtkmozembed</span> <span class="kn">as</span> <span class="nn">gecko</span>
+    <span class="kn">import</span> <span class="nn">gtkmozembed</span> <span class="k">as</span> <span class="nn">gecko</span>
 <span class="k">except</span><span class="p">:</span>
-    <span class="n">gecko</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">gecko</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="k">if</span> <span class="ow">not</span> <span class="n">webkit</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">gecko</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">'Failed to load both webkit and gecko modules'</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'Failed to load both webkit and gecko modules'</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">WebKitDriver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -281,17 +281,17 @@ article: https://ogp.me/ns/article#
         <span class="n">browser</span><span class="o">.</span><span class="n">load_url</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">run_gui</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">run_gui</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="n">window</span> <span class="o">=</span> <span class="n">gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
     <span class="n">driver</span> <span class="o">=</span> <span class="n">WebKitDriver</span><span class="p">()</span> <span class="k">if</span> <span class="n">webkit</span> <span class="k">else</span> <span class="n">GeckoDriver</span><span class="p">()</span>
     <span class="n">browser</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">create_browser</span><span class="p">()</span>
 
-    <span class="n">box</span> <span class="o">=</span> <span class="n">gtk</span><span class="o">.</span><span class="n">VBox</span><span class="p">(</span><span class="n">homogeneous</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">gtk</span><span class="o">.</span><span class="n">VBox</span><span class="p">(</span><span class="n">homogeneous</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">window</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
 
-    <span class="n">box</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">box</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-    <span class="n">window</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">'destroy'</span><span class="p">,</span> <span class="n">finish</span><span class="p">)</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">'destroy'</span><span class="p">,</span> <span class="n">finish</span><span class="p">)</span>
     <span class="n">window</span><span class="o">.</span><span class="n">set_default_size</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">)</span>
     <span class="n">window</span><span class="o">.</span><span class="n">show_all</span><span class="p">()</span>
 
@@ -305,9 +305,9 @@ article: https://ogp.me/ns/article#
 <h2 id="todo-el-codigo">Todo el código</h2>
 <p>Ale, aquí tenéis el código todo junto. Yo lo dividiría en, al menos, 2 archivos, pero lo he puesto junto para que os sea más sencillo probarlo si queréis. De todas maneras he puesto comentarios donde yo dividiría, separando también los <code>imports</code>.</p>
 <p>Necesitaréis el paquete debian <a href="http://packages.debian.org/es/squeeze/python-webkit" title="Versión actual de python-webkit en Debian stable">python-webkit</a>, por ejemplo, así como <a href="http://packages.debian.org/es/squeeze/python-gtk2" title="Versión actual de python-gtk2 en Debian stable">python-gtk2</a>:</p>
-<pre class="code literal-block"><span class="c">#!/usr/bin/env python</span>
+<pre class="code literal-block"><span></span><span class="ch">#!/usr/bin/env python</span>
 
-<span class="c"># file webserver.py</span>
+<span class="c1"># file webserver.py</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">httplib</span>
@@ -320,7 +320,7 @@ article: https://ogp.me/ns/article#
 
 
 <span class="k">class</span> <span class="nc">Handler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">request</span> <span class="o">=</span> <span class="n">request</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">write</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">write</span>
@@ -330,8 +330,8 @@ article: https://ogp.me/ns/article#
         <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">send_response</span><span class="p">(</span><span class="n">httplib</span><span class="o">.</span><span class="n">OK</span><span class="p">)</span>
         <span class="n">encoding</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getfilesystemencoding</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s">"Content-type"</span><span class="p">,</span> <span class="s">"text/html; charset=</span><span class="si">%s</span><span class="s">"</span> <span class="o">%</span> <span class="n">encoding</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s">"Content-Length"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">length</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s2">"Content-type"</span><span class="p">,</span> <span class="s2">"text/html; charset=</span><span class="si">%s</span><span class="s2">"</span> <span class="o">%</span> <span class="n">encoding</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">send_header</span><span class="p">(</span><span class="s2">"Content-Length"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">length</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">end_headers</span><span class="p">()</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">wfile</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -343,26 +343,26 @@ article: https://ogp.me/ns/article#
 <span class="k">class</span> <span class="nc">MainHandler</span><span class="p">(</span><span class="n">Handler</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-            <span class="s">'&lt;html&gt;'</span>
-            <span class="s">'  &lt;body&gt;'</span>
-            <span class="s">'    &lt;form action="/greet" method="GET"&gt;'</span>
-            <span class="s">'      &lt;input name="name" placeholder="Your name"/&gt;'</span>
-            <span class="s">'      &lt;input type="submit" value="Greet"/&gt;'</span>
-            <span class="s">'    &lt;/form&gt;'</span>
-            <span class="s">'  &lt;/body&gt;'</span>
-            <span class="s">'&lt;/html&gt;'</span>
+            <span class="s1">'&lt;html&gt;'</span>
+            <span class="s1">'  &lt;body&gt;'</span>
+            <span class="s1">'    &lt;form action="/greet" method="GET"&gt;'</span>
+            <span class="s1">'      &lt;input name="name" placeholder="Your name"/&gt;'</span>
+            <span class="s1">'      &lt;input type="submit" value="Greet"/&gt;'</span>
+            <span class="s1">'    &lt;/form&gt;'</span>
+            <span class="s1">'  &lt;/body&gt;'</span>
+            <span class="s1">'&lt;/html&gt;'</span>
         <span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">GreetingsHandler</span><span class="p">(</span><span class="n">Handler</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">'&lt;h1&gt;Cheers, {name[0]}!&lt;/h1&gt;&lt;br/&gt;&lt;br/&gt;&lt;a href="/"&gt;Go back&lt;/a&gt;'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">'&lt;h1&gt;Cheers, </span><span class="si">{name[0]}</span><span class="s1">!&lt;/h1&gt;&lt;br/&gt;&lt;br/&gt;&lt;a href="/"&gt;Go back&lt;/a&gt;'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
 
 <span class="k">class</span> <span class="nc">HTTPRequestHandler</span><span class="p">(</span><span class="n">BaseHTTPRequestHandler</span><span class="p">):</span>
     <span class="n">HANDLERS</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">'/greet'</span><span class="p">),</span> <span class="n">GreetingsHandler</span><span class="p">),</span>
-        <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">'/'</span><span class="p">),</span> <span class="n">MainHandler</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">'/greet'</span><span class="p">),</span> <span class="n">GreetingsHandler</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s1">'/'</span><span class="p">),</span> <span class="n">MainHandler</span><span class="p">),</span>
         <span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">do_GET</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -371,7 +371,7 @@ article: https://ogp.me/ns/article#
         <span class="k">for</span> <span class="n">regex</span><span class="p">,</span> <span class="n">clazz</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">HANDLERS</span><span class="p">:</span>
             <span class="n">m</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
-                <span class="n">params</span> <span class="o">=</span> <span class="n">parse_qs</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="n">parse_qs</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
                 <span class="n">handler</span> <span class="o">=</span> <span class="n">clazz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
                 <span class="n">handler</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
@@ -380,8 +380,8 @@ article: https://ogp.me/ns/article#
 
 
 <span class="k">class</span> <span class="nc">WebServer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">address</span> <span class="o">=</span> <span class="p">(</span><span class="s">''</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">address</span> <span class="o">=</span> <span class="p">(</span><span class="s1">''</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_httpd</span> <span class="o">=</span> <span class="n">HTTPServer</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">HTTPRequestHandler</span><span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -395,7 +395,7 @@ article: https://ogp.me/ns/article#
         <span class="bp">self</span><span class="o">.</span><span class="n">_httpd</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">()</span>
 
 
-<span class="c"># File gui.py</span>
+<span class="c1"># File gui.py</span>
 <span class="kn">import</span> <span class="nn">signal</span>
 <span class="kn">import</span> <span class="nn">gtk</span>
 <span class="kn">from</span> <span class="nn">webserver</span> <span class="kn">import</span> <span class="n">WebServer</span>
@@ -403,14 +403,14 @@ article: https://ogp.me/ns/article#
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">webkit</span>
 <span class="k">except</span><span class="p">:</span>
-    <span class="n">webkit</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">webkit</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">gtkmozembed</span> <span class="kn">as</span> <span class="nn">gecko</span>
+    <span class="kn">import</span> <span class="nn">gtkmozembed</span> <span class="k">as</span> <span class="nn">gecko</span>
 <span class="k">except</span><span class="p">:</span>
-    <span class="n">gecko</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">gecko</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="k">if</span> <span class="ow">not</span> <span class="n">webkit</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">gecko</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">'Failed to load both webkit and gecko modules'</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">'Failed to load both webkit and gecko modules'</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">WebKitDriver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -429,24 +429,24 @@ article: https://ogp.me/ns/article#
         <span class="n">browser</span><span class="o">.</span><span class="n">load_url</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">run_gui</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">run_gui</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="n">window</span> <span class="o">=</span> <span class="n">gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
     <span class="n">driver</span> <span class="o">=</span> <span class="n">WebKitDriver</span><span class="p">()</span> <span class="k">if</span> <span class="n">webkit</span> <span class="k">else</span> <span class="n">GeckoDriver</span><span class="p">()</span>
     <span class="n">browser</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">create_browser</span><span class="p">()</span>
 
-    <span class="n">box</span> <span class="o">=</span> <span class="n">gtk</span><span class="o">.</span><span class="n">VBox</span><span class="p">(</span><span class="n">homogeneous</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">gtk</span><span class="o">.</span><span class="n">VBox</span><span class="p">(</span><span class="n">homogeneous</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">window</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
 
-    <span class="n">box</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">box</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-    <span class="n">window</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">'destroy'</span><span class="p">,</span> <span class="n">finish</span><span class="p">)</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">'destroy'</span><span class="p">,</span> <span class="n">finish</span><span class="p">)</span>
     <span class="n">window</span><span class="o">.</span><span class="n">set_default_size</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">)</span>
     <span class="n">window</span><span class="o">.</span><span class="n">show_all</span><span class="p">()</span>
 
     <span class="n">driver</span><span class="o">.</span><span class="n">open_uri</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">uri</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="n">ignorable</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="n">ignorable</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">gtk</span><span class="o">.</span><span class="n">main_quit</span><span class="p">()</span>
 
 
@@ -457,15 +457,15 @@ article: https://ogp.me/ns/article#
     <span class="n">web</span> <span class="o">=</span> <span class="n">WebServer</span><span class="p">()</span>
     <span class="n">web</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
-    <span class="n">uri</span> <span class="o">=</span> <span class="s">'http://localhost:{}'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">web</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
-    <span class="k">print</span> <span class="s">'serving at'</span><span class="p">,</span> <span class="n">web</span><span class="o">.</span><span class="n">port</span>
-    <span class="k">print</span> <span class="s">'connecting to '</span><span class="p">,</span> <span class="n">uri</span>
+    <span class="n">uri</span> <span class="o">=</span> <span class="s1">'http://localhost:</span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">web</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+    <span class="nb">print</span> <span class="s1">'serving at'</span><span class="p">,</span> <span class="n">web</span><span class="o">.</span><span class="n">port</span>
+    <span class="nb">print</span> <span class="s1">'connecting to '</span><span class="p">,</span> <span class="n">uri</span>
     <span class="n">run_gui</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
 
     <span class="n">gtk</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
 
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </pre>
 

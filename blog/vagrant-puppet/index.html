@@ -7,7 +7,7 @@ article: https://ogp.me/ns/article#
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Vagrant y Puppet | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,8 +18,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/vagrant-puppet/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/python-curses/" title="Python curses" type="text/html">
 <link rel="next" href="/blog/python-compiler-internals/" title="El compilador de Python desde dentro" type="text/html">
@@ -136,18 +136,18 @@ article: https://ogp.me/ns/article#
 <p><a class="reference internal" href="/blog/vagrant-puppet/#id1">Vagrant</a>  no es más que una interfaz a VirtualBox, pero que nos hace la vida más fácil.</p>
 <p>Así que vamos a usar Vagrant. Llegada a esta conclusión, tendríamos dos opciones: instalar una máquina virtual desde cero o coger una ya instalada y partir de ahí. Si optáramos por la primera opción, tendríamos que ver <a class="reference internal" href="/blog/vagrant-puppet/#veewee">VeeWee</a> ; como este artículo va de Puppet, vamos a optar por la segunda opción.</p>
 <p>Lo primero: vamos a instalarnos Vagrant:</p>
-<pre class="code bash"><a name="rest_code_6c828b13d75e4d3dbc1917a2f604f73d-1"></a><span class="nv">$ </span>sudo gem install vagrant
+<pre class="code bash"><a name="rest_code_b026341d65ea4656ba1a7eabd12976d3-1"></a>$ sudo gem install vagrant
 </pre>
 <p>Sí, es Ruby.</p>
 <p>Tras pelearme con algunas máquinas virtuales públicas, algunos reinicios y demás, os recomiendo que utilicéis la siguiente:</p>
-<pre class="code text"><a name="rest_code_0e2cc12f684d455aa78ae858ab58490a-1"></a>$ vagrant box add squeeze32 http://mathie-vagrant-boxes.s3.amazonaws.com/debian_squeeze_32.box
+<pre class="code text"><a name="rest_code_6e54662b7d3748d8811075b488136c23-1"></a>$ vagrant box add squeeze32 http://mathie-vagrant-boxes.s3.amazonaws.com/debian_squeeze_32.box
 </pre>
 <p>Eso tardará un poco, ya que tiene que descargarse 4Gb. Os recomiendo que <em>no</em> utilicéis la wifi. Básicamente, nos descargamos la imagen y la llamamos <em>squeeze32</em>. Eso es importante para referirnos a ella desde el <em>Vagrantfile</em>.</p>
 <p>Mientras se descarga, vamos a crearnos una carpeta en alguna parte y a ir configurando Vagrant. El archivo de configuración que yo utilizo tiene el siguiente aspecto (debe llamarse <em>Vagrantfile</em>):</p>
-<pre class="code ruby"><a name="rest_code_67d564ff4d8a4626adc506f7d02b199b-1"></a><span class="c1"># file: Vagrantfile</span>
-<a name="rest_code_67d564ff4d8a4626adc506f7d02b199b-2"></a><span class="no">Vagrant</span><span class="o">::</span><span class="no">Config</span><span class="o">.</span><span class="n">run</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
-<a name="rest_code_67d564ff4d8a4626adc506f7d02b199b-3"></a>    <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">"squeeze32"</span>
-<a name="rest_code_67d564ff4d8a4626adc506f7d02b199b-4"></a><span class="k">end</span>
+<pre class="code ruby"><a name="rest_code_c87f12586e5d43078596838a625d540a-1"></a><span class="c1"># file: Vagrantfile</span>
+<a name="rest_code_c87f12586e5d43078596838a625d540a-2"></a><span class="no">Vagrant</span><span class="o">::</span><span class="no">Config</span><span class="o">.</span><span class="n">run</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+<a name="rest_code_c87f12586e5d43078596838a625d540a-3"></a>    <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">"squeeze32"</span>
+<a name="rest_code_c87f12586e5d43078596838a625d540a-4"></a><span class="k">end</span>
 </pre>
 <p>Difícil, ¿eh?</p>
 <p>Vamos con el manejo básico de vagrant:</p>
@@ -174,15 +174,15 @@ article: https://ogp.me/ns/article#
 <div class="section" id="estructura-basica-de-un-proyecto">
 <h3>Estructura básica de un proyecto</h3>
 <p>La estructura básica es:</p>
-<pre class="code bash"><a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-1"></a>.
-<a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-2"></a>├── manifests
-<a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-3"></a>│   └── desktop.pp
-<a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-4"></a>├── modules
-<a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-5"></a>│   └── module
-<a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-6"></a>│       ├── files
-<a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-7"></a>│       ├── templates
-<a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-8"></a>│       └── manifests
-<a name="rest_code_e049ea4a231e4102af0ebbf2704d9f17-9"></a>└── Vagrantfile
+<pre class="code bash"><a name="rest_code_e63ba5d265464ed2a8949e0d1df36159-1"></a>.
+<a name="rest_code_e63ba5d265464ed2a8949e0d1df36159-2"></a>├── manifests
+<a name="rest_code_e63ba5d265464ed2a8949e0d1df36159-3"></a>│   └── desktop.pp
+<a name="rest_code_e63ba5d265464ed2a8949e0d1df36159-4"></a>├── modules
+<a name="rest_code_e63ba5d265464ed2a8949e0d1df36159-5"></a>│   └── module
+<a name="rest_code_e63ba5d265464ed2a8949e0d1df36159-6"></a>│       ├── files
+<a name="rest_code_e63ba5d265464ed2a8949e0d1df36159-7"></a>│       ├── templates
+<a name="rest_code_e63ba5d265464ed2a8949e0d1df36159-8"></a>│       └── manifests
+<a name="rest_code_e63ba5d265464ed2a8949e0d1df36159-9"></a>└── Vagrantfile
 </pre>
 <p>El archivo que se encuentra en @manifests/desktop.pp@ va a ser el que defina nuestra máquina. Aquí hacemos un breve paréntesis.</p>
 <p>Puppet está pensado para utilizarse en grandes empresas, con cientos o miles de máquinas. Algunas de estas máquinas serán iguales, pero otras serán distintas. Por eso tiene una estructura cliente-servidor segura, mediante claves ssl.</p>
@@ -191,12 +191,12 @@ article: https://ogp.me/ns/article#
 <div class="section" id="configuracion">
 <h3>Configuración</h3>
 <p>La idea es mantener el archivo @desktop.pp@ lo más sencillo posible, de manera que podamos reutilizar su información en otras máquinas. Por eso el mío es así:</p>
-<pre class="code ruby"><a name="rest_code_359a6645d99e491e86f701f1388e8a42-1"></a><span class="c1"># file: manifests/desktop.pp</span>
-<a name="rest_code_359a6645d99e491e86f701f1388e8a42-2"></a><span class="n">stage</span> <span class="p">{</span> <span class="o">[</span><span class="n">apt</span><span class="p">,</span> <span class="n">pre</span><span class="p">,</span> <span class="n">post</span><span class="o">]</span><span class="p">:</span> <span class="p">}</span>
-<a name="rest_code_359a6645d99e491e86f701f1388e8a42-3"></a><span class="no">Stage</span><span class="o">[</span><span class="n">apt</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="no">Stage</span><span class="o">[</span><span class="n">pre</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="no">Stage</span><span class="o">[</span><span class="n">main</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="no">Stage</span><span class="o">[</span><span class="n">post</span><span class="o">]</span>
-<a name="rest_code_359a6645d99e491e86f701f1388e8a42-4"></a>
-<a name="rest_code_359a6645d99e491e86f701f1388e8a42-5"></a><span class="k">class</span> <span class="p">{</span> <span class="s1">'apt'</span><span class="p">:</span> <span class="n">stage</span> <span class="o">=&gt;</span> <span class="n">apt</span> <span class="p">}</span>
-<a name="rest_code_359a6645d99e491e86f701f1388e8a42-6"></a><span class="k">class</span> <span class="p">{</span> <span class="s1">'kernel'</span><span class="p">:</span> <span class="p">}</span>
+<pre class="code ruby"><a name="rest_code_4816f4f4d0d64a6a9607073a9d9d8188-1"></a><span class="c1"># file: manifests/desktop.pp</span>
+<a name="rest_code_4816f4f4d0d64a6a9607073a9d9d8188-2"></a><span class="n">stage</span> <span class="p">{</span> <span class="o">[</span><span class="n">apt</span><span class="p">,</span> <span class="n">pre</span><span class="p">,</span> <span class="n">post</span><span class="o">]</span><span class="p">:</span> <span class="p">}</span>
+<a name="rest_code_4816f4f4d0d64a6a9607073a9d9d8188-3"></a><span class="no">Stage</span><span class="o">[</span><span class="n">apt</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="no">Stage</span><span class="o">[</span><span class="n">pre</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="no">Stage</span><span class="o">[</span><span class="n">main</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="no">Stage</span><span class="o">[</span><span class="n">post</span><span class="o">]</span>
+<a name="rest_code_4816f4f4d0d64a6a9607073a9d9d8188-4"></a>
+<a name="rest_code_4816f4f4d0d64a6a9607073a9d9d8188-5"></a><span class="k">class</span> <span class="p">{</span> <span class="s1">'apt'</span><span class="p">:</span> <span class="n">stage</span> <span class="o">=&gt;</span> <span class="n">apt</span> <span class="p">}</span>
+<a name="rest_code_4816f4f4d0d64a6a9607073a9d9d8188-6"></a><span class="k">class</span> <span class="p">{</span> <span class="s1">'kernel'</span><span class="p">:</span> <span class="p">}</span>
 </pre>
 <p>Lo que hago es definirme 3 etapas: apt, pre y post; después establezco el orden de las etapas, relativas a <em>main</em>. Puppet no tiene orden de ejecución, pero hay cosas que hay que hacer antes que nada. Yo, por ejemplo, quiero que se me actualice APT antes de comenzar a trabajar.</p>
 <p>A continuación declaro las clases a utilizar. Queda claro que quiero la clase "apt" que se ejecutará en la etapa "apt" (derrocho imaginación).</p>
@@ -205,39 +205,39 @@ article: https://ogp.me/ns/article#
 <div class="section" id="modulos">
 <h3>Módulos</h3>
 <p>Ahora hay que definir los módulos. Comenzaremos por APT. la definición está en @modules/apt/manifests/init.pp@. Siempre, los manifiestos se llamarán <em>init.pp</em> y estarán en la carpeta <em>manifests</em>, dentro de nuestro módulo. Este archivo contendrá:</p>
-<pre class="code ruby"><a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-1"></a><span class="c1"># file: modules/apt/manifests/init.pp</span>
-<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-2"></a><span class="k">class</span> <span class="n">apt</span> <span class="p">{</span>
-<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-3"></a>  <span class="n">file</span> <span class="p">{</span> <span class="s1">'sources.list'</span><span class="p">:</span>
-<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-4"></a>    <span class="n">path</span> <span class="o">=&gt;</span> <span class="s1">'/etc/apt/sources.list'</span><span class="p">,</span>
-<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-5"></a>    <span class="n">source</span> <span class="o">=&gt;</span> <span class="s1">'puppet:///modules/apt/sources.list'</span><span class="p">,</span>
-<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-6"></a>    <span class="n">owner</span> <span class="o">=&gt;</span> <span class="s1">'root'</span><span class="p">,</span>
-<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-7"></a>    <span class="n">replace</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span>
-<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-8"></a>  <span class="p">}</span>
-<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-9"></a>
-<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-10"></a>  <span class="nb">exec</span> <span class="p">{</span> <span class="s1">'update'</span><span class="p">:</span>
-<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-11"></a>    <span class="n">path</span> <span class="o">=&gt;</span> <span class="s1">'/usr/bin'</span><span class="p">,</span>
-<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-12"></a>    <span class="n">command</span> <span class="o">=&gt;</span> <span class="s1">'apt-get update'</span><span class="p">,</span>
-<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-13"></a>    <span class="nb">require</span> <span class="o">=&gt;</span> <span class="no">File</span><span class="o">[</span><span class="s1">'sources.list'</span><span class="o">]</span><span class="p">,</span>
-<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-14"></a>  <span class="p">}</span>
-<a name="rest_code_058d2e5764594f73bd20b5b747c88dc1-15"></a><span class="p">}</span>
+<pre class="code ruby"><a name="rest_code_d2bee8edcef845b3a9de604ce1df3032-1"></a><span class="c1"># file: modules/apt/manifests/init.pp</span>
+<a name="rest_code_d2bee8edcef845b3a9de604ce1df3032-2"></a><span class="k">class</span> <span class="n">apt</span> <span class="p">{</span>
+<a name="rest_code_d2bee8edcef845b3a9de604ce1df3032-3"></a>  <span class="n">file</span> <span class="p">{</span> <span class="s1">'sources.list'</span><span class="p">:</span>
+<a name="rest_code_d2bee8edcef845b3a9de604ce1df3032-4"></a>    <span class="n">path</span> <span class="o">=&gt;</span> <span class="s1">'/etc/apt/sources.list'</span><span class="p">,</span>
+<a name="rest_code_d2bee8edcef845b3a9de604ce1df3032-5"></a>    <span class="n">source</span> <span class="o">=&gt;</span> <span class="s1">'puppet:///modules/apt/sources.list'</span><span class="p">,</span>
+<a name="rest_code_d2bee8edcef845b3a9de604ce1df3032-6"></a>    <span class="n">owner</span> <span class="o">=&gt;</span> <span class="s1">'root'</span><span class="p">,</span>
+<a name="rest_code_d2bee8edcef845b3a9de604ce1df3032-7"></a>    <span class="n">replace</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span>
+<a name="rest_code_d2bee8edcef845b3a9de604ce1df3032-8"></a>  <span class="p">}</span>
+<a name="rest_code_d2bee8edcef845b3a9de604ce1df3032-9"></a>
+<a name="rest_code_d2bee8edcef845b3a9de604ce1df3032-10"></a>  <span class="nb">exec</span> <span class="p">{</span> <span class="s1">'update'</span><span class="p">:</span>
+<a name="rest_code_d2bee8edcef845b3a9de604ce1df3032-11"></a>    <span class="n">path</span> <span class="o">=&gt;</span> <span class="s1">'/usr/bin'</span><span class="p">,</span>
+<a name="rest_code_d2bee8edcef845b3a9de604ce1df3032-12"></a>    <span class="n">command</span> <span class="o">=&gt;</span> <span class="s1">'apt-get update'</span><span class="p">,</span>
+<a name="rest_code_d2bee8edcef845b3a9de604ce1df3032-13"></a>    <span class="nb">require</span> <span class="o">=&gt;</span> <span class="no">File</span><span class="o">[</span><span class="s1">'sources.list'</span><span class="o">]</span><span class="p">,</span>
+<a name="rest_code_d2bee8edcef845b3a9de604ce1df3032-14"></a>  <span class="p">}</span>
+<a name="rest_code_d2bee8edcef845b3a9de604ce1df3032-15"></a><span class="p">}</span>
 </pre>
 <p>Esto es lo más dificil que vamos a hacer y lo más sencillo de explicar. Como véis, el módulo APT necesita un fichero de configuración y ejecutar una orden. El fichero será el @sources.list@, claro :D</p>
 <p>No hay mucho que contar, tan solo que sobreescribo el @sources.list@ y después lanzo un update. Estos requisitos se ejecutarán sin orden fijo, así que tengo que forzar un orden mediante la orden <em>require</em>.</p>
 <p>Claro, el archivo que quiero instalar tiene que estar en el directorio <em>files</em> (mirad la estructura más arriba). Y tendrá algo como esto:</p>
-<pre class="code text"><a name="rest_code_00c49a1513c347e2a52b2acc9e34157b-1"></a># file: modules/apt/files/sources.list
-<a name="rest_code_00c49a1513c347e2a52b2acc9e34157b-2"></a>deb http://ftp.es.debian.org/debian unstable main contrib non-free
+<pre class="code text"><a name="rest_code_106381fe3d3045ea85a83534ea4ee1a0-1"></a># file: modules/apt/files/sources.list
+<a name="rest_code_106381fe3d3045ea85a83534ea4ee1a0-2"></a>deb http://ftp.es.debian.org/debian unstable main contrib non-free
 </pre>
 <p>Ahora vamos a configurar el módulo del <em>kernel</em>:</p>
-<pre class="code ruby"><a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-1"></a><span class="c1"># file: modules/kernel/manifests/init.pp</span>
-<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-2"></a><span class="k">class</span> <span class="n">kernel</span> <span class="p">{</span>
-<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-3"></a>  <span class="n">package</span> <span class="p">{</span> <span class="s1">'linux-image-amd64'</span><span class="p">:</span>
-<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-4"></a>    <span class="k">ensure</span> <span class="o">=&gt;</span> <span class="n">latest</span><span class="p">,</span>
-<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-5"></a>  <span class="p">}</span>
-<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-6"></a>
-<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-7"></a>  <span class="n">package</span> <span class="p">{</span> <span class="s1">'linux-headers-amd64'</span><span class="p">:</span>
-<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-8"></a>    <span class="k">ensure</span> <span class="o">=&gt;</span> <span class="n">latest</span><span class="p">,</span>
-<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-9"></a>  <span class="p">}</span>
-<a name="rest_code_2c31eb743a7d4fe98cec0482b6c8ccfc-10"></a><span class="p">}</span>
+<pre class="code ruby"><a name="rest_code_65beb570a9224a7dba68c5a30f5dfa89-1"></a><span class="c1"># file: modules/kernel/manifests/init.pp</span>
+<a name="rest_code_65beb570a9224a7dba68c5a30f5dfa89-2"></a><span class="k">class</span> <span class="n">kernel</span> <span class="p">{</span>
+<a name="rest_code_65beb570a9224a7dba68c5a30f5dfa89-3"></a>  <span class="n">package</span> <span class="p">{</span> <span class="s1">'linux-image-amd64'</span><span class="p">:</span>
+<a name="rest_code_65beb570a9224a7dba68c5a30f5dfa89-4"></a>    <span class="k">ensure</span> <span class="o">=&gt;</span> <span class="n">latest</span><span class="p">,</span>
+<a name="rest_code_65beb570a9224a7dba68c5a30f5dfa89-5"></a>  <span class="p">}</span>
+<a name="rest_code_65beb570a9224a7dba68c5a30f5dfa89-6"></a>
+<a name="rest_code_65beb570a9224a7dba68c5a30f5dfa89-7"></a>  <span class="n">package</span> <span class="p">{</span> <span class="s1">'linux-headers-amd64'</span><span class="p">:</span>
+<a name="rest_code_65beb570a9224a7dba68c5a30f5dfa89-8"></a>    <span class="k">ensure</span> <span class="o">=&gt;</span> <span class="n">latest</span><span class="p">,</span>
+<a name="rest_code_65beb570a9224a7dba68c5a30f5dfa89-9"></a>  <span class="p">}</span>
+<a name="rest_code_65beb570a9224a7dba68c5a30f5dfa89-10"></a><span class="p">}</span>
 </pre>
 <p>Como véis, es una clase que necesitará dos paquetes: el kernel y las headers. Y me aseguro de tener instalada la última versión.</p>
 </div>
@@ -245,63 +245,63 @@ article: https://ogp.me/ns/article#
 <div class="section" id="lanzandolo">
 <h2>Lanzándolo</h2>
 <p>Bueno, ya lo tenemos todo configurado, así que hay que decirle a Vagrant que lance a Puppet:</p>
-<pre class="code ruby"><a name="rest_code_b2c787189ae84ad68b38aff6607ee109-1"></a><span class="c1"># file: Vagrantfile</span>
-<a name="rest_code_b2c787189ae84ad68b38aff6607ee109-2"></a><span class="no">Vagrant</span><span class="o">::</span><span class="no">Config</span><span class="o">.</span><span class="n">run</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
-<a name="rest_code_b2c787189ae84ad68b38aff6607ee109-3"></a>    <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">"squeeze32"</span>
-<a name="rest_code_b2c787189ae84ad68b38aff6607ee109-4"></a>    <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="ss">:puppet</span> <span class="k">do</span> <span class="o">|</span><span class="n">puppet</span><span class="o">|</span>
-<a name="rest_code_b2c787189ae84ad68b38aff6607ee109-5"></a>            <span class="n">puppet</span><span class="o">.</span><span class="n">manifests_path</span> <span class="o">=</span> <span class="s2">"manifests"</span>
-<a name="rest_code_b2c787189ae84ad68b38aff6607ee109-6"></a>            <span class="n">puppet</span><span class="o">.</span><span class="n">module_path</span> <span class="o">=</span> <span class="s2">"modules"</span>
-<a name="rest_code_b2c787189ae84ad68b38aff6607ee109-7"></a>            <span class="n">puppet</span><span class="o">.</span><span class="n">manifest_file</span> <span class="o">=</span> <span class="s2">"desktop.pp"</span>
-<a name="rest_code_b2c787189ae84ad68b38aff6607ee109-8"></a>    <span class="k">end</span>
-<a name="rest_code_b2c787189ae84ad68b38aff6607ee109-9"></a><span class="k">end</span>
+<pre class="code ruby"><a name="rest_code_1e00782f87b14046b69512038fc67f0c-1"></a><span class="c1"># file: Vagrantfile</span>
+<a name="rest_code_1e00782f87b14046b69512038fc67f0c-2"></a><span class="no">Vagrant</span><span class="o">::</span><span class="no">Config</span><span class="o">.</span><span class="n">run</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+<a name="rest_code_1e00782f87b14046b69512038fc67f0c-3"></a>    <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">"squeeze32"</span>
+<a name="rest_code_1e00782f87b14046b69512038fc67f0c-4"></a>    <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="ss">:puppet</span> <span class="k">do</span> <span class="o">|</span><span class="n">puppet</span><span class="o">|</span>
+<a name="rest_code_1e00782f87b14046b69512038fc67f0c-5"></a>            <span class="n">puppet</span><span class="o">.</span><span class="n">manifests_path</span> <span class="o">=</span> <span class="s2">"manifests"</span>
+<a name="rest_code_1e00782f87b14046b69512038fc67f0c-6"></a>            <span class="n">puppet</span><span class="o">.</span><span class="n">module_path</span> <span class="o">=</span> <span class="s2">"modules"</span>
+<a name="rest_code_1e00782f87b14046b69512038fc67f0c-7"></a>            <span class="n">puppet</span><span class="o">.</span><span class="n">manifest_file</span> <span class="o">=</span> <span class="s2">"desktop.pp"</span>
+<a name="rest_code_1e00782f87b14046b69512038fc67f0c-8"></a>    <span class="k">end</span>
+<a name="rest_code_1e00782f87b14046b69512038fc67f0c-9"></a><span class="k">end</span>
 </pre>
 <p>Bueeeeeeeeeeeno. Pues ya está todo. Vamos con la magia:</p>
-<pre class="code bash"><a name="rest_code_d6d1870483f14b45ac14a09132133d52-1"></a><span class="nv">$ </span>vagrant up
+<pre class="code bash"><a name="rest_code_f17b224a224d492f8b569a7094ae8240-1"></a>$ vagrant up
 </pre>
 <p>Y flipad con los mensajes de pantalla. Nos dejará una máquina perfectamente configurada:</p>
-<pre class="code bash"><a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-1"></a><span class="nv">$ </span>vagrant up
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-2"></a><span class="o">[</span>default<span class="o">]</span> Importing base box <span class="s1">'squeeze32'</span>...
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-3"></a><span class="o">[</span>default<span class="o">]</span> The guest additions on this VM <span class="k">do</span> not match the install version of
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-4"></a>VirtualBox! This may cause things such as forwarded ports, shared
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-5"></a>folders, and more to not work properly. If any of those things fail on
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-6"></a>this machine, please update the guest additions and repackage the
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-7"></a>box.
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-8"></a>
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-9"></a>Guest Additions Version: 4.0.4
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-10"></a>VirtualBox Version: 4.1.14
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-11"></a><span class="o">[</span>default<span class="o">]</span> Matching MAC address <span class="k">for</span> NAT networking...
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-12"></a><span class="o">[</span>default<span class="o">]</span> Clearing any previously <span class="nb">set </span>forwarded ports...
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-13"></a><span class="o">[</span>default<span class="o">]</span> Forwarding ports...
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-14"></a><span class="o">[</span>default<span class="o">]</span> -- <span class="nv">22</span> <span class="o">=</span>&gt; <span class="m">2222</span> <span class="o">(</span>adapter 1<span class="o">)</span>
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-15"></a><span class="o">[</span>default<span class="o">]</span> Creating shared folders metadata...
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-16"></a><span class="o">[</span>default<span class="o">]</span> Clearing any previously <span class="nb">set </span>network interfaces...
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-17"></a><span class="o">[</span>default<span class="o">]</span> Booting VM...
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-18"></a><span class="o">[</span>default<span class="o">]</span> Waiting <span class="k">for</span> VM to boot. This can take a few minutes.
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-19"></a><span class="o">[</span>default<span class="o">]</span> VM booted and ready <span class="k">for</span> use!
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-20"></a><span class="o">[</span>default<span class="o">]</span> Mounting shared folders...
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-21"></a><span class="o">[</span>default<span class="o">]</span> -- v-root: /vagrant
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-22"></a><span class="o">[</span>default<span class="o">]</span> -- manifests: /tmp/vagrant-puppet/manifests
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-23"></a><span class="o">[</span>default<span class="o">]</span> -- v-pp-m0: /tmp/vagrant-puppet/modules-0
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-24"></a><span class="o">[</span>default<span class="o">]</span> Running provisioner: Vagrant::Provisioners::Puppet...
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-25"></a><span class="o">[</span>default<span class="o">]</span> Running Puppet with /tmp/vagrant-puppet/manifests/desktop.pp...
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-26"></a>stdin: is not a tty
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-27"></a>notice: /Stage<span class="o">[</span>apt<span class="o">]</span>/Apt/File<span class="o">[</span>sources.list<span class="o">]</span>/content: content changed <span class="s1">'{md5}c6f69c7769cbbd3b3c938217487efa02'</span> to <span class="s1">'{md5}509cf608fd519f230246df247418b7b2'</span>
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-28"></a>
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-29"></a>notice: /Stage<span class="o">[</span>apt<span class="o">]</span>/Apt/File<span class="o">[</span>sources.list<span class="o">]</span>/group: group changed <span class="s1">'root'</span> to <span class="s1">'vagrant'</span>
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-30"></a>
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-31"></a>notice: /Stage<span class="o">[</span>apt<span class="o">]</span>/Apt/Exec<span class="o">[</span>update<span class="o">]</span>/returns: executed successfully
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-32"></a>
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-33"></a>notice: /Stage<span class="o">[</span>main<span class="o">]</span>/Kernel/Package<span class="o">[</span>linux-image-amd64<span class="o">]</span>/ensure: ensure changed <span class="s1">'purged'</span> to <span class="s1">'latest'</span>
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-34"></a>
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-35"></a>notice: /Stage<span class="o">[</span>main<span class="o">]</span>/Kernel/Package<span class="o">[</span>linux-headers-amd64<span class="o">]</span>/ensure: ensure changed <span class="s1">'purged'</span> to <span class="s1">'latest'</span>
-<a name="rest_code_05d4cc7e6c1d4052aa19830a7c87a768-36"></a><span class="err">$</span>
+<pre class="code bash"><a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-1"></a>$ vagrant up
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-2"></a><span class="o">[</span>default<span class="o">]</span> Importing base box <span class="s1">'squeeze32'</span>...
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-3"></a><span class="o">[</span>default<span class="o">]</span> The guest additions on this VM <span class="k">do</span> not match the install version of
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-4"></a>VirtualBox! This may cause things such as forwarded ports, shared
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-5"></a>folders, and more to not work properly. If any of those things fail on
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-6"></a>this machine, please update the guest additions and repackage the
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-7"></a>box.
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-8"></a>
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-9"></a>Guest Additions Version: <span class="m">4</span>.0.4
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-10"></a>VirtualBox Version: <span class="m">4</span>.1.14
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-11"></a><span class="o">[</span>default<span class="o">]</span> Matching MAC address <span class="k">for</span> NAT networking...
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-12"></a><span class="o">[</span>default<span class="o">]</span> Clearing any previously <span class="nb">set</span> forwarded ports...
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-13"></a><span class="o">[</span>default<span class="o">]</span> Forwarding ports...
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-14"></a><span class="o">[</span>default<span class="o">]</span> -- <span class="nv">22</span> <span class="o">=</span>&gt; <span class="m">2222</span> <span class="o">(</span>adapter <span class="m">1</span><span class="o">)</span>
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-15"></a><span class="o">[</span>default<span class="o">]</span> Creating shared folders metadata...
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-16"></a><span class="o">[</span>default<span class="o">]</span> Clearing any previously <span class="nb">set</span> network interfaces...
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-17"></a><span class="o">[</span>default<span class="o">]</span> Booting VM...
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-18"></a><span class="o">[</span>default<span class="o">]</span> Waiting <span class="k">for</span> VM to boot. This can take a few minutes.
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-19"></a><span class="o">[</span>default<span class="o">]</span> VM booted and ready <span class="k">for</span> use!
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-20"></a><span class="o">[</span>default<span class="o">]</span> Mounting shared folders...
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-21"></a><span class="o">[</span>default<span class="o">]</span> -- v-root: /vagrant
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-22"></a><span class="o">[</span>default<span class="o">]</span> -- manifests: /tmp/vagrant-puppet/manifests
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-23"></a><span class="o">[</span>default<span class="o">]</span> -- v-pp-m0: /tmp/vagrant-puppet/modules-0
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-24"></a><span class="o">[</span>default<span class="o">]</span> Running provisioner: Vagrant::Provisioners::Puppet...
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-25"></a><span class="o">[</span>default<span class="o">]</span> Running Puppet with /tmp/vagrant-puppet/manifests/desktop.pp...
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-26"></a>stdin: is not a tty
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-27"></a>notice: /Stage<span class="o">[</span>apt<span class="o">]</span>/Apt/File<span class="o">[</span>sources.list<span class="o">]</span>/content: content changed <span class="s1">'{md5}c6f69c7769cbbd3b3c938217487efa02'</span> to <span class="s1">'{md5}509cf608fd519f230246df247418b7b2'</span>
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-28"></a>
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-29"></a>notice: /Stage<span class="o">[</span>apt<span class="o">]</span>/Apt/File<span class="o">[</span>sources.list<span class="o">]</span>/group: group changed <span class="s1">'root'</span> to <span class="s1">'vagrant'</span>
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-30"></a>
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-31"></a>notice: /Stage<span class="o">[</span>apt<span class="o">]</span>/Apt/Exec<span class="o">[</span>update<span class="o">]</span>/returns: executed successfully
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-32"></a>
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-33"></a>notice: /Stage<span class="o">[</span>main<span class="o">]</span>/Kernel/Package<span class="o">[</span>linux-image-amd64<span class="o">]</span>/ensure: ensure changed <span class="s1">'purged'</span> to <span class="s1">'latest'</span>
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-34"></a>
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-35"></a>notice: /Stage<span class="o">[</span>main<span class="o">]</span>/Kernel/Package<span class="o">[</span>linux-headers-amd64<span class="o">]</span>/ensure: ensure changed <span class="s1">'purged'</span> to <span class="s1">'latest'</span>
+<a name="rest_code_3d6afbcec8654b8aa28ca80e40a4c602-36"></a>$
 </pre>
 </div>
 <div class="section" id="aplicandolo-a-nuestra-maquina">
 <h2>Aplicándolo a nuestra máquina</h2>
 <p><em>NOTA</em>: Mucho ojo. Si seguís estos pasos, es perfectamente posible que rompáis vuestra máquina. ¡Sobreescribiríais el @sources.list@!</p>
 <p>Como todas las operaciones que realizamos requieren ser root, si lo ejecutamos como usuarios normales no debería ocurrir nada, pero insisto una vez más: <em>si ejecutas esto es bajo tu cuenta y riesgo</em>:</p>
-<pre class="code bash"><a name="rest_code_ed66c3defdcc4d5f9890ff7a36a7aeaf-1"></a><span class="c"># puppet apply manifests/desktop.pp --modulepath=modules/</span>
+<pre class="code bash"><a name="rest_code_000f42deff064ff090894b0cff082b03-1"></a><span class="c1"># puppet apply manifests/desktop.pp --modulepath=modules/</span>
 </pre>
 <p>Poco que contar: le pedimos a puppet que aplique nuestra configuración y le indicamos dónde están los módulos.</p>
 </div>

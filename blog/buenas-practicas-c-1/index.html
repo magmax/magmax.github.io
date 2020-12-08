@@ -7,7 +7,7 @@ article: https://ogp.me/ns/article#
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Buenas prácticas en Ansi C (1) | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,8 +18,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/buenas-practicas-c-1/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/hsqldb-dbunit/" title="Pruebas con Bases de Datos en memoria: DBUnit + HSQLDB" type="text/html">
 <link rel="next" href="/blog/buenas-practicas-c-2/" title="Buenas prácticas en Ansi C (2)" type="text/html">
@@ -141,13 +141,13 @@ La falta de espacios d">
 <p>Las funciones suelen ser un problema, ya que no deben coincidir en tooooooodo nuestro entorno.</p>
 <p>Por lo tanto, yo suelo utilizar un sistema de nombrado jerárquico, tratando de evitar nombres excesivamente largos. Es un tira y afloja un poco difícil, y a veces no funciona, pero es lo mejor que he encontrado.</p>
 <p>En este sistema jerárquico comienzo por una abreviatura de la librería que estoy usando, separada del resto por un guión bajo. Si la librería tuviera distintas funcionalidades, entonces diferenciaría cada una de ellas con otra palabra indicando a cuál de éstas hace referencia, terminando con el nombre de la función propiamente dicho en camelcase, comenzando en minúsculas. Después de toda esta verborrea, uno ejemplitos:</p>
-<pre class="code c"><a name="rest_code_7b3c19f850ac4c0aaa1c4cdd6b1a7c2b-1"></a><span class="c1">// Librería libtypeutilities.a</span>
-<a name="rest_code_7b3c19f850ac4c0aaa1c4cdd6b1a7c2b-2"></a><span class="kt">void</span> <span class="nf">types_bigint_new</span> <span class="p">();</span>
-<a name="rest_code_7b3c19f850ac4c0aaa1c4cdd6b1a7c2b-3"></a><span class="kt">void</span> <span class="nf">types_bigint_calculateChecksum</span> <span class="p">();</span>
-<a name="rest_code_7b3c19f850ac4c0aaa1c4cdd6b1a7c2b-4"></a><span class="kt">void</span> <span class="nf">types_string_concat</span><span class="p">();</span>
-<a name="rest_code_7b3c19f850ac4c0aaa1c4cdd6b1a7c2b-5"></a><span class="c1">// Librería libencryption.a</span>
-<a name="rest_code_7b3c19f850ac4c0aaa1c4cdd6b1a7c2b-6"></a><span class="kt">void</span> <span class="nf">crypt_aes_new</span> <span class="p">();</span>
-<a name="rest_code_7b3c19f850ac4c0aaa1c4cdd6b1a7c2b-7"></a><span class="kt">void</span> <span class="nf">crypt_md5_get</span> <span class="p">();</span>
+<pre class="code c"><a name="rest_code_4459682125cf418cad816848ecd3e8d0-1"></a><span class="c1">// Librería libtypeutilities.a</span>
+<a name="rest_code_4459682125cf418cad816848ecd3e8d0-2"></a><span class="kt">void</span> <span class="nf">types_bigint_new</span> <span class="p">();</span>
+<a name="rest_code_4459682125cf418cad816848ecd3e8d0-3"></a><span class="kt">void</span> <span class="nf">types_bigint_calculateChecksum</span> <span class="p">();</span>
+<a name="rest_code_4459682125cf418cad816848ecd3e8d0-4"></a><span class="kt">void</span> <span class="nf">types_string_concat</span><span class="p">();</span>
+<a name="rest_code_4459682125cf418cad816848ecd3e8d0-5"></a><span class="c1">// Librería libencryption.a</span>
+<a name="rest_code_4459682125cf418cad816848ecd3e8d0-6"></a><span class="kt">void</span> <span class="nf">crypt_aes_new</span> <span class="p">();</span>
+<a name="rest_code_4459682125cf418cad816848ecd3e8d0-7"></a><span class="kt">void</span> <span class="nf">crypt_md5_get</span> <span class="p">();</span>
 </pre>
 </div>
 <div class="section" id="ambito-de-las-funciones">
@@ -173,17 +173,17 @@ La falta de espacios d">
 <p>Es una buena práctica realizar comprobaciones al comienzo de la función y terminar la ejecución de ésta. No importa si hay varios <tt class="docutils literal">return</tt>.</p>
 <p>Eso sí: Una vez se ha reservado memoria, será mejor evitar todo tipo de <tt class="docutils literal">return</tt> hasta el final.</p>
 <p>Una sola función sólo debería reservar memoria en un punto, ya sea a una o varias variables.</p>
-<pre class="code c"><a name="rest_code_1093addf4fde4d42bf4c797b1f8d9838-1"></a><span class="kt">void</span> <span class="nf">funcion</span> <span class="p">(</span><span class="kt">int</span> <span class="n">param</span><span class="p">)</span>
-<a name="rest_code_1093addf4fde4d42bf4c797b1f8d9838-2"></a><span class="p">{</span>
-<a name="rest_code_1093addf4fde4d42bf4c797b1f8d9838-3"></a>   <span class="c1">// definición de variables</span>
-<a name="rest_code_1093addf4fde4d42bf4c797b1f8d9838-4"></a>   <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<a name="rest_code_1093addf4fde4d42bf4c797b1f8d9838-5"></a>   <span class="c1">// comprobaciones al comienzo</span>
-<a name="rest_code_1093addf4fde4d42bf4c797b1f8d9838-6"></a>   <span class="k">if</span> <span class="p">(</span> <span class="n">param</span> <span class="o">&gt;</span> <span class="mi">5</span> <span class="p">)</span>
-<a name="rest_code_1093addf4fde4d42bf4c797b1f8d9838-7"></a>     <span class="k">return</span><span class="p">;</span>
-<a name="rest_code_1093addf4fde4d42bf4c797b1f8d9838-8"></a>
-<a name="rest_code_1093addf4fde4d42bf4c797b1f8d9838-9"></a>   <span class="c1">// cuerpo de la función</span>
-<a name="rest_code_1093addf4fde4d42bf4c797b1f8d9838-10"></a>   <span class="k">return</span><span class="p">;</span>
-<a name="rest_code_1093addf4fde4d42bf4c797b1f8d9838-11"></a><span class="p">}</span>
+<pre class="code c"><a name="rest_code_1c59fb5b98774dda92c2d794a78a869d-1"></a><span class="kt">void</span> <span class="nf">funcion</span> <span class="p">(</span><span class="kt">int</span> <span class="n">param</span><span class="p">)</span>
+<a name="rest_code_1c59fb5b98774dda92c2d794a78a869d-2"></a><span class="p">{</span>
+<a name="rest_code_1c59fb5b98774dda92c2d794a78a869d-3"></a>   <span class="c1">// definición de variables</span>
+<a name="rest_code_1c59fb5b98774dda92c2d794a78a869d-4"></a>   <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<a name="rest_code_1c59fb5b98774dda92c2d794a78a869d-5"></a>   <span class="c1">// comprobaciones al comienzo</span>
+<a name="rest_code_1c59fb5b98774dda92c2d794a78a869d-6"></a>   <span class="k">if</span> <span class="p">(</span> <span class="n">param</span> <span class="o">&gt;</span> <span class="mi">5</span> <span class="p">)</span>
+<a name="rest_code_1c59fb5b98774dda92c2d794a78a869d-7"></a>     <span class="k">return</span><span class="p">;</span>
+<a name="rest_code_1c59fb5b98774dda92c2d794a78a869d-8"></a>
+<a name="rest_code_1c59fb5b98774dda92c2d794a78a869d-9"></a>   <span class="c1">// cuerpo de la función</span>
+<a name="rest_code_1c59fb5b98774dda92c2d794a78a869d-10"></a>   <span class="k">return</span><span class="p">;</span>
+<a name="rest_code_1c59fb5b98774dda92c2d794a78a869d-11"></a><span class="p">}</span>
 </pre>
 </div>
 <div class="section" id="gestion-de-memoria">
@@ -194,13 +194,13 @@ La falta de espacios d">
 <h2>Protección de archivos de cabecera</h2>
 <p>La maraña de archivos de cabecera puede ser peligrosa, ya que es sencillo llegar a incluir varias veces el mismo archivo.</p>
 <p>Por eso se debe proteger siempre el archivo de cabecera:</p>
-<pre class="code c"><a name="rest_code_4e90357d14594380a6c669bbb1a89cdc-1"></a><span class="c1">// Archivo "a.h"</span>
-<a name="rest_code_4e90357d14594380a6c669bbb1a89cdc-2"></a><span class="cp">#ifndef _A_H_</span>
-<a name="rest_code_4e90357d14594380a6c669bbb1a89cdc-3"></a><span class="cp">#define _A_H_</span>
-<a name="rest_code_4e90357d14594380a6c669bbb1a89cdc-4"></a>
-<a name="rest_code_4e90357d14594380a6c669bbb1a89cdc-5"></a><span class="c1">// rellene aquí sus contenido</span>
-<a name="rest_code_4e90357d14594380a6c669bbb1a89cdc-6"></a>
-<a name="rest_code_4e90357d14594380a6c669bbb1a89cdc-7"></a><span class="cp">#endif </span><span class="cm">/* _A_H_ */</span><span class="cp"></span>
+<pre class="code c"><a name="rest_code_7b531f2ac12b4a01a22d18132d33a85c-1"></a><span class="c1">// Archivo "a.h"</span>
+<a name="rest_code_7b531f2ac12b4a01a22d18132d33a85c-2"></a><span class="cp">#ifndef _A_H_</span>
+<a name="rest_code_7b531f2ac12b4a01a22d18132d33a85c-3"></a><span class="cp">#define _A_H_</span>
+<a name="rest_code_7b531f2ac12b4a01a22d18132d33a85c-4"></a>
+<a name="rest_code_7b531f2ac12b4a01a22d18132d33a85c-5"></a><span class="c1">// rellene aquí sus contenido</span>
+<a name="rest_code_7b531f2ac12b4a01a22d18132d33a85c-6"></a>
+<a name="rest_code_7b531f2ac12b4a01a22d18132d33a85c-7"></a><span class="cp">#endif </span><span class="cm">/* _A_H_ */</span><span class="cp"></span>
 </pre>
 <p>He visto casos en los que se protege la inclusión en lugar de proteger el archivo de cabecera. La comparación que he puesto es como proteger los tarjeteros y no los cajeros automáticos. Lo primero es que hay muchos más, y lo segundo, que es sencillísimo violar la seguridad.</p>
 </div>
@@ -224,26 +224,26 @@ La falta de espacios d">
 <p>En las macros, siempre protegeremos los argumentos entre paréntesis:</p>
 <p>bc. #define max(a,b)  (a)&gt;(b) ? (a) : (b)</p>
 <p>Y nunca llamaremos a una macro con parámetros que contengan operadores unarios. Si queréis saber por qué, compilad esto:</p>
-<pre class="code c"><a name="rest_code_79ab825b8ec7485ca9573532bcfb900a-1"></a><span class="cp">#include &lt;stdio.h&gt;</span>
-<a name="rest_code_79ab825b8ec7485ca9573532bcfb900a-2"></a><span class="cp">#define MIN(a,b) a&lt;b?a:b</span>
-<a name="rest_code_79ab825b8ec7485ca9573532bcfb900a-3"></a>
-<a name="rest_code_79ab825b8ec7485ca9573532bcfb900a-4"></a><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
-<a name="rest_code_79ab825b8ec7485ca9573532bcfb900a-5"></a><span class="p">{</span>
-<a name="rest_code_79ab825b8ec7485ca9573532bcfb900a-6"></a>   <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-<a name="rest_code_79ab825b8ec7485ca9573532bcfb900a-7"></a>   <span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
-<a name="rest_code_79ab825b8ec7485ca9573532bcfb900a-8"></a>   <span class="n">printf</span><span class="p">(</span><span class="s">"min %d, %d = %d\</span>
-<a name="rest_code_79ab825b8ec7485ca9573532bcfb900a-9"></a><span class="s">"</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">MIN</span> <span class="p">(</span><span class="n">a</span><span class="o">++</span><span class="p">,</span> <span class="n">b</span><span class="o">++</span><span class="p">));</span>
-<a name="rest_code_79ab825b8ec7485ca9573532bcfb900a-10"></a>   <span class="n">printf</span><span class="p">(</span><span class="s">"min %d, %d = %d\</span>
-<a name="rest_code_79ab825b8ec7485ca9573532bcfb900a-11"></a><span class="s">"</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">MIN</span> <span class="p">(</span><span class="n">a</span><span class="o">++</span><span class="p">,</span> <span class="n">b</span><span class="o">++</span><span class="p">));</span>
-<a name="rest_code_79ab825b8ec7485ca9573532bcfb900a-12"></a>   <span class="n">printf</span><span class="p">(</span><span class="s">"min %d, %d = %d\</span>
-<a name="rest_code_79ab825b8ec7485ca9573532bcfb900a-13"></a><span class="s">"</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">MIN</span> <span class="p">(</span><span class="n">a</span><span class="o">++</span><span class="p">,</span> <span class="n">b</span><span class="o">++</span><span class="p">));</span>
-<a name="rest_code_79ab825b8ec7485ca9573532bcfb900a-14"></a>   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<a name="rest_code_79ab825b8ec7485ca9573532bcfb900a-15"></a><span class="p">}</span>
+<pre class="code c"><a name="rest_code_62c724d8a846415293693954f6b3f6c5-1"></a><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<a name="rest_code_62c724d8a846415293693954f6b3f6c5-2"></a><span class="cp">#define MIN(a,b) a&lt;b?a:b</span>
+<a name="rest_code_62c724d8a846415293693954f6b3f6c5-3"></a>
+<a name="rest_code_62c724d8a846415293693954f6b3f6c5-4"></a><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<a name="rest_code_62c724d8a846415293693954f6b3f6c5-5"></a><span class="p">{</span>
+<a name="rest_code_62c724d8a846415293693954f6b3f6c5-6"></a>   <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<a name="rest_code_62c724d8a846415293693954f6b3f6c5-7"></a>   <span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<a name="rest_code_62c724d8a846415293693954f6b3f6c5-8"></a>   <span class="n">printf</span><span class="p">(</span><span class="s">"min %d, %d = %d\</span>
+<a name="rest_code_62c724d8a846415293693954f6b3f6c5-9"></a><span class="s">"</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">MIN</span> <span class="p">(</span><span class="n">a</span><span class="o">++</span><span class="p">,</span> <span class="n">b</span><span class="o">++</span><span class="p">));</span>
+<a name="rest_code_62c724d8a846415293693954f6b3f6c5-10"></a>   <span class="n">printf</span><span class="p">(</span><span class="s">"min %d, %d = %d\</span>
+<a name="rest_code_62c724d8a846415293693954f6b3f6c5-11"></a><span class="s">"</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">MIN</span> <span class="p">(</span><span class="n">a</span><span class="o">++</span><span class="p">,</span> <span class="n">b</span><span class="o">++</span><span class="p">));</span>
+<a name="rest_code_62c724d8a846415293693954f6b3f6c5-12"></a>   <span class="n">printf</span><span class="p">(</span><span class="s">"min %d, %d = %d\</span>
+<a name="rest_code_62c724d8a846415293693954f6b3f6c5-13"></a><span class="s">"</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">MIN</span> <span class="p">(</span><span class="n">a</span><span class="o">++</span><span class="p">,</span> <span class="n">b</span><span class="o">++</span><span class="p">));</span>
+<a name="rest_code_62c724d8a846415293693954f6b3f6c5-14"></a>   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<a name="rest_code_62c724d8a846415293693954f6b3f6c5-15"></a><span class="p">}</span>
 </pre>
 <p>El resultado será:</p>
-<pre class="code c"><a name="rest_code_10640c8335de47e0ae6bd80cc1c20783-1"></a><span class="n">min</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="o">=</span> <span class="mi">2</span>
-<a name="rest_code_10640c8335de47e0ae6bd80cc1c20783-2"></a><span class="n">min</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span> <span class="o">=</span> <span class="mi">3</span>
-<a name="rest_code_10640c8335de47e0ae6bd80cc1c20783-3"></a><span class="n">min</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span> <span class="o">=</span> <span class="mi">5</span>
+<pre class="code c"><a name="rest_code_71dc913a77ed4a8eb2200c72db654974-1"></a><span class="n">min</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="o">=</span> <span class="mi">2</span>
+<a name="rest_code_71dc913a77ed4a8eb2200c72db654974-2"></a><span class="n">min</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span> <span class="o">=</span> <span class="mi">3</span>
+<a name="rest_code_71dc913a77ed4a8eb2200c72db654974-3"></a><span class="n">min</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span> <span class="o">=</span> <span class="mi">5</span>
 </pre>
 <p>¿Sabríais decir por qué? Probablemente no sea el resultado esperado o, al menos, no es el más intuitivo.</p>
 </div>

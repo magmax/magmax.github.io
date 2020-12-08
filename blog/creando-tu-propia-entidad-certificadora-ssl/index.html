@@ -7,7 +7,7 @@ article: https://ogp.me/ns/article#
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'2864e0750e0914fb7ea57f1000e152d2d49eb37b'">
+<meta http-equiv="ETag" content="b'1566322fc0722093b12eca5f1e9215a3ab6698c5'">
 <title>Creando tu propia Entidad Certificadora SSL (y volcando certificados autofirmados) | MagMax Blog</title>
 <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
@@ -18,8 +18,8 @@ article: https://ogp.me/ns/article#
 <link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
 <link rel="canonical" href="http://magmax.org/blog/creando-tu-propia-entidad-certificadora-ssl/">
 <link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.png" sizes="128x128">
 <link rel="icon" href="/favicon.ico" sizes="16x16">
+<link rel="icon" href="/favicon.png" sizes="128x128">
 <meta name="author" content="Miguel Ángel García">
 <link rel="prev" href="/blog/colas-de-mensajes-rabbitmq/" title="Colas de mensajes: RabbitMQ" type="text/html">
 <link rel="next" href="/blog/graficas-basadas-en-tiempo-graphite/" title="Gráficas basadas en tiempo: Graphite" type="text/html">
@@ -155,33 +155,33 @@ article: https://ogp.me/ns/article#
 <div class="section" id="crear-la-clave-raiz">
 <h3>Crear la clave raíz</h3>
 <p>El primer paso es crear la <abbr title="private root key">clave raíz privada</abbr> que sólo requiere un paso. En el ejemplo de abajo, estoy creando una clave de 2048 bits:</p>
-<pre class="code text"><a name="rest_code_1c6a11f68d6d4fc8a70b095f4f1237e6-1"></a>openssl genrsa -out rootCA.key 2048
+<pre class="code text"><a name="rest_code_a0bf12bdd4424f3981c34d4334b4acc2-1"></a>openssl genrsa -out rootCA.key 2048
 </pre>
 <p>Los tamaños de clave estándar actuales son 1024, 2048 y, aunque mucho menos extendido, 4096. Yo he elegido 2048, que es el más utilizado hoy en día. 4096 suele ser una exageración (y las claves con longitud 4096 es 5 veces más intensa computacionalmente que 2048), y se está abandonando 1024.</p>
 <p>Nota importante: Mantener esta clave privada <strong>muy privada</strong>. Ésta es la base de toda confianza para tus certificados, y si alguien obtiene una copia, podría generar certificados que acepte el navegador. También se puede crear una clave que esté protegida mediante una contraseña añadiendo <tt class="docutils literal"><span class="pre">-des3</span></tt>:</p>
-<pre class="code text"><a name="rest_code_a309413db53a4bb9a410776d56720188-1"></a>openssl genrsa -out rootCA.key 2048 -des3
+<pre class="code text"><a name="rest_code_89319e9791984aacbd3ea2195de02fe0-1"></a>openssl genrsa -out rootCA.key 2048 -des3
 </pre>
 <p>Se pedirá que se introduzca una contraseña, y desde entonces se retará a introducir la contraseña cada vez que se use la clave. Claro, si olvidads la clave tendrás que hacer todo esto de nuevo.</p>
 </div>
 <div class="section" id="el-siguiente-paso-es-autofirmar-este-certificado">
 <h3>El siguiente paso es autofirmar este certificado</h3>
-<pre class="code text"><a name="rest_code_dbfe574287fb49c1b2052d6864e6cf22-1"></a>openssl req -x509 -new -nodes -key rootCA.key -days 1024 -out rootCA.pem
+<pre class="code text"><a name="rest_code_16f10abf7b604be1b90cd417482881eb-1"></a>openssl req -x509 -new -nodes -key rootCA.key -days 1024 -out rootCA.pem
 </pre>
 <p>Lo que comenzará un <em>script</em> interactivo que preguntará varios bits de información. Se rellenarán como vea conveniente:</p>
-<pre class="code text"><a name="rest_code_fa893f3264ab4cf795d1276fb4551231-1"></a>You are about to be asked to enter information that will be incorporated
-<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-2"></a>into your certificate request.
-<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-3"></a>What you are about to enter is what is called a Distinguished Name or a DN.
-<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-4"></a>There are quite a few fields but you can leave some blank
-<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-5"></a>For some fields there will be a default value,
-<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-6"></a>If you enter '.', the field will be left blank.
-<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-7"></a>-----
-<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-8"></a>Country Name (2 letter code) [AU]:US
-<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-9"></a>State or Province Name (full name) [Some-State]:Oregon
-<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-10"></a>Locality Name (eg, city) []:Portland
-<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-11"></a>Organization Name (eg, company) [Internet Widgits Pty Ltd]:Overlords
-<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-12"></a>Organizational Unit Name (eg, section) []:IT
-<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-13"></a>Common Name (eg, YOUR name) []:Data Center Overlords
-<a name="rest_code_fa893f3264ab4cf795d1276fb4551231-14"></a>Email Address []:none@none.com
+<pre class="code text"><a name="rest_code_124b0ab3d81d439f943350cfba4497d6-1"></a>You are about to be asked to enter information that will be incorporated
+<a name="rest_code_124b0ab3d81d439f943350cfba4497d6-2"></a>into your certificate request.
+<a name="rest_code_124b0ab3d81d439f943350cfba4497d6-3"></a>What you are about to enter is what is called a Distinguished Name or a DN.
+<a name="rest_code_124b0ab3d81d439f943350cfba4497d6-4"></a>There are quite a few fields but you can leave some blank
+<a name="rest_code_124b0ab3d81d439f943350cfba4497d6-5"></a>For some fields there will be a default value,
+<a name="rest_code_124b0ab3d81d439f943350cfba4497d6-6"></a>If you enter '.', the field will be left blank.
+<a name="rest_code_124b0ab3d81d439f943350cfba4497d6-7"></a>-----
+<a name="rest_code_124b0ab3d81d439f943350cfba4497d6-8"></a>Country Name (2 letter code) [AU]:US
+<a name="rest_code_124b0ab3d81d439f943350cfba4497d6-9"></a>State or Province Name (full name) [Some-State]:Oregon
+<a name="rest_code_124b0ab3d81d439f943350cfba4497d6-10"></a>Locality Name (eg, city) []:Portland
+<a name="rest_code_124b0ab3d81d439f943350cfba4497d6-11"></a>Organization Name (eg, company) [Internet Widgits Pty Ltd]:Overlords
+<a name="rest_code_124b0ab3d81d439f943350cfba4497d6-12"></a>Organizational Unit Name (eg, section) []:IT
+<a name="rest_code_124b0ab3d81d439f943350cfba4497d6-13"></a>Common Name (eg, YOUR name) []:Data Center Overlords
+<a name="rest_code_124b0ab3d81d439f943350cfba4497d6-14"></a>Email Address []:none@none.com
 </pre>
 <p>Una vez hecho, se creará un certificado SSL llamado <strong>rootCA.pem</strong>, firmado por sí mismo, válido durante 1024 días, y que funcionará como tu certificado raíz. Lo más interesante de las autoridades certificadoras tradicionales es que ese certificado raíz está también autofirmado. Pero antes de comenzar una entidad certificadora propia, recuerde que el truco es mantener estos certificados en <em>cada navegador del mundo</em>.</p>
 </div>
@@ -195,18 +195,18 @@ article: https://ogp.me/ns/article#
 <div class="section" id="crear-un-certificado-hacer-una-vez-por-dispositivo">
 <h3>Crear un certificado (hacer una vez por dispositivo)</h3>
 <p>Será necesario seguir este proceso para cada dispositivo en el que se desee instalar un certificado confiable. Primero, al igual que con el paso del CA raíz, se necesita una clave privada (diferente de la del CA raíz).</p>
-<pre class="code text"><a name="rest_code_588517883bec4ba097ab8a912436460f-1"></a>openssl genrsa -out device.key 2048
+<pre class="code text"><a name="rest_code_21285c6e29c8425dad5dc2dadcabf3ea-1"></a>openssl genrsa -out device.key 2048
 </pre>
 <p>Una vez creada la clave, se generará la solicitud de firmado de certificado:</p>
-<pre class="code text"><a name="rest_code_5dd196e7f04f4aff873b26e205c4f512-1"></a>openssl req -new -key device.key -out device.csr
+<pre class="code text"><a name="rest_code_ea08606927504d2d8f2559f31a1be6e3-1"></a>openssl req -new -key device.key -out device.csr
 </pre>
 <p>El sistema realizará varias preguntas (País, Región/Provincia, etc.). Responder según corresponda. Sin embargo, la pregunta importante es <strong>common-name</strong>.</p>
-<pre class="code text"><a name="rest_code_f73a3e7502b448a491a26516cb246330-1"></a>Common Name (eg, YOUR name) []: 10.0.0.1
+<pre class="code text"><a name="rest_code_88ba03d1124f41c9bb93cdcc5d46a496-1"></a>Common Name (eg, YOUR name) []: 10.0.0.1
 </pre>
 <p>Lo que se ve en el campo de la dirección del navegador cuando se accede a tu dispositivo <strong>debe</strong> ser lo que se ponga bajo el <strong>common name</strong>, <em>incluso si es una dirección IP</em>. Sí, incluso una dirección IP (IPv4 o IPv6) funciona como <strong>common name</strong>.</p>
 <p>Si no se corresponden, incluso un certificado firmado adecuadamente no se validará adecuadamente, y se obtendrá el error de que "No se puede verificar la autenticidad".</p>
 <p>Una vez hecho esto, se firmará el CSR, lo que requiere la clave CA raíz:</p>
-<pre class="code text"><a name="rest_code_ce480031439d4083957060d0e5987dff-1"></a>openssl x509 -req -in device.csr -CA root.pem -CAkey root.key -CAcreateserial -out device.crt -days 500
+<pre class="code text"><a name="rest_code_d0d6027c34ed46e588bc5828a84666e3-1"></a>openssl x509 -req -in device.csr -CA root.pem -CAkey root.key -CAcreateserial -out device.crt -days 500
 </pre>
 <p>Esto crea un certificado autofirmado llamado <tt class="docutils literal">device.crt</tt> que es válido durante 500 días (se puede ajustar el número de días, claro, pero no tiene sentido que sea mayor que el del certificado raíz).</p>
 <p>El paso siguiente consiste en coger la clave y el certificado e instalarlos en el dispositivo. La mayoría de los dispositivos de red que se controlan mediante HTTPS tienen algún mecanismo para instalarlo. Por ejemplo, tengo un LTM VE (virtual edition) F5 como máquina virtual en mi host ESXi 4.</p>
