@@ -185,13 +185,13 @@
 <h2 id="vagrant">Vagrant</h2>
 <p>Lo primero que necesitamos es un entorno para gestionar máquinas virtuales. Uno de los más utilizados hoy en día es <a href="https://www.virtualbox.org/">VirtualBox</a> . Pero nosotros no vamos a necesitar un entorno gráfico ni nada de eso.</p>
 <p>VirtualBox tiene soporte para máquinas virtuales <em>headless</em>, es decir, máquinas que &ldquo;están por ahí&rdquo;, pero que no se ven.</p>
-<p><a href="http://vagrantup.com/">Vagrant</a>  no es más que una interfaz a VirtualBox, pero que nos hace la vida más fácil.</p>
+<p><a href="https://vagrantup.com/">Vagrant</a>  no es más que una interfaz a VirtualBox, pero que nos hace la vida más fácil.</p>
 <p>Así que vamos a usar Vagrant. Llegada a esta conclusión, tendríamos dos opciones: instalar una máquina virtual desde cero o coger una ya instalada y partir de ahí. Si optáramos por la primera opción, tendríamos que ver <a href="https://github.com/jedi4ever/veewee">VeeWee</a> ; como este artículo va de Puppet, vamos a optar por la segunda opción.</p>
 <p>Lo primero: vamos a instalarnos Vagrant:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>$ sudo gem install vagrant
 </code></pre></div><p>Sí, es Ruby.</p>
 <p>Tras pelearme con algunas máquinas virtuales públicas, algunos reinicios y demás, os recomiendo que utilicéis la siguiente:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>$ vagrant box add squeeze32 http://mathie-vagrant-boxes.s3.amazonaws.com/debian_squeeze_32.box
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>$ vagrant box add squeeze32 https://mathie-vagrant-boxes.s3.amazonaws.com/debian_squeeze_32.box
 </code></pre></div><p>Eso tardará un poco, ya que tiene que descargarse 4Gb. Os recomiendo que <em>no</em> utilicéis la wifi. Básicamente, nos descargamos la imagen y la llamamos <em>squeeze32</em>. Eso es importante para referirnos a ella desde el <em>Vagrantfile</em>.</p>
 <p>Mientras se descarga, vamos a crearnos una carpeta en alguna parte y a ir configurando Vagrant. El archivo de configuración que yo utilizo tiene el siguiente aspecto (debe llamarse <em>Vagrantfile</em>):</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#75715e"># file: Vagrantfile</span>
@@ -258,7 +258,7 @@
 <p>No hay mucho que contar, tan solo que sobreescribo el @sources.list@ y después lanzo un update. Estos requisitos se ejecutarán sin orden fijo, así que tengo que forzar un orden mediante la orden <em>require</em>.</p>
 <p>Claro, el archivo que quiero instalar tiene que estar en el directorio <em>files</em> (mirad la estructura más arriba). Y tendrá algo como esto:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span># file: modules/apt/files/sources.list
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>deb http://ftp.es.debian.org/debian unstable main contrib non-free
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>deb https://ftp.es.debian.org/debian unstable main contrib non-free
 </code></pre></div><p>Ahora vamos a configurar el módulo del <em>kernel</em>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e"># file: modules/kernel/manifests/init.pp</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#66d9ef">class</span> kernel {
@@ -346,11 +346,11 @@
 <p>Hay algunas soluciones, como realizar <em>pruebas</em>. Existen distintos entornos de pruebas, pero se basan en comprobar que la sintaxis es la adecuada y, en mi opinión, es lo mismo que tener redundancia: se especifican las reglas de dos maneras distintas y deben coincidir. Personalmente, no me gusta el sistema y no le veo un beneficio.</p>
 <p>Nuevamente, en mi opinión, lo más útil es definir una nueva etapa de pruebas que <em>realice pruebas por los efectos</em>, no por los requisitos: si queremos que un servidor esté corriendo, comprobamos que el puerto está ocupado. Si hemos modificado un archivo, podemos comprobar su fecha de modificación. Pero no hay ningún framework que nos facilite esta tarea.</p>
 <h2 id="más-información">Más información</h2>
-<p>Podéis visitar la propia <a href="http://docs.puppetlabs.com/learning/">web de Puppet</a> . Está todo muy bien explicadito, salvo la estructura inicial (para lo que ya estoy yo XD).</p>
-<p>En este artículo he introducido los tipos <a href="http://docs.puppetlabs.com/references/stable/type.html">file&quot;, &ldquo;package&rdquo; y &ldquo;exec&rdquo;; podéis visitar la &ldquo;lista completa de tipos puppet</a>  si queréis.</p>
+<p>Podéis visitar la propia <a href="https://docs.puppetlabs.com/learning/">web de Puppet</a> . Está todo muy bien explicadito, salvo la estructura inicial (para lo que ya estoy yo XD).</p>
+<p>En este artículo he introducido los tipos <a href="https://docs.puppetlabs.com/references/stable/type.html">file&quot;, &ldquo;package&rdquo; y &ldquo;exec&rdquo;; podéis visitar la &ldquo;lista completa de tipos puppet</a>  si queréis.</p>
 <p>Así mismo, he comentado las etapas, pero hay muchos otros <a href="https://www.puppetlabs.com/references/2.6.8/metaparameter.html">metaparámetros</a>.</p>
-<p>También tenéis <a href="http://vagrantup.com/">la página de Vagrant</a>, claro.</p>
-<p>Si os gustan estos temas, os recomiendo que sigáis a <a href="http://blog.carlossanchez.eu/">Carlos Sánchez</a>, que presentó en el <a href="http://codemotion.es/">CodeMotion</a>  la charla <a href="http://www.slideshare.net/carlossg/from-dev-to-devops-codemotion-es-2012">From Dev to DevOps</a>.</p>
+<p>También tenéis <a href="https://vagrantup.com/">la página de Vagrant</a>, claro.</p>
+<p>Si os gustan estos temas, os recomiendo que sigáis a <a href="https://blog.carlossanchez.eu/">Carlos Sánchez</a>, que presentó en el <a href="https://codemotion.es/">CodeMotion</a>  la charla <a href="https://www.slideshare.net/carlossg/from-dev-to-devops-codemotion-es-2012">From Dev to DevOps</a>.</p>
 <p>Podréis encontrar más información si buscáis la palabra &ldquo;devops&rdquo; en google :D</p>
 
     

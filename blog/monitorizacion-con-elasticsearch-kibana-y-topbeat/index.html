@@ -180,7 +180,7 @@ alertado. Pero he conocido <a href="https://www.elastic.co/products/elasticsearc
 <p>En los 10 breves minutos que se tarda en leer este post vamos a tener montado
 todo un sistema de monitorización, tanto local como remoto, totalmente escalable
 y de alta disponibilidad. Los únicos requisitos son tener un servidor con <a href="https://www.java.com/">Java</a>
-y <a href="http://www.git-scm.com/">Git</a>, y monitorización completa de la máquina. No tendremos monitorización de
+y <a href="https://www.git-scm.com/">Git</a>, y monitorización completa de la máquina. No tendremos monitorización de
 logs, cosa que podríamos añadir fácilmente con <a href="https://www.elastic.co/products/beats/filebeat">FileBeat</a>.</p>
 <p>Y sin más, comenzamos.</p>
 <h2 id="tienes-prisa">¿Tienes prisa?</h2>
@@ -243,7 +243,7 @@ agentes: <a href="https://www.elastic.co/products/beats/topbeat">TopBeat</a>.</p
 <p>La configuración mínima vuelve a ser indicar el host en el que está
 <a href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a>, y se encuentra en el directorio relativo <code>config/kibana.yml</code>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#f92672">server.host</span>: <span style="color:#e6db74">&#34;0.0.0.0&#34;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#f92672">elasticsearch.url</span>: <span style="color:#e6db74">&#34;http://123.123.123.123:9200&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#f92672">elasticsearch.url</span>: <span style="color:#e6db74">&#34;https://123.123.123.123:9200&#34;</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span style="color:#f92672">kibana.index</span>: <span style="color:#e6db74">&#34;.kibana&#34;</span>
 </code></pre></div><p>En este caso sólo se atacará una instancia de <a href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a>, y tendremos que
 indicar también dónde escucha el propio <a href="https://www.elastic.co/products/kibana">Kibana</a>. Además hay que indicar un nombre para sus índices.</p>
@@ -256,7 +256,7 @@ indicar también dónde escucha el propio <a href="https://www.elastic.co/produc
 <p>No tiene pérdida: descargar y ejecutar:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>$ git clone https://github.com/elastic/beats-dashboards.git
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>$ cd beats-dashboards
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>$ ./load.sh -l http://123.123.123.123:9200
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>$ ./load.sh -l https://123.123.123.123:9200
 </code></pre></div><p>Si no indicáis URL, usará <code>localhost</code>. Ojo, porque es la URL de un nodo del
 <em>cluster</em> de <a href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a>.</p>
 <p>Ahora podéis pulsar la pestaña <code>Dashboard</code> de la web de <a href="https://www.elastic.co/products/kibana">Kibana</a> y a la derecha, arriba, tendréis un pequeño panel de control. Seleccionad <code>Load Saved Dashboard</code> y a continuación cualquiera de ellos.</p>
@@ -268,14 +268,14 @@ seguramente todos estén vacíos, salvo el de <a href="https://www.elastic.co/pr
 <strong>Ruby</strong>) y recursos ilimitados, ya que lanza un proceso por cada <strong>check</strong>,
 llegando a consumir hasta el 10% de CPU. Usando el <a href="https://github.com/carllindelof/sensu-client">agente Sensu en c#</a> he
 reducido el <em>footprint</em> a 20 Mb y menos de un 1% de CPU. <a href="https://www.elastic.co/products/beats/topbeat">TopBeat</a> utiliza 8 Mb y apenas se nota el consumo de CPU.</p>
-<p>También hay que decir que utilizar <a href="https://sensuapp.org/">Sensu</a> con <a href="http://graphite.wikidot.com/">Graphite</a> es trivial, y montar
-un <a href="http://grafana.org/">Grafana</a> por encima también. Pero claro&hellip; es que se puede usar <a href="http://grafana.org/">Grafana</a>
+<p>También hay que decir que utilizar <a href="https://sensuapp.org/">Sensu</a> con <a href="https://graphite.wikidot.com/">Graphite</a> es trivial, y montar
+un <a href="https://grafana.org/">Grafana</a> por encima también. Pero claro&hellip; es que se puede usar <a href="https://grafana.org/">Grafana</a>
 con <a href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a> también&hellip; :)</p>
 <h3 id="alertas">Alertas</h3>
 <p>La ventaja de <a href="https://sensuapp.org/">Sensu</a> es que permite alertado. El motor de <a href="https://sensuapp.org/">Sensu</a> de alertado es realmente potente. Sin embargo, requiere bastantes recursos y, desgraciadamente, en momentos de pico podría fallar.</p>
 <p><a href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a> tiene a <a href="https://www.elastic.co/products/watcher">Watcher</a>, el cual, desgraciadamente, no es libre ni
 gratis. También hay que pensar que la gente de <a href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a> tiene que comer.</p>
-<p>Pero la gente de <a href="http://www.yelp.com/engineering">Yelp</a> se ha currado <a href="https://github.com/Yelp/elastalert">ElastAlert</a> que es un sistema de alertas libre y gratuíto. Aún no me ha dado tiempo a probarlo, y quizá se merezca otro artículo.</p>
+<p>Pero la gente de <a href="https://www.yelp.com/engineering">Yelp</a> se ha currado <a href="https://github.com/Yelp/elastalert">ElastAlert</a> que es un sistema de alertas libre y gratuíto. Aún no me ha dado tiempo a probarlo, y quizá se merezca otro artículo.</p>
 <p>En fin&hellip; Para gustos colores :)</p>
 
     

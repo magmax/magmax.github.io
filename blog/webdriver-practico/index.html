@@ -174,7 +174,7 @@
     
     <p>Todos los días tengo que coger el tren para ir a trabajar. Hablando con un amigo que también tiene que ir en tren, se me ocurrió comentarle que la seguridad de los abonos es muy mala, ya que hay que formalizar cada viaje y sacar un billete, donde se muestra el número de abono y se ocultan los 3 últimos dígitos del DNI y la letra. Insistí en que era capaz de sacarme viajes con su abono si me daba uno de sus billetes&hellip;</p>
 <p>Y me retó.</p>
-<p>Y como creo que es un ejemplo estupendo de uso de <a href="http://www.seleniumhq.org/projects/webdriver/" title="Web oficial de WebDriver">WebDriver</a>. pues aquí lo tenemos.</p>
+<p>Y como creo que es un ejemplo estupendo de uso de <a href="https://www.seleniumhq.org/projects/webdriver/" title="Web oficial de WebDriver">WebDriver</a>. pues aquí lo tenemos.</p>
 <p>Además, podremos ver algunas de las características chulas de Python :D</p>
 <!-- raw HTML omitted -->
 <figure>
@@ -193,7 +193,7 @@
 <p>Mi primera idea fue ver la solicitud y lanzar un montón de <code>curl</code>. Pero resulta que el DNI y el número de abono se cifran en cada llamada&hellip; Bueno, no es problema.</p>
 <p>Podría utilizar sus mismas funciones JavaScript sin cifrar de su página para codificar los argumentos&hellip; Pero hay otra manera más sencilla:</p>
 <h3 id="segunda-idea">Segunda idea</h3>
-<p>Siempre podemos recurrir a <a href="http://www.seleniumhq.org/projects/webdriver/" title="Web oficial de WebDriver">WebDriver</a>, e ir navegando la página hasta conseguir entrar.</p>
+<p>Siempre podemos recurrir a <a href="https://www.seleniumhq.org/projects/webdriver/" title="Web oficial de WebDriver">WebDriver</a>, e ir navegando la página hasta conseguir entrar.</p>
 <h3 id="generando-dnis">Generando DNIs</h3>
 <p>Aprovechando lo explicado en el <a href="https://magmax.org/blog/python-avanzado/">tutorial avanzado de Python</a>, no cuesta nada hacernos un generador de DNIs:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DniGenerator</span>(object):
@@ -213,7 +213,7 @@
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">__letter_for_dni</span>(self, n):
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#39;TRWAGMYFPDXBNJZSQVHLCKE&#39;</span>[n<span style="color:#f92672">%</span><span style="color:#ae81ff">23</span>]
 </code></pre></div><p>Aquí podemos ver varias cosas interesantes. Mi clase implementa el método mágico <code>__iter__</code> que devuelve un iterador. En este caso, devuelvo un generador directamente, que irá recorriendo las terminaciones y generando un DNI completo para cada una.</p>
-<p>Respecto al crack, vemos que <a href="http://es.wikibooks.org/wiki/Algoritmo_para_obtener_la_letra_del_NIF#Python" title="Algoritmos para obtener la letra del DNI en distintos lenguajes">la letra del DNI se puede generar automáticamente</a>, por lo que el problema se reduce a la generación de los 1000 números secuenciales. Como todos los números tienen las mismas posibilidades, he decidido darle un poco de aletoriedad para tratar de jugar con ventaja.</p>
+<p>Respecto al crack, vemos que <a href="https://es.wikibooks.org/wiki/Algoritmo_para_obtener_la_letra_del_NIF#Python" title="Algoritmos para obtener la letra del DNI en distintos lenguajes">la letra del DNI se puede generar automáticamente</a>, por lo que el problema se reduce a la generación de los 1000 números secuenciales. Como todos los números tienen las mismas posibilidades, he decidido darle un poco de aletoriedad para tratar de jugar con ventaja.</p>
 <h3 id="argumentos-de-entrada">Argumentos de entrada</h3>
 <p>Veamos cómo leer los argumentos de entrada:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>parser <span style="color:#f92672">=</span> argparse<span style="color:#f92672">.</span>ArgumentParser(usage<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Given the Abono data, retrieves the rest of the DNI&#34;</span>,
@@ -225,7 +225,7 @@
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7</span>options <span style="color:#f92672">=</span> parser<span style="color:#f92672">.</span>parse_args()
 </code></pre></div><p>Con eso es suficiente. Así no tengo que <em>hardcodear</em> mi DNI ni mi número de abono.</p>
 <h3 id="pageobjects">PageObjects</h3>
-<p>La mejor manera de usar <a href="http://www.seleniumhq.org/projects/webdriver/" title="Web oficial de WebDriver">WebDriver</a> es mediante <a href="https://magmax.org/blog/selenium-y-qa-automation-3/">PageObjects</a>. De esta manera, si modifican la página me será muy sencillo adaptar mi crack, y la implementación quedará oculta respecto del uso de la misma:</p>
+<p>La mejor manera de usar <a href="https://www.seleniumhq.org/projects/webdriver/" title="Web oficial de WebDriver">WebDriver</a> es mediante <a href="https://magmax.org/blog/selenium-y-qa-automation-3/">PageObjects</a>. De esta manera, si modifican la página me será muy sencillo adaptar mi crack, y la implementación quedará oculta respecto del uso de la misma:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">PageObject</span>(object):
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>    <span style="color:#66d9ef">def</span> __init__(self, browser):
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>        self<span style="color:#f92672">.</span>_browser <span style="color:#f92672">=</span> browser
@@ -234,7 +234,7 @@
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">InitialPage</span>(PageObject):
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>    <span style="color:#a6e22e">@staticmethod</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">create</span>(browser):
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>        browser<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;http://www.renfe.com/&#39;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>        browser<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;https://www.renfe.com/&#39;</span>)
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>        <span style="color:#66d9ef">return</span> InitialPage(browser)
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">go_ticket_page</span>(self):
@@ -328,7 +328,7 @@
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 18</span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">InitialPage</span>(PageObject):
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 19</span>    <span style="color:#a6e22e">@staticmethod</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 20</span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">create</span>(browser):
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 21</span>        browser<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;http://www.renfe.com/&#39;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 21</span>        browser<span style="color:#f92672">.</span>get(<span style="color:#e6db74">&#39;https://www.renfe.com/&#39;</span>)
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 22</span>        <span style="color:#66d9ef">return</span> InitialPage(browser)
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 23</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 24</span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">go_ticket_page</span>(self):

@@ -197,9 +197,9 @@
     <li><a href="#conclusión">Conclusión</a></li>
   </ul>
 </nav>
-    <p>En un post anterior escribí sobre <code>cómo escribir tests de aceptación con el framework Robot</code>. En esta ocasión voy a escribir sobre otro <em>framework</em> con el mismo fin: <a href="http://www.fitnesse.org/">Fitnesse</a>.</p>
-<p><a href="http://www.fitnesse.org/">Fitnesse</a> es bastante diferente de <a href="http://robotframework.org">Robot</a>. Para empezar, porque no es sólo un <em>framework</em>, sino también un <em>wiki</em>&hellip; Podríamos decir que es una <strong>plataforma de testing</strong>.</p>
-<p>Además, permite realizar los <em>fixtures</em> en <a href="http://www.fitnesse.org/PlugIns#slim">casi cualquier lenguaje</a>. En esta ocasión veremos sólo Java.</p>
+    <p>En un post anterior escribí sobre <code>cómo escribir tests de aceptación con el framework Robot</code>. En esta ocasión voy a escribir sobre otro <em>framework</em> con el mismo fin: <a href="https://www.fitnesse.org/">Fitnesse</a>.</p>
+<p><a href="https://www.fitnesse.org/">Fitnesse</a> es bastante diferente de <a href="https://robotframework.org">Robot</a>. Para empezar, porque no es sólo un <em>framework</em>, sino también un <em>wiki</em>&hellip; Podríamos decir que es una <strong>plataforma de testing</strong>.</p>
+<p>Además, permite realizar los <em>fixtures</em> en <a href="https://www.fitnesse.org/PlugIns#slim">casi cualquier lenguaje</a>. En esta ocasión veremos sólo Java.</p>
 <!-- raw HTML omitted -->
 <figure>
     <img src="/images/test.jpg"
@@ -207,8 +207,8 @@
 </figure>
 
 <h2 id="preparando-el-entorno">Preparando el entorno</h2>
-<p>Lo primero es descargarse <a href="http://www.fitnesse.org/">Fitnesse</a>. Éste consta de <a href="http://www.fitnesse.org/FitNesseDownload">un único archivo .jar</a>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>wget <span style="color:#e6db74">&#34;http://www.fitnesse.org/fitnesse-standalone.jar?responder=releaseDownload&amp;release=20150814&#34;</span> -O fitnesse-standalone.jar
+<p>Lo primero es descargarse <a href="https://www.fitnesse.org/">Fitnesse</a>. Éste consta de <a href="https://www.fitnesse.org/FitNesseDownload">un único archivo .jar</a>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>wget <span style="color:#e6db74">&#34;https://www.fitnesse.org/fitnesse-standalone.jar?responder=releaseDownload&amp;release=20150814&#34;</span> -O fitnesse-standalone.jar
 </code></pre></div><p>Como es evidente, necesitaremos tener instalado Java. La versión dependerá: Si vamos a crear los <em>fixtures</em> en Java, necesitaremos el JDK, mientras que si los vamos a crear en otro lenguaje nos basta con el JRE.</p>
 <p>Ya podemos lanzarlo:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>java -jar fitnesse-standalone.jar -p <span style="color:#ae81ff">9000</span>
@@ -222,16 +222,16 @@
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>java -jar fitnesse-standalone.jar -c <span style="color:#e6db74">&#34;FitNesse.SuiteAcceptanceTests.SuiteWidgetTests.TestComment?suite&amp;format=text&#34;</span>
 </code></pre></div><p>Fitnesse lanzará todo lo necesario para terminar devolviéndonos el resultado.</p>
 <h2 id="cómo-funciona">Cómo funciona</h2>
-<p>Es importante tener claro cómo funciona <a href="http://www.fitnesse.org/">Fitnesse</a>, ya que esto condiciona hacer bien o mal los tests.</p>
+<p>Es importante tener claro cómo funciona <a href="https://www.fitnesse.org/">Fitnesse</a>, ya que esto condiciona hacer bien o mal los tests.</p>
 <p>Por una parte está el <em>wiki</em>, que ya hemos visto y que tiene poco que explicar. Las páginas se pueden editar directamente desde él.</p>
-<p>Por otro lado, el servidor de pruebas. <a href="http://www.fitnesse.org/">Fitnesse</a> lanzará uno por cada Suite a probar, y puede estar implementado en cualquier lenguaje. Éste se encargará de manejar las <em>fixtures</em>.</p>
-<p>Finalmente, está el procesador, que puede ser <a href="http://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.FitFramework">Fit</a> o <a href="http://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.SliM">Slim</a>. Ambos son dos procesadores HTML que extraen los tests de las páginas HTML, los ejecutan en el servidor de pruebas y generan el HTML resultante. Dado que <a href="http://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.SliM">Slim</a> es la evolución de <a href="http://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.FitFramework">Fit</a>, me centraré sólo en <a href="http://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.SliM">Slim</a>.</p>
-<p><a href="http://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.SliM">Slim</a> permite definir variables y tablas. Para ello utiliza un lenguaje especial en el <em>wiki</em>. Por ejemplo, para definir una variable usa:</p>
+<p>Por otro lado, el servidor de pruebas. <a href="https://www.fitnesse.org/">Fitnesse</a> lanzará uno por cada Suite a probar, y puede estar implementado en cualquier lenguaje. Éste se encargará de manejar las <em>fixtures</em>.</p>
+<p>Finalmente, está el procesador, que puede ser <a href="https://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.FitFramework">Fit</a> o <a href="https://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.SliM">Slim</a>. Ambos son dos procesadores HTML que extraen los tests de las páginas HTML, los ejecutan en el servidor de pruebas y generan el HTML resultante. Dado que <a href="https://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.SliM">Slim</a> es la evolución de <a href="https://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.FitFramework">Fit</a>, me centraré sólo en <a href="https://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.SliM">Slim</a>.</p>
+<p><a href="https://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.SliM">Slim</a> permite definir variables y tablas. Para ello utiliza un lenguaje especial en el <em>wiki</em>. Por ejemplo, para definir una variable usa:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#f92672">!</span>define TEST_SYSTEM <span style="color:#f92672">{</span>slim<span style="color:#f92672">}</span>
 </code></pre></div><p>Así se define la variable <code>TEST_SYSTEM</code> con el valor <code>slim</code>. Esta variable es muy importante, ya que define el sistema de test a utilizar en la <em>Suite</em>.</p>
 <p>Para crear nuevas páginas en el wiki, basta con editar una página y escribir una palabra <em>camelcase</em> (&ldquo;EstoEsUnEjemplo&rdquo;); al guardar nos aparecerá el texto renderizado y una interrogación (&ldquo;Esto Es Un Ejemplo [?]&quot;). Al pulsar sobre ese link, se creará la página enlazada. Así de simple.</p>
 <h3 id="tablas">Tablas</h3>
-<p>Las tablas pueden definir distintas cosas, desde las librerías a importar a los propios tests. En esta ocasión nos centraremos en dos: <a href="http://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.SliM.ImportTable">Import Table</a> y <a href="http://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.SliM.DecisionTable">Decision Table</a>.</p>
+<p>Las tablas pueden definir distintas cosas, desde las librerías a importar a los propios tests. En esta ocasión nos centraremos en dos: <a href="https://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.SliM.ImportTable">Import Table</a> y <a href="https://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.SliM.DecisionTable">Decision Table</a>.</p>
 <p>Hay distintos formatos&hellip; Todos basados en <abbr title="Comma Separated Values">CSV</abbr>
  o
 <abbr title="Tab Separated Values">TSV</abbr>
@@ -259,7 +259,7 @@
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>|factor|factor|multiply?|
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>|4|2|8|
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>|44|12|8|
-</code></pre></div><p>Las <a href="http://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.SliM.DecisionTable">Decision Table</a> son las tablas por defecto, así que no es necesario indicarlo. La primera línea indica la <strong>clase</strong> a utilizar como <em>fixture</em>; la segunda indica qué <strong>métodos</strong> invocar; a partir de la tercera muestra los valores a utilizar para cada método.</p>
+</code></pre></div><p>Las <a href="https://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.SliM.DecisionTable">Decision Table</a> son las tablas por defecto, así que no es necesario indicarlo. La primera línea indica la <strong>clase</strong> a utilizar como <em>fixture</em>; la segunda indica qué <strong>métodos</strong> invocar; a partir de la tercera muestra los valores a utilizar para cada método.</p>
 <p>La columna que muestra una interrogación implica</p>
 <p>Se creará una instancia de la clase indicada por cada fila. Dicho de otro modo: cada fila a partir de la tercera es un <strong>test</strong>.</p>
 <h2 id="fixtures">Fixtures</h2>
@@ -316,10 +316,10 @@
 <p>En este ejemplo podemos ver varios tests que pasan y uno que falla, debido a que el test está mal especificado.</p>
 <h3 id="python">Python</h3>
 <p>Pues&hellip; Sinceramente, ha sido un verdadero dolor.</p>
-<p>La opción de usar <a href="http://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.FitFramework">Fit</a> es sencilla, pero claro, carecemos de la mayor parte de las características molonas. Basta con instalar el paquete <a href="https://pypi.python.org/pypi/PyFIT">pyfit</a>.</p>
-<p>Para usar <a href="http://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.SliM">Slim</a> es necesario instalar el paquete <a href="https://github.com/gbremer/waferslim">waferslim</a>, cuyo paquete pip simplemente no funciona. Tras no pocos problemas, tanto con python 2.7 como con python 3.4, he tenido que añadir algún parche que otro y <em>forkear</em> una rama que no es la oficial. Así que recomiendo optar por la solución fácil:</p>
+<p>La opción de usar <a href="https://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.FitFramework">Fit</a> es sencilla, pero claro, carecemos de la mayor parte de las características molonas. Basta con instalar el paquete <a href="https://pypi.python.org/pypi/PyFIT">pyfit</a>.</p>
+<p>Para usar <a href="https://www.fitnesse.org/FitNesse.UserGuide.WritingAcceptanceTests.SliM">Slim</a> es necesario instalar el paquete <a href="https://github.com/gbremer/waferslim">waferslim</a>, cuyo paquete pip simplemente no funciona. Tras no pocos problemas, tanto con python 2.7 como con python 3.4, he tenido que añadir algún parche que otro y <em>forkear</em> una rama que no es la oficial. Así que recomiendo optar por la solución fácil:</p>
 <ol>
-<li>En el mismo directorio en el que tengáis el <code>jar</code> de <a href="http://www.fitnesse.org/">Fitnesse</a>, clonad mi repositorio: <code>git clone https://github.com/magmax/waferslim.git</code></li>
+<li>En el mismo directorio en el que tengáis el <code>jar</code> de <a href="https://www.fitnesse.org/">Fitnesse</a>, clonad mi repositorio: <code>git clone https://github.com/magmax/waferslim.git</code></li>
 <li>Cread un <em>wiki</em> nuevo con este contenido (llamadlo, por ejemplo, <code>EjemploPython</code>):</li>
 </ol>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>!define TEST_SYSTEM {slim}
@@ -357,7 +357,7 @@
 </ol>
 <p>Lejos de estar perfecto y mosqueado por usar un entorno de tests que no tiene tests&hellip; Pero por lo menos &ldquo;parece&rdquo; que funciona.</p>
 <h2 id="ventajas-e-inconvenientes">Ventajas e inconvenientes</h2>
-<p>Suponiendo que <a href="http://www.fitnesse.org/">Fitnesse</a> funcionara con Python, ambos tendrían sus pros y sus contras:</p>
+<p>Suponiendo que <a href="https://www.fitnesse.org/">Fitnesse</a> funcionara con Python, ambos tendrían sus pros y sus contras:</p>
 <table>
 <thead>
 <tr>
@@ -380,11 +380,11 @@
 </tbody>
 </table>
 <h2 id="conclusión">Conclusión</h2>
-<p><a href="http://robotframework.org">Robot</a> no es el único <em>framework</em> para hacer tests de aceptación, y puede ser muy buena opción en algunos casos. <a href="http://www.fitnesse.org/">Fitnesse</a> es otra opción bastante buena que admite muchas más opciones que <a href="http://robotframework.org">Robot</a>. Estas opciones pueden no ser necesarias, lo que redunda en complejidad innecesaria.</p>
-<p>Para tests en Python, <a href="http://robotframework.org">Robot</a> es nativo; sin embargo, <a href="http://www.fitnesse.org/">Fitnesse</a> es más versátil y admite casi cualquier lenguaje.</p>
-<p>Metiéndonos en el lenguaje, <a href="http://robotframework.org">Robot</a> es más orientado al script, mientras que <a href="http://www.fitnesse.org/">Fitnesse</a> genera tablas bonitas y fáciles de enseñar a &ldquo;los jefes&rdquo;.</p>
-<p><a href="http://robotframework.org">Robot</a> tiene otras ventajas, como el lenguaje intermedio de resultados. Se puede utilizar para operaciones avanzadas: Reintentar tests fallidos, paralelizar tests&hellip; Estas opciones son más complejas con <a href="http://www.fitnesse.org/">Fitnesse</a>.</p>
-<p>Próximamente hablaré sobre <a href="http://concordion.org/">Concordion</a>. Aunque <a href="https://magmax.org/blog/concordion/">ya escribí algo anteriormente sobre Concordion</a>, espero terminar esta serie de artículos con otro más sobre este framework, entrando en mucho mayor detalle.</p>
+<p><a href="https://robotframework.org">Robot</a> no es el único <em>framework</em> para hacer tests de aceptación, y puede ser muy buena opción en algunos casos. <a href="https://www.fitnesse.org/">Fitnesse</a> es otra opción bastante buena que admite muchas más opciones que <a href="https://robotframework.org">Robot</a>. Estas opciones pueden no ser necesarias, lo que redunda en complejidad innecesaria.</p>
+<p>Para tests en Python, <a href="https://robotframework.org">Robot</a> es nativo; sin embargo, <a href="https://www.fitnesse.org/">Fitnesse</a> es más versátil y admite casi cualquier lenguaje.</p>
+<p>Metiéndonos en el lenguaje, <a href="https://robotframework.org">Robot</a> es más orientado al script, mientras que <a href="https://www.fitnesse.org/">Fitnesse</a> genera tablas bonitas y fáciles de enseñar a &ldquo;los jefes&rdquo;.</p>
+<p><a href="https://robotframework.org">Robot</a> tiene otras ventajas, como el lenguaje intermedio de resultados. Se puede utilizar para operaciones avanzadas: Reintentar tests fallidos, paralelizar tests&hellip; Estas opciones son más complejas con <a href="https://www.fitnesse.org/">Fitnesse</a>.</p>
+<p>Próximamente hablaré sobre <a href="https://concordion.org/">Concordion</a>. Aunque <a href="https://magmax.org/blog/concordion/">ya escribí algo anteriormente sobre Concordion</a>, espero terminar esta serie de artículos con otro más sobre este framework, entrando en mucho mayor detalle.</p>
 
     
       <div id="disqus_thread"></div>

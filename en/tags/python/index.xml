@@ -19,7 +19,7 @@
 &lt;abbr title=&#34;Service Oriented Architectures&#34;&gt;SOA&lt;/abbr&gt;
 
 architectures is in fashion. These architectures use little and very specific services, so they interact each other.&lt;/p&gt;
-&lt;p&gt;In this post I&amp;rsquo;ll show how to use &lt;a href=&#34;http://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; in order to create a SOA architecture.&lt;/p&gt;
+&lt;p&gt;In this post I&amp;rsquo;ll show how to use &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; in order to create a SOA architecture.&lt;/p&gt;
 &lt;!-- raw HTML omitted --&gt;
 &lt;figure&gt;
     &lt;img src=&#34;https://magmax.org/images/python.png&#34;
@@ -27,15 +27,15 @@ architectures is in fashion. These architectures use little and very specific se
 &lt;/figure&gt;
 
 &lt;h2 id=&#34;about-celery&#34;&gt;About Celery&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&#34;http://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; is not a communication system, because it uses &lt;a href=&#34;https://www.rabbitmq.com&#34;&gt;RabbitMQ&lt;/a&gt;, &lt;a href=&#34;http://redis.io/&#34;&gt;Redis&lt;/a&gt;, etc. as communication system. The same applies to argue it is not a message queue system. Neither it is a protocol, because it uses &lt;a href=&#34;https://www.amqp.org/&#34;&gt;AMQP&lt;/a&gt;. Neither it is an abstraction over all these, because &lt;a href=&#34;https://kombu.readthedocs.org/en/latest/&#34;&gt;Kombu&lt;/a&gt; does that work, the communications library it uses under the hood.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;http://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; is a set ot tools to work easily with several services, something like syntactic sugar. It allows to launch services as &lt;strong&gt;tasks&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; is not a communication system, because it uses &lt;a href=&#34;https://www.rabbitmq.com&#34;&gt;RabbitMQ&lt;/a&gt;, &lt;a href=&#34;https://redis.io/&#34;&gt;Redis&lt;/a&gt;, etc. as communication system. The same applies to argue it is not a message queue system. Neither it is a protocol, because it uses &lt;a href=&#34;https://www.amqp.org/&#34;&gt;AMQP&lt;/a&gt;. Neither it is an abstraction over all these, because &lt;a href=&#34;https://kombu.readthedocs.org/en/latest/&#34;&gt;Kombu&lt;/a&gt; does that work, the communications library it uses under the hood.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; is a set ot tools to work easily with several services, something like syntactic sugar. It allows to launch services as &lt;strong&gt;tasks&lt;/strong&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;how-to-install-it&#34;&gt;How to install it&lt;/h2&gt;
 &lt;p&gt;It is very easy to install; with &lt;code&gt;pip&lt;/code&gt;:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;pip install celery
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;or &lt;code&gt;apt&lt;/code&gt;:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;apt-get install python-celery
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The problem here is we need a &lt;strong&gt;Broker&lt;/strong&gt;. The &lt;strong&gt;Broker&lt;/strong&gt; is the way to transport messages from a service to another. In this case, we need a message queue.&lt;/p&gt;
-&lt;p&gt;We will use two of them as example: &lt;a href=&#34;https://www.rabbitmq.com&#34;&gt;RabbitMQ&lt;/a&gt; and &lt;a href=&#34;http://redis.io/&#34;&gt;Redis&lt;/a&gt;. The first one is somehow&amp;hellip; complicated, but very interesting if you already know and install the &lt;a href=&#34;https://www.rabbitmq.com/management.html&#34;&gt;management plugin&lt;/a&gt;. The second one is easier to be installed, but more difficult to see what is happening internally. To use &lt;a href=&#34;http://redis.io/&#34;&gt;Redis&lt;/a&gt; you will also require the library; with &lt;code&gt;pip&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;We will use two of them as example: &lt;a href=&#34;https://www.rabbitmq.com&#34;&gt;RabbitMQ&lt;/a&gt; and &lt;a href=&#34;https://redis.io/&#34;&gt;Redis&lt;/a&gt;. The first one is somehow&amp;hellip; complicated, but very interesting if you already know and install the &lt;a href=&#34;https://www.rabbitmq.com/management.html&#34;&gt;management plugin&lt;/a&gt;. The second one is easier to be installed, but more difficult to see what is happening internally. To use &lt;a href=&#34;https://redis.io/&#34;&gt;Redis&lt;/a&gt; you will also require the library; with &lt;code&gt;pip&lt;/code&gt;:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;pip install redis
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;or with &lt;code&gt;apt&lt;/code&gt;:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;apt-get install python-redis
@@ -53,7 +53,7 @@ architectures is in fashion. These architectures use little and very specific se
 &lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;@app.task&lt;/span&gt;
 &lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;multiply&lt;/span&gt;(a, b):
 &lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; a &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; b&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The overhead added by &lt;a href=&#34;http://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; is quite small: importing the library, connecting (&lt;code&gt;app&lt;/code&gt;) and adding a decorator to our service.&lt;/p&gt;
+&lt;p&gt;The overhead added by &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; is quite small: importing the library, connecting (&lt;code&gt;app&lt;/code&gt;) and adding a decorator to our service.&lt;/p&gt;
 &lt;p&gt;It is already executable:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;$ celery worker --loglevel&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;info -A tasks
 &lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;
@@ -136,7 +136,7 @@ architectures is in fashion. These architectures use little and very specific se
 &lt;p&gt;Now we are running a task method directly, so we get the task.&lt;/p&gt;
 &lt;p&gt;And now we have a very complicated way to multiply two numbers :)&lt;/p&gt;
 &lt;h2 id=&#34;tools&#34;&gt;Tools&lt;/h2&gt;
-&lt;p&gt;As I said before, &lt;a href=&#34;http://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; gives you tools and syntactic sugar.&lt;/p&gt;
+&lt;p&gt;As I said before, &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; gives you tools and syntactic sugar.&lt;/p&gt;
 &lt;p&gt;First of all, we&amp;rsquo;ll see &lt;em&gt;partials&lt;/em&gt;. They are functions with some parameters already set.&lt;/p&gt;
 &lt;p&gt;It is very easy to create the &lt;em&gt;partial&lt;/em&gt; &lt;code&gt;duplicate&lt;/code&gt; by forcing the first parameter of &lt;code&gt;multiply&lt;/code&gt;:&lt;/p&gt;
 &lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Celery full example: multiply two numbers with partials&lt;/span&gt;
@@ -161,8 +161,8 @@ architectures is in fashion. These architectures use little and very specific se
 :start-line: 12
 :end-line: 16
 :number-lines: 13&lt;/p&gt;
-&lt;p&gt;Yeah, partials are built with method &lt;code&gt;.si&lt;/code&gt;, despite we can use &lt;code&gt;.s&lt;/code&gt; too. The fist one is &lt;em&gt;immutable&lt;/em&gt; (that explains the &lt;code&gt;i&lt;/code&gt;). It is very difficult to explain this before explaining another &lt;a href=&#34;http://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; tool: &lt;code&gt;Chains&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;http://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; allows to chain tasks, so the result of one is the first parameter of the next one. Why the first one? It works so. It is a fucking shit, but works so.&lt;/p&gt;
+&lt;p&gt;Yeah, partials are built with method &lt;code&gt;.si&lt;/code&gt;, despite we can use &lt;code&gt;.s&lt;/code&gt; too. The fist one is &lt;em&gt;immutable&lt;/em&gt; (that explains the &lt;code&gt;i&lt;/code&gt;). It is very difficult to explain this before explaining another &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; tool: &lt;code&gt;Chains&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; allows to chain tasks, so the result of one is the first parameter of the next one. Why the first one? It works so. It is a fucking shit, but works so.&lt;/p&gt;
 &lt;p&gt;Sometimes we will require chained tasks just to set an order, so we can ignore the previous result. Here is when we can use the immutable functions, because they won&amp;rsquo;t use the previous task result.&lt;/p&gt;
 &lt;p&gt;I suppose you have noticed I use &amp;ldquo;functions&amp;rdquo; or &amp;ldquo;services&amp;rdquo; equally.&lt;/p&gt;
 &lt;p&gt;But too much talk; let&amp;rsquo;s concat something:&lt;/p&gt;
@@ -189,7 +189,7 @@ architectures is in fashion. These architectures use little and very specific se
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;
 &lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
 &lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;    main()&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;As I said before, &lt;a href=&#34;http://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; gives syntactic sugar, so it can be rewritten to:&lt;/p&gt;
+&lt;p&gt;As I said before, &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; gives syntactic sugar, so it can be rewritten to:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Celery example: multiply with chains using pipes (syntactic sugar)&lt;/span&gt;
 &lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; celery &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Celery
 &lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
@@ -240,9 +240,9 @@ architectures is in fashion. These architectures use little and very specific se
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;25&lt;/span&gt;
 &lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;26&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
 &lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;27&lt;/span&gt;    main()&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;There is even more syntactic sugar, like &lt;code&gt;chords&lt;/code&gt;, &lt;code&gt;maps&lt;/code&gt;, &lt;code&gt;starmaps&lt;/code&gt; and &lt;code&gt;chunks&lt;/code&gt;, but we won&amp;rsquo;t browse them. This is an introductory post. &lt;a href=&#34;http://celery.readthedocs.org/en/latest/userguide/canvas.html&#34;&gt;You can read more about Canvas&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;There is even more syntactic sugar, like &lt;code&gt;chords&lt;/code&gt;, &lt;code&gt;maps&lt;/code&gt;, &lt;code&gt;starmaps&lt;/code&gt; and &lt;code&gt;chunks&lt;/code&gt;, but we won&amp;rsquo;t browse them. This is an introductory post. &lt;a href=&#34;https://celery.readthedocs.org/en/latest/userguide/canvas.html&#34;&gt;You can read more about Canvas&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;the-beat&#34;&gt;The Beat&lt;/h3&gt;
-&lt;p&gt;Other important tool in &lt;a href=&#34;http://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; is the &lt;strong&gt;Beat&lt;/strong&gt;. It is a beat or a periodic signal. We can start it in the worker with &lt;code&gt;--beat&lt;/code&gt; option. While &lt;a href=&#34;https://github.com/celery/celery/issues/1495&#34;&gt;Beat exclusiveness&lt;/a&gt; is not added, it is important to run just one or we will receive more than one &lt;em&gt;beat&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Other important tool in &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; is the &lt;strong&gt;Beat&lt;/strong&gt;. It is a beat or a periodic signal. We can start it in the worker with &lt;code&gt;--beat&lt;/code&gt; option. While &lt;a href=&#34;https://github.com/celery/celery/issues/1495&#34;&gt;Beat exclusiveness&lt;/a&gt; is not added, it is important to run just one or we will receive more than one &lt;em&gt;beat&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;This &lt;em&gt;beat&lt;/em&gt; allows us to run periodic tasks.&lt;/p&gt;
 &lt;p&gt;Let&amp;rsquo;s see a small example: we are going to multiply the hour by 2 every 10 seconds:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Celery beat example: periodic date operation&lt;/span&gt;
@@ -274,7 +274,7 @@ architectures is in fashion. These architectures use little and very specific se
   &lt;iframe src=&#34;https://www.youtube.com/embed/qTXJUnV0oHU&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
 &lt;/div&gt;
 
-&lt;p&gt;Again, I&amp;rsquo;m going to stop here; I can only show a little about it. You can read more about &lt;a href=&#34;http://celery.readthedocs.org/en/latest/userguide/periodic-tasks.html&#34;&gt;periodic tasks&lt;/a&gt; if you are interested in.&lt;/p&gt;
+&lt;p&gt;Again, I&amp;rsquo;m going to stop here; I can only show a little about it. You can read more about &lt;a href=&#34;https://celery.readthedocs.org/en/latest/userguide/periodic-tasks.html&#34;&gt;periodic tasks&lt;/a&gt; if you are interested in.&lt;/p&gt;
 &lt;h3 id=&#34;warning-pickle&#34;&gt;Warning: pickle&lt;/h3&gt;
 &lt;p&gt;Perhaps you see a warning like &lt;code&gt;warnings.warn(CDeprecationWarning(W_PICKLE_DEPRECATED))&lt;/code&gt;. This is because we are using the &lt;a href=&#34;https://docs.python.org/3.4/library/pickle.html&#34;&gt;pickle&lt;/a&gt; serializer, which is deprecated. You can avoid it by adding:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Celery beat example: periodic date operation&lt;/span&gt;
@@ -302,7 +302,7 @@ architectures is in fashion. These architectures use little and very specific se
 &lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;    CELERY_ACCEPT_CONTENT &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;json&amp;#39;&lt;/span&gt;],
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24&lt;/span&gt;)&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;h2 id=&#34;complex-environments&#34;&gt;Complex environments&lt;/h2&gt;
-&lt;p&gt;Obviously, I&amp;rsquo;ve talked just about basic &lt;a href=&#34;http://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt;. We&amp;rsquo;ve used just a queue to communicate. As long as &lt;a href=&#34;https://www.rabbitmq.com&#34;&gt;RabbitMQ&lt;/a&gt; allows queue operations, &lt;a href=&#34;http://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; too.&lt;/p&gt;
+&lt;p&gt;Obviously, I&amp;rsquo;ve talked just about basic &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt;. We&amp;rsquo;ve used just a queue to communicate. As long as &lt;a href=&#34;https://www.rabbitmq.com&#34;&gt;RabbitMQ&lt;/a&gt; allows queue operations, &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; too.&lt;/p&gt;
 &lt;p&gt;You can:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;assign different queues to perform different tasks, so not all workers listen all requests or to assign different workers to different queues.&lt;/li&gt;
@@ -310,20 +310,20 @@ architectures is in fashion. These architectures use little and very specific se
 &lt;li&gt;send messages to all queues (&lt;strong&gt;topic&lt;/strong&gt;).&lt;/li&gt;
 &lt;li&gt;&amp;hellip;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;I&amp;rsquo;m not going to explain it deeply, but I&amp;rsquo;m going to describe the message path. This information is required to understand how routing works (found at &lt;a href=&#34;http://celery.readthedocs.org/en/latest/userguide/routing.html#exchanges-queues-and-routing-keys&#34;&gt;Exchanges, queues and routing keys&lt;/a&gt;):&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;m not going to explain it deeply, but I&amp;rsquo;m going to describe the message path. This information is required to understand how routing works (found at &lt;a href=&#34;https://celery.readthedocs.org/en/latest/userguide/routing.html#exchanges-queues-and-routing-keys&#34;&gt;Exchanges, queues and routing keys&lt;/a&gt;):&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;Message is sent. It is leaved in an &lt;strong&gt;EXCHANGE&lt;/strong&gt;. If it doesn&amp;rsquo;t exist, &lt;a href=&#34;http://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; will create it.&lt;/li&gt;
-&lt;li&gt;The &lt;strong&gt;EXCHANGE&lt;/strong&gt; routes the message to one or more queues, depending on its configuration. If queues doesn&amp;rsquo;t exist, &lt;a href=&#34;http://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; will care.&lt;/li&gt;
+&lt;li&gt;Message is sent. It is leaved in an &lt;strong&gt;EXCHANGE&lt;/strong&gt;. If it doesn&amp;rsquo;t exist, &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; will create it.&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;EXCHANGE&lt;/strong&gt; routes the message to one or more queues, depending on its configuration. If queues doesn&amp;rsquo;t exist, &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; will care.&lt;/li&gt;
 &lt;li&gt;The message waits in the queue until a consumer takeExchanges it. At this moment, the message is blocked to avoid other consumers to take it.&lt;/li&gt;
 &lt;li&gt;After processing it, consumer sends an &lt;strong&gt;ACK&lt;/strong&gt; and the message is finally removed.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;By default, &lt;a href=&#34;http://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; creates queues with the &lt;em&gt;exchange&lt;/em&gt; name and binds them in a direct way, that is, every message that gets the &lt;em&gt;exchange&lt;/em&gt; is routed to that queue.&lt;/p&gt;
+&lt;p&gt;By default, &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; creates queues with the &lt;em&gt;exchange&lt;/em&gt; name and binds them in a direct way, that is, every message that gets the &lt;em&gt;exchange&lt;/em&gt; is routed to that queue.&lt;/p&gt;
 &lt;p&gt;You can play with routings and create really complex architectures, so any message arrives to its target depending on the operation.&lt;/p&gt;
 &lt;h2 id=&#34;more-information&#34;&gt;More information&lt;/h2&gt;
-&lt;p&gt;The post &lt;a href=&#34;http://abhishek-tiwari.com/post/amqp-rabbitmq-and-celery-a-visual-guide-for-dummies&#34;&gt;AMQP, RabbitMQ and Celery - A Visual Guide For Dummies&lt;/a&gt; has beginner level, but I like it a lot because it explains everything with images. &lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-use-celery-with-rabbitmq-to-queue-tasks-on-an-ubuntu-vps&#34;&gt;How To Use Celery with RabbitMQ to Queue Tasks on an Ubuntu VPS&lt;/a&gt; is good too, and the PyCon slides &lt;a href=&#34;http://www.imankulov.name/posts/celery-for-internal-api.html&#34;&gt;Celery for Internal API in SOA infrastructure&lt;/a&gt; too.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;http://www.caktusgroup.com/blog/2014/06/23/scheduling-tasks-celery/&#34;&gt;Getting Started Scheduling Tasks with Celery&lt;/a&gt; is about configuring periodic tasks in a dynamic way by using &lt;a href=&#34;https://pypi.python.org/pypi/django-celery&#34;&gt;DJCelery&lt;/a&gt;, quite interesting to use it with &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;In order to understand it under the hood, I recommend &lt;a href=&#34;http://www.rabbitmq.com/tutorials/amqp-concepts.html&#34;&gt;AMQP 0-9-1 Model Explained&lt;/a&gt;, where &lt;a href=&#34;https://www.amqp.org/&#34;&gt;AMQP&lt;/a&gt; protocol is explained. It is very interesing to try complex routings. &lt;a href=&#34;http://rajith.2rlabs.com/2007/10/13/amqp-in-10-mins-part3-flexible-routing-model/&#34;&gt;AMQP in 10 mins : Part3 – Flexible Routing Model&lt;/a&gt; talks about that too, but is easier and just explains the basic concepts.&lt;/p&gt;
-&lt;p&gt;If you want to participate in a project using &lt;a href=&#34;http://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt;, I can cheer you to help me with &lt;a href=&#34;https://github.com/djcron-project/&#34;&gt;DJCron&lt;/a&gt;, a wrapper over &lt;a href=&#34;https://pypi.python.org/pypi/django-celery&#34;&gt;DJCelery&lt;/a&gt; that allows to configure distributed tasks dinamically, adding some extra features over  &lt;a href=&#34;https://pypi.python.org/pypi/django-celery&#34;&gt;DJCelery&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The post &lt;a href=&#34;https://abhishek-tiwari.com/post/amqp-rabbitmq-and-celery-a-visual-guide-for-dummies&#34;&gt;AMQP, RabbitMQ and Celery - A Visual Guide For Dummies&lt;/a&gt; has beginner level, but I like it a lot because it explains everything with images. &lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-use-celery-with-rabbitmq-to-queue-tasks-on-an-ubuntu-vps&#34;&gt;How To Use Celery with RabbitMQ to Queue Tasks on an Ubuntu VPS&lt;/a&gt; is good too, and the PyCon slides &lt;a href=&#34;https://www.imankulov.name/posts/celery-for-internal-api.html&#34;&gt;Celery for Internal API in SOA infrastructure&lt;/a&gt; too.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.caktusgroup.com/blog/2014/06/23/scheduling-tasks-celery/&#34;&gt;Getting Started Scheduling Tasks with Celery&lt;/a&gt; is about configuring periodic tasks in a dynamic way by using &lt;a href=&#34;https://pypi.python.org/pypi/django-celery&#34;&gt;DJCelery&lt;/a&gt;, quite interesting to use it with &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In order to understand it under the hood, I recommend &lt;a href=&#34;https://www.rabbitmq.com/tutorials/amqp-concepts.html&#34;&gt;AMQP 0-9-1 Model Explained&lt;/a&gt;, where &lt;a href=&#34;https://www.amqp.org/&#34;&gt;AMQP&lt;/a&gt; protocol is explained. It is very interesing to try complex routings. &lt;a href=&#34;https://rajith.2rlabs.com/2007/10/13/amqp-in-10-mins-part3-flexible-routing-model/&#34;&gt;AMQP in 10 mins : Part3 – Flexible Routing Model&lt;/a&gt; talks about that too, but is easier and just explains the basic concepts.&lt;/p&gt;
+&lt;p&gt;If you want to participate in a project using &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt;, I can cheer you to help me with &lt;a href=&#34;https://github.com/djcron-project/&#34;&gt;DJCron&lt;/a&gt;, a wrapper over &lt;a href=&#34;https://pypi.python.org/pypi/django-celery&#34;&gt;DJCelery&lt;/a&gt; that allows to configure distributed tasks dinamically, adding some extra features over  &lt;a href=&#34;https://pypi.python.org/pypi/django-celery&#34;&gt;DJCelery&lt;/a&gt;.&lt;/p&gt;
 
         
       </description>
@@ -359,7 +359,7 @@ architectures is in fashion. These architectures use little and very specific se
 &lt;h3 id=&#34;wide-api&#34;&gt;Wide API&lt;/h3&gt;
 &lt;p&gt;Standard Python has everything you can need, since command line managers to web servers, passing over threads management, configuration files management, XML readers, other language parsers, TK graphical interfaces,&amp;hellip; whatever you want.&lt;/p&gt;
 &lt;h3 id=&#34;command-line-interpreter&#34;&gt;Command line interpreter&lt;/h3&gt;
-&lt;p&gt;The command line interpreter is a marvel. Even more if you use any interpreter &lt;strong&gt;with steroids&lt;/strong&gt;, like &lt;a href=&#34;http://ipython.org/&#34;&gt;ipython&lt;/a&gt; or &lt;a href=&#34;http://bpython-interpreter.org/&#34;&gt;bpython&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The command line interpreter is a marvel. Even more if you use any interpreter &lt;strong&gt;with steroids&lt;/strong&gt;, like &lt;a href=&#34;https://ipython.org/&#34;&gt;ipython&lt;/a&gt; or &lt;a href=&#34;https://bpython-interpreter.org/&#34;&gt;bpython&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;zip-support-built-in&#34;&gt;Zip support built-in&lt;/h3&gt;
 &lt;p&gt;Zip support is native. You can store anything in a zip and try to execute it with python, and it will look for the file &lt;strong&gt;&lt;strong&gt;main&lt;/strong&gt;.py&lt;/strong&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;structured&#34;&gt;Structured&lt;/h3&gt;
@@ -381,9 +381,9 @@ architectures is in fashion. These architectures use little and very specific se
 &lt;h3 id=&#34;global-interpreter-lock-gil&#34;&gt;Global Interpreter Lock (GIL)&lt;/h3&gt;
 &lt;p&gt;It is a &lt;em&gt;mutex&lt;/em&gt; that avoids that several Python threads may be executed simultaneously. This can cause horrible performance problems and, what is more, it cannot take advantage of all system resources: multiprocess systems are strongly limited.&lt;/p&gt;
 &lt;h3 id=&#34;network-library&#34;&gt;Network library&lt;/h3&gt;
-&lt;p&gt;Standard Python has a network library too complex and few &lt;em&gt;pythonic&lt;/em&gt; in its API. Fortunatelly, we have &lt;a href=&#34;http://www.gevent.org/&#34;&gt;GEvent library&lt;/a&gt; and &lt;a href=&#34;http://docs.python-requests.org/en/latest/index.html&#34;&gt;requests library&lt;/a&gt;, that solve the proble, but they are out of standard API.&lt;/p&gt;
+&lt;p&gt;Standard Python has a network library too complex and few &lt;em&gt;pythonic&lt;/em&gt; in its API. Fortunatelly, we have &lt;a href=&#34;https://www.gevent.org/&#34;&gt;GEvent library&lt;/a&gt; and &lt;a href=&#34;https://docs.python-requests.org/en/latest/index.html&#34;&gt;requests library&lt;/a&gt;, that solve the proble, but they are out of standard API.&lt;/p&gt;
 &lt;h3 id=&#34;package-systems&#34;&gt;Package systems&lt;/h3&gt;
-&lt;p&gt;Despite all Python advantages, the package system is depresing: &lt;a href=&#34;http://packages.python.org/distribute/easy_install.html&#34;&gt;easy_install&lt;/a&gt; is not so &amp;ldquo;&lt;em&gt;easy&lt;/em&gt;&amp;rdquo;, and there are problems to retrieve a fixed version of a package. There are &lt;a href=&#34;http://farmdev.com/thoughts/76/the-python-packaging-problem/&#34;&gt;some more problems&lt;/a&gt;, but I think that it is enough with what I said.&lt;/p&gt;
+&lt;p&gt;Despite all Python advantages, the package system is depresing: &lt;a href=&#34;https://packages.python.org/distribute/easy_install.html&#34;&gt;easy_install&lt;/a&gt; is not so &amp;ldquo;&lt;em&gt;easy&lt;/em&gt;&amp;rdquo;, and there are problems to retrieve a fixed version of a package. There are &lt;a href=&#34;https://farmdev.com/thoughts/76/the-python-packaging-problem/&#34;&gt;some more problems&lt;/a&gt;, but I think that it is enough with what I said.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Update&lt;/strong&gt;: now we have &lt;a href=&#34;https://pypi.python.org/pypi/pip&#34;&gt;pip&lt;/a&gt; that seems to be easy to use and looks like the standard package management system.&lt;/p&gt;
 &lt;h3 id=&#34;the-hateful-self-var&#34;&gt;The hateful &lt;em&gt;self&lt;/em&gt; var&lt;/h3&gt;
 &lt;p&gt;Usually it is hateful to explicitly pass the &lt;em&gt;self&lt;/em&gt; variable as first parameter for every method. But this feature allows you to use several oparations that are uglier in other languages or, they cannot be used at all.&lt;/p&gt;
@@ -410,7 +410,7 @@ architectures is in fashion. These architectures use little and very specific se
       <guid>https://magmax.org/en/blog/python-asignaciones/</guid>
       <description>
         
-          &lt;p&gt;Some time ago, Manolowar showed me the operator [&amp;ldquo;Elvis]  from &lt;a href=&#34;http://groovy.codehaus.org/&#34;&gt;Groovy&lt;/a&gt; .&lt;/p&gt;
+          &lt;p&gt;Some time ago, Manolowar showed me the operator [&amp;ldquo;Elvis]  from &lt;a href=&#34;https://groovy.codehaus.org/&#34;&gt;Groovy&lt;/a&gt; .&lt;/p&gt;
 &lt;!-- raw HTML omitted --&gt;
 &lt;figure&gt;
     &lt;img src=&#34;https://magmax.org/images/python.png&#34;
@@ -433,7 +433,7 @@ architectures is in fashion. These architectures use little and very specific se
 &lt;p&gt;As you can see, every condition is false but the last one, so the final A value will be &amp;ldquo;Everything else is false&amp;rdquo;.&lt;/p&gt;
 &lt;p&gt;Use it carefully!!!&lt;/p&gt;
 &lt;h2 id=&#34;notes&#34;&gt;Notes&lt;/h2&gt;
-&lt;p&gt;I have been very careful trying to say that it searchs the first &lt;a href=&#34;http://docs.python.org/release/2.5.2/lib/truth.html&#34;&gt;that is not false&amp;rdquo;. This do not mean &amp;ldquo;the first that is true&amp;rdquo;, because &amp;ldquo;truth&amp;rdquo; is True. It is the very first that do not match &amp;ldquo;a false condition&lt;/a&gt; .&lt;/p&gt;
+&lt;p&gt;I have been very careful trying to say that it searchs the first &lt;a href=&#34;https://docs.python.org/release/2.5.2/lib/truth.html&#34;&gt;that is not false&amp;rdquo;. This do not mean &amp;ldquo;the first that is true&amp;rdquo;, because &amp;ldquo;truth&amp;rdquo; is True. It is the very first that do not match &amp;ldquo;a false condition&lt;/a&gt; .&lt;/p&gt;
 
         
       </description>

@@ -171,7 +171,7 @@ uno sobre <a href="https://github.com/etsy/statsd">StatsD</a>.</p>
 <p>En este artículo voy a contar qué es <a href="https://github.com/etsy/statsd">StatsD</a> y cómo usarlo para extraer
 estadísticas de uso de nuestro código. Aunque al principio pueda parecer un poco
 extraño, os aseguro que es realmente interesante, sobre todo cuando se usa junto
-con <a href="http://graphite.wikidot.com/">Graphite</a>.</p>
+con <a href="https://graphite.wikidot.com/">Graphite</a>.</p>
 <!-- raw HTML omitted -->
 <figure>
     <img src="/images/stats.png"
@@ -183,7 +183,7 @@ con <a href="http://graphite.wikidot.com/">Graphite</a>.</p>
 <blockquote>
 <p>StatsD is a front-end proxy for the Graphite/Carbon metrics server, originally written by Etsy&rsquo;s Erik Kastner. It is based on ideas from Flickr and this post by Cal Henderson: Counting and Timing. The server was written in Node, though there have been implementations in other languages since then.</p>
 </blockquote>
-<p>Pero debo decir que la definición no me gusta. No, porque <a href="http://graphite.wikidot.com/">Graphite</a> es sólo uno de los posibles backends.</p>
+<p>Pero debo decir que la definición no me gusta. No, porque <a href="https://graphite.wikidot.com/">Graphite</a> es sólo uno de los posibles backends.</p>
 <p>En lugar de preguntarnos <em>&quot;¿qué es StatsD?&quot;</em> deberíamos preguntarnos <em>&quot;¿Para qué sirve StatsD?&quot;</em>.</p>
 <p>StatsD permite recopilar datos de&hellip; cosas, para su posterior uso. Cosas como número de ejecuciones, veces que se pasa por una función, tiempo que tarda en ejecutarse una acción, etc.</p>
 <p>Existen <a href="https://github.com/etsy/statsd/wiki#server-implementations">distintas implementaciones del servidor StatsD</a>, aunque la original es
@@ -208,8 +208,8 @@ similar. Yo he usado <a href="https://www.npmjs.com/">npm</a> para este artícul
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span>}
 </code></pre></div><p>Podéis cambiar <code>graphiteHost</code> por <code>localhost</code>, y si seguísteis el artículo
 <a href="https://magmax.org/blog/graficas-basadas-en-tiempo-graphite/">Gráficas basadas en tiempo: Graphite</a> ya estaría todo funcionando con
-<a href="http://graphite.wikidot.com/">Graphite</a>. De todas maneras, para comenzar recomiendo cambiar el <strong>backend</strong>
-por <code>console</code>, y así no es necesario tener <a href="http://graphite.wikidot.com/">Graphite</a> instalado y podremos ver todos los datos en crudo. Por ello usaremos el archivo de configuración:</p>
+<a href="https://graphite.wikidot.com/">Graphite</a>. De todas maneras, para comenzar recomiendo cambiar el <strong>backend</strong>
+por <code>console</code>, y así no es necesario tener <a href="https://graphite.wikidot.com/">Graphite</a> instalado y podremos ver todos los datos en crudo. Por ello usaremos el archivo de configuración:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>{
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>  <span style="color:#a6e22e">port</span><span style="color:#f92672">:</span> <span style="color:#ae81ff">8125</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>, <span style="color:#a6e22e">backends</span><span style="color:#f92672">:</span> [ <span style="color:#e6db74">&#34;./backends/console&#34;</span> ]
@@ -325,7 +325,7 @@ proporcionado por Ets]y</p>
 <p>UDP tiene un problema: Es posible que la trama se pierda. Así que estas
 estadísticas no serán muy exactas, pero pueden darnos una idea muy aproximada de
 la evolución del sistema. De todas maneras, si el servidor <a href="https://github.com/etsy/statsd">StatsD</a> está en local, es raro que se pierda una trama.</p>
-<p>Si se conectara contra <a href="http://graphite.wikidot.com/">Graphite</a> directamente por TCP entonces sí que habría retrasos: hay que establecer la conexión, enviar la información, esperar <strong>ACK</strong>, etc.</p>
+<p>Si se conectara contra <a href="https://graphite.wikidot.com/">Graphite</a> directamente por TCP entonces sí que habría retrasos: hay que establecer la conexión, enviar la información, esperar <strong>ACK</strong>, etc.</p>
 <p>Otra ventaja es que no puede fallar. Si nuestro servidor TCP está caído, debemos tratar la excepción o el programa fallará. Si usamos UDP, perderemos la métrica, pero seguiremos dando servicio.</p>
 <p>¿Dónde es especialmente útil?</p>
 <ul>
@@ -335,11 +335,11 @@ la evolución del sistema. De todas maneras, si el servidor <a href="https://git
 </ul>
 <p>En Tuenti nos hicimos un <em>wrapper</em> sobre mercurial, para detectar la evolución
 del tiempo necesario para ejecutar cada subcomando, para medir la evolución de
-los más lentos. Gracias a esto, <a href="http://corporate.tuenti.com/es/dev/blog/Mercurial-performance-boost">detectamos un problema grave de rendimiento</a> y pudimos medir su evolución.</p>
+los más lentos. Gracias a esto, <a href="https://corporate.tuenti.com/es/dev/blog/Mercurial-performance-boost">detectamos un problema grave de rendimiento</a> y pudimos medir su evolución.</p>
 <h2 id="clusters-de-statsd">Clusters de StatsD</h2>
 <p>Todo esto tiene un problema. Si tenemos un balanceador de carga con dos
 servidores, cada uno con su servidor StatsD, y queremos medir los tiempos de
-request, el último que mande su valor a <a href="http://graphite.wikidot.com/">Graphite</a> es el que quedará. Por eso debemos configurar los servidores StatsD como <strong>Proxies</strong>, indicando la ubicación del resto de servidores StatsD.</p>
+request, el último que mande su valor a <a href="https://graphite.wikidot.com/">Graphite</a> es el que quedará. Por eso debemos configurar los servidores StatsD como <strong>Proxies</strong>, indicando la ubicación del resto de servidores StatsD.</p>
 <h2 id="conclusión">Conclusión</h2>
 <p>Todo se puede medir, y es importante medirlo todo. Desgraciadamente, eso requiere muchos recursos. Pero StatsD es una herramienta muy interesante para medir allá donde no se puede con otras herramientas.</p>
 <p>Finalmente os dejo con un vídeo de cómo hacer todo lo que he contado aquí:</p>
@@ -348,7 +348,7 @@ request, el último que mande su valor a <a href="http://graphite.wikidot.com/">
   <iframe src="https://www.youtube.com/embed/J5CeLI2CiPk" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
 </div>
 
-<p>También os proporciono otro vídeo de cómo instalar <a href="http://graphite.wikidot.com/">Graphite</a> y <a href="https://github.com/etsy/statsd">Statsd</a> en 3
+<p>También os proporciono otro vídeo de cómo instalar <a href="https://graphite.wikidot.com/">Graphite</a> y <a href="https://github.com/etsy/statsd">Statsd</a> en 3
 minutos, mostrando los datos. Es importante tener en cuenta que <a href="https://github.com/etsy/statsd">Statsd</a> dejará las métricas en <code>stats/gauges/</code> en lugar de colgar del árbol principal.</p>
 
 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">

@@ -174,7 +174,7 @@
 <abbr title="Service Oriented Architectures">SOA</abbr>
 
 architectures is in fashion. These architectures use little and very specific services, so they interact each other.</p>
-<p>In this post I&rsquo;ll show how to use <a href="http://www.celeryproject.org/">Celery</a> in order to create a SOA architecture.</p>
+<p>In this post I&rsquo;ll show how to use <a href="https://www.celeryproject.org/">Celery</a> in order to create a SOA architecture.</p>
 <!-- raw HTML omitted -->
 <figure>
     <img src="/images/python.png"
@@ -182,15 +182,15 @@ architectures is in fashion. These architectures use little and very specific se
 </figure>
 
 <h2 id="about-celery">About Celery</h2>
-<p><a href="http://www.celeryproject.org/">Celery</a> is not a communication system, because it uses <a href="https://www.rabbitmq.com">RabbitMQ</a>, <a href="http://redis.io/">Redis</a>, etc. as communication system. The same applies to argue it is not a message queue system. Neither it is a protocol, because it uses <a href="https://www.amqp.org/">AMQP</a>. Neither it is an abstraction over all these, because <a href="https://kombu.readthedocs.org/en/latest/">Kombu</a> does that work, the communications library it uses under the hood.</p>
-<p><a href="http://www.celeryproject.org/">Celery</a> is a set ot tools to work easily with several services, something like syntactic sugar. It allows to launch services as <strong>tasks</strong>.</p>
+<p><a href="https://www.celeryproject.org/">Celery</a> is not a communication system, because it uses <a href="https://www.rabbitmq.com">RabbitMQ</a>, <a href="https://redis.io/">Redis</a>, etc. as communication system. The same applies to argue it is not a message queue system. Neither it is a protocol, because it uses <a href="https://www.amqp.org/">AMQP</a>. Neither it is an abstraction over all these, because <a href="https://kombu.readthedocs.org/en/latest/">Kombu</a> does that work, the communications library it uses under the hood.</p>
+<p><a href="https://www.celeryproject.org/">Celery</a> is a set ot tools to work easily with several services, something like syntactic sugar. It allows to launch services as <strong>tasks</strong>.</p>
 <h2 id="how-to-install-it">How to install it</h2>
 <p>It is very easy to install; with <code>pip</code>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>pip install celery
 </code></pre></div><p>or <code>apt</code>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>apt-get install python-celery
 </code></pre></div><p>The problem here is we need a <strong>Broker</strong>. The <strong>Broker</strong> is the way to transport messages from a service to another. In this case, we need a message queue.</p>
-<p>We will use two of them as example: <a href="https://www.rabbitmq.com">RabbitMQ</a> and <a href="http://redis.io/">Redis</a>. The first one is somehow&hellip; complicated, but very interesting if you already know and install the <a href="https://www.rabbitmq.com/management.html">management plugin</a>. The second one is easier to be installed, but more difficult to see what is happening internally. To use <a href="http://redis.io/">Redis</a> you will also require the library; with <code>pip</code>:</p>
+<p>We will use two of them as example: <a href="https://www.rabbitmq.com">RabbitMQ</a> and <a href="https://redis.io/">Redis</a>. The first one is somehow&hellip; complicated, but very interesting if you already know and install the <a href="https://www.rabbitmq.com/management.html">management plugin</a>. The second one is easier to be installed, but more difficult to see what is happening internally. To use <a href="https://redis.io/">Redis</a> you will also require the library; with <code>pip</code>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>pip install redis
 </code></pre></div><p>or with <code>apt</code>:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>apt-get install python-redis
@@ -208,7 +208,7 @@ architectures is in fashion. These architectures use little and very specific se
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#a6e22e">@app.task</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">multiply</span>(a, b):
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>    <span style="color:#66d9ef">return</span> a <span style="color:#f92672">*</span> b</code></pre></div>
-<p>The overhead added by <a href="http://www.celeryproject.org/">Celery</a> is quite small: importing the library, connecting (<code>app</code>) and adding a decorator to our service.</p>
+<p>The overhead added by <a href="https://www.celeryproject.org/">Celery</a> is quite small: importing the library, connecting (<code>app</code>) and adding a decorator to our service.</p>
 <p>It is already executable:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>$ celery worker --loglevel<span style="color:#f92672">=</span>info -A tasks
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>
@@ -291,7 +291,7 @@ architectures is in fashion. These architectures use little and very specific se
 <p>Now we are running a task method directly, so we get the task.</p>
 <p>And now we have a very complicated way to multiply two numbers :)</p>
 <h2 id="tools">Tools</h2>
-<p>As I said before, <a href="http://www.celeryproject.org/">Celery</a> gives you tools and syntactic sugar.</p>
+<p>As I said before, <a href="https://www.celeryproject.org/">Celery</a> gives you tools and syntactic sugar.</p>
 <p>First of all, we&rsquo;ll see <em>partials</em>. They are functions with some parameters already set.</p>
 <p>It is very easy to create the <em>partial</em> <code>duplicate</code> by forcing the first parameter of <code>multiply</code>:</p>
 <p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e"># Celery full example: multiply two numbers with partials</span>
@@ -316,8 +316,8 @@ architectures is in fashion. These architectures use little and very specific se
 :start-line: 12
 :end-line: 16
 :number-lines: 13</p>
-<p>Yeah, partials are built with method <code>.si</code>, despite we can use <code>.s</code> too. The fist one is <em>immutable</em> (that explains the <code>i</code>). It is very difficult to explain this before explaining another <a href="http://www.celeryproject.org/">Celery</a> tool: <code>Chains</code>.</p>
-<p><a href="http://www.celeryproject.org/">Celery</a> allows to chain tasks, so the result of one is the first parameter of the next one. Why the first one? It works so. It is a fucking shit, but works so.</p>
+<p>Yeah, partials are built with method <code>.si</code>, despite we can use <code>.s</code> too. The fist one is <em>immutable</em> (that explains the <code>i</code>). It is very difficult to explain this before explaining another <a href="https://www.celeryproject.org/">Celery</a> tool: <code>Chains</code>.</p>
+<p><a href="https://www.celeryproject.org/">Celery</a> allows to chain tasks, so the result of one is the first parameter of the next one. Why the first one? It works so. It is a fucking shit, but works so.</p>
 <p>Sometimes we will require chained tasks just to set an order, so we can ignore the previous result. Here is when we can use the immutable functions, because they won&rsquo;t use the previous task result.</p>
 <p>I suppose you have noticed I use &ldquo;functions&rdquo; or &ldquo;services&rdquo; equally.</p>
 <p>But too much talk; let&rsquo;s concat something:</p>
@@ -344,7 +344,7 @@ architectures is in fashion. These architectures use little and very specific se
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>    main()</code></pre></div>
-<p>As I said before, <a href="http://www.celeryproject.org/">Celery</a> gives syntactic sugar, so it can be rewritten to:</p>
+<p>As I said before, <a href="https://www.celeryproject.org/">Celery</a> gives syntactic sugar, so it can be rewritten to:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e"># Celery example: multiply with chains using pipes (syntactic sugar)</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#f92672">from</span> celery <span style="color:#f92672">import</span> Celery
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>
@@ -395,9 +395,9 @@ architectures is in fashion. These architectures use little and very specific se
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>    main()</code></pre></div>
-<p>There is even more syntactic sugar, like <code>chords</code>, <code>maps</code>, <code>starmaps</code> and <code>chunks</code>, but we won&rsquo;t browse them. This is an introductory post. <a href="http://celery.readthedocs.org/en/latest/userguide/canvas.html">You can read more about Canvas</a>.</p>
+<p>There is even more syntactic sugar, like <code>chords</code>, <code>maps</code>, <code>starmaps</code> and <code>chunks</code>, but we won&rsquo;t browse them. This is an introductory post. <a href="https://celery.readthedocs.org/en/latest/userguide/canvas.html">You can read more about Canvas</a>.</p>
 <h3 id="the-beat">The Beat</h3>
-<p>Other important tool in <a href="http://www.celeryproject.org/">Celery</a> is the <strong>Beat</strong>. It is a beat or a periodic signal. We can start it in the worker with <code>--beat</code> option. While <a href="https://github.com/celery/celery/issues/1495">Beat exclusiveness</a> is not added, it is important to run just one or we will receive more than one <em>beat</em>.</p>
+<p>Other important tool in <a href="https://www.celeryproject.org/">Celery</a> is the <strong>Beat</strong>. It is a beat or a periodic signal. We can start it in the worker with <code>--beat</code> option. While <a href="https://github.com/celery/celery/issues/1495">Beat exclusiveness</a> is not added, it is important to run just one or we will receive more than one <em>beat</em>.</p>
 <p>This <em>beat</em> allows us to run periodic tasks.</p>
 <p>Let&rsquo;s see a small example: we are going to multiply the hour by 2 every 10 seconds:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e"># Celery beat example: periodic date operation</span>
@@ -429,7 +429,7 @@ architectures is in fashion. These architectures use little and very specific se
   <iframe src="https://www.youtube.com/embed/qTXJUnV0oHU" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
 </div>
 
-<p>Again, I&rsquo;m going to stop here; I can only show a little about it. You can read more about <a href="http://celery.readthedocs.org/en/latest/userguide/periodic-tasks.html">periodic tasks</a> if you are interested in.</p>
+<p>Again, I&rsquo;m going to stop here; I can only show a little about it. You can read more about <a href="https://celery.readthedocs.org/en/latest/userguide/periodic-tasks.html">periodic tasks</a> if you are interested in.</p>
 <h3 id="warning-pickle">Warning: pickle</h3>
 <p>Perhaps you see a warning like <code>warnings.warn(CDeprecationWarning(W_PICKLE_DEPRECATED))</code>. This is because we are using the <a href="https://docs.python.org/3.4/library/pickle.html">pickle</a> serializer, which is deprecated. You can avoid it by adding:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e"># Celery beat example: periodic date operation</span>
@@ -457,7 +457,7 @@ architectures is in fashion. These architectures use little and very specific se
 <span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>    CELERY_ACCEPT_CONTENT <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;json&#39;</span>],
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>)</code></pre></div>
 <h2 id="complex-environments">Complex environments</h2>
-<p>Obviously, I&rsquo;ve talked just about basic <a href="http://www.celeryproject.org/">Celery</a>. We&rsquo;ve used just a queue to communicate. As long as <a href="https://www.rabbitmq.com">RabbitMQ</a> allows queue operations, <a href="http://www.celeryproject.org/">Celery</a> too.</p>
+<p>Obviously, I&rsquo;ve talked just about basic <a href="https://www.celeryproject.org/">Celery</a>. We&rsquo;ve used just a queue to communicate. As long as <a href="https://www.rabbitmq.com">RabbitMQ</a> allows queue operations, <a href="https://www.celeryproject.org/">Celery</a> too.</p>
 <p>You can:</p>
 <ul>
 <li>assign different queues to perform different tasks, so not all workers listen all requests or to assign different workers to different queues.</li>
@@ -465,20 +465,20 @@ architectures is in fashion. These architectures use little and very specific se
 <li>send messages to all queues (<strong>topic</strong>).</li>
 <li>&hellip;</li>
 </ul>
-<p>I&rsquo;m not going to explain it deeply, but I&rsquo;m going to describe the message path. This information is required to understand how routing works (found at <a href="http://celery.readthedocs.org/en/latest/userguide/routing.html#exchanges-queues-and-routing-keys">Exchanges, queues and routing keys</a>):</p>
+<p>I&rsquo;m not going to explain it deeply, but I&rsquo;m going to describe the message path. This information is required to understand how routing works (found at <a href="https://celery.readthedocs.org/en/latest/userguide/routing.html#exchanges-queues-and-routing-keys">Exchanges, queues and routing keys</a>):</p>
 <ol>
-<li>Message is sent. It is leaved in an <strong>EXCHANGE</strong>. If it doesn&rsquo;t exist, <a href="http://www.celeryproject.org/">Celery</a> will create it.</li>
-<li>The <strong>EXCHANGE</strong> routes the message to one or more queues, depending on its configuration. If queues doesn&rsquo;t exist, <a href="http://www.celeryproject.org/">Celery</a> will care.</li>
+<li>Message is sent. It is leaved in an <strong>EXCHANGE</strong>. If it doesn&rsquo;t exist, <a href="https://www.celeryproject.org/">Celery</a> will create it.</li>
+<li>The <strong>EXCHANGE</strong> routes the message to one or more queues, depending on its configuration. If queues doesn&rsquo;t exist, <a href="https://www.celeryproject.org/">Celery</a> will care.</li>
 <li>The message waits in the queue until a consumer takeExchanges it. At this moment, the message is blocked to avoid other consumers to take it.</li>
 <li>After processing it, consumer sends an <strong>ACK</strong> and the message is finally removed.</li>
 </ol>
-<p>By default, <a href="http://www.celeryproject.org/">Celery</a> creates queues with the <em>exchange</em> name and binds them in a direct way, that is, every message that gets the <em>exchange</em> is routed to that queue.</p>
+<p>By default, <a href="https://www.celeryproject.org/">Celery</a> creates queues with the <em>exchange</em> name and binds them in a direct way, that is, every message that gets the <em>exchange</em> is routed to that queue.</p>
 <p>You can play with routings and create really complex architectures, so any message arrives to its target depending on the operation.</p>
 <h2 id="more-information">More information</h2>
-<p>The post <a href="http://abhishek-tiwari.com/post/amqp-rabbitmq-and-celery-a-visual-guide-for-dummies">AMQP, RabbitMQ and Celery - A Visual Guide For Dummies</a> has beginner level, but I like it a lot because it explains everything with images. <a href="https://www.digitalocean.com/community/tutorials/how-to-use-celery-with-rabbitmq-to-queue-tasks-on-an-ubuntu-vps">How To Use Celery with RabbitMQ to Queue Tasks on an Ubuntu VPS</a> is good too, and the PyCon slides <a href="http://www.imankulov.name/posts/celery-for-internal-api.html">Celery for Internal API in SOA infrastructure</a> too.</p>
-<p><a href="http://www.caktusgroup.com/blog/2014/06/23/scheduling-tasks-celery/">Getting Started Scheduling Tasks with Celery</a> is about configuring periodic tasks in a dynamic way by using <a href="https://pypi.python.org/pypi/django-celery">DJCelery</a>, quite interesting to use it with <a href="https://www.djangoproject.com/">Django</a>.</p>
-<p>In order to understand it under the hood, I recommend <a href="http://www.rabbitmq.com/tutorials/amqp-concepts.html">AMQP 0-9-1 Model Explained</a>, where <a href="https://www.amqp.org/">AMQP</a> protocol is explained. It is very interesing to try complex routings. <a href="http://rajith.2rlabs.com/2007/10/13/amqp-in-10-mins-part3-flexible-routing-model/">AMQP in 10 mins : Part3 – Flexible Routing Model</a> talks about that too, but is easier and just explains the basic concepts.</p>
-<p>If you want to participate in a project using <a href="http://www.celeryproject.org/">Celery</a>, I can cheer you to help me with <a href="https://github.com/djcron-project/">DJCron</a>, a wrapper over <a href="https://pypi.python.org/pypi/django-celery">DJCelery</a> that allows to configure distributed tasks dinamically, adding some extra features over  <a href="https://pypi.python.org/pypi/django-celery">DJCelery</a>.</p>
+<p>The post <a href="https://abhishek-tiwari.com/post/amqp-rabbitmq-and-celery-a-visual-guide-for-dummies">AMQP, RabbitMQ and Celery - A Visual Guide For Dummies</a> has beginner level, but I like it a lot because it explains everything with images. <a href="https://www.digitalocean.com/community/tutorials/how-to-use-celery-with-rabbitmq-to-queue-tasks-on-an-ubuntu-vps">How To Use Celery with RabbitMQ to Queue Tasks on an Ubuntu VPS</a> is good too, and the PyCon slides <a href="https://www.imankulov.name/posts/celery-for-internal-api.html">Celery for Internal API in SOA infrastructure</a> too.</p>
+<p><a href="https://www.caktusgroup.com/blog/2014/06/23/scheduling-tasks-celery/">Getting Started Scheduling Tasks with Celery</a> is about configuring periodic tasks in a dynamic way by using <a href="https://pypi.python.org/pypi/django-celery">DJCelery</a>, quite interesting to use it with <a href="https://www.djangoproject.com/">Django</a>.</p>
+<p>In order to understand it under the hood, I recommend <a href="https://www.rabbitmq.com/tutorials/amqp-concepts.html">AMQP 0-9-1 Model Explained</a>, where <a href="https://www.amqp.org/">AMQP</a> protocol is explained. It is very interesing to try complex routings. <a href="https://rajith.2rlabs.com/2007/10/13/amqp-in-10-mins-part3-flexible-routing-model/">AMQP in 10 mins : Part3 – Flexible Routing Model</a> talks about that too, but is easier and just explains the basic concepts.</p>
+<p>If you want to participate in a project using <a href="https://www.celeryproject.org/">Celery</a>, I can cheer you to help me with <a href="https://github.com/djcron-project/">DJCron</a>, a wrapper over <a href="https://pypi.python.org/pypi/django-celery">DJCelery</a> that allows to configure distributed tasks dinamically, adding some extra features over  <a href="https://pypi.python.org/pypi/django-celery">DJCelery</a>.</p>
 
     
       <div id="disqus_thread"></div>

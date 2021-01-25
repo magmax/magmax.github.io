@@ -43,9 +43,9 @@ llamada &lt;a href=&#34;https://pypi.python.org/pypi/whisper/&#34;&gt;Wisper&lt;
 &lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;su -s /bin/bash -c &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;/usr/bin/django-admin runserver --settings \
 &lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;  graphite.settings 0.0.0.0:8080&amp;#39;&lt;/span&gt; _graphite
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Básicamente: Hacemos que &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt; cree la base de datos y se la asignamos al usuario &lt;code&gt;_graphite&lt;/code&gt;, y después lanzamos el django con la configuración básica. Esto está en el archivo de información que comenté antes.&lt;/p&gt;
-&lt;p&gt;Podríamos haberlo montado con un &lt;a href=&#34;http://httpd.apache.org/&#34;&gt;Apache Httpd&lt;/a&gt; o con un &lt;a href=&#34;http://nginx.org/&#34;&gt;Nginx&lt;/a&gt;&amp;hellip; Pero eso complicaría este &lt;em&gt;post&lt;/em&gt;. Tenéis todo lo que necesitáis en &lt;code&gt;/usr/share/doc/graphite-web/README.Debian&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Podríamos haberlo montado con un &lt;a href=&#34;https://httpd.apache.org/&#34;&gt;Apache Httpd&lt;/a&gt; o con un &lt;a href=&#34;https://nginx.org/&#34;&gt;Nginx&lt;/a&gt;&amp;hellip; Pero eso complicaría este &lt;em&gt;post&lt;/em&gt;. Tenéis todo lo que necesitáis en &lt;code&gt;/usr/share/doc/graphite-web/README.Debian&lt;/code&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;interfaz-de-graphite&#34;&gt;Interfaz de Graphite&lt;/h3&gt;
-&lt;p&gt;Ya podemos abrir &lt;a href=&#34;https://pypi.python.org/pypi/graphite-web/&#34;&gt;Graphite&lt;/a&gt; en http://localhost:8080 aunque de momento estará vacía.&lt;/p&gt;
+&lt;p&gt;Ya podemos abrir &lt;a href=&#34;https://pypi.python.org/pypi/graphite-web/&#34;&gt;Graphite&lt;/a&gt; en https://localhost:8080 aunque de momento estará vacía.&lt;/p&gt;
 &lt;p&gt;Bien&amp;hellip; Ésta es la interfaz básica para humanos. Es un poco horrible, pero no os preocupéis que luego la pintamos bonita.&lt;/p&gt;
 &lt;p&gt;Vamos a meter algún dato, que si no esto no vale para nada. Podemos hacerlo
 directamente con &lt;a href=&#34;https://es.wikipedia.org/wiki/Netcat&#34;&gt;netcat&lt;/a&gt;:&lt;/p&gt;
@@ -53,14 +53,14 @@ directamente con &lt;a href=&#34;https://es.wikipedia.org/wiki/Netcat&#34;&gt;ne
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;con esto le estamos mandando los datos directamente a &lt;a href=&#34;https://pypi.python.org/pypi/carbon/&#34;&gt;Carbon&lt;/a&gt;, que es un servicio que por defecto escucha en el puerto 2003.&lt;/p&gt;
 &lt;p&gt;Lo que le estamos mandando es la métrica &lt;code&gt;magmax.test.examples&lt;/code&gt;, con el valor
 &lt;code&gt;4&lt;/code&gt; y el &lt;em&gt;timestamp&lt;/em&gt;. Éste es el formato que acepta &lt;a href=&#34;https://pypi.python.org/pypi/carbon/&#34;&gt;Carbon&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Ejecutad el comando varias veces, esperando un rato entre ejecuciones e id variando el valor. Después podéis entrar en la interfaz web de Graphite en http://localhost:8080 y, en el gráfico principal, pulsad sobre &lt;code&gt;Graph options&lt;/code&gt;, &lt;code&gt;Line mode&lt;/code&gt; y seleccionad &lt;code&gt;Connected line&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Ejecutad el comando varias veces, esperando un rato entre ejecuciones e id variando el valor. Después podéis entrar en la interfaz web de Graphite en https://localhost:8080 y, en el gráfico principal, pulsad sobre &lt;code&gt;Graph options&lt;/code&gt;, &lt;code&gt;Line mode&lt;/code&gt; y seleccionad &lt;code&gt;Connected line&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Además vamos a reducir el rango dibujado, que por defecto es de 24 horas. Apuntad a los botones que están encima del gráfico y os saldrá un &lt;em&gt;tip&lt;/em&gt;. Pulsad sobre &lt;code&gt;select recent data&lt;/code&gt; y seleccionad 5 ó 10 minutos.&lt;/p&gt;
 &lt;p&gt;En el árbol de la izquierda, id navegando hasta los nodos hoja, y veréis que el gráfico pinta los valores.&lt;/p&gt;
 &lt;p&gt;Mola, ¿eh?&lt;/p&gt;
 &lt;p&gt;Bueno, pues el gráfico que estáis generando tiene una URL que siempre generará
 el mismo gráfico. Eso lo han aprovechado algunos paneles como &lt;a href=&#34;https://github.com/ripienaar/gdash&#34;&gt;Gdash&lt;/a&gt; para
 mostrar &lt;em&gt;dashboards&lt;/em&gt; completos. Pero lo realmente molón es que se le puede
-indicar que quieres esos datos en &lt;a href=&#34;http://json.org/&#34;&gt;Json&lt;/a&gt;, cosa que utilizan otros como &lt;a href=&#34;http://grafana.org/&#34;&gt;Grafana&lt;/a&gt;.&lt;/p&gt;
+indicar que quieres esos datos en &lt;a href=&#34;https://json.org/&#34;&gt;Json&lt;/a&gt;, cosa que utilizan otros como &lt;a href=&#34;https://grafana.org/&#34;&gt;Grafana&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;grafana&#34;&gt;Grafana&lt;/h3&gt;
 &lt;p&gt;&lt;a href=&#34;https://github.com/python-diamond/Diamond&#34;&gt;Diamond&lt;/a&gt; es un servicio (&lt;a href=&#34;https://www.python.org/&#34;&gt;Python&lt;/a&gt; también) que genera estadísticas del sistema
 y las manda a &lt;a href=&#34;https://pypi.python.org/pypi/carbon/&#34;&gt;Carbon&lt;/a&gt; para que podamos pintarlas con &lt;a href=&#34;https://pypi.python.org/pypi/graphite-web/&#34;&gt;Graphite&lt;/a&gt;.&lt;/p&gt;
@@ -77,8 +77,8 @@ y las manda a &lt;a href=&#34;https://pypi.python.org/pypi/carbon/&#34;&gt;Carbo
       <guid>https://magmax.org/blog/graficas-basadas-en-tiempo-graphite/</guid>
       <description>
         
-          &lt;p&gt;En esta ocasión voy a escribir sobre &lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt;, una utilidad para generar gráficas basadas en tiempo.&lt;/p&gt;
-&lt;p&gt;Una vez tengamos &lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; instalado, se podrá utilizar para distintos usos: contar las visitas a una web, contar las ejecuciones de un programa, medir el tiempo de ejecución de un programa, &amp;hellip;&lt;/p&gt;
+          &lt;p&gt;En esta ocasión voy a escribir sobre &lt;a href=&#34;https://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt;, una utilidad para generar gráficas basadas en tiempo.&lt;/p&gt;
+&lt;p&gt;Una vez tengamos &lt;a href=&#34;https://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; instalado, se podrá utilizar para distintos usos: contar las visitas a una web, contar las ejecuciones de un programa, medir el tiempo de ejecución de un programa, &amp;hellip;&lt;/p&gt;
 &lt;p&gt;Veremos que es un programa sencillo de manejar, pero muy potente.&lt;/p&gt;
 &lt;!-- raw HTML omitted --&gt;
 &lt;figure&gt;
@@ -88,8 +88,8 @@ y las manda a &lt;a href=&#34;https://pypi.python.org/pypi/carbon/&#34;&gt;Carbo
 
 &lt;h2 id=&#34;entendiendo-graphite&#34;&gt;Entendiendo Graphite&lt;/h2&gt;
 &lt;p&gt;Antes de meternos en harina, es importante tener claros los conceptos.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; es una herramienta &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt; que permite graficar lo almacenado en una base de datos &lt;strong&gt;Round Robin&lt;/strong&gt; llamada &lt;code&gt;whisper&lt;/code&gt;. También permite guardar &lt;strong&gt;eventos discretos&lt;/strong&gt; (luego lo vemos).&lt;/p&gt;
-&lt;p&gt;Por tanto, podremos mostrar información, pero &lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; no guarda esa
+&lt;p&gt;&lt;a href=&#34;https://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; es una herramienta &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt; que permite graficar lo almacenado en una base de datos &lt;strong&gt;Round Robin&lt;/strong&gt; llamada &lt;code&gt;whisper&lt;/code&gt;. También permite guardar &lt;strong&gt;eventos discretos&lt;/strong&gt; (luego lo vemos).&lt;/p&gt;
+&lt;p&gt;Por tanto, podremos mostrar información, pero &lt;a href=&#34;https://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; no guarda esa
 información. Eso se delega en otros servicios, como &lt;a href=&#34;https://pypi.python.org/pypi/carbon/&#34;&gt;Carbon&lt;/a&gt;:&lt;/p&gt;
 &lt;div hidden&gt;
 
@@ -128,20 +128,20 @@ Browser --&gt; Graphite
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Como se puede observar, el formato es sencillo.&lt;/p&gt;
 &lt;p&gt;Existen más piezas en este puzzle, que iremos introduciendo a lo largo de otros posts. Este artículo se centrará en los que se ven.&lt;/p&gt;
 &lt;h2 id=&#34;instalando-graphite&#34;&gt;Instalando Graphite&lt;/h2&gt;
-&lt;p&gt;Como no sólo tenemos que instalar &lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; sino también &lt;a href=&#34;https://pypi.python.org/pypi/carbon/&#34;&gt;Carbon&lt;/a&gt;, lo más sencillo es usar:&lt;/p&gt;
+&lt;p&gt;Como no sólo tenemos que instalar &lt;a href=&#34;https://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; sino también &lt;a href=&#34;https://pypi.python.org/pypi/carbon/&#34;&gt;Carbon&lt;/a&gt;, lo más sencillo es usar:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;apt-get install graphite-web graphite-carbon
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;A continuación tendremos que configurar el &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt; detrás de &lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt;. Esta información se encuentra en &lt;code&gt;/usr/share/doc/graphite-web/README.Debian&lt;/code&gt;, pero voy a repetirla aquí.&lt;/p&gt;
-&lt;p&gt;Si sólo queremos probar &lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt;, lo más sencillo es hacer, como &lt;code&gt;root&lt;/code&gt;:&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;A continuación tendremos que configurar el &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt; detrás de &lt;a href=&#34;https://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt;. Esta información se encuentra en &lt;code&gt;/usr/share/doc/graphite-web/README.Debian&lt;/code&gt;, pero voy a repetirla aquí.&lt;/p&gt;
+&lt;p&gt;Si sólo queremos probar &lt;a href=&#34;https://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt;, lo más sencillo es hacer, como &lt;code&gt;root&lt;/code&gt;:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;su -s /bin/bash -c &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;/usr/bin/django-admin runserver --settings graphite.settings 0.0.0.0:8080&amp;#39;&lt;/span&gt; _graphite
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Eso utiliza el servidor web de &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt; y una base de datos &lt;a href=&#34;https://www.sqlite.org/&#34;&gt;sqlite&lt;/a&gt;, que puede no ser suficiente para producción, pero es ideal para probarlo rápidamente.&lt;/p&gt;
 &lt;p&gt;En producción, por el contrario, será mejor montarlo de una forma más decente,
-usando &lt;a href=&#34;http://httpd.apache.org/&#34;&gt;Apache httpd&lt;/a&gt;, por ejemplo:&lt;/p&gt;
+usando &lt;a href=&#34;https://httpd.apache.org/&#34;&gt;Apache httpd&lt;/a&gt;, por ejemplo:&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;Instalar &lt;code&gt;wsgi&lt;/code&gt; para &lt;a href=&#34;http://httpd.apache.org/&#34;&gt;Apache httpd&lt;/a&gt;:&lt;/li&gt;
+&lt;li&gt;Instalar &lt;code&gt;wsgi&lt;/code&gt; para &lt;a href=&#34;https://httpd.apache.org/&#34;&gt;Apache httpd&lt;/a&gt;:&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;apt-get install libapache2-mod-wsgi
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
-&lt;li&gt;Copiar los valores por defecto que ya nos proporciona el paquete Debian de &lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt;:&lt;/li&gt;
+&lt;li&gt;Copiar los valores por defecto que ya nos proporciona el paquete Debian de &lt;a href=&#34;https://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt;:&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;cp /usr/share/graphite-web/apache2-graphite.conf /etc/apache2/sites-available/graphite-web.conf
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
@@ -152,17 +152,17 @@ usando &lt;a href=&#34;http://httpd.apache.org/&#34;&gt;Apache httpd&lt;/a&gt;, 
 &lt;li&gt;Reiniciar apache:&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;service apache2 restart
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Si también queremos usar &lt;a href=&#34;https://www.mysql.com/&#34;&gt;MySQL&lt;/a&gt; o &lt;a href=&#34;http://www.postgresql.org.es/&#34;&gt;PostgreSQL&lt;/a&gt; en lugar de &lt;a href=&#34;https://www.sqlite.org/&#34;&gt;sqlite&lt;/a&gt;, tendremos
-que modificar la configuración de &lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt;, que se encuentra en
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Si también queremos usar &lt;a href=&#34;https://www.mysql.com/&#34;&gt;MySQL&lt;/a&gt; o &lt;a href=&#34;https://www.postgresql.org.es/&#34;&gt;PostgreSQL&lt;/a&gt; en lugar de &lt;a href=&#34;https://www.sqlite.org/&#34;&gt;sqlite&lt;/a&gt;, tendremos
+que modificar la configuración de &lt;a href=&#34;https://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt;, que se encuentra en
 &lt;code&gt;/etc/graphite/local_setting.py&lt;/code&gt; y que es equivalente a la de cualquier
 &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Si habéis trabajado con &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt;, sabréis que el programa principal se suele
-llamar &lt;code&gt;manage.py&lt;/code&gt;&amp;hellip; Pues el de &lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; es accesible invocando &lt;code&gt;graphite-manage&lt;/code&gt; en su lugar.&lt;/p&gt;
+llamar &lt;code&gt;manage.py&lt;/code&gt;&amp;hellip; Pues el de &lt;a href=&#34;https://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; es accesible invocando &lt;code&gt;graphite-manage&lt;/code&gt; en su lugar.&lt;/p&gt;
 &lt;h2 id=&#34;primeros-pasos-en-graphite&#34;&gt;Primeros pasos en Graphite&lt;/h2&gt;
 &lt;p&gt;Asumiendo que se ha optado por la vía rápida, ejecutando el &lt;code&gt;runserver&lt;/code&gt;, o
-bien una configuración similiar, tendremos &lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; escuchando en el puerto 8080, y podremos acceder a él: http://localhost:8080&lt;/p&gt;
+bien una configuración similiar, tendremos &lt;a href=&#34;https://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; escuchando en el puerto 8080, y podremos acceder a él: https://localhost:8080&lt;/p&gt;
 &lt;p&gt;Probablemente se queje porque la clave &lt;code&gt;SECRET_KEY&lt;/code&gt; utilizada es el valor por defecto. Podéis ignorarlo o arreglarlo editando su valor en el archivo &lt;code&gt;/etc/graphite/local_setting.py&lt;/code&gt; y poniendo un valor aleatorio y grande.&lt;/p&gt;
-&lt;p&gt;Pues ya está, ya tenemos &lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; corriendo. No ha sido tan duro.&lt;/p&gt;
+&lt;p&gt;Pues ya está, ya tenemos &lt;a href=&#34;https://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; corriendo. No ha sido tan duro.&lt;/p&gt;
 &lt;p&gt;Como también instalamos &lt;a href=&#34;https://pypi.python.org/pypi/carbon/&#34;&gt;Carbon&lt;/a&gt;, éste ya se ha puesto a insertar valores por su cuenta. En la interfaz, veréis un árbol a la izquierda que podéis ir desplegando. Los nodos pintarán gráficas:&lt;/p&gt;
 &lt;figure&gt;
     &lt;img src=&#34;https://magmax.org/images/graphite/graphite_main.png&#34;
@@ -173,7 +173,7 @@ bien una configuración similiar, tendremos &lt;a href=&#34;http://graphite.wiki
 &lt;p&gt;Abajo tenéis los botones &lt;code&gt;Graph Options&lt;/code&gt; y &lt;code&gt;Graph Data&lt;/code&gt; permiten modificar la forma de los gráficos u operar sobre los datos. Volveremos sobre esto en la sección de la API.&lt;/p&gt;
 &lt;p&gt;A la derecha veréis varios botones, donde me centraré en dos: &lt;strong&gt;Dashboard&lt;/strong&gt; y &lt;strong&gt;Events&lt;/strong&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;graphite-dashboard&#34;&gt;Graphite Dashboard&lt;/h3&gt;
-&lt;p&gt;En un intento por hacer &lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; algo más usable, hicieron el &lt;strong&gt;Dashboard&lt;/strong&gt;, que no es más que otra aberración para la vista:&lt;/p&gt;
+&lt;p&gt;En un intento por hacer &lt;a href=&#34;https://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; algo más usable, hicieron el &lt;strong&gt;Dashboard&lt;/strong&gt;, que no es más que otra aberración para la vista:&lt;/p&gt;
 &lt;figure&gt;
     &lt;img src=&#34;https://magmax.org/images/graphite/graphite_dashboard.png&#34;
          alt=&#34;Dashboard de Graphite&#34;/&gt; 
@@ -181,26 +181,26 @@ bien una configuración similiar, tendremos &lt;a href=&#34;http://graphite.wiki
 
 &lt;p&gt;Al menos tiene &lt;em&gt;completion&lt;/em&gt;.&lt;/p&gt;
 &lt;p&gt;Permite generar paneles y así gestionar varias gráficas de una vez. De todas
-maneras, es mejor hacer eso con &lt;a href=&#34;http://grafana.org/&#34;&gt;Grafana&lt;/a&gt;, como veremos en próximos posts.&lt;/p&gt;
+maneras, es mejor hacer eso con &lt;a href=&#34;https://grafana.org/&#34;&gt;Grafana&lt;/a&gt;, como veremos en próximos posts.&lt;/p&gt;
 &lt;h3 id=&#34;graphite-events&#34;&gt;Graphite Events&lt;/h3&gt;
 &lt;p&gt;Si hemos pulsado en el botón de &lt;strong&gt;Events&lt;/strong&gt;, veremos una página horrible que dice:&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;No events. Add events using the admin interface or by posting (eg, curl -X POST http://localhost:8000/events/ -d &amp;lsquo;{&amp;ldquo;what&amp;rdquo;: &amp;ldquo;Something Interesting&amp;rdquo;, &amp;ldquo;tags&amp;rdquo; : &amp;ldquo;tag1 &amp;ldquo;}&#39;)&lt;/p&gt;
+&lt;p&gt;No events. Add events using the admin interface or by posting (eg, curl -X POST https://localhost:8000/events/ -d &amp;lsquo;{&amp;ldquo;what&amp;rdquo;: &amp;ldquo;Something Interesting&amp;rdquo;, &amp;ldquo;tags&amp;rdquo; : &amp;ldquo;tag1 &amp;ldquo;}&#39;)&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;Recomiendo hacerle caso, aunque tendréis que cambiar el puerto, sólo por probar:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;curl -X POST http://localhost:8080/events/ -d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{&amp;#34;what&amp;#34;: &amp;#34;Something Interesting&amp;#34;, &amp;#34;tags&amp;#34; : &amp;#34;tag1 &amp;#34;}&amp;#39;&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;curl -X POST https://localhost:8080/events/ -d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{&amp;#34;what&amp;#34;: &amp;#34;Something Interesting&amp;#34;, &amp;#34;tags&amp;#34; : &amp;#34;tag1 &amp;#34;}&amp;#39;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y, si recargamos la página, veremos el evento. Esto será útil para registrar
 acciones no periódicas: una actualización de configuración, una ejecución de
-&lt;a href=&#34;https://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt;, etc. Veremos más sobre su uso en el post sobre &lt;a href=&#34;http://grafana.org/&#34;&gt;Grafana&lt;/a&gt;.&lt;/p&gt;
+&lt;a href=&#34;https://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt;, etc. Veremos más sobre su uso en el post sobre &lt;a href=&#34;https://grafana.org/&#34;&gt;Grafana&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;puntos-fuertes-de-graphite&#34;&gt;Puntos fuertes de Graphite&lt;/h2&gt;
 &lt;p&gt;Algún lector dirá: &amp;ldquo;bueno, pues si la interfaz es tan horrible como dices, ¿por qué nos cuentas todo esto?&amp;rdquo;.&lt;/p&gt;
 &lt;h3 id=&#34;interfaz-get&#34;&gt;Interfaz GET&lt;/h3&gt;
 &lt;p&gt;Y tendría toda la razón, pero es que Graphite tiene una interfaz, accesible por GET, muy versátil y molona.&lt;/p&gt;
 &lt;p&gt;Por ejemplo&amp;hellip; obtenemos la URL de la imagen anterior, obtendremos:
-&lt;code&gt;http://localhost:8080/render/?width=586&amp;amp;height=308&amp;amp;_salt=1436083979.749&amp;amp;target=carbon.agents.nightcrawler-a.avgUpdateTime&lt;/code&gt;&lt;/p&gt;
+&lt;code&gt;https://localhost:8080/render/?width=586&amp;amp;height=308&amp;amp;_salt=1436083979.749&amp;amp;target=carbon.agents.nightcrawler-a.avgUpdateTime&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;Vamos por partes:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;code&gt;http://localhost:8080/render/&lt;/code&gt; Punto de acceso a la API&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;https://localhost:8080/render/&lt;/code&gt; Punto de acceso a la API&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;width=586&lt;/code&gt; Ancho que tendrá la imagen.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;height=308&lt;/code&gt; Alto que tendrá la imagen.&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;_salt=1436083979.749&lt;/code&gt; Podéis ignorarlo. Es la semilla utilizada en caso de usar valores aleatorios.&lt;/li&gt;
@@ -209,10 +209,10 @@ acciones no periódicas: una actualización de configuración, una ejecución de
 &lt;p&gt;El &lt;code&gt;target&lt;/code&gt; permite realizar operaciones, tales como sumar diferentes series, filtrar valores, etc. Por ejemplo, para mostrar el percentil 90 de las consultas a la caché de carbon:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;target&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;percentileOfSeries&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;carbon.agents.nightcrawler-a.cache.queries,0.9&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;También se pueden obtener los valores guardados con el argumento &lt;code&gt;format&lt;/code&gt;.
-Recomiendo echar un ojo a toda la &lt;a href=&#34;http://graphite.readthedocs.org/en/latest/render_api.html&#34;&gt;API de Graphite&lt;/a&gt;.&lt;/p&gt;
+Recomiendo echar un ojo a toda la &lt;a href=&#34;https://graphite.readthedocs.org/en/latest/render_api.html&#34;&gt;API de Graphite&lt;/a&gt;.&lt;/p&gt;
 &lt;h3 id=&#34;interfaz-post&#34;&gt;Interfaz POST&lt;/h3&gt;
 &lt;p&gt;Carbon también tiene una interfaz POST que permite insertar datos en &lt;strong&gt;Whisper&lt;/strong&gt;
-y así renderizarlos desde &lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt;. Por defecto estará escuchando en el puerto 2003:&lt;/p&gt;
+y así renderizarlos desde &lt;a href=&#34;https://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt;. Por defecto estará escuchando en el puerto 2003:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;local.random.diceroll 4 `date +%s`&amp;#34;&lt;/span&gt; | nc -q0 localhost &lt;span style=&#34;color:#ae81ff&#34;&gt;2003&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Como se puede observar, el formato es my sencillo:&lt;/p&gt;
 &lt;ul&gt;
@@ -229,11 +229,11 @@ y así renderizarlos desde &lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;
 
 &lt;p&gt;No conté con que &lt;code&gt;$RANDOM&lt;/code&gt; se resuelve en el primer shell, por lo que enviaba un valor fijo XD&lt;/p&gt;
 &lt;h2 id=&#34;conclusión&#34;&gt;Conclusión&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; es una herramienta mucho más potente de lo que pueda parecer. Lo veremos en próximos posts.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt; es una herramienta mucho más potente de lo que pueda parecer. Lo veremos en próximos posts.&lt;/p&gt;
 &lt;p&gt;De momento es importante quedarse con la idea principal: generación de gráficos donde el tiempo es el eje X.&lt;/p&gt;
 &lt;p&gt;En próximos posts veremos cómo graficar información del sistema, cómo embeber
 estos gráficos en nuestro sistema de alertas o cómo dar soporte a millones de
-métricas por segundo. Y todo basado en &lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt;.&lt;/p&gt;
+métricas por segundo. Y todo basado en &lt;a href=&#34;https://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt;.&lt;/p&gt;
 
         
       </description>

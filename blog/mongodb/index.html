@@ -171,7 +171,7 @@
     <p>En este artículo voy a exponer un problema, como de costumbre, y a resolverlo de la manera más rápida posible. Una vez hecho esto, trataré de cambiarlo para que utilice MongoDB para la persistencia. Usaré YAGNI.</p>
 <p>No soy un experto en MongoDB, sino que estoy comenzando mis primeros pinitos. Por eso voy a tratar de explicarlo como yo lo veo.</p>
 <p>El problema es el siguiente: quiero un programa que me permita gestionar mi biblioteca. Algo sencillo: sólo libro y autor. Y quiero poder buscar un libro por el título.</p>
-<p>La idea de este artículo partió del titulado &ldquo;<a href="http://www.carlosble.com/2012/08/diseno-emergente-tambien-para-la-base-de-datos/">Diseño emergente, también para la base de datos</a>&rdquo;, por <a href="https://twitter.com/carlosble">Carlos Blé</a>.</p>
+<p>La idea de este artículo partió del titulado &ldquo;<a href="https://www.carlosble.com/2012/08/diseno-emergente-tambien-para-la-base-de-datos/">Diseño emergente, también para la base de datos</a>&rdquo;, por <a href="https://twitter.com/carlosble">Carlos Blé</a>.</p>
 <p>Usaré python y freshen.</p>
 <!-- raw HTML omitted -->
 <figure>
@@ -456,13 +456,13 @@ comprobaciones pertinentes, por lo que comienza por <code>check_</code>.</p>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">76</span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">77</span>    main()
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">78</span>    sys<span style="color:#f92672">.</span>exit(<span style="color:#ae81ff">0</span>)
-</code></pre></div><p>Como puede observarse, al utilizar <a href="http://docs.python.org/library/shelve.html">Shelve</a> estoy creando una tabla <em>Hash</em> que me permite enlazar el título con el autor. Mientras busque por título, todo irá bien&hellip; cuando intente buscar por autor, sufriré una penalización terrible, ya que tendré que recorrer todos los valores :D</p>
+</code></pre></div><p>Como puede observarse, al utilizar <a href="https://docs.python.org/library/shelve.html">Shelve</a> estoy creando una tabla <em>Hash</em> que me permite enlazar el título con el autor. Mientras busque por título, todo irá bien&hellip; cuando intente buscar por autor, sufriré una penalización terrible, ya que tendré que recorrer todos los valores :D</p>
 <p>Como primera aproximación me basta. Así que puedo decir que está terminado.</p>
 <h2 id="conclusiones">Conclusiones</h2>
 <p>Puedo asegurar que hasta el escenario &ldquo;<em>Searching an existent a title</em>&rdquo; no decidí qué tipo de persistencia iba a utilizar. Y decidí utilizar <strong>Shelve</strong> porque es muy sencilla y me pareció que se ajustaba a lo que yo necesitaba. Igualmente podría haber utilizado un fichero de texto plano o haber volcado una <em>hash</em> a disco con <em>pickle</em>. No importa. No es nada importante.</p>
 <p>Como veis, me he ajustado al enunciado en todo lo que he podido. Por eso tardé en escribirlo media hora, más o menos. Eso era importante, porque quería algo rápido pero usable. Además, me permite añadir más &ldquo;columnas&rdquo;, aunque tendría que portar los datos viejos o tirarlos, directamente.</p>
 <h2 id="pasándolo-a-mongodb">Pasándolo a MongoDB</h2>
-<p>Vamos ahora a tratar de aprovechar todo lo aprovechable y a utilizar <a href="http://www.mongodb.org/">MongoDB</a> en su lugar. Para ello utilizaremos la librería <a href="http://api.mongodb.org/python/current/">pymongo</a>.</p>
+<p>Vamos ahora a tratar de aprovechar todo lo aprovechable y a utilizar <a href="https://www.mongodb.org/">MongoDB</a> en su lugar. Para ello utilizaremos la librería <a href="https://api.mongodb.org/python/current/">pymongo</a>.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e">#!/usr/bin/env python</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#75715e"># file: ./library.py</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>
@@ -549,7 +549,7 @@ comprobaciones pertinentes, por lo que comienza por <code>check_</code>.</p>
 <p>El <em>mapreduce</em> suele utilizarse para obtener estadísticas de la base de datos, tales como contar elementos que cumplen ciertos criterios.</p>
 <p>Pero insisto en que estoy comenzando y, seguramente, diga alguna burrada XD</p>
 <h2 id="conclusión">Conclusión</h2>
-<p>Probablemente existan muchos escenarios en los que una base de datos <a href="http://es.wikipedia.org/wiki/NoSQL">No-SQL</a> no sea la solución, pero creo que existen muchos más escenarios donde son la solución, pero los desarrolladores se empeñan en encajarla en una base de datos relacional. A menudo, con resultados desastrosos.</p>
+<p>Probablemente existan muchos escenarios en los que una base de datos <a href="https://es.wikipedia.org/wiki/NoSQL">No-SQL</a> no sea la solución, pero creo que existen muchos más escenarios donde son la solución, pero los desarrolladores se empeñan en encajarla en una base de datos relacional. A menudo, con resultados desastrosos.</p>
 <p>Por extraño que parezca, No-SQL es muy intuitivo. No resulta muy diferente de lo que haríamos sin bases de datos convencionales. Sin embargo, utilizar un motor nos ofrece ciertas ventajas que no debemos despreciar.</p>
 <p>Sinceramente, creo que hay todo un mundo a descubrir en este sentido.</p>
 
