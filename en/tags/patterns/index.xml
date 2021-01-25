@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>patterns on MagMax&#39;s blog</title>
+    <link>http://example.org/en/tags/patterns/</link>
+    <description>Recent content in patterns on MagMax&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 12 Mar 2012 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/en/tags/patterns/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Constructors as simple as you can</title>
+      <link>http://example.org/en/blog/constructores-simples/</link>
+      <pubDate>Mon, 12 Mar 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/en/blog/constructores-simples/</guid>
+      <description>
+        
+          &lt;p&gt;This week I realized about the difference between an ugly constructor and a pretty one. It is curious how easy doing it well is and how cheap it is, so I am going to share my point with you, waiting your comments.&lt;/p&gt;
+&lt;p&gt;Since I began to work, I have done lots of ugly things, so do not face me up if you find something mine done in a different way :D The real goal is to improve yourself day after day!&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/patterns.png&#34;
+         alt=&#34;Patterns&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h3 id=&#34;throwing-exceptions&#34;&gt;Throwing exceptions&lt;/h3&gt;
+&lt;p&gt;A constructor that throws exceptions is something really ugly. A constructor should prepare the object to be used, not to do its thing. And if it do not do any real job, it should not throw any exception.&lt;/p&gt;
+&lt;p&gt;When I say that it do not launch exceptions it does not mean to capture them: I&amp;rsquo;m saying that it do not raise them because it do not need them. Every activity done by the constructor must be so simple that it cannot fail: initializations and nothing more. No operations. Complex things must be placed on methods.&lt;/p&gt;
+&lt;p&gt;There is nothing uglier than a constructor that throws exceptions. It is the last thing you hope and it is the last thing you want other people to find.&lt;/p&gt;
+&lt;p&gt;When the constructor has exceptions, this must be the least code to instantiate it:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;   &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;throws&lt;/span&gt; exception &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;   &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// [...]
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;try&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    Example example &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Example&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;catch&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;Exception e&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;null-pointer-exception&#34;&gt;Null pointer exception&lt;/h3&gt;
+&lt;p&gt;If a constructor do no operation, it cannot access any invalid pointer. Constructors should only do assignments, and nothing more.&lt;/p&gt;
+&lt;h3 id=&#34;constructors-with-parameters&#34;&gt;Constructors with parameters&lt;/h3&gt;
+&lt;p&gt;From time to time, an object requires a parameter to work. In these cases, it is right to require it in the constructor.&lt;/p&gt;
+&lt;p&gt;When the number of parameters is too high (that is, TWO), then we should look
+another way to do it. If the constructor is requiring so many parameters, it is
+possible that it be rapping the &lt;a href=&#34;http://en.wikipedia.org/wiki/Single_responsibility_principle&#34;&gt;Single Responsability Principle&lt;/a&gt; .&lt;/p&gt;
+&lt;p&gt;Another of my old habits that I saw a lot is to have a constructor with N parameters, allowing to initializate each of its private attributes. Experience showed me that it is a very bad habit&amp;hellip; almost in all cases.&lt;/p&gt;
+&lt;p&gt;Using Java, it is a bad habit from every point of view. Which one is the parameter order? If I have 3 parameters&amp;hellip; Have I to try the three unique parameter combinations, at least two with two arguments and anotherone with the three ones? And what if I need the fourth private attribute? How many combinations should I do?&lt;/p&gt;
+&lt;p&gt;Using other languages, like Python, when arguments can be named, our code is not affected by previous assertion. Despite of that, we will have another problem: what if I do not need one of the arguments or if I need to change its name?&lt;/p&gt;
+&lt;p&gt;For example&amp;hellip; With the next piece of code:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; value1&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; value2&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;private&lt;/span&gt; String juntaLaTrocola&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;private&lt;/span&gt; String gamusino&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; value1&lt;span style=&#34;color:#f92672&#34;&gt;){}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; a&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; b&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;String juntaLaTrocola&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;String gamusino&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; String &lt;span style=&#34;color:#a6e22e&#34;&gt;juntaLaTrocola&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I have lots of questions&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The third constructor, shoud I use first the &lt;em&gt;value1&lt;/em&gt; or &lt;em&gt;value2&lt;/em&gt;?&lt;/li&gt;
+&lt;li&gt;Why is not possible to build an object only with &lt;em&gt;gamusino&lt;/em&gt;?&lt;/li&gt;
+&lt;li&gt;Why cannot combine numbers and strings? Is it because the developer was tired (just like in this case)? Is it because I must not? Is it because they were added later?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In addition, if you inherit that class, you have to overwrite all of these methods!!!&lt;/p&gt;
+&lt;p&gt;Examples? &lt;a href=&#34;http://docs.oracle.com/javase/6/docs/api/index.html&#34;&gt;JDialog&lt;/a&gt;  has 16 different constructors.&lt;/p&gt;
+&lt;h3 id=&#34;tired-constructors&#34;&gt;Tired constructors&lt;/h3&gt;
+&lt;p&gt;Some time ago I implemented a constructor that was parsing a whole XML file. It looked horrible, but I couldn&amp;rsquo;t find another way of doing it better. Anybody see any logic in this matter? Now I do not.&lt;/p&gt;
+&lt;p&gt;When we have a constructor doing so many work, how can we improve our code? We cannot use the pattern &lt;em&gt;a method a class&lt;/em&gt;, because we will have a class with a constructor that will do, again, all the work. And if it does not, why have we two classes? We could use the second one instead the first class.&lt;/p&gt;
+&lt;p&gt;It is not so difficult to find: Java API has methods that launches exceptions or make lots of work (&lt;em&gt;NOTE:&lt;/em&gt; searching some examples, I found no one launching esceptions, but I know I saw them; did I find them in third party code?):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;RMIConnectorServer&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;JMXServiceURL url&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; Map&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;String&lt;span style=&#34;color:#f92672&#34;&gt;,?&amp;gt;&lt;/span&gt; environment&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; RMIServerImpl rmiServerImpl&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; MBeanServer mbeanServer&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;JDialog&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;Window owner&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; String title&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; Dialog&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;ModalityType&lt;/span&gt; modalityType&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; GraphicsConfiguration gc&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;the-solution-factories&#34;&gt;The solution: Factories&lt;/h2&gt;
+&lt;p&gt;Some times I need two constructors because there are severan ways to use the object. For example: I have a class that is connected to a database and can be used in two different ways: with a real database or a memory one.&lt;/p&gt;
+&lt;p&gt;Here I have a problem. One of the constructors will need an argument and the other one, none. It is not logical to use another system to build the object&amp;hellip; Maybe.&lt;/p&gt;
+&lt;p&gt;After doing in this way again and again, I found a better way to do it: By using a method that makes the object. So, I can differ between one build steps and the others. That is: I will have the method &lt;em&gt;createInMemory&lt;/em&gt; and &lt;em&gt;createInfFile&lt;/em&gt;. Optionally I will be able to transform the constructor as private to avoid is incorrect use (but I do not like too much this approach).&lt;/p&gt;
+&lt;p&gt;With so easy transformation, I get constructor that is not raising any exception and, in addition, I have a beautiful way to build the object with some instructions, being more verbose when I have to modify it.&lt;/p&gt;
+&lt;p&gt;Another advantage: If I need to add more &amp;ldquo;constructors&amp;rdquo;, like a remote database, it will be enough to add more factories: &lt;em&gt;createRemote&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;An example:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;DataAccess&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;DataAccess&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; DataAccess &lt;span style=&#34;color:#a6e22e&#34;&gt;createInMemory&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;throws&lt;/span&gt; SQLException&lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;    DataAccess result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; DataAccess&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    result&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;setConnectionString&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;in memory&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;    result&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;buildDatabase&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; result&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; DataAccess &lt;span style=&#34;color:#a6e22e&#34;&gt;createMySql&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;throws&lt;/span&gt; SQLException&lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    DataAccess result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; DataAccess&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    result&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;setConnectionString&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;mysql&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(!&lt;/span&gt;result&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;hasDatabase&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;())&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;        result&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;buildDatabase&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; result&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;abstract-factories&#34;&gt;Abstract factories&lt;/h3&gt;
+&lt;p&gt;I think it is very important to write code that can grow, without any limit when
+it is born. Using factories you can easily evolve it into an &lt;a href=&#34;http://es.wikipedia.org/wiki/Abstract_Factory_(patr%C3%B3n_de_dise%C3%B1o)&#34;&gt;Abstract Factory&lt;/a&gt;, giving it more functionality with baby changes.&lt;/p&gt;
+&lt;h3 id=&#34;tests&#34;&gt;Tests&lt;/h3&gt;
+&lt;p&gt;When a complex constructor is being used, you have lots of drawbacks to test it. But when the constructor is simple and the complexity is inside the operations, it is easier to test it, because you can build the object inside the &lt;em&gt;setUp&lt;/em&gt; method being sure that it is not going to fail. But when you use complex constructors, there are no way to test it.&lt;/p&gt;
+&lt;p&gt;If any operation (method) raises an exception, the operation is telling you something. If it is the constructor the one that throws it, you cannot be sure about the operation that was been performed in that moment. This is what makes tests difficult and makes very hard to &lt;em&gt;mock&lt;/em&gt; the object.&lt;/p&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;As our classes have to be complex, do not get the code dirty since the very begining and let&amp;rsquo;s try with simple constructos. When the constructor is the one who makes the job, which ones are the methods responsabilities? Let&amp;rsquo;s delegate that job.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

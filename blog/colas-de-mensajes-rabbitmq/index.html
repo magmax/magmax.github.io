@@ -1,445 +1,1301 @@
+
 <!DOCTYPE html>
-<html prefix="
-og: https://ogp.me/ns#
-article: https://ogp.me/ns/article#
-" lang="es">
-<head>
+<html lang="es" data-figures="" class="page">
+  <head>
+<title>Colas de mensajes: RabbitMQ | El blog de MagMax</title>
 <meta charset="utf-8">
-<meta name="description" content="Pequeña introducción al uso de RabbitMQ">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'43516d322f35b42f7136bc9e4ca4c9c80cc1466c'">
-<title>Colas de mensajes: RabbitMQ | MagMax Blog</title>
-<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
-<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
-<link rel="canonical" href="http://magmax.org/blog/colas-de-mensajes-rabbitmq/">
-<link rel="icon" href="/favicon.png" sizes="128x128">
-<link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.ico" sizes="16x16">
-<meta name="description" itemprop="description" content="Pequeña introducción al uso de RabbitMQ">
-<meta name="author" content="Miguel Ángel García">
-<link rel="prev" href="/blog/monitorizacion-y-alertado/" title="Monitorización y alertado" type="text/html">
-<link rel="next" href="/blog/creando-tu-propia-entidad-certificadora-ssl/" title="Creando tu propia Entidad Certificadora SSL (y volcando certificados autofirmados)" type="text/html">
-<meta property="og:site_name" content="MagMax Blog">
-<meta property="og:title" content="Colas de mensajes: RabbitMQ">
-<meta property="og:url" content="http://magmax.org/blog/colas-de-mensajes-rabbitmq/">
-<meta property="og:description" content="Pequeña introducción al uso de RabbitMQ">
+<meta name="generator" content="Hugo 0.79.1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta property="og:locale" content="es" />
+
 <meta property="og:type" content="article">
-<meta property="article:author" content="Miguel Ángel García">
-<meta property="article:published_time" content="2015-06-19T04:44:33+00:00">
-<meta property="article:updated" content="2015-06-19T04:44:33+00:00">
-<meta property="article:tag" content="rabbitmq">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:site" content="@magmax_en">
-<meta name="twitter:creator" content="@magmax">
-<meta name="twitter:title" content="MagMax Blog">
-<meta name="twitter:description" content="Pequeña introducción al uso de RabbitMQ">
-<meta name="twitter:url" content="http://magmax.org//blog/colas-de-mensajes-rabbitmq/">
-<meta name="twitter:image" content="http://magmax.org/favicon.png">
-</head>
-<body>
-<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+<meta name="description" content="Pequeña introducción al uso de RabbitMQ">
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:creator" content="">
+<meta name="twitter:title" content="Colas de mensajes: RabbitMQ" />
+<meta property="og:url" content="http://example.org/blog/colas-de-mensajes-rabbitmq/" />
+<meta property="og:title" content="Colas de mensajes: RabbitMQ" />
+<meta property="og:description" content="Pequeña introducción al uso de RabbitMQ" />
+<meta property="og:image" content="http://example.org/" />
+<link rel="apple-touch-icon" sizes="180x180" href='http://example.org/icons/apple-touch-icon.png'>
+<link rel="icon" type="image/png" sizes="32x32" href='http://example.org/icons/favicon-32x32.png'>
+<link rel="manifest" href='http://example.org/icons/site.webmanifest'>
+<link rel="mask-icon" href='http://example.org/safari-pinned-tab.svg' color="#002538">
+<meta name="msapplication-TileColor" content="#002538">
+<meta name="theme-color" content="#002538">
 
-<!-- Menubar -->
+<link rel="canonical" href="http://example.org/blog/colas-de-mensajes-rabbitmq/">
 
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
-<!-- This keeps the margins nice -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="http://magmax.org/">
+    
 
-        <span id="blog-title">MagMax Blog</span>
-      </a>
-    </div>
-<!-- /.navbar-header -->
-    <div class="collapse navbar-collapse navbar-ex1-collapse">
-      <ul class="nav navbar-nav">
-<li>
-<a href="/">Inicio</a>
-                </li>
-<li>
-<a href="/archive.html">Archivo</a>
-                </li>
-<li>
-<a href="/categories">Categorías</a>
-                </li>
-<li>
-<a href="/projects">Proyectos</a>
-                </li>
-<li>
-<a href="/news">Posts Externos</a>
+    
+    
+    <link rel="preload" href="http://example.org/css/styles.37cea41fe2c1b43e2a17095e01eb999e8701c9f0ba06d4df0a9db514a215e26dfbdb8a606a36c9d3b54bb1c09fd4a9ce41ee8f6788a8c6b17067830f34396135.css" integrity = "sha512-N86kH&#43;LBtD4qFwleAeuZnocByfC6BtTfCp21FKIV4m3724pgajbJ07VLscCf1KnOQe6PZ4ioxrFwZ4MPNDlhNQ==" as="style" crossorigin="anonymous">
+    <link rel="preload" href="http://example.org/js/bundle.min.d47d3d6894e66aa67f2514c171756283d3e8847b56f8f158bdd8430843da5f5af874c7a89a316c6743a845399bdb89649685154dc88b7e9bff1a155ca9e5108a.js" as="script" integrity=
+    "sha512-1H09aJTmaqZ/JRTBcXVig9PohHtW&#43;PFYvdhDCEPaX1r4dMeomjFsZ0OoRTmb24lkloUVTciLfpv/GhVcqeUQig==" crossorigin="anonymous">
 
-        
-      </li>
-</ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
-<div class="form-group">
-<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
-</div>
-</form>
-</li>
+    
+    <link rel="stylesheet" type="text/css" href="http://example.org/css/styles.37cea41fe2c1b43e2a17095e01eb999e8701c9f0ba06d4df0a9db514a215e26dfbdb8a606a36c9d3b54bb1c09fd4a9ce41ee8f6788a8c6b17067830f34396135.css" integrity="sha512-N86kH&#43;LBtD4qFwleAeuZnocByfC6BtTfCp21FKIV4m3724pgajbJ07VLscCf1KnOQe6PZ4ioxrFwZ4MPNDlhNQ==" crossorigin="anonymous">
+    
+  </head>
+  
+  
+    
+  
+  <body data-code="20" data-lines="false" id="documentTop">
 
-        <li style="margin-left:0">
-          <a href="http://feeds.feedburner.com/magmax">
-            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
-        </li>
-
-        
-      </ul>
-</div>
-<!-- /.navbar-collapse -->
-  </div>
-<!-- /.container -->
-</nav><!-- End of Menubar --><div class="container" id="content" role="main">
-  <div class="body-content">
-    <div class="row">
-      <div class="page-content col-md-9">
-        
-        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="https://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/colas-de-mensajes-rabbitmq/" class="u-url">Colas de mensajes: RabbitMQ</a></h1>
-            <div class="metadata text-muted">
-              <i class="glyphicon glyphicon-calendar"></i>
-              <p class="dateline">
-                <time class="published dt-published updated dt-updated" datetime="2015-06-19T04:44:33+00:00" title="2015-06-19">2015-06-19</time></p>
-              <p class="commentline">            <a href="/blog/colas-de-mensajes-rabbitmq/#disqus_thread" data-disqus-identifier="cache/posts/colas-de-mensajes-rabbitmq.html">Comments</a>
-
-</p>
-              <address class="vcard author"><a class="url fn" href="https://magmax.org">Miguel Ángel García</a></address>
-            </div>
-            <br></header><div class="e-content entry-content" itemprop="articleBody text">
-            <div>
-<p>Cuando se desarrolla una aplicación y ésta comienza a crecer, a menudo necesitamos interconectar distintos componentes. En estos casos se utiliza un <em>middleware</em> que nos permita comunicar las distintas piezas.</p>
-<p>Una opción es usar una cola de mensajes. No es el mecanismo más rápido, pero probablemente sí el más sencillo, y permite realizar acciones de forma asíncrona.</p>
-<p>Y un gestor de colas de mensajes sencillo, robusto y muy utilizado es <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a>.</p>
-<!-- TEASER_END -->
-<div class="section" id="instalando-rabbitmq">
-<h2>Instalando RabbitMQ</h2>
-<p>Esta aplicación <em>Erlang</em> es sencilla de instalar en Linux:</p>
-<pre class="code text"><a name="rest_code_1b4b081e8ede49d3b63a2a10b2bda8a1-1"></a>apt-get install rabbitmq-server
-</pre>
-<p>Y tendremos la aplicación funcionando, escuchando en el puerto 5672.</p>
-<p>Es interesante instalar el <a class="reference external" href="https://www.rabbitmq.com/management.html">plugin de gestión</a> para poder ver qué está pasando ahí dentro. Para ello basta con hacer:</p>
-<pre class="code text"><a name="rest_code_10f9bb3d0e094494ac42c0399b79ff1e-1"></a>rabbitmq-plugins enable rabbitmq_management
-</pre>
-<p>Y automáticamente lo tendremos escuchando en <a class="reference external" href="http://localhost:15672/">http://localhost:15672/</a></p>
-</div>
-<div class="section" id="lo-basico-de-rabbitmq">
-<h2>Lo básico de RabbitMQ</h2>
-<p>Hay algunos conceptos que hay que tener claros de RabbitMQ:</p>
-<dl class="docutils">
-<dt><em>Exchange</em></dt>
-<dd>Es el punto de entrada de un mensaje. Pueden ser <strong>Direct</strong>, si entregan un mensaje en una cola, <strong>Fanout</strong> si se entregan copias del mensaje a todas las colas o <strong>Topic</strong> si se entregan copias del mensaje sólo a algunas colas.</dd>
-<dt><em>Queue</em></dt>
-<dd>Es el punto de lectura de un mensaje. Pueden ser <strong>durable</strong> o persistentes, si almacenan los mensajes para sobrevivir a un reinicio de <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a>. También pueden ser <strong>exclusivas</strong>, si sólo un consumidor puede estar conectado a la vez.</dd>
-<dt><em>Bindings</em></dt>
-<dd>Son reglas que indican cómo llegar de un <strong>Exchange</strong> a las <strong>Queue</strong> asociadas.</dd>
-<dt><em>Routing key</em></dt>
-<dd>Filtro asociado a un <strong>Binging</strong> que permite seleccionar sólo algunos mensajes para dicho <strong>binding</strong>.</dd>
-<dt><em>Producer o Productor</em></dt>
-<dd>Programa que escribe en un <strong>Exchange</strong>
-</dd>
-<dt><em>Consumer o Consumidor</em></dt>
-<dd>Programa que escucha en una <strong>Queue</strong>
-</dd>
-<dt><em>AMQP</em></dt>
-<dd>Protocolo de comunicaciones utilizado por RabbitMQ. Lo usa tanto el <strong>Productor</strong> como el <strong>Consumidor</strong>.</dd>
-<dt><em>Virtual host o vhost</em></dt>
-<dd>Un entorno aislado, con sus propios grupos de usuarios, <em>exchanges</em>, <em>queues</em>, ...</dd>
-<dt><em>mnesia</em></dt>
-<dd>La base de datos interna de <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a>
-</dd>
-</dl>
-<p>Una vez dicho esto, podemos describir el flujo básico de <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a>:</p>
-<p class="graphviz">b'<?xml version="1.0" encoding="UTF-8" standalone="no"?>\nn "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"&gt;\n<!-- Generated by graphviz version 2.40.1 (20161225.0304)\n -->\n<!-- Title: rabbitmq_basic_flow Pages: 1 -->\n<svg width="154pt" height="364pt" viewbox="0.00 0.00 154.00 364.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 360)">\n<title>rabbitmq_basic_flow</title>\n<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-360 150,-360 150,4 -4,4"></polygon>\n<g id="clust1" class="cluster">\n<title>cluster_0</title>\n<polygon fill="#f5f5f5" stroke="#000000" points="8,-79 8,-279 138,-279 138,-79 8,-79"></polygon>\n<text text-anchor="middle" x="73" y="-263.8" font-family="Times,serif" font-size="14.00" fill="#000000">RabbitMQ</text>\n</g>\n<!-- Exchange -->\n<g id="node1" class="node">\n<title>Exchange</title>\n<ellipse fill="none" stroke="#000000" cx="73" cy="-230" rx="56.59" ry="18"></ellipse>\n<text text-anchor="middle" x="73" y="-226.3" font-family="Times,serif" font-size="14.00" fill="#000000">Exchange</text>\n</g>\n<!-- Queue -->\n<g id="node2" class="node">\n<title>Queue</title>\n<ellipse fill="none" stroke="#000000" cx="73" cy="-105" rx="40.8928" ry="18"></ellipse>\n<text text-anchor="middle" x="73" y="-101.3" font-family="Times,serif" font-size="14.00" fill="#000000">Queue</text>\n</g>\n<!-- Exchange&#45;&gt;Queue -->\n<g id="edge2" class="edge">\n<title>Exchange-&gt;Queue</title>\n<path fill="none" stroke="#000000" d="M73,-211.8239C73,-191.2723 73,-157.5472 73,-133.4893"></path>\n<polygon fill="#000000" stroke="#000000" points="76.5001,-133.198 73,-123.198 69.5001,-133.198 76.5001,-133.198"></polygon>\n<text text-anchor="middle" x="100.5" y="-163.8" font-family="Times,serif" font-size="14.00" fill="#000000">binding</text>\n</g>\n<!-- Consumer -->\n<g id="node4" class="node">\n<title>Consumer</title>\n<ellipse fill="none" stroke="#000000" cx="73" cy="-18" rx="58.4896" ry="18"></ellipse>\n<text text-anchor="middle" x="73" y="-14.3" font-family="Times,serif" font-size="14.00" fill="#000000">Consumer</text>\n</g>\n<!-- Queue&#45;&gt;Consumer -->\n<g id="edge3" class="edge">\n<title>Queue-&gt;Consumer</title>\n<path fill="none" stroke="#000000" d="M73,-86.9735C73,-75.1918 73,-59.5607 73,-46.1581"></path>\n<polygon fill="#000000" stroke="#000000" points="76.5001,-46.0033 73,-36.0034 69.5001,-46.0034 76.5001,-46.0033"></polygon>\n<text text-anchor="middle" x="93" y="-57.8" font-family="Times,serif" font-size="14.00" fill="#000000">listen</text>\n</g>\n<!-- Producer -->\n<g id="node3" class="node">\n<title>Producer</title>\n<ellipse fill="none" stroke="#000000" cx="73" cy="-338" rx="53.8905" ry="18"></ellipse>\n<text text-anchor="middle" x="73" y="-334.3" font-family="Times,serif" font-size="14.00" fill="#000000">Producer</text>\n</g>\n<!-- Producer&#45;&gt;Exchange -->\n<g id="edge1" class="edge">\n<title>Producer-&gt;Exchange</title>\n<path fill="none" stroke="#000000" d="M73,-319.6793C73,-302.821 73,-277.5651 73,-258.147"></path>\n<polygon fill="#000000" stroke="#000000" points="76.5001,-258.0501 73,-248.0502 69.5001,-258.0502 76.5001,-258.0501"></polygon>\n<text text-anchor="middle" x="90" y="-290.8" font-family="Times,serif" font-size="14.00" fill="#000000">send</text>\n</g>\n</g>\n</svg>\n'</p>
-<p>Claro, que esto puede evolucionar a entornos mucho más complejos:</p>
-<p class="graphviz">b'<?xml version="1.0" encoding="UTF-8" standalone="no"?>\nn "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"&gt;\n<!-- Generated by graphviz version 2.40.1 (20161225.0304)\n -->\n<!-- Title: rabbitmq_complex_flow Pages: 1 -->\n<svg width="618pt" height="263pt" viewbox="0.00 0.00 618.09 263.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 259)">\n<title>rabbitmq_complex_flow</title>\n<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-259 614.0877,-259 614.0877,4 -4,4"></polygon>\n<g id="clust1" class="cluster">\n<title>cluster_0</title>\n<polygon fill="#f5f5f5" stroke="#000000" points="61.5438,-64 61.5438,-211 425.5438,-211 425.5438,-64 61.5438,-64"></polygon>\n<text text-anchor="middle" x="243.5438" y="-195.8" font-family="Times,serif" font-size="14.00" fill="#000000">RabbitMQ</text>\n</g>\n<!-- Exchange_1 -->\n<g id="node1" class="node">\n<title>Exchange_1</title>\n<ellipse fill="none" stroke="#000000" cx="166.5438" cy="-162" rx="67.6881" ry="18"></ellipse>\n<text text-anchor="middle" x="166.5438" y="-158.3" font-family="Times,serif" font-size="14.00" fill="#000000">Exchange_1</text>\n</g>\n<!-- Queue_1 -->\n<g id="node3" class="node">\n<title>Queue_1</title>\n<ellipse fill="none" stroke="#000000" cx="121.5438" cy="-90" rx="51.9908" ry="18"></ellipse>\n<text text-anchor="middle" x="121.5438" y="-86.3" font-family="Times,serif" font-size="14.00" fill="#000000">Queue_1</text>\n</g>\n<!-- Exchange_1&#45;&gt;Queue_1 -->\n<g id="edge3" class="edge">\n<title>Exchange_1-&gt;Queue_1</title>\n<path fill="none" stroke="#000000" d="M155.4202,-144.2022C150.1343,-135.7448 143.7116,-125.4685 137.8857,-116.147"></path>\n<polygon fill="#000000" stroke="#000000" points="140.8075,-114.218 132.5395,-107.593 134.8715,-117.928 140.8075,-114.218"></polygon>\n</g>\n<!-- Queue_2 -->\n<g id="node4" class="node">\n<title>Queue_2</title>\n<ellipse fill="none" stroke="#000000" cx="243.5438" cy="-90" rx="51.9908" ry="18"></ellipse>\n<text text-anchor="middle" x="243.5438" y="-86.3" font-family="Times,serif" font-size="14.00" fill="#000000">Queue_2</text>\n</g>\n<!-- Exchange_1&#45;&gt;Queue_2 -->\n<g id="edge4" class="edge">\n<title>Exchange_1-&gt;Queue_2</title>\n<path fill="none" stroke="#000000" d="M185.1834,-144.5708C194.9968,-135.3946 207.1809,-124.0017 217.8741,-114.0029"></path>\n<polygon fill="#000000" stroke="#000000" points="220.4279,-116.4067 225.3416,-107.0202 215.6469,-111.2937 220.4279,-116.4067"></polygon>\n</g>\n<!-- Exchange_2 -->\n<g id="node2" class="node">\n<title>Exchange_2</title>\n<ellipse fill="none" stroke="#000000" cx="334.5438" cy="-162" rx="67.6881" ry="18"></ellipse>\n<text text-anchor="middle" x="334.5438" y="-158.3" font-family="Times,serif" font-size="14.00" fill="#000000">Exchange_2</text>\n</g>\n<!-- Exchange_2&#45;&gt;Queue_2 -->\n<g id="edge5" class="edge">\n<title>Exchange_2-&gt;Queue_2</title>\n<path fill="none" stroke="#000000" d="M312.9781,-144.937C300.8782,-135.3634 285.6213,-123.292 272.4928,-112.9047"></path>\n<polygon fill="#000000" stroke="#000000" points="274.6548,-110.1522 264.6408,-106.6921 270.3114,-115.6418 274.6548,-110.1522"></polygon>\n</g>\n<!-- Queue_3 -->\n<g id="node5" class="node">\n<title>Queue_3</title>\n<ellipse fill="none" stroke="#000000" cx="365.5438" cy="-90" rx="51.9908" ry="18"></ellipse>\n<text text-anchor="middle" x="365.5438" y="-86.3" font-family="Times,serif" font-size="14.00" fill="#000000">Queue_3</text>\n</g>\n<!-- Exchange_2&#45;&gt;Queue_3 -->\n<g id="edge6" class="edge">\n<title>Exchange_2-&gt;Queue_3</title>\n<path fill="none" stroke="#000000" d="M342.3664,-143.8314C345.8439,-135.7547 350.0111,-126.0761 353.847,-117.1668"></path>\n<polygon fill="#000000" stroke="#000000" points="357.0912,-118.4824 357.8311,-107.9134 350.6618,-115.7141 357.0912,-118.4824"></polygon>\n</g>\n<!-- Consumer_1 -->\n<g id="node8" class="node">\n<title>Consumer_1</title>\n<ellipse fill="none" stroke="#000000" cx="69.5438" cy="-18" rx="69.5877" ry="18"></ellipse>\n<text text-anchor="middle" x="69.5438" y="-14.3" font-family="Times,serif" font-size="14.00" fill="#000000">Consumer_1</text>\n</g>\n<!-- Queue_1&#45;&gt;Consumer_1 -->\n<g id="edge7" class="edge">\n<title>Queue_1-&gt;Consumer_1</title>\n<path fill="none" stroke="#000000" d="M108.6899,-72.2022C102.5648,-63.7214 95.1188,-53.4115 88.3719,-44.0696"></path>\n<polygon fill="#000000" stroke="#000000" points="91.1224,-41.9001 82.4301,-35.8425 85.4477,-45.9986 91.1224,-41.9001"></polygon>\n</g>\n<!-- Consumer_2 -->\n<g id="node9" class="node">\n<title>Consumer_2</title>\n<ellipse fill="none" stroke="#000000" cx="226.5438" cy="-18" rx="69.5877" ry="18"></ellipse>\n<text text-anchor="middle" x="226.5438" y="-14.3" font-family="Times,serif" font-size="14.00" fill="#000000">Consumer_2</text>\n</g>\n<!-- Queue_2&#45;&gt;Consumer_2 -->\n<g id="edge8" class="edge">\n<title>Queue_2-&gt;Consumer_2</title>\n<path fill="none" stroke="#000000" d="M239.254,-71.8314C237.4359,-64.131 235.2739,-54.9743 233.2533,-46.4166"></path>\n<polygon fill="#000000" stroke="#000000" points="236.5957,-45.3414 230.8914,-36.4133 229.7831,-46.95 236.5957,-45.3414"></polygon>\n</g>\n<!-- Consumer_3 -->\n<g id="node10" class="node">\n<title>Consumer_3</title>\n<ellipse fill="none" stroke="#000000" cx="383.5438" cy="-18" rx="69.5877" ry="18"></ellipse>\n<text text-anchor="middle" x="383.5438" y="-14.3" font-family="Times,serif" font-size="14.00" fill="#000000">Consumer_3</text>\n</g>\n<!-- Queue_3&#45;&gt;Consumer_3 -->\n<g id="edge9" class="edge">\n<title>Queue_3-&gt;Consumer_3</title>\n<path fill="none" stroke="#000000" d="M370.086,-71.8314C372.0322,-64.0463 374.3506,-54.7729 376.5101,-46.1347"></path>\n<polygon fill="#000000" stroke="#000000" points="379.9106,-46.9636 378.9405,-36.4133 373.1196,-45.2658 379.9106,-46.9636"></polygon>\n</g>\n<!-- Consumer_4 -->\n<g id="node11" class="node">\n<title>Consumer_4</title>\n<ellipse fill="none" stroke="#000000" cx="540.5438" cy="-18" rx="69.5877" ry="18"></ellipse>\n<text text-anchor="middle" x="540.5438" y="-14.3" font-family="Times,serif" font-size="14.00" fill="#000000">Consumer_4</text>\n</g>\n<!-- Queue_3&#45;&gt;Consumer_4 -->\n<g id="edge10" class="edge">\n<title>Queue_3-&gt;Consumer_4</title>\n<path fill="none" stroke="#000000" d="M399.2856,-76.1177C426.1724,-65.0557 464.1158,-49.4447 493.9081,-37.1873"></path>\n<polygon fill="#000000" stroke="#000000" points="495.354,-40.3771 503.2702,-33.3354 492.6906,-33.9036 495.354,-40.3771"></polygon>\n</g>\n<!-- Producer_1 -->\n<g id="node6" class="node">\n<title>Producer_1</title>\n<ellipse fill="none" stroke="#000000" cx="166.5438" cy="-237" rx="64.189" ry="18"></ellipse>\n<text text-anchor="middle" x="166.5438" y="-233.3" font-family="Times,serif" font-size="14.00" fill="#000000">Producer_1</text>\n</g>\n<!-- Producer_1&#45;&gt;Exchange_1 -->\n<g id="edge1" class="edge">\n<title>Producer_1-&gt;Exchange_1</title>\n<path fill="none" stroke="#000000" d="M166.5438,-218.8446C166.5438,-210.3401 166.5438,-200.0076 166.5438,-190.4964"></path>\n<polygon fill="#000000" stroke="#000000" points="170.0439,-190.2481 166.5438,-180.2482 163.0439,-190.2482 170.0439,-190.2481"></polygon>\n</g>\n<!-- Producer_2 -->\n<g id="node7" class="node">\n<title>Producer_2</title>\n<ellipse fill="none" stroke="#000000" cx="334.5438" cy="-237" rx="64.189" ry="18"></ellipse>\n<text text-anchor="middle" x="334.5438" y="-233.3" font-family="Times,serif" font-size="14.00" fill="#000000">Producer_2</text>\n</g>\n<!-- Producer_2&#45;&gt;Exchange_2 -->\n<g id="edge2" class="edge">\n<title>Producer_2-&gt;Exchange_2</title>\n<path fill="none" stroke="#000000" d="M334.5438,-218.8446C334.5438,-210.3401 334.5438,-200.0076 334.5438,-190.4964"></path>\n<polygon fill="#000000" stroke="#000000" points="338.0439,-190.2481 334.5438,-180.2482 331.0439,-190.2482 338.0439,-190.2481"></polygon>\n</g>\n</g>\n</svg>\n'</p>
-<p>En este entorno, y asumiendo que los <em>Exchange</em> están en modo <strong>Topic</strong> (es decir, que un mensaje llega a todas las colas):</p>
-<ul class="simple">
-<li>
-<tt class="docutils literal">Consumer_1</tt> recibe todo lo que produzca <tt class="docutils literal">Producer_1</tt>, pasando por <tt class="docutils literal">Queue_1</tt>. Este tipo de escenario es igual que el básico.</li>
-<li>
-<tt class="docutils literal">Consumer_2</tt> recibe todo lo que produzca tanto <tt class="docutils literal">Producer_1</tt> como <tt class="docutils literal">Producer_2</tt>, pasando por <tt class="docutils literal">Queue_2</tt>. Útil para procesar eventos que se producen en distintos lugares pero tienen un destino común. Ejemplo: guardar logs de distintas máquinas en base de datos.</li>
-<li>
-<tt class="docutils literal">Consumer_3</tt> y <tt class="docutils literal">Consumer_4</tt> se repartirán lo producido por <tt class="docutils literal">Producer_2</tt>, pasando por <tt class="docutils literal">Queue_3</tt>. Útil cuando la carga producida es muy alta y se requieren muchos recursos para consimir cada mensaje. Ejemplo: Renderización de vídeo 3D.</li>
-</ul>
-<div class="section" id="puertos-y-valores-por-defecto">
-<h3>Puertos y valores por defecto</h3>
-<p>Si no cambiamos nada, <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a> escucha en el puerto 5672, y la interfaz de administración en el 15672.</p>
-<p>Se crea un usuario <em>guest/guest</em> que nos permite acceder a ambas.</p>
-<p><a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a> consume mucha memoria. Recomiendo utilizar servidores dedicados, para que no se haga con toda y tengamos problemas.</p>
-</div>
-</div>
-<div class="section" id="algunas-tareas-de-administracion">
-<h2>Algunas tareas de administración</h2>
-<div class="section" id="crear-un-vhost">
-<h3>Crear un vhost</h3>
-<p>Con el fin de aislar un entorno, podemos crear un <strong>vhost</strong>. Nada más sencillo:</p>
-<pre class="code text"><a name="rest_code_b7a81e04b2194a9fb0337c2168ce94b1-1"></a>rabbitmqctl add_vhost /mi_vhost
-</pre>
-</div>
-<div class="section" id="crear-un-usuario">
-<h3>Crear un usuario</h3>
-<p>Ahora podemos crear un usuario</p>
-<pre class="code text"><a name="rest_code_784f0ad7d1524ebfabc50405081694e5-1"></a>rabbitmqctl add_user my_user my_pass
-</pre>
-<p>Y podemos asociarlo al <strong>vhost</strong>:</p>
-<pre class="code text"><a name="rest_code_6ce0880a813d4a11bcfede381730ea4d-1"></a>rabbitmqctl set_permissions -p /my_vhost my_user ".*" ".*" ".*"
-</pre>
-</div>
-<div class="section" id="asignar-permisos">
-<h3>Asignar permisos</h3>
-<p>Si queremos poder utilizar este usuario para entrar en la interfaz de administracción, necesitamos darle permisos de <em>management</em> y <em>monitoring</em>:</p>
-<pre class="code text"><a name="rest_code_300e3a18516d41cf947b0d13edbef367-1"></a>rabbitmqctl set_user_tags my_user management monitoring
-</pre>
-<p>Por tanto, los mensajes se escriben en un <strong>Exchange</strong> pero se leen de una <strong>Queue</strong>. Para llegar de un <strong>Exchange</strong> a una <strong>Queue</strong> se utilizan los <strong>Routes</strong>.</p>
-</div>
-<div class="section" id="crear-un-cluster">
-<h3>Crear un cluster</h3>
-<p>Una de las tareas típicas es <a class="reference external" href="https://www.rabbitmq.com/clustering.html">crear un cluster de RabbitMQ</a>. Esto nos permite <a class="reference external" href="/blog/en-busca-de-los-cinco-9s">mejorar la disponibilidad del sistema</a>, ya que si uno de nuestros servidores cae, el otro seguirá atendiendo peticiones.</p>
-<p>Esta tarea es algo más compleja. Supongamos que tenemos dos nodos: <em>rabbit1</em> y <em>rabbit2</em>. Vamos a añadir <em>Rabbit2</em>, dejando <em>Rabbit1</em> como maestro inicial. Lo primero que podemos hacer es ver el estado actual del sistema:</p>
-<pre class="code text"><a name="rest_code_04fa3a84d8624da2a57e71bad016761a-1"></a>rabbit2$ rabbitmqctl cluster_status
-<a name="rest_code_04fa3a84d8624da2a57e71bad016761a-2"></a>[{nodes,[{disc,[rabbit@rabbit2]}]},{running_nodes,[rabbit@rabbit2]}]
-<a name="rest_code_04fa3a84d8624da2a57e71bad016761a-3"></a>...done.
-</pre>
-<p>Para crear un cluster, tenemos que parar uno de los <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a>, pero debemos hacerlo con órdenes especiales:</p>
-<pre class="code text"><a name="rest_code_6b5298fae3e1487ea7c89f45fbe787a8-1"></a>rabbit2$ rabbitmqctl stop_app
-<a name="rest_code_6b5298fae3e1487ea7c89f45fbe787a8-2"></a>Stopping node rabbit@rabbit2 ...done.
-</pre>
-<p>A continuación lo añadimos al cluster:</p>
-<pre class="code text"><a name="rest_code_dbf67d3350db45b797858b852158cf73-1"></a>rabbit2$ rabbitmqctl join_cluster rabbit@rabbit1
-<a name="rest_code_dbf67d3350db45b797858b852158cf73-2"></a>Clustering node rabbit@rabbit2 with rabbit@rabbit1 ...done.
-</pre>
-<p>Y volvemos a arrancar:</p>
-<pre class="code text"><a name="rest_code_beab2109487f43c0bbeb2641b22a73cf-1"></a>rabbit2$ rabbitmqctl start_app
-<a name="rest_code_beab2109487f43c0bbeb2641b22a73cf-2"></a>Starting node rabbit@rabbit2 ...done.
-</pre>
-<p>Ahora podemos comprobar que todo fue bien:</p>
-<pre class="code text"><a name="rest_code_fe5911192b8741038e2aba13a9117d94-1"></a>rabbit2$ rabbitmqctl cluster_status
-<a name="rest_code_fe5911192b8741038e2aba13a9117d94-2"></a>Cluster status of node rabbit@rabbit2 ...
-<a name="rest_code_fe5911192b8741038e2aba13a9117d94-3"></a>[{nodes,[{disc,[rabbit@rabbit1,rabbit@rabbit2]}]},
-<a name="rest_code_fe5911192b8741038e2aba13a9117d94-4"></a> {running_nodes,[rabbit@rabbit1,rabbit@rabbit2]}]
-<a name="rest_code_fe5911192b8741038e2aba13a9117d94-5"></a>...done.
-</pre>
-<p>Aunque también podemos verlo desde la herramienta de administración (mucho más molona XD)</p>
-<p>Es <strong>IMPORTANTE</strong> que todos los nodos de un cluster tengan la misma versión de <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a> o podríamos tener problemas.</p>
-<p>Si se va a gestionar un cluster, recomiendo encarecidamente leerse toda la <a class="reference external" href="https://www.rabbitmq.com/clustering.html">documentación de RabbitMQ sobre clusters</a>. Es poco y muy conveniente. Además, es bueno tenerlo siempre a mano.</p>
-<p>Una vez creado el cluster se puede utilizar una VIp (Virtual IP), de manera que nos respondan ambos indistintamente. Si uno cae, la VIp se puede cambiar mediante <a class="reference external" href="http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html">Keepalive</a> y, si preparamos nuestra aplicación para hacer reintentos, no se verá afectada por la caída.</p>
-<p>En la interfaz de administración podemos ver cómo los mensajes estarán replicados en ambos nodos, el estado de los mismos, etc.</p>
-</div>
-</div>
-<div class="section" id="programando">
-<h2>Programando</h2>
-<p>Para programar contra un <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a> recomiendo usar <a class="reference external" href="https://www.rabbitmq.com/devtools.html">una de las librerías AMQP</a>. Hay otras opciones de más alto nivel. Por ejemplo, en Python está <a class="reference external" href="https://kombu.readthedocs.org/en/latest/">Kombu</a>, que se abstrae de la cola de mensajes a usar, o incluso <a class="reference external" href="https://pypi.python.org/pypi/amqp">Celery</a>, que permite usar una cola de mensajes para la gestión de tareas distribuidas.</p>
-<p>Veamos unos ejemplillos sencillos. Recordad que hay muchas opciones y se pueden configurar bastantes historias, pero voy a ir a lo básico:</p>
-<div class="section" id="python">
-<h3>Python</h3>
-<p>Utilizaré la librería <cite>Pika</cite> (tomado de la propia documentación de la librería):</p>
-<p>El consumidor:</p>
-<pre class="code python"><a name="rest_code_aa4c03b6972845be870414f6cbb0eeb4-1"></a><span class="kn">import</span> <span class="nn">pika</span>
-<a name="rest_code_aa4c03b6972845be870414f6cbb0eeb4-2"></a>
-<a name="rest_code_aa4c03b6972845be870414f6cbb0eeb4-3"></a><span class="n">connection</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">BlockingConnection</span><span class="p">()</span>
-<a name="rest_code_aa4c03b6972845be870414f6cbb0eeb4-4"></a><span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">channel</span><span class="p">()</span>
-<a name="rest_code_aa4c03b6972845be870414f6cbb0eeb4-5"></a><span class="n">method_frame</span><span class="p">,</span> <span class="n">header_frame</span><span class="p">,</span> <span class="n">body</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="n">basic_get</span><span class="p">(</span><span class="s1">'test'</span><span class="p">)</span>
-<a name="rest_code_aa4c03b6972845be870414f6cbb0eeb4-6"></a><span class="k">if</span> <span class="n">method_frame</span><span class="p">:</span>
-<a name="rest_code_aa4c03b6972845be870414f6cbb0eeb4-7"></a>    <span class="nb">print</span> <span class="n">method_frame</span><span class="p">,</span> <span class="n">header_frame</span><span class="p">,</span> <span class="n">body</span>
-<a name="rest_code_aa4c03b6972845be870414f6cbb0eeb4-8"></a>    <span class="n">channel</span><span class="o">.</span><span class="n">basic_ack</span><span class="p">(</span><span class="n">method_frame</span><span class="o">.</span><span class="n">delivery_tag</span><span class="p">)</span>
-<a name="rest_code_aa4c03b6972845be870414f6cbb0eeb4-9"></a><span class="k">else</span><span class="p">:</span>
-<a name="rest_code_aa4c03b6972845be870414f6cbb0eeb4-10"></a>    <span class="nb">print</span> <span class="s1">'No message returned'</span>
-<a name="rest_code_aa4c03b6972845be870414f6cbb0eeb4-11"></a><span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</pre>
-<p>Y el productor:</p>
-<pre class="code python"><a name="rest_code_7c45490042044c0ca69ce42e79fe53cb-1"></a><span class="kn">import</span> <span class="nn">pika</span>
-<a name="rest_code_7c45490042044c0ca69ce42e79fe53cb-2"></a>
-<a name="rest_code_7c45490042044c0ca69ce42e79fe53cb-3"></a><span class="n">parameters</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">URLParameters</span><span class="p">(</span><span class="s1">'amqp://guest:guest@localhost:5672/</span><span class="si">%2F</span><span class="s1">'</span><span class="p">)</span>
-<a name="rest_code_7c45490042044c0ca69ce42e79fe53cb-4"></a><span class="n">connection</span> <span class="o">=</span> <span class="n">pika</span><span class="o">.</span><span class="n">BlockingConnection</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-<a name="rest_code_7c45490042044c0ca69ce42e79fe53cb-5"></a><span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">channel</span><span class="p">()</span>
-<a name="rest_code_7c45490042044c0ca69ce42e79fe53cb-6"></a><span class="n">channel</span><span class="o">.</span><span class="n">basic_publish</span><span class="p">(</span><span class="s1">'test_exchange'</span><span class="p">,</span>
-<a name="rest_code_7c45490042044c0ca69ce42e79fe53cb-7"></a>                      <span class="s1">'test_routing_key'</span><span class="p">,</span>
-<a name="rest_code_7c45490042044c0ca69ce42e79fe53cb-8"></a>                      <span class="s1">'Hello, world!'</span><span class="p">,</span>
-<a name="rest_code_7c45490042044c0ca69ce42e79fe53cb-9"></a>                      <span class="n">pika</span><span class="o">.</span><span class="n">BasicProperties</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="s1">'text/plain'</span><span class="p">,</span>
-<a name="rest_code_7c45490042044c0ca69ce42e79fe53cb-10"></a>                                           <span class="n">delivery_mode</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
-<a name="rest_code_7c45490042044c0ca69ce42e79fe53cb-11"></a><span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</pre>
-</div>
-<div class="section" id="java">
-<h3>Java</h3>
-<p>Usando la <a class="reference external" href="https://www.rabbitmq.com/java-client.html">rabbitmq-java-client</a>, el consumidor:</p>
-<pre class="code java"><a name="rest_code_141465f1c40a494981050040fae5de53-1"></a><span class="kn">import</span> <span class="nn">com.rabbitmq.client.Connection</span><span class="p">;</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-2"></a><span class="kn">import</span> <span class="nn">com.rabbitmq.client.Channel</span><span class="p">;</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-3"></a>
-<a name="rest_code_141465f1c40a494981050040fae5de53-4"></a><span class="kd">class</span> <span class="nc">Consumer</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-5"></a><span class="p">{</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-6"></a>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(){</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-7"></a>        <span class="n">ConnectionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="p">();</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-8"></a>        <span class="n">factory</span><span class="p">.</span><span class="na">setUri</span><span class="p">(</span><span class="s">"amqp://guest:guest@hostName:5672/"</span><span class="p">);</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-9"></a>        <span class="n">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">factory</span><span class="p">.</span><span class="na">newConnection</span><span class="p">();</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-10"></a>
-<a name="rest_code_141465f1c40a494981050040fae5de53-11"></a>        <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="na">createChannel</span><span class="p">();</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-12"></a>
-<a name="rest_code_141465f1c40a494981050040fae5de53-13"></a>        <span class="n">channel</span><span class="p">.</span><span class="na">basicConsume</span><span class="p">(</span><span class="n">queueName</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="s">"myConsumerTag"</span><span class="p">,</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-14"></a>            <span class="k">new</span> <span class="n">DefaultConsumer</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span> <span class="p">{</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-15"></a>                <span class="nd">@Override</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-16"></a>                <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handleDelivery</span><span class="p">(</span><span class="n">String</span> <span class="n">consumerTag</span><span class="p">,</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-17"></a>                                           <span class="n">Envelope</span> <span class="n">envelope</span><span class="p">,</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-18"></a>                                           <span class="n">AMQP</span><span class="p">.</span><span class="na">BasicProperties</span> <span class="n">properties</span><span class="p">,</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-19"></a>                                           <span class="kt">byte</span><span class="o">[]</span> <span class="n">body</span><span class="p">)</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-20"></a>                    <span class="kd">throws</span> <span class="n">IOException</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-21"></a>                <span class="p">{</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-22"></a>                    <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">body</span><span class="p">);</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-23"></a>                <span class="p">}</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-24"></a>            <span class="p">}</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-25"></a>        <span class="p">});</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-26"></a>
-<a name="rest_code_141465f1c40a494981050040fae5de53-27"></a>        <span class="n">channel</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-28"></a>        <span class="n">conn</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-29"></a>    <span class="p">}</span>
-<a name="rest_code_141465f1c40a494981050040fae5de53-30"></a><span class="p">}</span>
-</pre>
-<p>y el productor:</p>
-<pre class="code java"><a name="rest_code_f079d7ac9673418091f649137db0d3cc-1"></a><span class="kn">import</span> <span class="nn">com.rabbitmq.client.Connection</span><span class="p">;</span>
-<a name="rest_code_f079d7ac9673418091f649137db0d3cc-2"></a><span class="kn">import</span> <span class="nn">com.rabbitmq.client.Channel</span><span class="p">;</span>
-<a name="rest_code_f079d7ac9673418091f649137db0d3cc-3"></a>
-<a name="rest_code_f079d7ac9673418091f649137db0d3cc-4"></a><span class="kd">class</span> <span class="nc">Producer</span> <span class="p">{</span>
-<a name="rest_code_f079d7ac9673418091f649137db0d3cc-5"></a>    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="p">(){</span>
-<a name="rest_code_f079d7ac9673418091f649137db0d3cc-6"></a>        <span class="n">ConnectionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="p">();</span>
-<a name="rest_code_f079d7ac9673418091f649137db0d3cc-7"></a>        <span class="n">factory</span><span class="p">.</span><span class="na">setUri</span><span class="p">(</span><span class="s">"amqp://guest:guest@hostName:5672/"</span><span class="p">);</span>
-<a name="rest_code_f079d7ac9673418091f649137db0d3cc-8"></a>        <span class="n">Connection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">factory</span><span class="p">.</span><span class="na">newConnection</span><span class="p">();</span>
-<a name="rest_code_f079d7ac9673418091f649137db0d3cc-9"></a>
-<a name="rest_code_f079d7ac9673418091f649137db0d3cc-10"></a>        <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="na">createChannel</span><span class="p">();</span>
-<a name="rest_code_f079d7ac9673418091f649137db0d3cc-11"></a>
-<a name="rest_code_f079d7ac9673418091f649137db0d3cc-12"></a>        <span class="kt">byte</span><span class="o">[]</span> <span class="n">messageBodyBytes</span> <span class="o">=</span> <span class="s">"Hello, world!"</span><span class="p">.</span><span class="na">getBytes</span><span class="p">();</span>
-<a name="rest_code_f079d7ac9673418091f649137db0d3cc-13"></a>        <span class="n">channel</span><span class="p">.</span><span class="na">basicPublish</span><span class="p">(</span><span class="s">"test_exchange"</span><span class="p">,</span> <span class="s">"test_routing_key"</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="n">messageBodyBytes</span><span class="p">);</span>
-<a name="rest_code_f079d7ac9673418091f649137db0d3cc-14"></a>
-<a name="rest_code_f079d7ac9673418091f649137db0d3cc-15"></a>        <span class="n">channel</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
-<a name="rest_code_f079d7ac9673418091f649137db0d3cc-16"></a>        <span class="n">conn</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
-<a name="rest_code_f079d7ac9673418091f649137db0d3cc-17"></a>    <span class="p">}</span>
-<a name="rest_code_f079d7ac9673418091f649137db0d3cc-18"></a><span class="p">}</span>
-</pre>
-<p>Debo admitir que no los he probado... Así que si alguien encuentra algún fallo, que me lo diga XD</p>
-</div>
-</div>
-<div class="section" id="conclusion">
-<h2>Conclusión</h2>
-<p><a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a> es un canal de comunicaciones. Quizá no sea muy rápido, ya que no deja de ser un <em>man-in-the-middle</em>, pero permite integrarse fácilmente con cualquier sistema existente.</p>
-<p>Además, como no fuerza ningún formato de mensaje, resulta muy sencillo crear conectores que permitan publicar/consumir mensajes e integrar distintos escenarios. Y en las últimas versiones han añadido soporte para <a class="reference external" href="https://www.rabbitmq.com/priority.html">mensajes prioritarios</a>, lo que puede dar mucho juego para enviar mensajes de control.</p>
-<p>De todas maneras, <a class="reference external" href="https://www.rabbitmq.com/">RabbitMQ</a> es sólo un sistema de colas de mensajes, pero hay otros. También está <a class="reference external" href="http://activemq.apache.org/">Apache ActiveMQ</a>, <a class="reference external" href="http://kafka.apache.org/">Apache Kafka</a>, <a class="reference external" href="https://qpid.apache.org/">Apache Qpid</a>,  <a class="reference external" href="http://zeromq.org/">ZeroMQ</a>, <a class="reference external" href="http://hornetq.jboss.org/">HornetQ</a>, <a class="reference external" href="https://code.google.com/p/sparrow/">Sparrow</a>, <a class="reference external" href="https://github.com/starling/starling/tree/master">Starling</a>, <a class="reference external" href="http://aws.amazon.com/es/sqs/">Amazon SQS</a>, <a class="reference external" href="http://kr.github.io/beanstalkd/">Beanstalkd</a>, ...</p>
-</div>
-</div>
-          </div>
-          <br><div>
-            <nav><span class="author">
-                <span class="glyphicon glyphicon-user"></span> 
-                <span>Publicado:Miguel Ángel García</span>
-              </span>
-               
-
-              
-              <span class="dateline">
-                <span class="glyphicon glyphicon-calendar"></span> 
-                <time class="published dt-published" datetime="2015-06-19T04:44:33+00:00" title="2015-06-19">2015-06-19</time></span>
-               
-              <span class="tags">
-                <span class="glyphicon glyphicon-tags"></span> 
-                <a class="label label-primary p-category" href="/categories/rabbitmq/" rel="tag">rabbitmq</a>
-              </span>
-                      <ul class="pager">
-<li class="previous">
-              <a href="/blog/monitorizacion-y-alertado/" rel="prev" title="Monitorización y alertado">
-                <span class="glyphicon glyphicon-arrow-left"></span>
-                Publicación anterior
-              </a>
-            </li>
-            <li class="next">
-              <a href="/blog/creando-tu-propia-entidad-certificadora-ssl/" rel="next" title="Creando tu propia Entidad Certificadora SSL (y volcando certificados autofirmados)">
-                Siguiente publicación
-                <span class="glyphicon glyphicon-arrow-right"></span>
-              </a>
-            </li>
-        </ul></nav>
-</div>
-          <section class="comments"><h2>Comentarios</h2>
-                            <div id="disqus_thread"></div>
-        <script>
-        var disqus_shortname ="magmax",
-            disqus_url="http://magmax.org/blog/colas-de-mensajes-rabbitmq/",
-        disqus_title="Colas de mensajes: RabbitMQ",
-        disqus_identifier="cache/posts/colas-de-mensajes-rabbitmq.html",
-        disqus_config = function () {
-            this.language = "es_ES";
-        };
-        (function() {
-            var dsq = document.createElement('script'); dsq.async = true;
-            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        })();
-    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
-</noscript>
-    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
-
-
-          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
-</div>
-      <aside class="sidebar col-md-3"><div>
-<section class="panel panel-default"><div class="panel-heading">
-    <h3 class="panel-title">Last comments</h3>
-  </div>
-  <div class="panel-body">
-    <div id="disqus_last_comments" class="dsq-widget">
-      <script type="text/javascript" src="https://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
-      </script>
-</div>
-  </div>
-</section>
-</div>
-          <div>
-<section class="panel panel-default"><div class="panel-heading">
-    <h3 class="panel-title">GitHub Repos</h3>
-  </div>
-  <div class="panel-body">
-    <ul id="gh_repos" class="list-unstyled">
-<li class="loading">Status updating…</li>
-    </ul>
-</div>
-  <div class="panel-footer">
-    <a href="https://github.com/magmax">@magmax</a> on GitHub
-  </div>
-</section>
-</div>
-      </aside>
-</div>
-
-    <footer>
-      Contents © 2009-2020 <a href="mailto:">Miguel Ángel García</a> 
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
-<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+<header class="nav_header" >
+  <nav class="nav">
+    <a href='http://example.org/' class="nav_brand nav_item">
+        El blog de MagMax
+      <div class="nav_close">
+        <div>
+          <svg class="icon">
+  <use xlink:href="#open-menu"></use>
+</svg>
+          <svg class="icon">
+  <use xlink:href="#closeme"></use>
+</svg>
+        </div>
+      </div>
+    </a>
+    <div class='nav_body nav_body_'>
       
-    </footer>
+      
+      
+        
+
+  <div class="nav_parent">
+    <a href="http://example.org/" class="nav_item">Inicio </a>
+  </div>
+  <div class="nav_parent">
+    <a href="http://example.org/en" class="nav_item">English </a>
+  </div>
+      
+      <div class="nav_parent">
+        <a href="#" class="nav_item"></a>
+        <div class="nav_sub">
+          <span class="nav_child"></span>
+          
+          <a href="http://example.org/en/" class="nav_child nav_item">English</a>
+          
+          <a href="http://example.org/" class="nav_child nav_item">Español</a>
+          
+        </div>
+      </div>
+      
+<div class='follow'>
+    
+    
+  <a href="https://github.com/magmax/">
+    <svg class="icon">
+  <use xlink:href="#github"></use>
+</svg>
+  </a>
+    
+    
+  <a href="https://twitter.com/magmax_en">
+    <svg class="icon">
+  <use xlink:href="#twitter"></use>
+</svg>
+  </a>
+    
+    
+  <a href="https://www.linkedin.com/in/miguelangelgarciamartinez/">
+    <svg class="icon">
+  <use xlink:href="#linkedin"></use>
+</svg>
+  </a>
+    
+    
+    
+  <a href="http://example.org/index.xml">
+    <svg class="icon">
+  <use xlink:href="#rss"></use>
+</svg>
+  </a>
+<div class="color_mode">
+  <input type="checkbox" class="color_choice" id="mode">
 </div>
+
 </div>
 
+    </div>
+  </nav>
+</header>
 
+    <main>
+  
+<div class="grid-inverse wrap content">
+  <article class="post_content">
+    <h1 class="post_title">Colas de mensajes: RabbitMQ</h1><div class="post_meta">
+  
+    <svg class="icon">
+  <use xlink:href="#calendar"></use>
+</svg>
+    <span class="post_date">
+      Jun 19, 2015</span>
+      <a href='http://example.org/tags/rabbitmq' class="post_tag button button_translucent">rabbitmq
+      </a>
+</div>
 
+    
+  <div class="post_share">
+    Compartir en:
+    <a href="https://twitter.com/intent/tweet?text=Colas%20de%20mensajes%3a%20RabbitMQ&url=http%3a%2f%2fexample.org%2fblog%2fcolas-de-mensajes-rabbitmq%2f&tw_p=tweetbutton" class="twitter" title="Compartir en Twitter" target="_blank" rel="nofollow">
+      <svg class="icon">
+  <use xlink:href="#twitter"></use>
+</svg>
+    </a>
+    <a href="https://www.facebook.com/sharer.php?u=http%3a%2f%2fexample.org%2fblog%2fcolas-de-mensajes-rabbitmq%2f&t=Colas%20de%20mensajes%3a%20RabbitMQ" class="facebook" title="Compartir en Facebook" target="_blank" rel="nofollow">
+      <svg class="icon">
+  <use xlink:href="#facebook"></use>
+</svg>
+    </a>
+    <a href="#linkedinshare" id = "linkedinshare" class="linkedin" title="Compartir en LinkedIn" rel="nofollow">
+      <svg class="icon">
+  <use xlink:href="#linkedin"></use>
+</svg>
+    </a>
+    <a href="http://example.org/blog/colas-de-mensajes-rabbitmq/" title="Copy Link" class="link link_yank">
+      <svg class="icon">
+  <use xlink:href="#copy"></use>
+</svg>
+    </a>
+  </div>
 
-<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    
+    <p>Cuando se desarrolla una aplicación y ésta comienza a crecer, a menudo necesitamos interconectar distintos componentes. En estos casos se utiliza un <em>middleware</em> que nos permita comunicar las distintas piezas.</p>
+<p>Una opción es usar una cola de mensajes. No es el mecanismo más rápido, pero probablemente sí el más sencillo, y permite realizar acciones de forma asíncrona.</p>
+<p>Y un gestor de colas de mensajes sencillo, robusto y muy utilizado es <a href="https://www.rabbitmq.com/">RabbitMQ</a>.</p>
+<!-- raw HTML omitted -->
+<figure>
+    <img src="/images/rabbitmq.png"
+         alt="Rabbit MQ"/> 
+</figure>
 
-  ga('create', 'UA-9308241-3', 'auto');
-  ga('send', 'pageview');
+<h2 id="instalando-rabbitmq">Instalando RabbitMQ</h2>
+<p>Esta aplicación <em>Erlang</em> es sencilla de instalar en Linux:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>apt-get install rabbitmq-server
+</code></pre></div><p>Y tendremos la aplicación funcionando, escuchando en el puerto 5672.</p>
+<p>Es interesante instalar el <a href="https://www.rabbitmq.com/management.html">plugin de gestión</a> para poder ver qué está pasando
+ahí dentro. Para ello basta con hacer:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>rabbitmq-plugins enable rabbitmq_management
+</code></pre></div><p>Y automáticamente lo tendremos escuchando en http://localhost:15672/</p>
+<h2 id="lo-básico-de-rabbitmq">Lo básico de RabbitMQ</h2>
+<p>Hay algunos conceptos que hay que tener claros de RabbitMQ:</p>
+<p><em>Exchange</em>
+Es el punto de entrada de un mensaje. Pueden ser <strong>Direct</strong>, si entregan un mensaje en una cola, <strong>Fanout</strong> si se entregan copias del mensaje a todas las colas o <strong>Topic</strong> si se entregan copias del mensaje sólo a algunas colas.</p>
+<p><em>Queue</em>
+Es el punto de lectura de un mensaje. Pueden ser <strong>durable</strong> o persistentes, si almacenan los mensajes para sobrevivir a un reinicio de RabbitMQ_. También pueden ser **exclusivas**, si sólo un consumidor puede estar conectado a la vez.</p>
+<p><em>Bindings</em>
+Son reglas que indican cómo llegar de un <strong>Exchange</strong> a las <strong>Queue</strong> asociadas.</p>
+<p><em>Routing key</em>
+Filtro asociado a un <strong>Binging</strong> que permite seleccionar sólo algunos mensajes para dicho <strong>binding</strong>.</p>
+<p><em>Producer o Productor</em>
+Programa que escribe en un <strong>Exchange</strong></p>
+<p><em>Consumer o Consumidor</em>
+Programa que escucha en una <strong>Queue</strong></p>
+<p><em>AMQP</em>
+Protocolo de comunicaciones utilizado por RabbitMQ. Lo usa tanto el <strong>Productor</strong> como el <strong>Consumidor</strong>.</p>
+<p><em>Virtual host o vhost</em>
+Un entorno aislado, con sus propios grupos de usuarios, <em>exchanges</em>, <em>queues</em>, &hellip;</p>
+<p><em>mnesia</em>
+La base de datos interna de <a href="https://www.rabbitmq.com/">RabbitMQ</a></p>
+<p>Una vez dicho esto, podemos describir el flujo básico de <a href="https://www.rabbitmq.com/">RabbitMQ</a>:</p>
+<div hidden>
 
-</script>
-</body>
+@startuml rabbitmq-overview
+package RabbitMQ {
+  component Exchange
+  Component Queue
+
+  Exchange --> Queue
+}
+
+Producer --> Exchange: send
+Queue --> Consumer: listen
+@enduml
+
+</div>
+
+<img src="/diagrams/rabbitmq-overview.png"/>
+
+<p>Claro, que esto puede evolucionar a entornos mucho más complejos:</p>
+<div hidden>
+
+@startuml rabbitmq-complex-flow
+package RabbitMQ {
+  component Exchange_1
+  component Exchange_2
+  Component Queue_1
+  Component Queue_2
+  Component Queue_3
+
+  Exchange_1 --> Queue_1
+  Exchange_1 --> Queue_2
+  Exchange_2 --> Queue_2
+  Exchange_2 --> Queue_3
+}
+
+Producer_1 --> Exchange_1
+Producer_2 --> Exchange_2
+Queue_1 --> Consumer_1
+Queue_2 --> Consumer_2
+Queue_3 --> Consumer_3
+Queue_3 --> Consumer_4
+@enduml
+
+</div>
+
+<img src="/diagrams/rabbitmq-complex-flow.png"/>
+
+<p>En este entorno, y asumiendo que los <em>Exchange</em> están en modo <strong>Topic</strong> (es decir, que un mensaje llega a todas las colas):</p>
+<ul>
+<li><code>Consumer_1</code> recibe todo lo que produzca <code>Producer_1</code>, pasando por <code>Queue_1</code>. Este tipo de escenario es igual que el básico.</li>
+<li><code>Consumer_2</code> recibe todo lo que produzca tanto <code>Producer_1</code> como <code>Producer_2</code>, pasando por <code>Queue_2</code>. Útil para procesar eventos que se producen en distintos lugares pero tienen un destino común. Ejemplo: guardar logs de distintas máquinas en base de datos.</li>
+<li><code>Consumer_3</code> y <code>Consumer_4</code> se repartirán lo producido por <code>Producer_2</code>, pasando por <code>Queue_3</code>. Útil cuando la carga producida es muy alta y se requieren muchos recursos para consimir cada mensaje. Ejemplo: Renderización de vídeo 3D.</li>
+</ul>
+<h3 id="puertos-y-valores-por-defecto">Puertos y valores por defecto</h3>
+<p>Si no cambiamos nada, <a href="https://www.rabbitmq.com/">RabbitMQ</a> escucha en el puerto 5672, y la interfaz de administración en el 15672.</p>
+<p>Se crea un usuario <em>guest/guest</em> que nos permite acceder a ambas.</p>
+<p><a href="https://www.rabbitmq.com/">RabbitMQ</a> consume mucha memoria. Recomiendo utilizar servidores dedicados, para que no se haga con toda y tengamos problemas.</p>
+<h2 id="algunas-tareas-de-administración">Algunas tareas de administración</h2>
+<h3 id="crear-un-vhost">Crear un vhost</h3>
+<p>Con el fin de aislar un entorno, podemos crear un <strong>vhost</strong>. Nada más sencillo:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>rabbitmqctl add_vhost /mi_vhost
+</code></pre></div><h3 id="crear-un-usuario">Crear un usuario</h3>
+<p>Ahora podemos crear un usuario</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>rabbitmqctl add_user my_user my_pass
+</code></pre></div><p>Y podemos asociarlo al <strong>vhost</strong>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>rabbitmqctl set_permissions -p /my_vhost my_user <span style="color:#e6db74">&#34;.*&#34;</span> <span style="color:#e6db74">&#34;.*&#34;</span> <span style="color:#e6db74">&#34;.*&#34;</span>
+</code></pre></div><h3 id="asignar-permisos">Asignar permisos</h3>
+<p>Si queremos poder utilizar este usuario para entrar en la interfaz de administracción, necesitamos darle permisos de <em>management</em> y <em>monitoring</em>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>rabbitmqctl set_user_tags my_user management monitoring
+</code></pre></div><p>Por tanto, los mensajes se escriben en un <strong>Exchange</strong> pero se leen de una <strong>Queue</strong>. Para llegar de un <strong>Exchange</strong> a una <strong>Queue</strong> se utilizan los <strong>Routes</strong>.</p>
+<h3 id="crear-un-cluster">Crear un cluster</h3>
+<p>Una de las tareas típicas es <code>crear un cluster de RabbitMQ</code><em>. Esto nos permite <code>mejorar la disponibilidad del sistema</code></em>, ya que si uno de nuestros servidores cae, el otro seguirá atendiendo peticiones.</p>
+<p>Esta tarea es algo más compleja. Supongamos que tenemos dos nodos: <em>rabbit1</em> y <em>rabbit2</em>. Vamos a añadir <em>Rabbit2</em>, dejando <em>Rabbit1</em> como maestro inicial. Lo primero que podemos hacer es ver el estado actual del sistema:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>rabbit2$ rabbitmqctl cluster_status
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#f92672">[{</span>nodes,<span style="color:#f92672">[{</span>disc,<span style="color:#f92672">[</span>rabbit@rabbit2<span style="color:#f92672">]}]}</span>,<span style="color:#f92672">{</span>running_nodes,<span style="color:#f92672">[</span>rabbit@rabbit2<span style="color:#f92672">]}]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>...done.
+</code></pre></div><p>Para crear un cluster, tenemos que parar uno de los <a href="https://www.rabbitmq.com/">RabbitMQ</a>, pero debemos hacerlo con órdenes especiales:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>rabbit2$ rabbitmqctl stop_app
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>Stopping node rabbit@rabbit2 ...done.
+</code></pre></div><p>A continuación lo añadimos al cluster:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>rabbit2$ rabbitmqctl join_cluster rabbit@rabbit1
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>Clustering node rabbit@rabbit2 with rabbit@rabbit1 ...done.
+</code></pre></div><p>Y volvemos a arrancar:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>rabbit2$ rabbitmqctl start_app
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>Starting node rabbit@rabbit2 ...done.
+</code></pre></div><p>Ahora podemos comprobar que todo fue bien:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>rabbit2$ rabbitmqctl cluster_status
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>Cluster status of node rabbit@rabbit2 ...
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span style="color:#f92672">[{</span>nodes,<span style="color:#f92672">[{</span>disc,<span style="color:#f92672">[</span>rabbit@rabbit1,rabbit@rabbit2<span style="color:#f92672">]}]}</span>,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span> <span style="color:#f92672">{</span>running_nodes,<span style="color:#f92672">[</span>rabbit@rabbit1,rabbit@rabbit2<span style="color:#f92672">]}]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>...done.
+</code></pre></div><p>Aunque también podemos verlo desde la herramienta de administración (mucho más molona XD)</p>
+<p>Es <strong>IMPORTANTE</strong> que todos los nodos de un cluster tengan la misma versión de
+<a href="https://www.rabbitmq.com/">RabbitMQ</a> o podríamos tener problemas.</p>
+<p>Si se va a gestionar un cluster, recomiendo encarecidamente leerse toda la
+<a href="https://www.rabbitmq.com/clustering.html">documentación de RabbitMQ sobre clusters</a>. Es poco y muy conveniente. Además,
+es bueno tenerlo siempre a mano.</p>
+<p>Una vez creado el cluster se puede utilizar una VIp (Virtual IP), de manera que
+nos respondan ambos indistintamente. Si uno cae, la VIp se puede cambiar
+mediante <a href="http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html">Keepalive</a> y, si preparamos nuestra aplicación para hacer reintentos,
+no se verá afectada por la caída.</p>
+<p>En la interfaz de administración podemos ver cómo los mensajes estarán
+replicados en ambos nodos, el estado de los mismos, etc.</p>
+<h2 id="programando">Programando</h2>
+<p>Para programar contra un <a href="https://www.rabbitmq.com/">RabbitMQ</a> recomiendo usar <a href="https://www.rabbitmq.com/devtools.html">una de las librerías AMQP</a>.
+Hay otras opciones de más alto nivel. Por ejemplo, en Python está <a href="https://kombu.readthedocs.org/en/latest/">Kombu</a>, que se
+abstrae de la cola de mensajes a usar, o incluso <a href="https://pypi.org/project/celery/">Celery</a>, que permite usar una
+cola de mensajes para la gestión de tareas distribuidas.</p>
+<p>Veamos unos ejemplillos sencillos. Recordad que hay muchas opciones y se pueden
+configurar bastantes historias, pero voy a ir a lo básico:</p>
+<h3 id="python">Python</h3>
+<p>Utilizaré la librería <code>Pika</code> (tomado de la propia documentación de la librería):</p>
+<p>El consumidor:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#f92672">import</span> pika
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>connection <span style="color:#f92672">=</span> pika<span style="color:#f92672">.</span>BlockingConnection()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>channel <span style="color:#f92672">=</span> connection<span style="color:#f92672">.</span>channel()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>method_frame, header_frame, body <span style="color:#f92672">=</span> channel<span style="color:#f92672">.</span>basic_get(<span style="color:#e6db74">&#39;test&#39;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#66d9ef">if</span> method_frame:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>    <span style="color:#66d9ef">print</span> method_frame, header_frame, body
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>    channel<span style="color:#f92672">.</span>basic_ack(method_frame<span style="color:#f92672">.</span>delivery_tag)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#66d9ef">else</span>:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>    <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#39;No message returned&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>connection<span style="color:#f92672">.</span>close()
+</code></pre></div><p>Y el productor:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#f92672">import</span> pika
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>parameters <span style="color:#f92672">=</span> pika<span style="color:#f92672">.</span>URLParameters(<span style="color:#e6db74">&#39;amqp://guest:guest@localhost:5672/</span><span style="color:#e6db74">%2F</span><span style="color:#e6db74">&#39;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>connection <span style="color:#f92672">=</span> pika<span style="color:#f92672">.</span>BlockingConnection(parameters)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>channel <span style="color:#f92672">=</span> connection<span style="color:#f92672">.</span>channel()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>channel<span style="color:#f92672">.</span>basic_publish(<span style="color:#e6db74">&#39;test_exchange&#39;</span>,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>                      <span style="color:#e6db74">&#39;test_routing_key&#39;</span>,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>                      <span style="color:#e6db74">&#39;Hello, world!&#39;</span>,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>                      pika<span style="color:#f92672">.</span>BasicProperties(content_type<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;text/plain&#39;</span>,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>                                           delivery_mode<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>))
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>connection<span style="color:#f92672">.</span>close()
+</code></pre></div><h3 id="java">Java</h3>
+<p>Usando la <a href="https://www.rabbitmq.com/java-client.html">rabbitmq-java-client</a>, el consumidor:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#f92672">import</span> com.rabbitmq.client.Connection<span style="color:#f92672">;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#f92672">import</span> com.rabbitmq.client.Channel<span style="color:#f92672">;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Consumer</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#f92672">{</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(){</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>        ConnectionFactory factory <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConnectionFactory<span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>        factory<span style="color:#f92672">.</span><span style="color:#a6e22e">setUri</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;amqp://guest:guest@hostName:5672/&#34;</span><span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>        Connection conn <span style="color:#f92672">=</span> factory<span style="color:#f92672">.</span><span style="color:#a6e22e">newConnection</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>        Channel channel <span style="color:#f92672">=</span> conn<span style="color:#f92672">.</span><span style="color:#a6e22e">createChannel</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>        channel<span style="color:#f92672">.</span><span style="color:#a6e22e">basicConsume</span><span style="color:#f92672">(</span>queueName<span style="color:#f92672">,</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;myConsumerTag&#34;</span><span style="color:#f92672">,</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>            <span style="color:#66d9ef">new</span> DefaultConsumer<span style="color:#f92672">(</span>channel<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>                <span style="color:#a6e22e">@Override</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>                <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">handleDelivery</span><span style="color:#f92672">(</span>String consumerTag<span style="color:#f92672">,</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>                                           Envelope envelope<span style="color:#f92672">,</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>                                           AMQP<span style="color:#f92672">.</span><span style="color:#a6e22e">BasicProperties</span> properties<span style="color:#f92672">,</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>                                           <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> body<span style="color:#f92672">)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>                    <span style="color:#66d9ef">throws</span> IOException
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>                <span style="color:#f92672">{</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>                    System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>body<span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>                <span style="color:#f92672">}</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>            <span style="color:#f92672">}</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>        <span style="color:#f92672">});</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>        channel<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>        conn<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>    <span style="color:#f92672">}</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span><span style="color:#f92672">}</span>
+</code></pre></div><p>y el productor:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#f92672">import</span> com.rabbitmq.client.Connection<span style="color:#f92672">;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#f92672">import</span> com.rabbitmq.client.Channel<span style="color:#f92672">;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Producer</span> <span style="color:#f92672">{</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(){</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>        ConnectionFactory factory <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConnectionFactory<span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>        factory<span style="color:#f92672">.</span><span style="color:#a6e22e">setUri</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;amqp://guest:guest@hostName:5672/&#34;</span><span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>        Connection conn <span style="color:#f92672">=</span> factory<span style="color:#f92672">.</span><span style="color:#a6e22e">newConnection</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>        Channel channel <span style="color:#f92672">=</span> conn<span style="color:#f92672">.</span><span style="color:#a6e22e">createChannel</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>        <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> messageBodyBytes <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;Hello, world!&#34;</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getBytes</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>        channel<span style="color:#f92672">.</span><span style="color:#a6e22e">basicPublish</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;test_exchange&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;test_routing_key&#34;</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">,</span> messageBodyBytes<span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>        channel<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>        conn<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>    <span style="color:#f92672">}</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span style="color:#f92672">}</span>
+</code></pre></div><p>Debo admitir que no los he probado&hellip; Así que si alguien encuentra algún fallo, que me lo diga XD</p>
+<h2 id="conclusión">Conclusión</h2>
+<p><a href="https://www.rabbitmq.com/">RabbitMQ</a> es un canal de comunicaciones. Quizá no sea muy rápido, ya que no
+deja de ser un <em>man-in-the-middle</em>, pero permite integrarse fácilmente con
+cualquier sistema existente.</p>
+<p>Además, como no fuerza ningún formato de mensaje, resulta muy sencillo crear
+conectores que permitan publicar/consumir mensajes e integrar distintos
+escenarios. Y en las últimas versiones han añadido soporte para <a href="https://www.rabbitmq.com/priority.html">mensajes
+prioritarios</a>, lo que puede dar mucho juego para enviar mensajes de control.</p>
+<p>De todas maneras, <a href="https://www.rabbitmq.com/">RabbitMQ</a> es sólo un sistema de colas de mensajes, pero hay
+otros. También está <a href="http://activemq.apache.org/">Apache ActiveMQ</a>, <a href="http://kafka.apache.org/">Apache Kafka</a>, <a href="https://qpid.apache.org/">Apache Qpid</a>,
+<a href="http://zeromq.org/">ZeroMQ</a>, <a href="http://hornetq.jboss.org/">HornetQ</a>, <a href="https://code.google.com/p/sparrow/">Sparrow</a>, <a href="https://github.com/starling/starling/tree/master">Starling</a>, <a href="http://aws.amazon.com/es/sqs/">Amazon SQS</a>, <a href="http://kr.github.io/beanstalkd/">Beanstalkd</a>, &hellip;</p>
+
+    
+      
+    
+  </article>
+<aside class="sidebar">
+  <section class="sidebar_inner">
+    
+    <h2 class="mt-4">Posts recientes</h2>
+    <ul class="flex-column">
+      <li>
+        <a href="http://example.org/blog/argocd/" class="nav-link">ArgoCD con Kind</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/monitorizacion-con-graphite/" class="nav-link">Monitorización con Graphite</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/organizacion/" class="nav-link">Organización</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/hosting/" class="nav-link">Hosting</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/devops-rol-o-metodologia/" class="nav-link">DevOps: ¿Equipo, Rol o metodología?</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/instalando-linux-con-uefi/" class="nav-link">Instalando Linux con UEFI</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/plugins-en-python/" class="nav-link">Plugins en Python</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/ipython-autoreload/" class="nav-link">ipython autoreload</a>
+      </li>
+    </ul>
+    <div>
+      <h2 class="mt-4 taxonomy" id="categories-section">Categorías</h2>
+      <nav class="tags_nav">
+        <a href='http://example.org/categories/django-tutorial/' class="post_tag button button_translucent">
+          DJANGO-TUTORIAL
+          <span class="button_tally">3</span>
+        </a>
+        
+        <a href='http://example.org/categories/translations/' class="post_tag button button_translucent">
+          TRANSLATIONS
+          <span class="button_tally">1</span>
+        </a>
+        
+        
+      </nav>
+    </div>
+    <div>
+      <h2 class="mt-4 taxonomy" id="tags-section">Tags</h2>
+      <nav class="tags_nav">
+        <a href='http://example.org/tags/python/' class="post_tag button button_translucent">
+          PYTHON
+          <span class="button_tally">32</span>
+        </a>
+        
+        <a href='http://example.org/tags/agile/' class="post_tag button button_translucent">
+          AGILE
+          <span class="button_tally">15</span>
+        </a>
+        
+        <a href='http://example.org/tags/engineering/' class="post_tag button button_translucent">
+          ENGINEERING
+          <span class="button_tally">14</span>
+        </a>
+        
+        <a href='http://example.org/tags/retrospective/' class="post_tag button button_translucent">
+          RETROSPECTIVE
+          <span class="button_tally">13</span>
+        </a>
+        
+        <a href='http://example.org/tags/testing/' class="post_tag button button_translucent">
+          TESTING
+          <span class="button_tally">13</span>
+        </a>
+        
+        <a href='http://example.org/tags/life/' class="post_tag button button_translucent">
+          LIFE
+          <span class="button_tally">12</span>
+        </a>
+        
+        <a href='http://example.org/tags/django/' class="post_tag button button_translucent">
+          DJANGO
+          <span class="button_tally">9</span>
+        </a>
+        
+        <a href='http://example.org/tags/drupal/' class="post_tag button button_translucent">
+          DRUPAL
+          <span class="button_tally">9</span>
+        </a>
+        
+        <a href='http://example.org/tags/git/' class="post_tag button button_translucent">
+          GIT
+          <span class="button_tally">9</span>
+        </a>
+        
+        <a href='http://example.org/tags/dvcs/' class="post_tag button button_translucent">
+          DVCS
+          <span class="button_tally">8</span>
+        </a>
+        
+        
+        <br>
+        <div class="post_tags_toggle button">Todos los Tags</div>
+        <div class="post_tags">
+          <div class="tags_list">
+            
+            <a href='http://example.org/tags/acceptance/' class=" post_tag button button_translucent" data-position=2>ACCEPTANCE<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/admin/' class=" post_tag button button_translucent" data-position=1>ADMIN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/administration/' class=" post_tag button button_translucent" data-position=1>ADMINISTRATION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/agile/' class=" post_tag button button_translucent" data-position=15>AGILE<span class="button_tally">15</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ajax/' class=" post_tag button button_translucent" data-position=1>AJAX<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/alerting/' class=" post_tag button button_translucent" data-position=1>ALERTING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/angularjs/' class=" post_tag button button_translucent" data-position=1>ANGULARJS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ansi-c/' class=" post_tag button button_translucent" data-position=5>ANSI-C<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ansi-c-testing/' class=" post_tag button button_translucent" data-position=2>ANSI-C-TESTING<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ant/' class=" post_tag button button_translucent" data-position=1>ANT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/apache/' class=" post_tag button button_translucent" data-position=1>APACHE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/argocd/' class=" post_tag button button_translucent" data-position=1>ARGOCD<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/atheist/' class=" post_tag button button_translucent" data-position=3>ATHEIST<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/automation/' class=" post_tag button button_translucent" data-position=3>AUTOMATION<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/awesome-wm/' class=" post_tag button button_translucent" data-position=1>AWESOME-WM<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/aws/' class=" post_tag button button_translucent" data-position=1>AWS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/bootstrap/' class=" post_tag button button_translucent" data-position=2>BOOTSTRAP<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/bower/' class=" post_tag button button_translucent" data-position=1>BOWER<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/buildbot/' class=" post_tag button button_translucent" data-position=2>BUILDBOT<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/celery/' class=" post_tag button button_translucent" data-position=1>CELERY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/chemistry/' class=" post_tag button button_translucent" data-position=1>CHEMISTRY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/code-coverage/' class=" post_tag button button_translucent" data-position=2>CODE-COVERAGE<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/code-highlight/' class=" post_tag button button_translucent" data-position=1>CODE-HIGHLIGHT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/code-retreat/' class=" post_tag button button_translucent" data-position=1>CODE-RETREAT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/codemotion/' class=" post_tag button button_translucent" data-position=1>CODEMOTION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/codice-software/' class=" post_tag button button_translucent" data-position=1>CODICE-SOFTWARE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/compiler/' class=" post_tag button button_translucent" data-position=1>COMPILER<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/compilers/' class=" post_tag button button_translucent" data-position=1>COMPILERS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/configuration/' class=" post_tag button button_translucent" data-position=2>CONFIGURATION<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/continuous-integration/' class=" post_tag button button_translucent" data-position=4>CONTINUOUS-INTEGRATION<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/coverage/' class=" post_tag button button_translucent" data-position=1>COVERAGE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/crack/' class=" post_tag button button_translucent" data-position=1>CRACK<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/css/' class=" post_tag button button_translucent" data-position=5>CSS<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/curses/' class=" post_tag button button_translucent" data-position=1>CURSES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/db-testing/' class=" post_tag button button_translucent" data-position=2>DB-TESTING<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/dbunit/' class=" post_tag button button_translucent" data-position=1>DBUNIT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/debian/' class=" post_tag button button_translucent" data-position=1>DEBIAN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/deployment/' class=" post_tag button button_translucent" data-position=1>DEPLOYMENT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/derby-db/' class=" post_tag button button_translucent" data-position=1>DERBY-DB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/devops/' class=" post_tag button button_translucent" data-position=4>DEVOPS<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/devscripts/' class=" post_tag button button_translucent" data-position=1>DEVSCRIPTS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/distributed-systems/' class=" post_tag button button_translucent" data-position=1>DISTRIBUTED-SYSTEMS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/django/' class=" post_tag button button_translucent" data-position=9>DJANGO<span class="button_tally">9</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/django-testing/' class=" post_tag button button_translucent" data-position=1>DJANGO-TESTING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/docker/' class=" post_tag button button_translucent" data-position=4>DOCKER<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/docker-compose/' class=" post_tag button button_translucent" data-position=1>DOCKER-COMPOSE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/doctest/' class=" post_tag button button_translucent" data-position=1>DOCTEST<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/domain/' class=" post_tag button button_translucent" data-position=1>DOMAIN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/drupal/' class=" post_tag button button_translucent" data-position=9>DRUPAL<span class="button_tally">9</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/dvcs/' class=" post_tag button button_translucent" data-position=8>DVCS<span class="button_tally">8</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/elasticsearch/' class=" post_tag button button_translucent" data-position=1>ELASTICSEARCH<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/emacs/' class=" post_tag button button_translucent" data-position=1>EMACS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/email/' class=" post_tag button button_translucent" data-position=1>EMAIL<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/engineering/' class=" post_tag button button_translucent" data-position=14>ENGINEERING<span class="button_tally">14</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/firefox/' class=" post_tag button button_translucent" data-position=1>FIREFOX<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/fish/' class=" post_tag button button_translucent" data-position=1>FISH<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/freshen/' class=" post_tag button button_translucent" data-position=1>FRESHEN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/functional-programming/' class=" post_tag button button_translucent" data-position=1>FUNCTIONAL-PROGRAMMING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/games/' class=" post_tag button button_translucent" data-position=1>GAMES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/gettext/' class=" post_tag button button_translucent" data-position=1>GETTEXT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/git/' class=" post_tag button button_translucent" data-position=9>GIT<span class="button_tally">9</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/gnome/' class=" post_tag button button_translucent" data-position=1>GNOME<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/gnu/linux/' class=" post_tag button button_translucent" data-position=3>GNU/LINUX<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/google/' class=" post_tag button button_translucent" data-position=1>GOOGLE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/grammar/' class=" post_tag button button_translucent" data-position=1>GRAMMAR<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/graphite/' class=" post_tag button button_translucent" data-position=2>GRAPHITE<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/grub/' class=" post_tag button button_translucent" data-position=1>GRUB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/grunt/' class=" post_tag button button_translucent" data-position=1>GRUNT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/gtk/' class=" post_tag button button_translucent" data-position=2>GTK<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/hamcrest/' class=" post_tag button button_translucent" data-position=1>HAMCREST<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/hibernate/' class=" post_tag button button_translucent" data-position=1>HIBERNATE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/home/' class=" post_tag button button_translucent" data-position=1>HOME<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/hosting/' class=" post_tag button button_translucent" data-position=1>HOSTING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/hsqldb/' class=" post_tag button button_translucent" data-position=1>HSQLDB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ini-files/' class=" post_tag button button_translucent" data-position=1>INI-FILES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/internationalization/' class=" post_tag button button_translucent" data-position=1>INTERNATIONALIZATION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/internet/' class=" post_tag button button_translucent" data-position=1>INTERNET<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ipython/' class=" post_tag button button_translucent" data-position=1>IPYTHON<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/it/' class=" post_tag button button_translucent" data-position=1>IT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/java/' class=" post_tag button button_translucent" data-position=6>JAVA<span class="button_tally">6</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/java-ide/' class=" post_tag button button_translucent" data-position=3>JAVA-IDE<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/java-testing/' class=" post_tag button button_translucent" data-position=7>JAVA-TESTING<span class="button_tally">7</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/javascript/' class=" post_tag button button_translucent" data-position=6>JAVASCRIPT<span class="button_tally">6</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/jbehave/' class=" post_tag button button_translucent" data-position=2>JBEHAVE<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/jekyll/' class=" post_tag button button_translucent" data-position=2>JEKYLL<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/jenkins/' class=" post_tag button button_translucent" data-position=4>JENKINS<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/job/' class=" post_tag button button_translucent" data-position=1>JOB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/jquery/' class=" post_tag button button_translucent" data-position=1>JQUERY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/json/' class=" post_tag button button_translucent" data-position=2>JSON<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/junit/' class=" post_tag button button_translucent" data-position=1>JUNIT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kibana/' class=" post_tag button button_translucent" data-position=1>KIBANA<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kind/' class=" post_tag button button_translucent" data-position=1>KIND<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kitchen/' class=" post_tag button button_translucent" data-position=2>KITCHEN<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kohana/' class=" post_tag button button_translucent" data-position=2>KOHANA<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kubernetes/' class=" post_tag button button_translucent" data-position=1>KUBERNETES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/lamp/' class=" post_tag button button_translucent" data-position=3>LAMP<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/languages/' class=" post_tag button button_translucent" data-position=7>LANGUAGES<span class="button_tally">7</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/latex/' class=" post_tag button button_translucent" data-position=1>LATEX<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ldap/' class=" post_tag button button_translucent" data-position=1>LDAP<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/life/' class=" post_tag button button_translucent" data-position=12>LIFE<span class="button_tally">12</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/logstash/' class=" post_tag button button_translucent" data-position=1>LOGSTASH<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/make/' class=" post_tag button button_translucent" data-position=1>MAKE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/mathematics/' class=" post_tag button button_translucent" data-position=1>MATHEMATICS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/maven/' class=" post_tag button button_translucent" data-position=2>MAVEN<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/mercurial/' class=" post_tag button button_translucent" data-position=2>MERCURIAL<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/middleware/' class=" post_tag button button_translucent" data-position=1>MIDDLEWARE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/migrating/' class=" post_tag button button_translucent" data-position=4>MIGRATING<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/mock/' class=" post_tag button button_translucent" data-position=1>MOCK<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/mongodb/' class=" post_tag button button_translucent" data-position=2>MONGODB<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/monitor/' class=" post_tag button button_translucent" data-position=2>MONITOR<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/monitoring/' class=" post_tag button button_translucent" data-position=5>MONITORING<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/munin/' class=" post_tag button button_translucent" data-position=2>MUNIN<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/netbeans/' class=" post_tag button button_translucent" data-position=3>NETBEANS<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/nikola/' class=" post_tag button button_translucent" data-position=1>NIKOLA<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/nose/' class=" post_tag button button_translucent" data-position=1>NOSE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/nosql/' class=" post_tag button button_translucent" data-position=3>NOSQL<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/octopress/' class=" post_tag button button_translucent" data-position=1>OCTOPRESS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/openspace/' class=" post_tag button button_translucent" data-position=1>OPENSPACE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/organization/' class=" post_tag button button_translucent" data-position=1>ORGANIZATION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/orm/' class=" post_tag button button_translucent" data-position=1>ORM<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/package/' class=" post_tag button button_translucent" data-position=1>PACKAGE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/patents/' class=" post_tag button button_translucent" data-position=1>PATENTS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/patterns/' class=" post_tag button button_translucent" data-position=7>PATTERNS<span class="button_tally">7</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/peewee/' class=" post_tag button button_translucent" data-position=1>PEEWEE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/permission/' class=" post_tag button button_translucent" data-position=1>PERMISSION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/persistence/' class=" post_tag button button_translucent" data-position=1>PERSISTENCE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/php/' class=" post_tag button button_translucent" data-position=3>PHP<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/php-testing/' class=" post_tag button button_translucent" data-position=1>PHP-TESTING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/plugins/' class=" post_tag button button_translucent" data-position=1>PLUGINS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/programming/' class=" post_tag button button_translucent" data-position=1>PROGRAMMING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/programs/' class=" post_tag button button_translucent" data-position=1>PROGRAMS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/puppet/' class=" post_tag button button_translucent" data-position=3>PUPPET<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/pydoubles/' class=" post_tag button button_translucent" data-position=1>PYDOUBLES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/python/' class=" post_tag button button_translucent" data-position=32>PYTHON<span class="button_tally">32</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/python-testing/' class=" post_tag button button_translucent" data-position=7>PYTHON-TESTING<span class="button_tally">7</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/rabbitmq/' class=" post_tag button button_translucent" data-position=1>RABBITMQ<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/resume/' class=" post_tag button button_translucent" data-position=1>RESUME<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/retrospective/' class=" post_tag button button_translucent" data-position=13>RETROSPECTIVE<span class="button_tally">13</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/rounding/' class=" post_tag button button_translucent" data-position=1>ROUNDING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ruby/' class=" post_tag button button_translucent" data-position=3>RUBY<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ruby-on-rails/' class=" post_tag button button_translucent" data-position=1>RUBY-ON-RAILS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/saltstack/' class=" post_tag button button_translucent" data-position=2>SALTSTACK<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/scrum/' class=" post_tag button button_translucent" data-position=1>SCRUM<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/security/' class=" post_tag button button_translucent" data-position=1>SECURITY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/selenium/' class=" post_tag button button_translucent" data-position=5>SELENIUM<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/shell/' class=" post_tag button button_translucent" data-position=1>SHELL<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/smtp/' class=" post_tag button button_translucent" data-position=1>SMTP<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/spam/' class=" post_tag button button_translucent" data-position=1>SPAM<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/sql/' class=" post_tag button button_translucent" data-position=5>SQL<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ssl/' class=" post_tag button button_translucent" data-position=1>SSL<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/static/' class=" post_tag button button_translucent" data-position=1>STATIC<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/statistic/' class=" post_tag button button_translucent" data-position=1>STATISTIC<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/subversion/' class=" post_tag button button_translucent" data-position=2>SUBVERSION<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/swing/' class=" post_tag button button_translucent" data-position=2>SWING<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/sysadmin/' class=" post_tag button button_translucent" data-position=2>SYSADMIN<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/tdd/' class=" post_tag button button_translucent" data-position=1>TDD<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/test/' class=" post_tag button button_translucent" data-position=2>TEST<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/testing/' class=" post_tag button button_translucent" data-position=13>TESTING<span class="button_tally">13</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/tests/' class=" post_tag button button_translucent" data-position=2>TESTS<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/tornado/' class=" post_tag button button_translucent" data-position=2>TORNADO<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/tuenti/' class=" post_tag button button_translucent" data-position=3>TUENTI<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/unittest/' class=" post_tag button button_translucent" data-position=1>UNITTEST<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/vagrant/' class=" post_tag button button_translucent" data-position=3>VAGRANT<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/virtualbox/' class=" post_tag button button_translucent" data-position=1>VIRTUALBOX<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/virtualenv/' class=" post_tag button button_translucent" data-position=1>VIRTUALENV<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/web/' class=" post_tag button button_translucent" data-position=1>WEB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/webdriver/' class=" post_tag button button_translucent" data-position=2>WEBDRIVER<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/webviews/' class=" post_tag button button_translucent" data-position=1>WEBVIEWS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/windows/' class=" post_tag button button_translucent" data-position=1>WINDOWS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/xml/' class=" post_tag button button_translucent" data-position=2>XML<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/yaml/' class=" post_tag button button_translucent" data-position=1>YAML<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/yeoman/' class=" post_tag button button_translucent" data-position=1>YEOMAN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/zsh/' class=" post_tag button button_translucent" data-position=1>ZSH<span class="button_tally">1</span>
+            </a>
+            
+            <div class="tags_sort"><span title="sort alphabetically">[A~Z]</span><span title="sort by count">[0~9]</span>
+            </div>
+            <span class="tags_hide"><svg class="icon">
+            <use xlink:href="#closeme"></use>
+          </svg></span>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </section>
+</aside>
+
+</div>
+    </main><svg width="0" height="0" class="hidden">
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="facebook">
+    <path d="M437 0H75C33.648 0 0 33.648 0 75v362c0 41.352 33.648 75 75 75h151V331h-60v-90h60v-61c0-49.629 40.371-90 90-90h91v90h-91v61h91l-15 90h-76v181h121c41.352 0 75-33.648 75-75V75c0-41.352-33.648-75-75-75zm0 0"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.001 18.001" id="twitter">
+    <path d="M15.891 4.013c.808-.496 1.343-1.173 1.605-2.034a8.68 8.68 0 0 1-2.351.861c-.703-.756-1.593-1.14-2.66-1.14-1.043 0-1.924.366-2.643 1.078a3.56 3.56 0 0 0-1.076 2.605c0 .309.039.585.117.819-3.076-.105-5.622-1.381-7.628-3.837-.34.601-.51 1.213-.51 1.846 0 1.301.549 2.332 1.645 3.089-.625-.053-1.176-.211-1.645-.47 0 .929.273 1.705.82 2.388a3.623 3.623 0 0 0 2.115 1.291c-.312.08-.641.118-.979.118-.312 0-.533-.026-.664-.083.23.757.664 1.371 1.291 1.841a3.652 3.652 0 0 0 2.152.743C4.148 14.173 2.625 14.69.902 14.69c-.422 0-.721-.006-.902-.038 1.697 1.102 3.586 1.649 5.676 1.649 2.139 0 4.029-.542 5.674-1.626 1.645-1.078 2.859-2.408 3.639-3.974a10.77 10.77 0 0 0 1.172-4.892v-.468a7.788 7.788 0 0 0 1.84-1.921 8.142 8.142 0 0 1-2.11.593z"
+      ></path>
+  </symbol>
+  <symbol aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="mail">
+    <path  d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="calendar">
+    <path d="M452 40h-24V0h-40v40H124V0H84v40H60C26.916 40 0 66.916 0 100v352c0 33.084 26.916 60 60 60h392c33.084 0 60-26.916 60-60V100c0-33.084-26.916-60-60-60zm20 412c0 11.028-8.972 20-20 20H60c-11.028 0-20-8.972-20-20V188h432v264zm0-304H40v-48c0-11.028 8.972-20 20-20h24v40h40V80h264v40h40V80h24c11.028 0 20 8.972 20 20v48z"></path>
+    <path d="M76 230h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zM76 310h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zM76 390h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zm80-80h40v40h-40z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="github">
+    <path d="M255.968 5.329C114.624 5.329 0 120.401 0 262.353c0 113.536 73.344 209.856 175.104 243.872 12.8 2.368 17.472-5.568 17.472-12.384 0-6.112-.224-22.272-.352-43.712-71.2 15.52-86.24-34.464-86.24-34.464-11.616-29.696-28.416-37.6-28.416-37.6-23.264-15.936 1.728-15.616 1.728-15.616 25.696 1.824 39.2 26.496 39.2 26.496 22.848 39.264 59.936 27.936 74.528 21.344 2.304-16.608 8.928-27.936 16.256-34.368-56.832-6.496-116.608-28.544-116.608-127.008 0-28.064 9.984-51.008 26.368-68.992-2.656-6.496-11.424-32.64 2.496-68 0 0 21.504-6.912 70.4 26.336 20.416-5.696 42.304-8.544 64.096-8.64 21.728.128 43.648 2.944 64.096 8.672 48.864-33.248 70.336-26.336 70.336-26.336 13.952 35.392 5.184 61.504 2.56 68 16.416 17.984 26.304 40.928 26.304 68.992 0 98.72-59.84 120.448-116.864 126.816 9.184 7.936 17.376 23.616 17.376 47.584 0 34.368-.32 62.08-.32 70.496 0 6.88 4.608 14.88 17.6 12.352C438.72 472.145 512 375.857 512 262.353 512 120.401 397.376 5.329 255.968 5.329z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 212 212" id="gitlab">
+    <path d="M12.3 74.7h54L43.3 3c-1-3.6-6.4-3.6-7.6 0L12.3 74.8z" />
+    <path d="M12.3 74.7L.5 111c-1 3.2 0 6.8 3 8.8l101.6 74-92.5-119z"/>
+    <path d="M105 193.7l-38.6-119h-54l92.7 119z"/>
+    <path d="M105 193.7l38.7-119H66.4l38.7 119z"/>
+    <path d="M105 193.7l38.7-119H198l-93 119z"/>
+    <path d="M198 74.7l11.6 36.2c1 3 0 6.6-3 8.6l-101.5 74 93-119z"/>
+    <path d="M198 74.7h-54.3L167 3c1.2-3.6 6.4-3.6 7.6 0L198 74.8z"/> 
+  </symbol>
+  <symbol viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="rss">
+    <circle cx="3.429" cy="20.571" r="3.429"></circle>
+    <path d="M11.429 24h4.57C15.999 15.179 8.821 8.001 0 8v4.572c6.302.001 11.429 5.126 11.429 11.428z"></path>
+    <path d="M24 24C24 10.766 13.234 0 0 0v4.571c10.714 0 19.43 8.714 19.43 19.429z"></path>
+  </symbol>
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="linkedin">
+    <path d="M437 0H75C33.648 0 0 33.648 0 75v362c0 41.352 33.648 75 75 75h362c41.352 0 75-33.648 75-75V75c0-41.352-33.648-75-75-75zM181 406h-60V196h60zm0-240h-60v-60h60zm210 240h-60V286c0-16.54-13.46-30-30-30s-30 13.46-30 30v120h-60V196h60v11.309C286.719 202.422 296.93 196 316 196c40.691.043 75 36.547 75 79.688zm0 0"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612 612" id="arrow">
+    <path d="M604.501 440.509L325.398 134.956c-5.331-5.357-12.423-7.627-19.386-7.27-6.989-.357-14.056 1.913-19.387 7.27L7.499 440.509c-9.999 10.024-9.999 26.298 0 36.323s26.223 10.024 36.222 0l262.293-287.164L568.28 476.832c9.999 10.024 26.222 10.024 36.221 0 9.999-10.023 9.999-26.298 0-36.323z"></path>
+  </symbol>
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="carly">
+    <path d="M504.971 239.029L448 182.059V84c0-46.317-37.682-84-84-84h-44c-13.255 0-24 10.745-24 24s10.745 24 24 24h44c19.851 0 36 16.149 36 36v108c0 6.365 2.529 12.47 7.029 16.971L454.059 256l-47.029 47.029A24.002 24.002 0 0 0 400 320v108c0 19.851-16.149 36-36 36h-44c-13.255 0-24 10.745-24 24s10.745 24 24 24h44c46.318 0 84-37.683 84-84v-98.059l56.971-56.971c9.372-9.372 9.372-24.568 0-33.941zM112 192V84c0-19.851 16.149-36 36-36h44c13.255 0 24-10.745 24-24S205.255 0 192 0h-44c-46.318 0-84 37.683-84 84v98.059l-56.971 56.97c-9.373 9.373-9.373 24.568 0 33.941L64 329.941V428c0 46.317 37.682 84 84 84h44c13.255 0 24-10.745 24-24s-10.745-24-24-24h-44c-19.851 0-36-16.149-36-36V320c0-6.365-2.529-12.47-7.029-16.971L57.941 256l47.029-47.029A24.002 24.002 0 0 0 112 192z"></path>
+  </symbol>
+  <symbol viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="copy">
+    <path d="M23 2.75A2.75 2.75 0 0 0 20.25 0H8.75A2.75 2.75 0 0 0 6 2.75v13.5A2.75 2.75 0 0 0 8.75 19h11.5A2.75 2.75 0 0 0 23 16.25zM18.25 14.5h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5zm0-3h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5zm0-3h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5z"></path>
+    <path d="M8.75 20.5a4.255 4.255 0 0 1-4.25-4.25V2.75c0-.086.02-.166.025-.25H3.75A2.752 2.752 0 0 0 1 5.25v16A2.752 2.752 0 0 0 3.75 24h12a2.752 2.752 0 0 0 2.75-2.75v-.75z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.001 512.001" id="closeme">
+    <path d="M284.286 256.002L506.143 34.144c7.811-7.811 7.811-20.475 0-28.285-7.811-7.81-20.475-7.811-28.285 0L256 227.717 34.143 5.859c-7.811-7.811-20.475-7.811-28.285 0-7.81 7.811-7.811 20.475 0 28.285l221.857 221.857L5.858 477.859c-7.811 7.811-7.811 20.475 0 28.285a19.938 19.938 0 0 0 14.143 5.857 19.94 19.94 0 0 0 14.143-5.857L256 284.287l221.857 221.857c3.905 3.905 9.024 5.857 14.143 5.857s10.237-1.952 14.143-5.857c7.811-7.811 7.811-20.475 0-28.285L284.286 256.002z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="open-menu">
+    <path d="M492 236H20c-11.046 0-20 8.954-20 20s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20zm0-160H20C8.954 76 0 84.954 0 96s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20zm0 320H20c-11.046 0-20 8.954-20 20s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="instagram">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id=youtube>
+    <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="stackoverflow">
+    <path d="M21 27v-8h3v11H0V19h3v8h18z"></path><path d="M17.1.2L15 1.8l7.9 10.6 2.1-1.6L17.1.2zm3.7 14.7L10.6 6.4l1.7-2 10.2 8.5-1.7 2zM7.2 12.3l12 5.6 1.1-2.4-12-5.6-1.1 2.4zm-1.8 6.8l13.56 1.96.17-2.38-13.26-2.55-.47 2.97zM19 25H5v-3h14v3z"></path>
+  </symbol>
+</svg>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+<footer class="footer">
+  <div class="footer_inner wrap pale">
+    <img src='http://example.org/icons/apple-touch-icon.png' class="icon icon_2 transparent">
+    <p>Copyright<span class="year"></span> EL BLOG DE MAGMAX. Todos los Derechos Reservados</p><a class="to_top" href="#documentTop">
+  <svg class="icon">
+  <use xlink:href="#arrow"></use>
+</svg>
+</a>
+
+  </div>
+</footer>
+
+    <script type="text/javascript" src="http://example.org/js/bundle.min.d47d3d6894e66aa67f2514c171756283d3e8847b56f8f158bdd8430843da5f5af874c7a89a316c6743a845399bdb89649685154dc88b7e9bff1a155ca9e5108a.js" integrity="sha512-1H09aJTmaqZ/JRTBcXVig9PohHtW&#43;PFYvdhDCEPaX1r4dMeomjFsZ0OoRTmb24lkloUVTciLfpv/GhVcqeUQig==" crossorigin="anonymous"></script>
+    
+  </body>
 </html>

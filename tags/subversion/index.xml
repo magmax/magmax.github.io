@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>subversion on El blog de MagMax</title>
+    <link>http://example.org/tags/subversion/</link>
+    <description>Recent content in subversion on El blog de MagMax</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 13 Jul 2014 10:05:55 +0200</lastBuildDate><atom:link href="http://example.org/tags/subversion/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Combinando Git y Subversion</title>
+      <link>http://example.org/blog/combinando-git-y-subversion/</link>
+      <pubDate>Sun, 13 Jul 2014 10:05:55 +0200</pubDate>
+      
+      <guid>http://example.org/blog/combinando-git-y-subversion/</guid>
+      <description>
+        
+          &lt;p&gt;El otro día mi amigo Diego D. me propuso un problema. Él ya tenía una posible solución, pero quería contar también con mi opinión.&lt;/p&gt;
+&lt;p&gt;A menudo, cuando tenemos un problema no somos los únicos en enfrentarnos a él. Por eso he decidido publicar aquí mi solución, algo más elaborada de cómo se la conté a él, por supuesto.&lt;/p&gt;
+&lt;p&gt;Y éste es el problema: Nuestra empresa utiliza &lt;a href=&#34;http://git-scm.com/&#34;&gt;Git&lt;/a&gt;, y una subcontrata utiliza &lt;a href=&#34;http://subversion.apache.org/&#34;&gt;Subversion&lt;/a&gt;. Cada vez que la subcontrata nos tiene que enviar código, lo hace a través del email (ésto no es tan raro, yo también lo he sufrido). Claro, eso supone perder el tiempo colocando los archivos en su sitio y &lt;em&gt;mergeando&lt;/em&gt; a mano, con todos los problemas que esto supone.&lt;/p&gt;
+&lt;p&gt;Veamos mi solución. Si alguien tiene otra mejor, por favor, que lo diga.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/gitvssvn.jpg&#34;
+         alt=&#34;Git vs Svn&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;primer-paso-ramas&#34;&gt;Primer paso: Ramas&lt;/h2&gt;
+&lt;p&gt;Lo primero que tenemos que hacer es crear una rama en nuestro repositorio &lt;a href=&#34;http://git-scm.com/&#34;&gt;Git&lt;/a&gt;. Yo la llamaría con el nombre de la empresa externa, algo como &amp;ldquo;externa/subversion&amp;rdquo;, por si el día de mañana dejaran la edad de piedra y usaran ellos &lt;a href=&#34;http://git-scm.com/&#34;&gt;Git&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;segundo-paso-incorporando-sus-cambios&#34;&gt;Segundo paso: incorporando sus cambios.&lt;/h2&gt;
+&lt;h3 id=&#34;si-hay-acceso-a-su-repositorio-subversion&#34;&gt;Si hay acceso a su repositorio Subversion&lt;/h3&gt;
+&lt;p&gt;Éste es el caso fácil. Basta con seguir este &lt;em&gt;script&lt;/em&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;git fetch
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;git rebase
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;svn checkout
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;git add -A
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;git commit -am &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Autocommit&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;git push
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Es decir: traemos lo que haya de &lt;a href=&#34;http://subversion.apache.org/&#34;&gt;Subversion&lt;/a&gt; y lo añadimos a &lt;a href=&#34;http://git-scm.com/&#34;&gt;Git&lt;/a&gt;. Para evitar conflictos, primero actualizamos la copia local. Aún es posible tener conflictos, pero habremos minimizado las posibilidades.&lt;/p&gt;
+&lt;h3 id=&#34;no-hay-acceso-al-repositorio-subversion&#34;&gt;No hay acceso al repositorio Subversion&lt;/h3&gt;
+&lt;p&gt;Cada vez que nos manden un archivo, nos cambiamos a esa rama, los colocamos y &lt;em&gt;comiteamos&lt;/em&gt;. Este proceso es un auténtico coñazo y nos hará perder mogollón de tiempo.&lt;/p&gt;
+&lt;p&gt;El resto de los puntos serán igual. Sólo estamos sustituyendo el paso &lt;code&gt;svn checkout&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;¿Alguien se ha dado cuenta de la gracia del tema? ¡Sí! esto se puede automatizar :D&lt;/p&gt;
+&lt;h4 id=&#34;automatizando-que-se-jodan-otros&#34;&gt;Automatizando: que se jodan otros&lt;/h4&gt;
+&lt;p&gt;Yo haría una pequeña interfaz web en la que se soliciten los archivos y un pequeño texto explicando lo que contienen. Por detrás, haría el commit que he propuesto anteriormente XD&lt;/p&gt;
+&lt;p&gt;Si nuestra intención es ser eficientes, la única solución es delegar las tareas que nos hacen perder el tiempo. Si ellos quieren hacernos perder el tiempo, le damos la vuelta. Total, será similar enviar un email que rellenar dicho formulario.&lt;/p&gt;
+&lt;h4 id=&#34;usando-parches&#34;&gt;Usando parches&lt;/h4&gt;
+&lt;p&gt;Una mejora es usar parches. De esa manera sólo tendrán que enviarnos un único archivo y lo aplicaremos todo de golpe. En la empresa externa tendrán que hacer:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;svn diff &amp;gt; changes.patch
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y hacernos llegar el archivo &lt;code&gt;changes.patch&lt;/code&gt;. Gracias a este cambio, para nosotros será mucho más sencillo aplicar sus cambios (desde el directorio principal del repositorio):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;patch -p0 -i /path/al/fichero/changes.patch
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Podemos incluir eso en nuestros archivos de automatización.&lt;/p&gt;
+&lt;h2 id=&#34;tercer-paso-incorporando-nuestros-cambios-y-haciéndoselos-llegar&#34;&gt;Tercer paso: incorporando nuestros cambios y haciéndoselos llegar&lt;/h2&gt;
+&lt;h3 id=&#34;si-hay-acceso-a-su-repositorio-subversion-1&#34;&gt;Si hay acceso a su repositorio Subversion&lt;/h3&gt;
+&lt;p&gt;Nada más sencillo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/bin/bash
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;old_commit&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;git rev-parse HEAD&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;git fetch
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;git rebase
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;current_commit&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;git rev-parse HEAD&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$old_commit&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; !&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$current_commit&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; line in &lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;git diff --name-status &lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;old_commit&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;..&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;current_commit&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;        operation&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;echo line | cut -d&lt;span style=&#34;color:#ae81ff&#34;&gt;\t&lt;/span&gt; -f1&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;        filename&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;echo line | cut -d&lt;span style=&#34;color:#ae81ff&#34;&gt;\t&lt;/span&gt; -f2&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;operation&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;D&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;            svn rm $filename
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;            svn add $filename &lt;span style=&#34;color:#f92672&#34;&gt;||&lt;/span&gt; True
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;done&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;svn commit &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Automatic push&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(No he probado el script&amp;hellip; pero creo que os podéis hacer a la idea)&lt;/p&gt;
+&lt;h3 id=&#34;no-hay-acceso-al-repositorio-subversion-1&#34;&gt;No hay acceso al repositorio Subversion&lt;/h3&gt;
+&lt;p&gt;Pues igual, pero aún más sencillo para nosotros:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/bin/bash
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;PREFIX&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Please, could you apply these changes?\n&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;SUFFIX&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;\n\nThank you.&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;old_commit&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;git rev-parse HEAD&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;git fetch
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;git rebase
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;current_commit&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;git rev-parse HEAD&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$PREFIX&lt;span style=&#34;color:#e6db74&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;git diff &lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;old_commit&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;..&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;current_commit&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; &lt;/span&gt;$SUFFIX&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    | mail -s &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Repository changes&amp;#34;&lt;/span&gt; empresa@example.org
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;De la misma manera, se les puede mandar el parche para que lo apliquen ellos.&lt;/p&gt;
+&lt;h2 id=&#34;añadiendo-los-cambios&#34;&gt;Añadiendo los cambios&lt;/h2&gt;
+&lt;p&gt;Finalmente, será necesario meter los cambios en nuestra rama principal. Para ello yo seguiría el siguiente esquema:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;git fetch&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git checkout -t origin/externa/subversion&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git rebase rama_principal&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Pasar los tests&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git checkout master&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git rebase external/subversion&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Volver a pasar los tests. Aunque este paso es opcional, ya que no debería haber problemas.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;git push&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Alguien podría decirme: &amp;ldquo;Es que la empresa externa no escribe tests&amp;rdquo;. Los que me seguís habitualmente sabéis lo que voy a contestar: ¿Y qué hacéis trabajando aún con ellos? ¿Y es que no tenéis vuestros propios tests de aceptación? ¿Cómo sabéis que no os han roto nada crítico?&lt;/p&gt;
+&lt;h3 id=&#34;mejoras&#34;&gt;Mejoras&lt;/h3&gt;
+&lt;p&gt;Gracias a todo este esquema podéis obtener información extra de forma gratuita: podéis &lt;em&gt;trackear&lt;/em&gt; la covertura de los tests, evitando que ésta baje, generar informes, graficar defectos arreglados/producidos por unidad de tiempo, frecuencia de cambios, etc.&lt;/p&gt;
+&lt;h2 id=&#34;replicabilidad&#34;&gt;Replicabilidad&lt;/h2&gt;
+&lt;p&gt;Otra de las cosas que suelen preocuparme es la replicabilidad de este sistema. Por ello sugiero los siguientes cambios:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Añadir archivos subversion&lt;/strong&gt;: Yo añadiría los archivos más básicos de &lt;a href=&#34;http://subversion.apache.org/&#34;&gt;Subversion&lt;/a&gt; al repositorio &lt;a href=&#34;http://git-scm.com/&#34;&gt;Git&lt;/a&gt;. De esta manera, cualquier &lt;em&gt;working copy&lt;/em&gt; es susceptible de realizar los pasos arriba indicados.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Scripts en el repositorio&lt;/strong&gt;: Igualmente, añadiría los scripts que permiten gestionar el repositorio al propio repositorio. Esto permitirá que cualquiera pueda ejecutarlos desde cualquier sitio. Así no serán necesarios incómodos &lt;em&gt;backups&lt;/em&gt; del sistema.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;backups&#34;&gt;Backups&lt;/h3&gt;
+&lt;p&gt;Los que me conocen saben que soy enemigo de los &lt;em&gt;backups&lt;/em&gt;. Si estás usando un repositorio &lt;a href=&#34;http://git-scm.com/&#34;&gt;Git&lt;/a&gt;, todas las &lt;em&gt;working copies&lt;/em&gt; son &lt;em&gt;backups&lt;/em&gt; potenciales, y restaurar el sistema no debería ser un problema. Bastaría con guardar la configuración del servidor&amp;hellip; ¡Que podría estar en otro repositorio! Y si usa &lt;a href=&#34;http://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt;, &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt; o &lt;a href=&#34;http://www.getchef.com/chef/&#34;&gt;Chef&lt;/a&gt;, mucho mejor.&lt;/p&gt;
+&lt;p&gt;Usad los &lt;em&gt;backups&lt;/em&gt; para cosas que realmente cambian con frecuencia o no son susceptibles de añadirse a un repositorio (o bien no se va a descargar nadie): Bases de datos, repositorios de archivos (tipo &lt;a href=&#34;http://www.sonatype.org/nexus/&#34;&gt;Nexus&lt;/a&gt;, &lt;a href=&#34;http://www.jfrog.com/home/v_artifactory_opensource_overview&#34;&gt;Artifactory&lt;/a&gt;, &amp;hellip;)&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Sistemas de Control de Versiones (Subversion y Mercurial)</title>
+      <link>http://example.org/blog/mercurial-subversion/</link>
+      <pubDate>Mon, 30 Jan 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/mercurial-subversion/</guid>
+      <description>
+        
+          &lt;p&gt;En esta ocasión vamos a ver qué es un Sistema de Control de Versiones y cómo se utiliza.&lt;/p&gt;
+&lt;p&gt;Voy a dividir la entrada en 4 partes bien diferenciadas. Primero una breve introducción, explicando qué son y qué tipos hay. A continuación, una descripción del uso de VCS, seguida por una descripción de DVCS. Finalmente, una entrada avanzada de cómo utilizar DVCS. Si ya eres un usuario de DVCS, a lo mejor te interesa saltarte las dos primeras partes.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/hgvssvn.jpg&#34;
+         alt=&#34;Mercurial y Subversion&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;introducción&#34;&gt;Introducción&lt;/h2&gt;
+&lt;p&gt;Un &lt;em&gt;Sistema de Control de Versiones&lt;/em&gt; (SCV o, en inglés, VCS o &amp;ldquo;Version Control System&amp;rdquo;) tiene una estructura similar a un sistema de archivos. La diferencia está en que se puede acceder a distintas versiones de los archivos y operar con estas versiones. Es decir: &lt;em&gt;Es un sistema de ficheros con versionado&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Hay distintos tipos. Los más sencillos son los sistemas locales, útiles para un único usuario. En la era de la nube, no tiene sentido en pensar en sistemas de este tipo y ya no se mantiene ninguno de éstos. Hace tiempo trabajé con PVCS y era un verdadero infierno (una persona estaba encargada del PVCS y era la única que accedía al mismo). Los ignoraremos.&lt;/p&gt;
+&lt;p&gt;Un poco más complejos son los denominados VCS (&amp;ldquo;Version Control System&amp;rdquo;). Éstos diferencian entre el sistema central y la copia local (&lt;em&gt;working copy&lt;/em&gt;).&lt;/p&gt;
+&lt;p&gt;Los más utilizados actualmente son los DVCS (&amp;quot;&lt;em&gt;Distributed Version Control System&lt;/em&gt;&amp;quot;), en los que puede haber más de una copia remota y éstas se pueden sincronizar entre ellas.&lt;/p&gt;
+&lt;p&gt;Echémosle un vistazo rápido a todos ellos.&lt;/p&gt;
+&lt;h2 id=&#34;vcs&#34;&gt;VCS&lt;/h2&gt;
+&lt;p&gt;Aunque las empresas están abandonándolos, aún siguen siendo muy utilizados.&lt;/p&gt;
+&lt;p&gt;El sistema consiste, básicamente, en una copia local y un servidor remoto. Las modificaciones se realizan sobre la copia local y luego se envían al servidor. Cada máquina que tiene una copia local se sincroniza bajo demanda con el servidor remoto.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://subversion.tigris.org/&#34;&gt;Subversion&lt;/a&gt; , &lt;a href=&#34;http://cvs.nongnu.org/&#34;&gt;CVS&lt;/a&gt; , &amp;hellip; Han sido los más utilizados. Vamos a ver un poquito de &lt;em&gt;Subversion&lt;/em&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;init&lt;/em&gt;: permite inicializar un repositorio.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;checkout&lt;/em&gt;: descarga un repositorio remoto en una carpeta local (&lt;em&gt;working copy&lt;/em&gt;), desde la que podemos manipular los archivos.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;update&lt;/em&gt;: comprueba si hay actualizaciones en el servidor y se las descarga a la copia local. Si hay conflictos (hemos tocado un archivo que alguien ya ha modificado en el servidor), tratará de resolverlos. Si no puede, dejará los archivos marcados como &amp;ldquo;conflicto&amp;rdquo;.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;add&lt;/em&gt;: mientras que no hagamos &lt;em&gt;add&lt;/em&gt; a un archivo, éste será ignorado.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;commit&lt;/em&gt;: crea una nueva versión, enviando al servidor las modificaciones desde la última vez que se utilizó esta orden.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;remove&lt;/em&gt;: el archivo deja de estar gestionado. Hay que tener en cuenta que las versiones que subimos con el archivo seguirán estando ahí, pero a partir de ese momento, las nuevas versiones no lo mostrarán.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;diff&lt;/em&gt;: permite ver las diferencias existentes entre las distintas versiones de un mismo fichero.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;log&lt;/em&gt;: muestra los cambios ocurridos en el repositorio.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;El uso típico de este tipo de repositorios es:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;El administrador crea el repositorio (&lt;em&gt;init&lt;/em&gt;) y publica la dirección en la que se encuentra (https, ssh, &amp;hellip;).&lt;/li&gt;
+&lt;li&gt;El usuario se descarga el repositorio a su copia local (&lt;em&gt;checkout&lt;/em&gt;).&lt;/li&gt;
+&lt;li&gt;El usuario comienza un ciclo de iteraciones sucesivas de las órdenes siguientes, aunque usará el resto de forma ocasional:
+&lt;ol&gt;
+&lt;li&gt;Modificar el código&lt;/li&gt;
+&lt;li&gt;Subir cambios (&lt;em&gt;commit&lt;/em&gt;). En este punto se realiza un &lt;em&gt;update&lt;/em&gt; automático y, si hay conflictos, se exige su resolución antes de permitir el &lt;em&gt;commit&lt;/em&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Los sistemas de este tipo tienen un problema: si no hay conexión, no se puede hacer nada con el repositorio, ya que la mayor parte de la lógica está en el servidor.&lt;/p&gt;
+&lt;h2 id=&#34;dvcs&#34;&gt;DVCS&lt;/h2&gt;
+&lt;p&gt;En este caso entra en juego un componente más: un servidor local. Este servidor local puede ser una copia local del servidor remoto. Esta característica permite trabajar con el servidor aunque no exista conexión a la red. Cuando se desee, se puede sincronizar el servidor local con el servidor remoto.&lt;/p&gt;
+&lt;p&gt;La manera de trabajar con el servidor local es muy similar a la utilizada por los &lt;em&gt;VCS&lt;/em&gt;, aunque pueden cambiar los nombres de las órdenes. Por ejemplo, la orden &amp;ldquo;&lt;em&gt;clone&lt;/em&gt;&amp;rdquo; de &lt;em&gt;Mercurial&lt;/em&gt; equivaldría al &amp;ldquo;&lt;em&gt;checkout&lt;/em&gt;&amp;rdquo; de subversion.&lt;/p&gt;
+&lt;p&gt;Evidentemente, hay una serie de instrucciones adicionales que nos permiten trabajar con el servidor remoto. Dado que esto no es un tutorial de &lt;em&gt;mercurial&lt;/em&gt;, obviaré estas órdenes comunes y me centraré en las nuevas operaciones:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;pull&lt;/em&gt;: permite traerse los cambios del repositorio remoto al repositorio local.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;push&lt;/em&gt;: Envía los cambios del repositorio local (ojo, no la copia de trabajo) al repositorio remoto.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;branch&lt;/em&gt;: Permite crear ramas nuevas. De esto hablaremos en el siguiente punto.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;branches&lt;/em&gt;: Muestra la lista de ramas existentes.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;merge&lt;/em&gt;: Mezcla dos colas.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;out&lt;/em&gt;: Muestra la lista de &lt;em&gt;changesets&lt;/em&gt; (commits) que están en el servidor local pero no en el servidor remoto.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;No hay un ciclo habitual con los DVCS. Sin embargo, podríamos poner como &amp;ldquo;ciclo sencillo&amp;rdquo; la intercalación entre:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;pull&lt;/li&gt;
+&lt;li&gt;Ciclos de tipo VCS&lt;/li&gt;
+&lt;li&gt;push&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Algunos ejemplos de DVCS son &lt;a href=&#34;http://mercurial.selenic.com/&#34;&gt;Mercurial&lt;/a&gt; , &lt;a href=&#34;http://git-scm.com/&#34;&gt;Git&lt;/a&gt; , &lt;a href=&#34;http://bazaar.canonical.com/en/&#34;&gt;Bazaar&lt;/a&gt; , &lt;a href=&#34;http://veracity-scm.com/&#34;&gt;Veracity&lt;/a&gt;  o
+&lt;a href=&#34;http://www.plasticscm.com/&#34;&gt;Plastic SCM&lt;/a&gt; .&lt;/p&gt;
+&lt;h2 id=&#34;dvcs-avanzado&#34;&gt;DVCS Avanzado&lt;/h2&gt;
+&lt;p&gt;Vamos a ver aquí tres niveles. El primero se tratará del manejo de ramas (&amp;ldquo;branches&amp;rdquo;); el segundo, de &lt;em&gt;hooks&lt;/em&gt; y el tercer, del manejo de repositorios remotos.&lt;/p&gt;
+&lt;h3 id=&#34;branches&#34;&gt;Branches&lt;/h3&gt;
+&lt;p&gt;El manejo de ramas permite realizar un trabajo paralelo sin afectar a la rama principal. Las ramas principales suelen llamarse algo como &amp;ldquo;&lt;em&gt;trunk&lt;/em&gt;&amp;rdquo;, &amp;ldquo;&lt;em&gt;default&lt;/em&gt;&amp;rdquo;, &amp;hellip; y suelen ser las más importantes.&lt;/p&gt;
+&lt;p&gt;Existe una corriente que defiende el &amp;ldquo;&lt;em&gt;Un cambio, una rama&lt;/em&gt;&amp;rdquo;, de manera que antes de comenzar a hacer cambios, debes crearte una rama y, posteriormente, mezclar con la rama principal. Este planteamiento permite pasar varios días trabajando en la rama sin afectar al trabajo de los demás. No es necesario esperar al último momento para aplicar todos los cambios, ya que se puede mezclar una rama con la rama principal en cualquier momento, facilitando así el poder actualizarse o reduciendo los posibles conflictos.&lt;/p&gt;
+&lt;p&gt;Existe también la posibilidad de crear ramas de ramas o de mezclarlas entre ellas, complicando así el grafo generado.&lt;/p&gt;
+&lt;p&gt;Hay que tener en cuenta que, durante la mezcla de código, es posible que el algoritmo de mezclado falle, así que es buena idea combinar estas técnicas con robustas baterías de pruebas.&lt;/p&gt;
+&lt;h3 id=&#34;hooks&#34;&gt;Hooks&lt;/h3&gt;
+&lt;p&gt;Los repositorios pueden lanzar acciones automáticas cuando se producen ciertos eventos. Por ejemplo, podrían enviarnos un e-mail cuando una rama se mezcla con la rama principal, o comprobar que el código cumple ciertos criterios de calidad.&lt;/p&gt;
+&lt;p&gt;Este tipo de técnicas pueden ser muy provechosas, aunque puede requerir tanto mantenimiento como para dedicar parte del personal a manejarlas.&lt;/p&gt;
+&lt;h3 id=&#34;múltiples-repositorios&#34;&gt;Múltiples repositorios&lt;/h3&gt;
+&lt;p&gt;Finalmente, llegamos a los múltiples repositorios. Existe la opción de tener repositorios remotos réplica. Esto significa que podemos sincronizar nuestros cambios contra una de estas réplicas y ésta se sincronizará tarde o temprano con otra de las réplicas.&lt;/p&gt;
+&lt;p&gt;La sincronización entre repositorios puede ser manual o automática, y puede dar lugar a un &lt;em&gt;flujo de trabajo&lt;/em&gt; distinto según se necesite. Por ejemplo, puede utilizarse esta técnica para mantener repositorios remotos, de manera que se incremente la velocidad entre los &lt;em&gt;working copies&lt;/em&gt; y el servidor central o, lo que puede resultar más provechoso, definir unas calidades para cada uno de los repositorios.&lt;/p&gt;
+&lt;p&gt;Veamos un ejemplo&amp;hellip; Podemos tener el repositorio de uso habitual, donde &amp;ldquo;cabe todo&amp;rdquo;, llamándole &amp;ldquo;&lt;em&gt;Development&lt;/em&gt;&amp;quot;; otro repositorio del que se realizan pruebas unitarias automáticas, llamado &amp;ldquo;&lt;em&gt;testing&lt;/em&gt;&amp;quot;; si las pruebas automáticas pasan, podríamos tener otro con las pruebas de integración &amp;ldquo;&lt;em&gt;integration&lt;/em&gt;&amp;quot;; si estas pasan, otro con las pruebas de calidad &amp;ldquo;&lt;em&gt;QA&lt;/em&gt;&amp;rdquo; y, si estas pasan, otro con el código definitivo &amp;ldquo;&lt;em&gt;Release&lt;/em&gt;&amp;rdquo;. Cuando hay una nueva rama en este repositorio, podríamos sincronizarlo con &amp;ldquo;&lt;em&gt;Development&lt;/em&gt;&amp;rdquo; y, así, cerramos el círculo.&lt;/p&gt;
+&lt;p&gt;No he leído nada aún al respecto, pero supongo que a esto es a lo que hace referencia la &amp;ldquo;&lt;em&gt;Integración contínua&lt;/em&gt;&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;Con el fin de no hacer crecer disparatadamente todos los repositorios, se pueden mezclar sólo ciertas ramas de un repositorio a otro, simplificando las mezclas y reduciendo la historia.&lt;/p&gt;
+&lt;h2 id=&#34;conclusión&#34;&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;El uso de todas las técnicas avanzadas puede provocar flujos de trabajo muy diferentes, pero todos ellos útiles para el desarrollo de software. Cualquier empresa de más de 5 desarrolladores que trate de hacer software sin utilizar un VCS o un DVCS está destinada al fracaso; no podrá obtener una calidad competitiva ni unos plazos aceptables.&lt;/p&gt;
+&lt;h2 id=&#34;más-información&#34;&gt;Más información&lt;/h2&gt;
+&lt;p&gt;Hoy día es raro no haber oído hablar de los sistemas de control de versiones. De
+todas maneras, os recomiendo apuntaros al blog de mis amigos de `Codice
+Software]  donde, entre muchas cosas interesantes, explican más a fondo &lt;a href=&#34;http://www.plasticscm.com/infocenter/quick-start/task-cycle-in-plastic-scm.aspx&#34;&gt;un
+flujo de trabajo&lt;/a&gt;  con su propia herramienta.&lt;/p&gt;
+&lt;p&gt;En breve voy a comenzar la lectura de un libro que promete ser interesante,
+&lt;a href=&#34;http://www.ericsink.com/&#34;&gt;Version Control by Example&lt;/a&gt;, propuesto por Eric Sink, que os podéis descargar
+gratuítamente o, si tenéis suerte como yo, &lt;a href=&#34;http://www.ericsink.com/entries/vcbe_print_edition_free.html&#34;&gt;conseguirlo de forma gratuita en
+papel&lt;/a&gt; .&lt;/p&gt;
+&lt;p&gt;También os propongo echar un ojo a la &lt;a href=&#34;http://en.wikipedia.org/wiki/Revision_control&#34;&gt;Wikipedia&lt;/a&gt; .&lt;/p&gt;
+&lt;p&gt;Y, por si fuera poco, existe la posibilidad de utilizar algunos de ellos de
+forma remota, utilizando &lt;a href=&#34;https://github.com/&#34;&gt;Github&lt;/a&gt; , &lt;a href=&#34;https://bitbucket.org/&#34;&gt;Bitbucket&lt;/a&gt; , &lt;a href=&#34;https://launchpad.net/&#34;&gt;Launchpad&lt;/a&gt; , &lt;a href=&#34;http://savannah.gnu.org/&#34;&gt;Savannah&lt;/a&gt; ,
+&lt;a href=&#34;http://gna.org/&#34;&gt;Gna!&lt;/a&gt; , &amp;hellip; Para gustos, los -colores- sistemas de control de versiones :D&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

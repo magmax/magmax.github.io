@@ -1,376 +1,1199 @@
+
 <!DOCTYPE html>
-<html prefix="
-og: https://ogp.me/ns#
-article: https://ogp.me/ns/article#
-" lang="es">
-<head>
+<html lang="es" data-figures="" class="page">
+  <head>
+<title>El compilador de Python desde dentro | El blog de MagMax</title>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'43516d322f35b42f7136bc9e4ca4c9c80cc1466c'">
-<title>El compilador de Python desde dentro | MagMax Blog</title>
-<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
-<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
-<link rel="canonical" href="http://magmax.org/blog/python-compiler-internals/">
-<link rel="icon" href="/favicon.png" sizes="128x128">
-<link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.ico" sizes="16x16">
-<meta name="author" content="Miguel Ángel García">
-<link rel="prev" href="/blog/vagrant-puppet/" title="Vagrant y Puppet" type="text/html">
-<link rel="next" href="/blog/como-funcionan-las-cosas/" title="Cómo funcionan las cosas" type="text/html">
-<meta property="og:site_name" content="MagMax Blog">
-<meta property="og:title" content="El compilador de Python desde dentro">
-<meta property="og:url" content="http://magmax.org/blog/python-compiler-internals/">
-<meta property="og:description" content="Los viernes hay formación en la oficina. El viernes pasado le tocó dar una charla a Goran, y nos estuvo contando cómo funciona PHP por dentro.
-No he podido quitarme la charla de la cabeza en todo el f">
+<meta name="generator" content="Hugo 0.79.1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta property="og:locale" content="es" />
+
 <meta property="og:type" content="article">
-<meta property="article:author" content="Miguel Ángel García">
-<meta property="article:published_time" content="2012-05-20T00:00:00+00:00">
-<meta property="article:updated" content="2012-05-20T00:00:00">
-<meta property="article:tag" content="compilers">
-<meta property="article:tag" content="python">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:site" content="@magmax_en">
-<meta name="twitter:creator" content="@magmax">
-<meta name="twitter:title" content="MagMax Blog">
-<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
-<meta name="twitter:url" content="http://magmax.org//blog/python-compiler-internals/">
-<meta name="twitter:image" content="http://magmax.org/favicon.png">
-</head>
-<body>
-<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+<meta name="description" content="Los viernes hay formación en la oficina. El viernes pasado le tocó dar una charla a Goran, y nos estuvo contando cómo funciona PHP por dentro.
+No he podido …">
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:creator" content="">
+<meta name="twitter:title" content="El compilador de Python desde dentro" />
+<meta property="og:url" content="http://example.org/blog/python-compiler-internals/" />
+<meta property="og:title" content="El compilador de Python desde dentro" />
+<meta property="og:description" content="Los viernes hay formación en la oficina. El viernes pasado le tocó dar una charla a Goran, y nos estuvo contando cómo funciona PHP por dentro.
+No he podido …" />
+<meta property="og:image" content="http://example.org/" />
+<link rel="apple-touch-icon" sizes="180x180" href='http://example.org/icons/apple-touch-icon.png'>
+<link rel="icon" type="image/png" sizes="32x32" href='http://example.org/icons/favicon-32x32.png'>
+<link rel="manifest" href='http://example.org/icons/site.webmanifest'>
+<link rel="mask-icon" href='http://example.org/safari-pinned-tab.svg' color="#002538">
+<meta name="msapplication-TileColor" content="#002538">
+<meta name="theme-color" content="#002538">
 
-<!-- Menubar -->
+<link rel="canonical" href="http://example.org/blog/python-compiler-internals/">
 
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
-<!-- This keeps the margins nice -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="http://magmax.org/">
+    
 
-        <span id="blog-title">MagMax Blog</span>
-      </a>
-    </div>
-<!-- /.navbar-header -->
-    <div class="collapse navbar-collapse navbar-ex1-collapse">
-      <ul class="nav navbar-nav">
-<li>
-<a href="/">Inicio</a>
-                </li>
-<li>
-<a href="/archive.html">Archivo</a>
-                </li>
-<li>
-<a href="/categories">Categorías</a>
-                </li>
-<li>
-<a href="/projects">Proyectos</a>
-                </li>
-<li>
-<a href="/news">Posts Externos</a>
+    
+    
+    <link rel="preload" href="http://example.org/css/styles.37cea41fe2c1b43e2a17095e01eb999e8701c9f0ba06d4df0a9db514a215e26dfbdb8a606a36c9d3b54bb1c09fd4a9ce41ee8f6788a8c6b17067830f34396135.css" integrity = "sha512-N86kH&#43;LBtD4qFwleAeuZnocByfC6BtTfCp21FKIV4m3724pgajbJ07VLscCf1KnOQe6PZ4ioxrFwZ4MPNDlhNQ==" as="style" crossorigin="anonymous">
+    <link rel="preload" href="http://example.org/js/bundle.min.d47d3d6894e66aa67f2514c171756283d3e8847b56f8f158bdd8430843da5f5af874c7a89a316c6743a845399bdb89649685154dc88b7e9bff1a155ca9e5108a.js" as="script" integrity=
+    "sha512-1H09aJTmaqZ/JRTBcXVig9PohHtW&#43;PFYvdhDCEPaX1r4dMeomjFsZ0OoRTmb24lkloUVTciLfpv/GhVcqeUQig==" crossorigin="anonymous">
 
+    
+    <link rel="stylesheet" type="text/css" href="http://example.org/css/styles.37cea41fe2c1b43e2a17095e01eb999e8701c9f0ba06d4df0a9db514a215e26dfbdb8a606a36c9d3b54bb1c09fd4a9ce41ee8f6788a8c6b17067830f34396135.css" integrity="sha512-N86kH&#43;LBtD4qFwleAeuZnocByfC6BtTfCp21FKIV4m3724pgajbJ07VLscCf1KnOQe6PZ4ioxrFwZ4MPNDlhNQ==" crossorigin="anonymous">
+    
+  </head>
+  
+  
+    
+  
+  <body data-code="20" data-lines="false" id="documentTop">
+
+<header class="nav_header" >
+  <nav class="nav">
+    <a href='http://example.org/' class="nav_brand nav_item">
+        El blog de MagMax
+      <div class="nav_close">
+        <div>
+          <svg class="icon">
+  <use xlink:href="#open-menu"></use>
+</svg>
+          <svg class="icon">
+  <use xlink:href="#closeme"></use>
+</svg>
+        </div>
+      </div>
+    </a>
+    <div class='nav_body nav_body_'>
+      
+      
+      
         
-      </li>
-</ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
-<div class="form-group">
-<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
-</div>
-</form>
-</li>
 
-        <li style="margin-left:0">
-          <a href="http://feeds.feedburner.com/magmax">
-            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
-        </li>
-
-        
-      </ul>
-</div>
-<!-- /.navbar-collapse -->
+  <div class="nav_parent">
+    <a href="http://example.org/" class="nav_item">Inicio </a>
   </div>
-<!-- /.container -->
-</nav><!-- End of Menubar --><div class="container" id="content" role="main">
-  <div class="body-content">
-    <div class="row">
-      <div class="page-content col-md-9">
-        
-        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="https://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/python-compiler-internals/" class="u-url">El compilador de Python desde dentro</a></h1>
-            <div class="metadata text-muted">
-              <i class="glyphicon glyphicon-calendar"></i>
-              <p class="dateline">
-                <time class="published dt-published" datetime="2012-05-20T00:00:00+00:00" title="2012-05-20">2012-05-20</time>
-                // <time class="updated dt-updated" datetime="2012-05-20T00:00:00" title="2012-05-20">2012-05-20</time></p>
-              <p class="commentline">            <a href="/blog/python-compiler-internals/#disqus_thread" data-disqus-identifier="cache/posts/python-compiler-internals.html">Comments</a>
+  <div class="nav_parent">
+    <a href="http://example.org/en" class="nav_item">English </a>
+  </div>
+      
+      <div class="nav_parent">
+        <a href="#" class="nav_item"></a>
+        <div class="nav_sub">
+          <span class="nav_child"></span>
+          
+          <a href="http://example.org/en/" class="nav_child nav_item">English</a>
+          
+          <a href="http://example.org/" class="nav_child nav_item">Español</a>
+          
+        </div>
+      </div>
+      
+<div class='follow'>
+    
+    
+  <a href="https://github.com/magmax/">
+    <svg class="icon">
+  <use xlink:href="#github"></use>
+</svg>
+  </a>
+    
+    
+  <a href="https://twitter.com/magmax_en">
+    <svg class="icon">
+  <use xlink:href="#twitter"></use>
+</svg>
+  </a>
+    
+    
+  <a href="https://www.linkedin.com/in/miguelangelgarciamartinez/">
+    <svg class="icon">
+  <use xlink:href="#linkedin"></use>
+</svg>
+  </a>
+    
+    
+    
+  <a href="http://example.org/index.xml">
+    <svg class="icon">
+  <use xlink:href="#rss"></use>
+</svg>
+  </a>
+<div class="color_mode">
+  <input type="checkbox" class="color_choice" id="mode">
+</div>
 
-</p>
-              <address class="vcard author"><a class="url fn" href="https://magmax.org">Miguel Ángel García</a></address>
-            </div>
-            <br></header><div class="e-content entry-content" itemprop="articleBody text">
-            <div>
-<p>Los viernes hay formación en la oficina. El viernes pasado le tocó dar una charla a Goran, y nos estuvo contando cómo funciona PHP por dentro.</p>
-<p>No he podido quitarme la charla de la cabeza en todo el fin de semana, y he investigado cómo funciona Python por dentro. Goran se quejaba de que hay muy poca información sobre PHP, y tampoco hay tanta sobre Python. Pero encontré este artículo, me gustó y he tenido que traducirlo. Lo mejor es que todos los lenguajes que están de moda (PHP, Python, Ruby, Java, ...) se basan en los mismos principios, aunque algunos de ellos tienen mayor acierto que otros, y la implementación, que es completamente diferente.</p>
-<p>El artículo original, <a class="reference external" href="http://tomlee.co/wp-content/uploads/2008/12/python-language-internals.pdf">'Python Compiler Internals'</a>  lo escribió <a class="reference external" href="http://tomlee.co">Thomas Lee</a>  (<a class="reference external" href="https://twitter.com/#!/tglee">@tglee</a> ) en el 2008, pero es perfectamente válido hoy en día. Me gustó por lo sencillo y por lo acertado del ejemplo.</p>
+</div>
+
+    </div>
+  </nav>
+</header>
+
+    <main>
+  
+<div class="grid-inverse wrap content">
+  <article class="post_content">
+    <h1 class="post_title">El compilador de Python desde dentro</h1><div class="post_meta">
+  
+    <svg class="icon">
+  <use xlink:href="#calendar"></use>
+</svg>
+    <span class="post_date">
+      May 20, 2012</span>
+      <a href='http://example.org/tags/compilers' class="post_tag button button_translucent">compilers
+      </a>
+      <a href='http://example.org/tags/python' class="post_tag button button_translucent">python
+      </a>
+</div>
+
+    
+  <div class="post_share">
+    Compartir en:
+    <a href="https://twitter.com/intent/tweet?text=El%20compilador%20de%20Python%20desde%20dentro&url=http%3a%2f%2fexample.org%2fblog%2fpython-compiler-internals%2f&tw_p=tweetbutton" class="twitter" title="Compartir en Twitter" target="_blank" rel="nofollow">
+      <svg class="icon">
+  <use xlink:href="#twitter"></use>
+</svg>
+    </a>
+    <a href="https://www.facebook.com/sharer.php?u=http%3a%2f%2fexample.org%2fblog%2fpython-compiler-internals%2f&t=El%20compilador%20de%20Python%20desde%20dentro" class="facebook" title="Compartir en Facebook" target="_blank" rel="nofollow">
+      <svg class="icon">
+  <use xlink:href="#facebook"></use>
+</svg>
+    </a>
+    <a href="#linkedinshare" id = "linkedinshare" class="linkedin" title="Compartir en LinkedIn" rel="nofollow">
+      <svg class="icon">
+  <use xlink:href="#linkedin"></use>
+</svg>
+    </a>
+    <a href="http://example.org/blog/python-compiler-internals/" title="Copy Link" class="link link_yank">
+      <svg class="icon">
+  <use xlink:href="#copy"></use>
+</svg>
+    </a>
+  </div>
+
+    
+    <p>Los viernes hay formación en la oficina. El viernes pasado le tocó dar una charla a Goran, y nos estuvo contando cómo funciona PHP por dentro.</p>
+<p>No he podido quitarme la charla de la cabeza en todo el fin de semana, y he investigado cómo funciona Python por dentro. Goran se quejaba de que hay muy poca información sobre PHP, y tampoco hay tanta sobre Python. Pero encontré este artículo, me gustó y he tenido que traducirlo. Lo mejor es que todos los lenguajes que están de moda (PHP, Python, Ruby, Java, &hellip;) se basan en los mismos principios, aunque algunos de ellos tienen mayor acierto que otros, y la implementación, que es completamente diferente.</p>
+<p>El artículo original, <a href="http://tomlee.co/wp-content/uploads/2008/12/python-language-internals.pdf">&lsquo;Python Compiler Internals&rsquo;</a>  lo escribió <a href="http://tomlee.co">Thomas Lee</a>  (<a href="https://twitter.com/#!/tglee">@tglee</a> ) en el 2008, pero es perfectamente válido hoy en día. Me gustó por lo sencillo y por lo acertado del ejemplo.</p>
 <p>Espero que también os guste:</p>
-<!-- TEASER_END -->
-<hr class="docutils">
-<div class="section" id="resumen">
-<h2>Resumen</h2>
+<!-- raw HTML omitted -->
+<figure>
+    <img src="/images/python.png"
+         alt="Python"/> 
+</figure>
+
+<hr>
+<h2 id="resumen">Resumen</h2>
 <p>En este artículo se introduce una nueva instrucción del lenguaje para demostrar cómo se puede comenzar a modificar el compilador del lenguaje Python. El lenguaje Python en sí mismo es un lenguaje potente, dinámicamente tipado que corre en gran variedad de sistemas operativos y plataformas. Los entresijos del propio compilador siguen un patrón común en las implementaciones de muchos lenguajes, con fases de análisis léxico, sintáctico y generación de código. Esto hace del código fuente de Python un buen lugar para aprender cómo deberían implementarse los lenguajes en su sentido más general. Tras leer el artículo, se espera que el lector vea que contribuir al núcleo del lenguaje Python no es tan complejo como puede parecer.</p>
-</div>
-<div class="section" id="vista-general">
-<h2>1. Vista general</h2>
-<p>Aquéllos que ven a Python como un lenguaje de <em>scripting</em> pueden sorprenderse al descubrir que el núcleo del intérprete Python realmente tiene la estructura de un compilador clásico. Cuando se invoca la orden "python", el código fuente se escanea buscando <em>tokens</em>, estos <em>tokens</em> se procesan en una representación arbórea de la estructura lógica del programa, que finalmente se transforma en <em>bytecode</em>. Finalmente, este <em>bytecode</em> se procesa por la máquina virtual.</p>
-<p>Con el fin de demostrar cómo encajan entre sí los distintos componentes del compilador de Python, usaremos como base el código de Python 2.6 caminando hacia la agregación de una nueva estructura del lenguaje: la instrucción <em>"unless"</em>, mostrada en el listado siguiente:</p>
-<pre class="code python"><a name="rest_code_ffc654ad37804064841a3a6c0872f998-1"></a><span class="kn">import</span> <span class="nn">sys</span>
-<a name="rest_code_ffc654ad37804064841a3a6c0872f998-2"></a>
-<a name="rest_code_ffc654ad37804064841a3a6c0872f998-3"></a><span class="n">passwd</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-<a name="rest_code_ffc654ad37804064841a3a6c0872f998-4"></a><span class="n">unless</span> <span class="n">passwd</span> <span class="o">==</span> <span class="s1">'tehsecret'</span><span class="p">:</span>
-<a name="rest_code_ffc654ad37804064841a3a6c0872f998-5"></a>       <span class="nb">print</span> <span class="s1">'Password do not match. Exiting!'</span>
-<a name="rest_code_ffc654ad37804064841a3a6c0872f998-6"></a>       <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</pre>
-<p>Todo el código de este artículo se ha escrito y probado con Python 2.6 beta 3, cuyo repositorio Subversion puede encontrarse aquí: <a class="reference external" href="http://svn.python.org/projects/python/tags/r26b3/">http://svn.python.org/projects/python/tags/r26b3/</a> . La única cosa que debería cambiar en la versión 2.6 final son los números de línea referenciados en los listados de fuentes aquí presentes.</p>
-</div>
-<div class="section" id="analisis-lexico">
-<h2>2. Análisis léxico</h2>
-<p>En lugar de tratar de procesar un flujo de texto directamente, a menudo es más sencillo -- y rápido -- desglosar la entrada de texto en una serie de "tokens", que deberían incluir palabras reservadas, literales, operadores y/o identificadores. Estos <em>tokens</em> pueden inspeccionarse por el procesador de forma más eficiente que un flujo de texto plano. El proceso de transformar la entra de texto en <em>tokens</em> se conoce como "análisis léxico", "tokenizado" (<tt class="docutils literal">tokenizing</tt>) o, simplemente, "escaneo" (<tt class="docutils literal">scanning</tt>).</p>
-<p>El punto de entrada del analizador léxico es la función <tt class="docutils literal">PyTokenizer_Get</tt> en <a class="reference external" href="http://svn.python.org/projects/python/tags/r26b3/Parser/tokenizer.c">Parser/tokenizer.c</a> . Esta función se llama repetidamente desde la función principal de procesado, <tt class="docutils literal">parsetok</tt> en <a class="reference external" href="http://svn.python.org/projects/python/tags/r26b3/Parser/parsetok.c">Parser/parsetok.c</a> , que a su vez se utiliza por por alguna de las distintas funciones de proceso de más alto nivel.</p>
-<p>Para implementar nuestra instrucción "unless", no es necesario realizar nada explícito en el código del <tt class="docutils literal">tokenizer</tt> -- sólo es necesario modificar la descripción de la gramática, como se verá en la siguiente sección.</p>
-</div>
-<div class="section" id="analisis-sintactico">
-<h2>3. Análisis sintáctico</h2>
-<p>Para que el compilador obtenga algún significado del programa fuente, el flujo de tokens emitido por el analizador léxico debe estar organizado en algún tipo de estructura. Éste es el trabajo del analizador sintáctico de Python, que toma como entrada un flujo de tokens y -- basado en las reglas declaradas en la gramática de Python -- produce un Árbol Sintáctico Abstracto (AST, <em>"Abstract Syntax Tree"</em>).</p>
+<h2 id="1-vista-general">1. Vista general</h2>
+<p>Aquéllos que ven a Python como un lenguaje de <em>scripting</em> pueden sorprenderse al descubrir que el núcleo del intérprete Python realmente tiene la estructura de un compilador clásico. Cuando se invoca la orden &ldquo;python&rdquo;, el código fuente se escanea buscando <em>tokens</em>, estos <em>tokens</em> se procesan en una representación arbórea de la estructura lógica del programa, que finalmente se transforma en <em>bytecode</em>. Finalmente, este <em>bytecode</em> se procesa por la máquina virtual.</p>
+<p>Con el fin de demostrar cómo encajan entre sí los distintos componentes del compilador de Python, usaremos como base el código de Python 2.6 caminando hacia la agregación de una nueva estructura del lenguaje: la instrucción <em>&ldquo;unless&rdquo;</em>, mostrada en el listado siguiente:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#f92672">import</span> sys
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>passwd <span style="color:#f92672">=</span> sys<span style="color:#f92672">.</span>stdin<span style="color:#f92672">.</span>readline()<span style="color:#f92672">.</span>strip()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>unless passwd <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;tehsecret&#39;</span>:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>       <span style="color:#66d9ef">print</span> <span style="color:#e6db74">&#39;Password do not match. Exiting!&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span>       sys<span style="color:#f92672">.</span>exit(<span style="color:#ae81ff">1</span>)
+</code></pre></div><p>Todo el código de este artículo se ha escrito y probado con Python 2.6 beta 3, cuyo repositorio Subversion puede encontrarse aquí: <a href="http://svn.python.org/projects/python/tags/r26b3/">http://svn.python.org/projects/python/tags/r26b3/</a> . La única cosa que debería cambiar en la versión 2.6 final son los números de línea referenciados en los listados de fuentes aquí presentes.</p>
+<h2 id="2-análisis-léxico">2. Análisis léxico</h2>
+<p>En lugar de tratar de procesar un flujo de texto directamente, a menudo es más sencillo &ndash; y rápido &ndash; desglosar la entrada de texto en una serie de &ldquo;tokens&rdquo;, que deberían incluir palabras reservadas, literales, operadores y/o identificadores. Estos <em>tokens</em> pueden inspeccionarse por el procesador de forma más eficiente que un flujo de texto plano. El proceso de transformar la entra de texto en <em>tokens</em> se conoce como &ldquo;análisis léxico&rdquo;, &ldquo;tokenizado&rdquo; (<code>tokenizing</code>) o, simplemente, &ldquo;escaneo&rdquo; (<code>scanning</code>).</p>
+<p>El punto de entrada del analizador léxico es la función <code>PyTokenizer_Get</code> en <a href="http://svn.python.org/projects/python/tags/r26b3/Parser/tokenizer.c">Parser/tokenizer.c</a> . Esta función se llama repetidamente desde la función principal de procesado, <code>parsetok</code> en <a href="http://svn.python.org/projects/python/tags/r26b3/Parser/parsetok.c">Parser/parsetok.c</a> , que a su vez se utiliza por por alguna de las distintas funciones de proceso de más alto nivel.</p>
+<p>Para implementar nuestra instrucción &ldquo;unless&rdquo;, no es necesario realizar nada explícito en el código del <code>tokenizer</code> &ndash; sólo es necesario modificar la descripción de la gramática, como se verá en la siguiente sección.</p>
+<h2 id="3-análisis-sintáctico">3. Análisis sintáctico</h2>
+<p>Para que el compilador obtenga algún significado del programa fuente, el flujo de tokens emitido por el analizador léxico debe estar organizado en algún tipo de estructura. Éste es el trabajo del analizador sintáctico de Python, que toma como entrada un flujo de tokens y &ndash; basado en las reglas declaradas en la gramática de Python &ndash; produce un Árbol Sintáctico Abstracto (AST, <em>&ldquo;Abstract Syntax Tree&rdquo;</em>).</p>
 <p>Python utiliza un generador de análisis sintáctico a medida que genera automáticamente su analizador sintáctico a partir de una descripción gramatical. La salida del análisis sintáctico es el árbol sintáctico, que puede verse como una representación de bajo nivel del programa analizado en la estructura definida por la descripción gramatical.</p>
 <p>En Python 2.5, se añade un paso adicional a la fase de análisis sintáctico: la construcción de un Árbol Sintáctico Abstracto (AST) del árbol analizado. El AST, como el árbol analizado, es una representación en memoria del programa que se está procesando, aunque de una forma de más alto nivel y por tanto más sencilla de manipular.</p>
-<p>Ahora, para añadir nuestra nueva instrucción <tt class="docutils literal">unless</tt> al lenguaje Python, primero tenemos que modificar el archivo de gramática (<a class="reference external" href="http://svn.python.org/projects/python/tags/r26b3/Grammar/Grammar">Grammar/Grammar</a>)  para describir la sintaxis de esta característica, como en el listado siguiente:</p>
-<pre class="code cpp"><a name="rest_code_c8da952233e7493aa3e13da5cabc7d39-1"></a><span class="cm">/* Grammar/Grammar:78 */</span>
-<a name="rest_code_c8da952233e7493aa3e13da5cabc7d39-2"></a><span class="nl">if_stmt</span><span class="p">:</span> <span class="err">'</span><span class="k">if</span><span class="err">'</span> <span class="n">test</span> <span class="sc">':'</span> <span class="n">suite</span> <span class="p">(</span><span class="err">'</span><span class="n">elif</span><span class="err">'</span> <span class="n">test</span> <span class="sc">':'</span> <span class="n">suite</span><span class="p">)</span><span class="o">*</span> <span class="p">[</span><span class="err">'</span><span class="k">else</span><span class="sc">' '</span><span class="o">:</span><span class="err">'</span> <span class="n">suite</span><span class="p">]</span>
-<a name="rest_code_c8da952233e7493aa3e13da5cabc7d39-3"></a><span class="nl">while_stmt</span><span class="p">:</span> <span class="err">'</span><span class="k">while</span><span class="err">'</span> <span class="n">test</span> <span class="sc">':'</span> <span class="n">suite</span> <span class="p">[</span><span class="err">'</span><span class="k">else</span><span class="sc">' '</span><span class="o">:</span><span class="err">'</span> <span class="n">suite</span><span class="p">]</span>
-<a name="rest_code_c8da952233e7493aa3e13da5cabc7d39-4"></a><span class="nl">unless_stmt</span><span class="p">:</span> <span class="err">'</span><span class="n">unless</span><span class="err">'</span> <span class="n">test</span> <span class="sc">':'</span> <span class="n">suite</span>
-<a name="rest_code_c8da952233e7493aa3e13da5cabc7d39-5"></a><span class="nl">for_stmt</span><span class="p">:</span> <span class="err">'</span><span class="k">for</span><span class="err">'</span> <span class="n">exprlist</span> <span class="err">'</span><span class="n">in</span><span class="err">'</span> <span class="n">testlist</span> <span class="sc">':'</span> <span class="n">suite</span> <span class="p">[</span><span class="err">'</span><span class="k">else</span><span class="sc">' '</span><span class="o">:</span><span class="err">'</span> <span class="n">suite</span><span class="p">]</span>
-</pre>
-<p>Dado que nuesta instrucción <tt class="docutils literal">unless</tt> es realmente una instrucción "if" con la lógica invertida, para implementarlo <em>podríamos</em> utilizar los nodos AST del "if" y el "Not" existentes. De hecho, así es como se introdujo la sintaxis el try...except...finally en Python 2.5. De todas formas, para los propósitos de este artículo se modificará la estructura AST para poder demostrar cómo generar <em>bytecode</em> para nuestra nueva construcción. Con tal fin, se modifica <a class="reference external" href="http://svn.python.org/projects/python/tags/r26b3/Parser/Python.asdl">Parser/Python.asdl</a>  -- que contiene la definición del AST -- como en el listado siguiente:</p>
-<pre class="code cpp"><a name="rest_code_c2aa5db413fe4efe90d53f1a685c1daf-1"></a><span class="cm">/* Parser/Python.asdl:25 */</span>
-<a name="rest_code_c2aa5db413fe4efe90d53f1a685c1daf-2"></a>    <span class="o">|</span> <span class="n">For</span><span class="p">(</span><span class="n">expr</span> <span class="n">target</span><span class="p">,</span> <span class="n">expr</span> <span class="n">iter</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">orelse</span><span class="p">)</span>
-<a name="rest_code_c2aa5db413fe4efe90d53f1a685c1daf-3"></a>    <span class="o">|</span> <span class="n">While</span><span class="p">(</span><span class="n">expr</span> <span class="n">test</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">orelse</span><span class="p">)</span>
-<a name="rest_code_c2aa5db413fe4efe90d53f1a685c1daf-4"></a>    <span class="o">|</span> <span class="n">Unless</span><span class="p">(</span><span class="n">expr</span> <span class="n">test</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">)</span>
-<a name="rest_code_c2aa5db413fe4efe90d53f1a685c1daf-5"></a>    <span class="o">|</span> <span class="n">If</span><span class="p">(</span><span class="n">expr</span> <span class="n">test</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">orelse</span><span class="p">)</span>
-</pre>
-<p>Finalmente, necesitamos añadir algo de código para manejar la transformación de la gramática al AST en <a class="reference external" href="http://svn.python.org/projects/python/tags/r26b3/Python/ast.c">Python/ast.c</a> . Aquí añadimos <tt class="docutils literal">ast_for_unless_stmt</tt>, como se muestra a continuación:</p>
-<pre class="code cpp"><a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-1"></a><span class="cm">/* Python/ast.c:2805 */</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-2"></a><span class="k">static</span> <span class="n">stmt_ty</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-3"></a><span class="n">ast_for_unless_stmt</span><span class="p">(</span><span class="k">struct</span> <span class="nc">compiling</span><span class="o">*</span> <span class="n">c</span><span class="p">,</span> <span class="k">const</span> <span class="n">node</span> <span class="o">*</span><span class="n">n</span><span class="p">)</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-4"></a><span class="p">{</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-5"></a>    <span class="n">expr_ty</span> <span class="n">test_expr</span><span class="p">;</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-6"></a>    <span class="n">asdl_seq</span> <span class="o">*</span><span class="n">suite_seq</span><span class="p">;</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-7"></a>    <span class="cm">/* unless_stmt: 'unless' test ':' suite */</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-8"></a>    <span class="n">REQ</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">unless_stmt</span><span class="p">);</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-9"></a>    <span class="n">test_expr</span> <span class="o">=</span> <span class="n">ast_for_expr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">CHILD</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">));</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-10"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">test_expr</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-11"></a>        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-12"></a>    <span class="n">suite_seq</span> <span class="o">=</span> <span class="n">ast_for_suite</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">CHILD</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-13"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">suite_seq</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-14"></a>        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-15"></a>    <span class="k">return</span> <span class="nf">Unless</span><span class="p">(</span><span class="n">test_expr</span><span class="p">,</span> <span class="n">suite_seq</span><span class="p">,</span> <span class="n">LINENO</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">n</span><span class="o">-&gt;</span><span class="n">n_col_offset</span><span class="p">,</span> <span class="n">c</span><span class="o">-&gt;</span><span class="n">c_arena</span><span class="p">);</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-16"></a><span class="p">}</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-17"></a><span class="cm">/* ... &lt;snip&gt; ... */</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-18"></a><span class="cm">/* Python/ast.c:3125 */</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-19"></a>    <span class="k">case</span> <span class="nl">while_stmt</span><span class="p">:</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-20"></a>        <span class="k">return</span> <span class="n">ast_for_while_stmt</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">ch</span><span class="p">);</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-21"></a>    <span class="k">case</span> <span class="nl">unless_stmt</span><span class="p">:</span>
-<a name="rest_code_f7ba6683e7dd43b8b9a9b8b034349dc7-22"></a>        <span class="k">return</span> <span class="n">ast_for_unless_stmt</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">ch</span><span class="p">);</span>
-</pre>
-<p>El código de transformación del árbol sintáctico al AST sigue un popular patrón Visitor. En la línea 3123, se añade un <em>hook</em> para llamar al código de transformación apropiado si se encuentra un nodo <tt class="docutils literal">unless_stmt</tt> en el árbol sintáctico. Una vez dentro de la función de transformación, se construye un nodo Unless analizando recursivamente la condición y el cuerpo.</p>
+<p>Ahora, para añadir nuestra nueva instrucción <code>unless</code> al lenguaje Python, primero tenemos que modificar el archivo de gramática (<a href="http://svn.python.org/projects/python/tags/r26b3/Grammar/Grammar">Grammar/Grammar</a>)  para describir la sintaxis de esta característica, como en el listado siguiente:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#75715e">/* Grammar/Grammar:78 */</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>if_stmt: <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#66d9ef">if</span><span style="color:#960050;background-color:#1e0010">&#39;</span> test <span style="color:#e6db74">&#39;:&#39;</span> suite (<span style="color:#960050;background-color:#1e0010">&#39;</span>elif<span style="color:#960050;background-color:#1e0010">&#39;</span> test <span style="color:#e6db74">&#39;:&#39;</span> suite)<span style="color:#f92672">*</span> [<span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#66d9ef">else</span><span style="color:#e6db74">&#39; &#39;</span><span style="color:#f92672">:</span><span style="color:#960050;background-color:#1e0010">&#39;</span> suite]
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>while_stmt: <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#66d9ef">while</span><span style="color:#960050;background-color:#1e0010">&#39;</span> test <span style="color:#e6db74">&#39;:&#39;</span> suite [<span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#66d9ef">else</span><span style="color:#e6db74">&#39; &#39;</span><span style="color:#f92672">:</span><span style="color:#960050;background-color:#1e0010">&#39;</span> suite]
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>unless_stmt: <span style="color:#960050;background-color:#1e0010">&#39;</span>unless<span style="color:#960050;background-color:#1e0010">&#39;</span> test <span style="color:#e6db74">&#39;:&#39;</span> suite
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>for_stmt: <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#66d9ef">for</span><span style="color:#960050;background-color:#1e0010">&#39;</span> exprlist <span style="color:#960050;background-color:#1e0010">&#39;</span>in<span style="color:#960050;background-color:#1e0010">&#39;</span> testlist <span style="color:#e6db74">&#39;:&#39;</span> suite [<span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#66d9ef">else</span><span style="color:#e6db74">&#39; &#39;</span><span style="color:#f92672">:</span><span style="color:#960050;background-color:#1e0010">&#39;</span> suite]
+</code></pre></div><p>Dado que nuesta instrucción <code>unless</code> es realmente una instrucción &ldquo;if&rdquo; con la lógica invertida, para implementarlo <em>podríamos</em> utilizar los nodos AST del &ldquo;if&rdquo; y el &ldquo;Not&rdquo; existentes. De hecho, así es como se introdujo la sintaxis el try&hellip;except&hellip;finally en Python 2.5. De todas formas, para los propósitos de este artículo se modificará la estructura AST para poder demostrar cómo generar <em>bytecode</em> para nuestra nueva construcción. Con tal fin, se modifica <a href="http://svn.python.org/projects/python/tags/r26b3/Parser/Python.asdl">Parser/Python.asdl</a>  &ndash; que contiene la definición del AST &ndash; como en el listado siguiente:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#75715e">/* Parser/Python.asdl:25 */</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>    <span style="color:#f92672">|</span> For(expr target, expr iter, stmt<span style="color:#f92672">*</span> body, stmt<span style="color:#f92672">*</span> orelse)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>    <span style="color:#f92672">|</span> While(expr test, stmt<span style="color:#f92672">*</span> body, stmt<span style="color:#f92672">*</span> orelse)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>    <span style="color:#f92672">|</span> Unless(expr test, stmt<span style="color:#f92672">*</span> body)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>    <span style="color:#f92672">|</span> If(expr test, stmt<span style="color:#f92672">*</span> body, stmt<span style="color:#f92672">*</span> orelse)
+</code></pre></div><p>Finalmente, necesitamos añadir algo de código para manejar la transformación de la gramática al AST en <a href="http://svn.python.org/projects/python/tags/r26b3/Python/ast.c">Python/ast.c</a> . Aquí añadimos <code>ast_for_unless_stmt</code>, como se muestra a continuación:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e">/* Python/ast.c:2805 */</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#66d9ef">static</span> stmt_ty
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#a6e22e">ast_for_unless_stmt</span>(<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">compiling</span><span style="color:#f92672">*</span> c, <span style="color:#66d9ef">const</span> node <span style="color:#f92672">*</span>n)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>{
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>    expr_ty test_expr;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>    asdl_seq <span style="color:#f92672">*</span>suite_seq;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>    <span style="color:#75715e">/* unless_stmt: &#39;unless&#39; test &#39;:&#39; suite */</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>    REQ(n, unless_stmt);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>    test_expr <span style="color:#f92672">=</span> ast_for_expr(c, CHILD(n, <span style="color:#ae81ff">1</span>));
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>    <span style="color:#66d9ef">if</span> (test_expr <span style="color:#f92672">==</span> NULL)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>        <span style="color:#66d9ef">return</span> NULL;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>    suite_seq <span style="color:#f92672">=</span> ast_for_suite(c, CHILD(n, <span style="color:#ae81ff">3</span>));
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>    <span style="color:#66d9ef">if</span> (suite_seq <span style="color:#f92672">==</span> NULL)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>        <span style="color:#66d9ef">return</span> NULL;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>    <span style="color:#66d9ef">return</span> Unless(test_expr, suite_seq, LINENO(n), n<span style="color:#f92672">-&gt;</span>n_col_offset, c<span style="color:#f92672">-&gt;</span>c_arena);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>}
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span style="color:#75715e">/* ... &lt;snip&gt; ... */</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span style="color:#75715e">/* Python/ast.c:3125 */</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>    <span style="color:#66d9ef">case</span> while_stmt:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>        <span style="color:#66d9ef">return</span> ast_for_while_stmt(c, ch);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>    <span style="color:#66d9ef">case</span> unless_stmt:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>        <span style="color:#66d9ef">return</span> ast_for_unless_stmt(c, ch);
+</code></pre></div><p>El código de transformación del árbol sintáctico al AST sigue un popular patrón Visitor. En la línea 3123, se añade un <em>hook</em> para llamar al código de transformación apropiado si se encuentra un nodo <code>unless_stmt</code> en el árbol sintáctico. Una vez dentro de la función de transformación, se construye un nodo Unless analizando recursivamente la condición y el cuerpo.</p>
 <p>Note que puede necesitar regenerar explícitamente algunos ficheros tras realizar estos cambios:</p>
-<pre class="code bash"><a name="rest_code_af7d6485d9ba4f739d79d3012052f7c1-1"></a>$ rm -f Python/graminit.c <span class="o">&amp;&amp;</span> make Python/graminit.c
-<a name="rest_code_af7d6485d9ba4f739d79d3012052f7c1-2"></a>$ rm -f Python/Python-ast.c <span class="o">&amp;&amp;</span> make Python/Python-ast.c
-</pre>
-<p>En este punto, el compilador podrá escanear y analizar nuestra nueva instrucción "unless". Lo único que falta es añadir código para generar el <em>bytecode</em> para nuestro nuevo nodo AST.</p>
-</div>
-<div class="section" id="generacion-de-codigo">
-<h2>4. Generación de código</h2>
-<p>La siguiente fase de compilación -- generación de código -- toma el AST construído en la fase anterior y produce un PyCodeObject como salida. Un PyCodeObject es una unidad independiente de código ejecutable, que contiene toda la información y código para la ejecución independiente por parte del intérprete de <em>bytecode</em> de Python.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>$ rm -f Python/graminit.c <span style="color:#f92672">&amp;&amp;</span> make Python/graminit.c
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>$ rm -f Python/Python-ast.c <span style="color:#f92672">&amp;&amp;</span> make Python/Python-ast.c
+</code></pre></div><p>En este punto, el compilador podrá escanear y analizar nuestra nueva instrucción &ldquo;unless&rdquo;. Lo único que falta es añadir código para generar el <em>bytecode</em> para nuestro nuevo nodo AST.</p>
+<h2 id="4-generación-de-código">4. Generación de código</h2>
+<p>La siguiente fase de compilación &ndash; generación de código &ndash; toma el AST construído en la fase anterior y produce un PyCodeObject como salida. Un PyCodeObject es una unidad independiente de código ejecutable, que contiene toda la información y código para la ejecución independiente por parte del intérprete de <em>bytecode</em> de Python.</p>
 <p>Antes de ver más código fuente, es importante comprender que el intérprete de <em>bytecode</em> de Python es una máquina virtual basada en pila. Esto significa que el proceso de ejecutar <em>bytecode</em> manipula una pila de datos, con instrucciones que añaden, eliminan y operan sobre el par de elementos de la cima de la pila. Con esto en mente, veamos cómo generar <em>bytecode</em> desde nuestro nuevo nodo AST Unless en el listado siguiente (veremos lo que hace realmente el <em>bytecode</em> en la sección siguiente):</p>
-<pre class="code cpp"><a name="rest_code_334770a588d44377a6f815800fe4925d-1"></a><span class="cm">/* Python/compile.c:1623 */</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-2"></a><span class="k">static</span> <span class="kt">int</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-3"></a><span class="n">compiler_unless</span><span class="p">(</span><span class="k">struct</span> <span class="nc">compiler</span> <span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="n">stmt_ty</span> <span class="n">s</span><span class="p">)</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-4"></a><span class="p">{</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-5"></a>    <span class="n">basicblock</span> <span class="o">*</span><span class="n">end</span><span class="p">;</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-6"></a>    <span class="n">basicblock</span> <span class="o">*</span><span class="n">next</span><span class="p">;</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-7"></a>    <span class="n">assert</span><span class="p">(</span><span class="n">s</span><span class="o">-&gt;</span><span class="n">kind</span> <span class="o">==</span> <span class="n">Unless_kind</span><span class="p">);</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-8"></a>    <span class="n">end</span> <span class="o">=</span> <span class="n">compiler_new_block</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-9"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">end</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-10"></a>        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-11"></a>    <span class="n">next</span> <span class="o">=</span> <span class="n">compiler_new_block</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-12"></a>    <span class="k">if</span> <span class="p">(</span><span class="n">next</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-13"></a>        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-14"></a>    <span class="n">VISIT</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">s</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">.</span><span class="n">Unless</span><span class="p">.</span><span class="n">test</span><span class="p">);</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-15"></a>    <span class="n">ADDOP_JREL</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">JUMP_IF_TRUE</span><span class="p">,</span> <span class="n">next</span><span class="p">);</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-16"></a>    <span class="n">ADDOP</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">POP_TOP</span><span class="p">);</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-17"></a>    <span class="n">VISIT_SEQ</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">stmt</span><span class="p">,</span> <span class="n">s</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">.</span><span class="n">Unless</span><span class="p">.</span><span class="n">body</span><span class="p">);</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-18"></a>    <span class="n">ADDOP_JREL</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">JUMP_FORWARD</span><span class="p">,</span> <span class="n">end</span><span class="p">);</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-19"></a>    <span class="n">compiler_use_next_block</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">next</span><span class="p">);</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-20"></a>    <span class="n">ADDOP</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">POP_TOP</span><span class="p">);</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-21"></a>    <span class="n">compiler_use_next_block</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">end</span><span class="p">);</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-22"></a>    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-23"></a><span class="p">}</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-24"></a><span class="cm">/* ... &lt;snip&gt; ... */</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-25"></a><span class="cm">/* Python/compile.c:2167 */</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-26"></a><span class="k">case</span> <span class="nl">If_kind</span><span class="p">:</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-27"></a>    <span class="k">return</span> <span class="n">compiler_if</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-28"></a><span class="k">case</span> <span class="nl">Unless_kind</span><span class="p">:</span>
-<a name="rest_code_334770a588d44377a6f815800fe4925d-29"></a>    <span class="k">return</span> <span class="n">compiler_unless</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
-</pre>
-<p>En este punto, nuestra implementación de la instrucción "Unless" está terminada. Recompile Python y pruébelo:</p>
-<pre class="code bash"><a name="rest_code_3b9a3108fbc249b29a782e727f58ad6a-1"></a>$ ./configure <span class="o">&amp;&amp;</span> make clean <span class="o">&amp;&amp;</span> make
-<a name="rest_code_3b9a3108fbc249b29a782e727f58ad6a-2"></a>$ ./python <span class="s">&lt;&lt;EOF</span>
-<a name="rest_code_3b9a3108fbc249b29a782e727f58ad6a-3"></a><span class="s">&gt; dv = False</span>
-<a name="rest_code_3b9a3108fbc249b29a782e727f58ad6a-4"></a><span class="s">&gt; unless v:</span>
-<a name="rest_code_3b9a3108fbc249b29a782e727f58ad6a-5"></a><span class="s">&gt;</span>
-<a name="rest_code_3b9a3108fbc249b29a782e727f58ad6a-6"></a><span class="s">print 'test'</span>
-<a name="rest_code_3b9a3108fbc249b29a782e727f58ad6a-7"></a><span class="s">&gt; EOF</span>
-<a name="rest_code_3b9a3108fbc249b29a782e727f58ad6a-8"></a><span class="nb">test</span>
-</pre>
-<p>Vea <a class="reference external" href="http://svn.python.org/projects/python/tags/r26b3/Python/compile.c">Python/compile.c</a>  para más detalles sobre el generador de _bytecode_ de Python.</p>
-</div>
-<div class="section" id="ejecucion-de-codigo">
-<h2>5. Ejecución de código</h2>
-<p>La ejecución del <em>bytecode</em> de Python se maneja por el intérprete de <em>bytecode</em>. Como se mencionó en la sección anterior, el intérprete es una máquina virtual basada en pila que ejecuta las instrucciones <em>bytecode</em> de Python que actúan sobre una única pila de datos. No se requiere realizar ningún cambio adicional al propio intérprete de <em>bytecode</em> para que nuestra instrucción "Unless" funcione, pero veamos con más detenimiento cómo interpreta el <em>bytecode</em> que generamos en la sección anterior.</p>
-<p>Primero se ejecuta la expresión de la condición, y se añade el resultado de la misma a la pila. A continuación, el <em>opcode</em> <tt class="docutils literal">JUMP_IF_TRUE</tt> inspeccionará el valor en la cima de la pila y determinará si contiene un valor que representa la verdad.  Si es así, se salta todo el cuerpo y continúa la ejecución a partir del final de la instrucción "unless". Si la expresión se evalúa como un valor <em>falso</em>, el compilador ejecutará el cuerpo de la instrucción <tt class="docutils literal">unless</tt>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e">/* Python/compile.c:1623 */</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#a6e22e">compiler_unless</span>(<span style="color:#66d9ef">struct</span> <span style="color:#a6e22e">compiler</span> <span style="color:#f92672">*</span>c, stmt_ty s)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>{
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>    basicblock <span style="color:#f92672">*</span>end;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>    basicblock <span style="color:#f92672">*</span>next;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>    assert(s<span style="color:#f92672">-&gt;</span>kind <span style="color:#f92672">==</span> Unless_kind);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>    end <span style="color:#f92672">=</span> compiler_new_block(c);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>    <span style="color:#66d9ef">if</span> (end <span style="color:#f92672">==</span> NULL)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>    next <span style="color:#f92672">=</span> compiler_new_block(c);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>    <span style="color:#66d9ef">if</span> (next <span style="color:#f92672">==</span> NULL)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>    VISIT(c, expr, s<span style="color:#f92672">-&gt;</span>v.Unless.test);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>    ADDOP_JREL(c, JUMP_IF_TRUE, next);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>    ADDOP(c, POP_TOP);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>    VISIT_SEQ(c, stmt, s<span style="color:#f92672">-&gt;</span>v.Unless.body);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>    ADDOP_JREL(c, JUMP_FORWARD, end);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>    compiler_use_next_block(c, next);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>    ADDOP(c, POP_TOP);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>    compiler_use_next_block(c, end);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>}
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span style="color:#75715e">/* ... &lt;snip&gt; ... */</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span style="color:#75715e">/* Python/compile.c:2167 */</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span style="color:#66d9ef">case</span> If_kind:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>    <span style="color:#66d9ef">return</span> compiler_if(c, s);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span style="color:#66d9ef">case</span> Unless_kind:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>    <span style="color:#66d9ef">return</span> compiler_unless(c, s);
+</code></pre></div><p>En este punto, nuestra implementación de la instrucción &ldquo;Unless&rdquo; está terminada. Recompile Python y pruébelo:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>$ ./configure <span style="color:#f92672">&amp;&amp;</span> make clean <span style="color:#f92672">&amp;&amp;</span> make
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>$ ./python <span style="color:#e6db74">&lt;&lt;EOF
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span style="color:#e6db74">&gt; dv = False
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span style="color:#e6db74">&gt; unless v:
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span><span style="color:#e6db74">&gt;
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span><span style="color:#e6db74">print &#39;test&#39;
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7</span><span style="color:#e6db74">&gt; EOF</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8</span>test
+</code></pre></div><p>Vea <a href="http://svn.python.org/projects/python/tags/r26b3/Python/compile.c">Python/compile.c</a>  para más detalles sobre el generador de <em>bytecode</em> de Python.</p>
+<h2 id="5-ejecución-de-código">5. Ejecución de código</h2>
+<p>La ejecución del <em>bytecode</em> de Python se maneja por el intérprete de <em>bytecode</em>. Como se mencionó en la sección anterior, el intérprete es una máquina virtual basada en pila que ejecuta las instrucciones <em>bytecode</em> de Python que actúan sobre una única pila de datos. No se requiere realizar ningún cambio adicional al propio intérprete de <em>bytecode</em> para que nuestra instrucción &ldquo;Unless&rdquo; funcione, pero veamos con más detenimiento cómo interpreta el <em>bytecode</em> que generamos en la sección anterior.</p>
+<p>Primero se ejecuta la expresión de la condición, y se añade el resultado de la misma a la pila. A continuación, el <em>opcode</em> <code>JUMP_IF_TRUE</code> inspeccionará el valor en la cima de la pila y determinará si contiene un valor que representa la verdad.  Si es así, se salta todo el cuerpo y continúa la ejecución a partir del final de la instrucción &ldquo;unless&rdquo;. Si la expresión se evalúa como un valor <em>falso</em>, el compilador ejecutará el cuerpo de la instrucción <code>unless</code>.</p>
 <p>Se aprecia que la primera instrucción a ejecutar en cualquiera de las ramas es desapilar el elemento de encima de la pila de datos (POP_TOP). Es así porque la expresión JUMP_IF_TRUE deja la expresión comprobada en la pila. En nuestro caso ya no se necesita el valor de la expresión de comprobación, por lo que simplemente se descarta con la ejecución de la instrucción POP_TOP.</p>
-<p>Si está interesado en los detalles de lo que hacen los <em>bytecodes</em> individuales, puede encontrar información sobre todos los <em>bytecodes</em> en <a class="reference external" href="http://docs.python.org/lib/bytecodes.html">http://docs.python.org/lib/bytecodes.html</a> . También puede ver <tt class="docutils literal">PyEval_CodeEvalEx</tt> y <tt class="docutils literal">PyEval_EvalFrame_ex</tt>  en <a class="reference external" href="http://svn.python.org/projects/python/tags/r26b3/Python/ceval.c">Python/ceval.c</a>  si está interesado en investigar con mayor detalle el intérprete de <em>bytecode</em>.</p>
-</div>
-<div class="section" id="conclusion">
-<h2>6. Conclusión</h2>
+<p>Si está interesado en los detalles de lo que hacen los <em>bytecodes</em> individuales, puede encontrar información sobre todos los <em>bytecodes</em> en <a href="http://docs.python.org/lib/bytecodes.html">http://docs.python.org/lib/bytecodes.html</a> . También puede ver <code>PyEval_CodeEvalEx</code> y <code>PyEval_EvalFrame_ex</code>  en <a href="http://svn.python.org/projects/python/tags/r26b3/Python/ceval.c">Python/ceval.c</a>  si está interesado en investigar con mayor detalle el intérprete de <em>bytecode</em>.</p>
+<h2 id="6-conclusión">6. Conclusión</h2>
 <p>Debería quedar claro que no es necesario ser un científico de la Nasa para contribuir en el núcleo del lenguaje Python. Si le interesan realmente los entresijos del trabajo de un intérprete del mundo real, Python es un buen lugar para comenzar. Si no está seguro de por dónde debe continuar, aquí tiene un par de ideas tanto alcanzables como educativas para el nivel iniciado del <em>hacker</em> de Python:</p>
-<p># Reescriba la instrucción "unless" usando sólo nodos AST ya existentes.
-# Añada un nuevo operador al lenguaje modificando el <tt class="docutils literal">tokenizer</tt>.
-# Investigue cómo funcionan por dentro las funciones embebidas en el lenguaje.
-# Investigue el uso de la tabla de símbolos (symtable).</p>
-<p>Hay mucho que aprender jugando con el código, y aún más realizando contribuciones activas al proyecto mediante el arreglo de errores, contribuyendo a la documentación o respondiendo las preguntas de novatos en la lista de correo de usuarios. Anímese -- y puede que se sorprenda usted mismo.</p>
-<hr class="docutils">
-<p>Artículo original: <a class="reference external" href="http://tomlee.co/wp-content/uploads/2008/12/python-language-internals.pdf">Python Compiler Internals</a>
-Autor original: <a class="reference external" href="http://tomlee.co">Thomas Lee</a> / (<a class="reference external" href="https://twitter.com/#!/tglee">@tglee</a> )
-Traducción: <a class="reference external" href="http://magmax.org">Miguel Ángel García</a>  (<a class="reference external" href="https://twitter.com/#!/magmax_en">@magmax_en</a> )</p>
-</div>
-</div>
-          </div>
-          <br><div>
-            <nav><span class="author">
-                <span class="glyphicon glyphicon-user"></span> 
-                <span>Publicado:Miguel Ángel García</span>
-              </span>
-               
+<ol>
+<li>Reescriba la instrucción &ldquo;unless&rdquo; usando sólo nodos AST ya existentes.</li>
+<li>Añada un nuevo operador al lenguaje modificando el <code>tokenizer</code>.</li>
+<li>Investigue cómo funcionan por dentro las funciones embebidas en el lenguaje.</li>
+<li>Investigue el uso de la tabla de símbolos (symtable).</li>
+</ol>
+<p>Hay mucho que aprender jugando con el código, y aún más realizando contribuciones activas al proyecto mediante el arreglo de errores, contribuyendo a la documentación o respondiendo las preguntas de novatos en la lista de correo de usuarios. Anímese &ndash; y puede que se sorprenda usted mismo.</p>
+<hr>
+<p>Artículo original: <a href="http://tomlee.co/wp-content/uploads/2008/12/python-language-internals.pdf">Python Compiler Internals</a>
+Autor original: <a href="http://tomlee.co">Thomas Lee</a> / (<a href="https://twitter.com/#!/tglee">@tglee</a> )
+Traducción: <a href="http://magmax.org">Miguel Ángel García</a>  (<a href="https://twitter.com/#!/magmax_en">@magmax_en</a> )</p>
 
-              
-              <span class="dateline">
-                <span class="glyphicon glyphicon-calendar"></span> 
-                <time class="published dt-published" datetime="2012-05-20T00:00:00+00:00" title="2012-05-20">2012-05-20</time></span>
-               
-              <span class="tags">
-                <span class="glyphicon glyphicon-tags"></span> 
-                <a class="label label-primary p-category" href="/categories/compilers/" rel="tag">compilers</a>
-                <a class="label label-primary p-category" href="/categories/python/" rel="tag">python</a>
-              </span>
-                      <ul class="pager">
-<li class="previous">
-              <a href="/blog/vagrant-puppet/" rel="prev" title="Vagrant y Puppet">
-                <span class="glyphicon glyphicon-arrow-left"></span>
-                Publicación anterior
-              </a>
-            </li>
-            <li class="next">
-              <a href="/blog/como-funcionan-las-cosas/" rel="next" title="Cómo funcionan las cosas">
-                Siguiente publicación
-                <span class="glyphicon glyphicon-arrow-right"></span>
-              </a>
-            </li>
-        </ul></nav>
-</div>
-          <section class="comments"><h2>Comentarios</h2>
-                            <div id="disqus_thread"></div>
-        <script>
-        var disqus_shortname ="magmax",
-            disqus_url="http://magmax.org/blog/python-compiler-internals/",
-        disqus_title="El compilador de Python desde dentro",
-        disqus_identifier="cache/posts/python-compiler-internals.html",
-        disqus_config = function () {
-            this.language = "es_ES";
-        };
-        (function() {
-            var dsq = document.createElement('script'); dsq.async = true;
-            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        })();
-    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
-</noscript>
-    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
-
-
-          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
-</div>
-      <aside class="sidebar col-md-3"><div>
-<section class="panel panel-default"><div class="panel-heading">
-    <h3 class="panel-title">Last comments</h3>
-  </div>
-  <div class="panel-body">
-    <div id="disqus_last_comments" class="dsq-widget">
-      <script type="text/javascript" src="https://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
-      </script>
-</div>
-  </div>
-</section>
-</div>
-          <div>
-<section class="panel panel-default"><div class="panel-heading">
-    <h3 class="panel-title">GitHub Repos</h3>
-  </div>
-  <div class="panel-body">
-    <ul id="gh_repos" class="list-unstyled">
-<li class="loading">Status updating…</li>
-    </ul>
-</div>
-  <div class="panel-footer">
-    <a href="https://github.com/magmax">@magmax</a> on GitHub
-  </div>
-</section>
-</div>
-      </aside>
-</div>
-
-    <footer>
-      Contents © 2009-2020 <a href="mailto:">Miguel Ángel García</a> 
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
-<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+    
       
-    </footer>
+    
+  </article>
+<aside class="sidebar">
+  <section class="sidebar_inner">
+    
+    <h2 class="mt-4">Posts recientes</h2>
+    <ul class="flex-column">
+      <li>
+        <a href="http://example.org/blog/argocd/" class="nav-link">ArgoCD con Kind</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/monitorizacion-con-graphite/" class="nav-link">Monitorización con Graphite</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/organizacion/" class="nav-link">Organización</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/hosting/" class="nav-link">Hosting</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/devops-rol-o-metodologia/" class="nav-link">DevOps: ¿Equipo, Rol o metodología?</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/instalando-linux-con-uefi/" class="nav-link">Instalando Linux con UEFI</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/plugins-en-python/" class="nav-link">Plugins en Python</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/ipython-autoreload/" class="nav-link">ipython autoreload</a>
+      </li>
+    </ul>
+    <div>
+      <h2 class="mt-4 taxonomy" id="categories-section">Categorías</h2>
+      <nav class="tags_nav">
+        <a href='http://example.org/categories/django-tutorial/' class="post_tag button button_translucent">
+          DJANGO-TUTORIAL
+          <span class="button_tally">3</span>
+        </a>
+        
+        <a href='http://example.org/categories/translations/' class="post_tag button button_translucent">
+          TRANSLATIONS
+          <span class="button_tally">1</span>
+        </a>
+        
+        
+      </nav>
+    </div>
+    <div>
+      <h2 class="mt-4 taxonomy" id="tags-section">Tags</h2>
+      <nav class="tags_nav">
+        <a href='http://example.org/tags/python/' class="post_tag button button_translucent">
+          PYTHON
+          <span class="button_tally">32</span>
+        </a>
+        
+        <a href='http://example.org/tags/agile/' class="post_tag button button_translucent">
+          AGILE
+          <span class="button_tally">15</span>
+        </a>
+        
+        <a href='http://example.org/tags/engineering/' class="post_tag button button_translucent">
+          ENGINEERING
+          <span class="button_tally">14</span>
+        </a>
+        
+        <a href='http://example.org/tags/retrospective/' class="post_tag button button_translucent">
+          RETROSPECTIVE
+          <span class="button_tally">13</span>
+        </a>
+        
+        <a href='http://example.org/tags/testing/' class="post_tag button button_translucent">
+          TESTING
+          <span class="button_tally">13</span>
+        </a>
+        
+        <a href='http://example.org/tags/life/' class="post_tag button button_translucent">
+          LIFE
+          <span class="button_tally">12</span>
+        </a>
+        
+        <a href='http://example.org/tags/django/' class="post_tag button button_translucent">
+          DJANGO
+          <span class="button_tally">9</span>
+        </a>
+        
+        <a href='http://example.org/tags/drupal/' class="post_tag button button_translucent">
+          DRUPAL
+          <span class="button_tally">9</span>
+        </a>
+        
+        <a href='http://example.org/tags/git/' class="post_tag button button_translucent">
+          GIT
+          <span class="button_tally">9</span>
+        </a>
+        
+        <a href='http://example.org/tags/dvcs/' class="post_tag button button_translucent">
+          DVCS
+          <span class="button_tally">8</span>
+        </a>
+        
+        
+        <br>
+        <div class="post_tags_toggle button">Todos los Tags</div>
+        <div class="post_tags">
+          <div class="tags_list">
+            
+            <a href='http://example.org/tags/acceptance/' class=" post_tag button button_translucent" data-position=2>ACCEPTANCE<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/admin/' class=" post_tag button button_translucent" data-position=1>ADMIN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/administration/' class=" post_tag button button_translucent" data-position=1>ADMINISTRATION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/agile/' class=" post_tag button button_translucent" data-position=15>AGILE<span class="button_tally">15</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ajax/' class=" post_tag button button_translucent" data-position=1>AJAX<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/alerting/' class=" post_tag button button_translucent" data-position=1>ALERTING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/angularjs/' class=" post_tag button button_translucent" data-position=1>ANGULARJS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ansi-c/' class=" post_tag button button_translucent" data-position=5>ANSI-C<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ansi-c-testing/' class=" post_tag button button_translucent" data-position=2>ANSI-C-TESTING<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ant/' class=" post_tag button button_translucent" data-position=1>ANT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/apache/' class=" post_tag button button_translucent" data-position=1>APACHE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/argocd/' class=" post_tag button button_translucent" data-position=1>ARGOCD<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/atheist/' class=" post_tag button button_translucent" data-position=3>ATHEIST<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/automation/' class=" post_tag button button_translucent" data-position=3>AUTOMATION<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/awesome-wm/' class=" post_tag button button_translucent" data-position=1>AWESOME-WM<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/aws/' class=" post_tag button button_translucent" data-position=1>AWS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/bootstrap/' class=" post_tag button button_translucent" data-position=2>BOOTSTRAP<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/bower/' class=" post_tag button button_translucent" data-position=1>BOWER<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/buildbot/' class=" post_tag button button_translucent" data-position=2>BUILDBOT<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/celery/' class=" post_tag button button_translucent" data-position=1>CELERY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/chemistry/' class=" post_tag button button_translucent" data-position=1>CHEMISTRY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/code-coverage/' class=" post_tag button button_translucent" data-position=2>CODE-COVERAGE<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/code-highlight/' class=" post_tag button button_translucent" data-position=1>CODE-HIGHLIGHT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/code-retreat/' class=" post_tag button button_translucent" data-position=1>CODE-RETREAT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/codemotion/' class=" post_tag button button_translucent" data-position=1>CODEMOTION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/codice-software/' class=" post_tag button button_translucent" data-position=1>CODICE-SOFTWARE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/compiler/' class=" post_tag button button_translucent" data-position=1>COMPILER<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/compilers/' class=" post_tag button button_translucent" data-position=1>COMPILERS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/configuration/' class=" post_tag button button_translucent" data-position=2>CONFIGURATION<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/continuous-integration/' class=" post_tag button button_translucent" data-position=4>CONTINUOUS-INTEGRATION<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/coverage/' class=" post_tag button button_translucent" data-position=1>COVERAGE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/crack/' class=" post_tag button button_translucent" data-position=1>CRACK<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/css/' class=" post_tag button button_translucent" data-position=5>CSS<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/curses/' class=" post_tag button button_translucent" data-position=1>CURSES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/db-testing/' class=" post_tag button button_translucent" data-position=2>DB-TESTING<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/dbunit/' class=" post_tag button button_translucent" data-position=1>DBUNIT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/debian/' class=" post_tag button button_translucent" data-position=1>DEBIAN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/deployment/' class=" post_tag button button_translucent" data-position=1>DEPLOYMENT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/derby-db/' class=" post_tag button button_translucent" data-position=1>DERBY-DB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/devops/' class=" post_tag button button_translucent" data-position=4>DEVOPS<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/devscripts/' class=" post_tag button button_translucent" data-position=1>DEVSCRIPTS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/distributed-systems/' class=" post_tag button button_translucent" data-position=1>DISTRIBUTED-SYSTEMS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/django/' class=" post_tag button button_translucent" data-position=9>DJANGO<span class="button_tally">9</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/django-testing/' class=" post_tag button button_translucent" data-position=1>DJANGO-TESTING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/docker/' class=" post_tag button button_translucent" data-position=4>DOCKER<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/docker-compose/' class=" post_tag button button_translucent" data-position=1>DOCKER-COMPOSE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/doctest/' class=" post_tag button button_translucent" data-position=1>DOCTEST<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/domain/' class=" post_tag button button_translucent" data-position=1>DOMAIN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/drupal/' class=" post_tag button button_translucent" data-position=9>DRUPAL<span class="button_tally">9</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/dvcs/' class=" post_tag button button_translucent" data-position=8>DVCS<span class="button_tally">8</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/elasticsearch/' class=" post_tag button button_translucent" data-position=1>ELASTICSEARCH<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/emacs/' class=" post_tag button button_translucent" data-position=1>EMACS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/email/' class=" post_tag button button_translucent" data-position=1>EMAIL<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/engineering/' class=" post_tag button button_translucent" data-position=14>ENGINEERING<span class="button_tally">14</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/firefox/' class=" post_tag button button_translucent" data-position=1>FIREFOX<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/fish/' class=" post_tag button button_translucent" data-position=1>FISH<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/freshen/' class=" post_tag button button_translucent" data-position=1>FRESHEN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/functional-programming/' class=" post_tag button button_translucent" data-position=1>FUNCTIONAL-PROGRAMMING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/games/' class=" post_tag button button_translucent" data-position=1>GAMES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/gettext/' class=" post_tag button button_translucent" data-position=1>GETTEXT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/git/' class=" post_tag button button_translucent" data-position=9>GIT<span class="button_tally">9</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/gnome/' class=" post_tag button button_translucent" data-position=1>GNOME<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/gnu/linux/' class=" post_tag button button_translucent" data-position=3>GNU/LINUX<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/google/' class=" post_tag button button_translucent" data-position=1>GOOGLE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/grammar/' class=" post_tag button button_translucent" data-position=1>GRAMMAR<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/graphite/' class=" post_tag button button_translucent" data-position=2>GRAPHITE<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/grub/' class=" post_tag button button_translucent" data-position=1>GRUB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/grunt/' class=" post_tag button button_translucent" data-position=1>GRUNT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/gtk/' class=" post_tag button button_translucent" data-position=2>GTK<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/hamcrest/' class=" post_tag button button_translucent" data-position=1>HAMCREST<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/hibernate/' class=" post_tag button button_translucent" data-position=1>HIBERNATE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/home/' class=" post_tag button button_translucent" data-position=1>HOME<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/hosting/' class=" post_tag button button_translucent" data-position=1>HOSTING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/hsqldb/' class=" post_tag button button_translucent" data-position=1>HSQLDB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ini-files/' class=" post_tag button button_translucent" data-position=1>INI-FILES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/internationalization/' class=" post_tag button button_translucent" data-position=1>INTERNATIONALIZATION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/internet/' class=" post_tag button button_translucent" data-position=1>INTERNET<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ipython/' class=" post_tag button button_translucent" data-position=1>IPYTHON<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/it/' class=" post_tag button button_translucent" data-position=1>IT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/java/' class=" post_tag button button_translucent" data-position=6>JAVA<span class="button_tally">6</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/java-ide/' class=" post_tag button button_translucent" data-position=3>JAVA-IDE<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/java-testing/' class=" post_tag button button_translucent" data-position=7>JAVA-TESTING<span class="button_tally">7</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/javascript/' class=" post_tag button button_translucent" data-position=6>JAVASCRIPT<span class="button_tally">6</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/jbehave/' class=" post_tag button button_translucent" data-position=2>JBEHAVE<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/jekyll/' class=" post_tag button button_translucent" data-position=2>JEKYLL<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/jenkins/' class=" post_tag button button_translucent" data-position=4>JENKINS<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/job/' class=" post_tag button button_translucent" data-position=1>JOB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/jquery/' class=" post_tag button button_translucent" data-position=1>JQUERY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/json/' class=" post_tag button button_translucent" data-position=2>JSON<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/junit/' class=" post_tag button button_translucent" data-position=1>JUNIT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kibana/' class=" post_tag button button_translucent" data-position=1>KIBANA<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kind/' class=" post_tag button button_translucent" data-position=1>KIND<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kitchen/' class=" post_tag button button_translucent" data-position=2>KITCHEN<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kohana/' class=" post_tag button button_translucent" data-position=2>KOHANA<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kubernetes/' class=" post_tag button button_translucent" data-position=1>KUBERNETES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/lamp/' class=" post_tag button button_translucent" data-position=3>LAMP<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/languages/' class=" post_tag button button_translucent" data-position=7>LANGUAGES<span class="button_tally">7</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/latex/' class=" post_tag button button_translucent" data-position=1>LATEX<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ldap/' class=" post_tag button button_translucent" data-position=1>LDAP<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/life/' class=" post_tag button button_translucent" data-position=12>LIFE<span class="button_tally">12</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/logstash/' class=" post_tag button button_translucent" data-position=1>LOGSTASH<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/make/' class=" post_tag button button_translucent" data-position=1>MAKE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/mathematics/' class=" post_tag button button_translucent" data-position=1>MATHEMATICS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/maven/' class=" post_tag button button_translucent" data-position=2>MAVEN<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/mercurial/' class=" post_tag button button_translucent" data-position=2>MERCURIAL<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/middleware/' class=" post_tag button button_translucent" data-position=1>MIDDLEWARE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/migrating/' class=" post_tag button button_translucent" data-position=4>MIGRATING<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/mock/' class=" post_tag button button_translucent" data-position=1>MOCK<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/mongodb/' class=" post_tag button button_translucent" data-position=2>MONGODB<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/monitor/' class=" post_tag button button_translucent" data-position=2>MONITOR<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/monitoring/' class=" post_tag button button_translucent" data-position=5>MONITORING<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/munin/' class=" post_tag button button_translucent" data-position=2>MUNIN<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/netbeans/' class=" post_tag button button_translucent" data-position=3>NETBEANS<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/nikola/' class=" post_tag button button_translucent" data-position=1>NIKOLA<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/nose/' class=" post_tag button button_translucent" data-position=1>NOSE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/nosql/' class=" post_tag button button_translucent" data-position=3>NOSQL<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/octopress/' class=" post_tag button button_translucent" data-position=1>OCTOPRESS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/openspace/' class=" post_tag button button_translucent" data-position=1>OPENSPACE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/organization/' class=" post_tag button button_translucent" data-position=1>ORGANIZATION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/orm/' class=" post_tag button button_translucent" data-position=1>ORM<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/package/' class=" post_tag button button_translucent" data-position=1>PACKAGE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/patents/' class=" post_tag button button_translucent" data-position=1>PATENTS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/patterns/' class=" post_tag button button_translucent" data-position=7>PATTERNS<span class="button_tally">7</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/peewee/' class=" post_tag button button_translucent" data-position=1>PEEWEE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/permission/' class=" post_tag button button_translucent" data-position=1>PERMISSION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/persistence/' class=" post_tag button button_translucent" data-position=1>PERSISTENCE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/php/' class=" post_tag button button_translucent" data-position=3>PHP<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/php-testing/' class=" post_tag button button_translucent" data-position=1>PHP-TESTING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/plugins/' class=" post_tag button button_translucent" data-position=1>PLUGINS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/programming/' class=" post_tag button button_translucent" data-position=1>PROGRAMMING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/programs/' class=" post_tag button button_translucent" data-position=1>PROGRAMS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/puppet/' class=" post_tag button button_translucent" data-position=3>PUPPET<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/pydoubles/' class=" post_tag button button_translucent" data-position=1>PYDOUBLES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/python/' class=" post_tag button button_translucent" data-position=32>PYTHON<span class="button_tally">32</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/python-testing/' class=" post_tag button button_translucent" data-position=7>PYTHON-TESTING<span class="button_tally">7</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/rabbitmq/' class=" post_tag button button_translucent" data-position=1>RABBITMQ<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/resume/' class=" post_tag button button_translucent" data-position=1>RESUME<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/retrospective/' class=" post_tag button button_translucent" data-position=13>RETROSPECTIVE<span class="button_tally">13</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/rounding/' class=" post_tag button button_translucent" data-position=1>ROUNDING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ruby/' class=" post_tag button button_translucent" data-position=3>RUBY<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ruby-on-rails/' class=" post_tag button button_translucent" data-position=1>RUBY-ON-RAILS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/saltstack/' class=" post_tag button button_translucent" data-position=2>SALTSTACK<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/scrum/' class=" post_tag button button_translucent" data-position=1>SCRUM<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/security/' class=" post_tag button button_translucent" data-position=1>SECURITY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/selenium/' class=" post_tag button button_translucent" data-position=5>SELENIUM<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/shell/' class=" post_tag button button_translucent" data-position=1>SHELL<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/smtp/' class=" post_tag button button_translucent" data-position=1>SMTP<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/spam/' class=" post_tag button button_translucent" data-position=1>SPAM<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/sql/' class=" post_tag button button_translucent" data-position=5>SQL<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ssl/' class=" post_tag button button_translucent" data-position=1>SSL<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/static/' class=" post_tag button button_translucent" data-position=1>STATIC<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/statistic/' class=" post_tag button button_translucent" data-position=1>STATISTIC<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/subversion/' class=" post_tag button button_translucent" data-position=2>SUBVERSION<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/swing/' class=" post_tag button button_translucent" data-position=2>SWING<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/sysadmin/' class=" post_tag button button_translucent" data-position=2>SYSADMIN<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/tdd/' class=" post_tag button button_translucent" data-position=1>TDD<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/test/' class=" post_tag button button_translucent" data-position=2>TEST<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/testing/' class=" post_tag button button_translucent" data-position=13>TESTING<span class="button_tally">13</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/tests/' class=" post_tag button button_translucent" data-position=2>TESTS<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/tornado/' class=" post_tag button button_translucent" data-position=2>TORNADO<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/tuenti/' class=" post_tag button button_translucent" data-position=3>TUENTI<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/unittest/' class=" post_tag button button_translucent" data-position=1>UNITTEST<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/vagrant/' class=" post_tag button button_translucent" data-position=3>VAGRANT<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/virtualbox/' class=" post_tag button button_translucent" data-position=1>VIRTUALBOX<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/virtualenv/' class=" post_tag button button_translucent" data-position=1>VIRTUALENV<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/web/' class=" post_tag button button_translucent" data-position=1>WEB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/webdriver/' class=" post_tag button button_translucent" data-position=2>WEBDRIVER<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/webviews/' class=" post_tag button button_translucent" data-position=1>WEBVIEWS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/windows/' class=" post_tag button button_translucent" data-position=1>WINDOWS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/xml/' class=" post_tag button button_translucent" data-position=2>XML<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/yaml/' class=" post_tag button button_translucent" data-position=1>YAML<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/yeoman/' class=" post_tag button button_translucent" data-position=1>YEOMAN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/zsh/' class=" post_tag button button_translucent" data-position=1>ZSH<span class="button_tally">1</span>
+            </a>
+            
+            <div class="tags_sort"><span title="sort alphabetically">[A~Z]</span><span title="sort by count">[0~9]</span>
+            </div>
+            <span class="tags_hide"><svg class="icon">
+            <use xlink:href="#closeme"></use>
+          </svg></span>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </section>
+</aside>
+
 </div>
-</div>
+    </main><svg width="0" height="0" class="hidden">
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="facebook">
+    <path d="M437 0H75C33.648 0 0 33.648 0 75v362c0 41.352 33.648 75 75 75h151V331h-60v-90h60v-61c0-49.629 40.371-90 90-90h91v90h-91v61h91l-15 90h-76v181h121c41.352 0 75-33.648 75-75V75c0-41.352-33.648-75-75-75zm0 0"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.001 18.001" id="twitter">
+    <path d="M15.891 4.013c.808-.496 1.343-1.173 1.605-2.034a8.68 8.68 0 0 1-2.351.861c-.703-.756-1.593-1.14-2.66-1.14-1.043 0-1.924.366-2.643 1.078a3.56 3.56 0 0 0-1.076 2.605c0 .309.039.585.117.819-3.076-.105-5.622-1.381-7.628-3.837-.34.601-.51 1.213-.51 1.846 0 1.301.549 2.332 1.645 3.089-.625-.053-1.176-.211-1.645-.47 0 .929.273 1.705.82 2.388a3.623 3.623 0 0 0 2.115 1.291c-.312.08-.641.118-.979.118-.312 0-.533-.026-.664-.083.23.757.664 1.371 1.291 1.841a3.652 3.652 0 0 0 2.152.743C4.148 14.173 2.625 14.69.902 14.69c-.422 0-.721-.006-.902-.038 1.697 1.102 3.586 1.649 5.676 1.649 2.139 0 4.029-.542 5.674-1.626 1.645-1.078 2.859-2.408 3.639-3.974a10.77 10.77 0 0 0 1.172-4.892v-.468a7.788 7.788 0 0 0 1.84-1.921 8.142 8.142 0 0 1-2.11.593z"
+      ></path>
+  </symbol>
+  <symbol aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="mail">
+    <path  d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="calendar">
+    <path d="M452 40h-24V0h-40v40H124V0H84v40H60C26.916 40 0 66.916 0 100v352c0 33.084 26.916 60 60 60h392c33.084 0 60-26.916 60-60V100c0-33.084-26.916-60-60-60zm20 412c0 11.028-8.972 20-20 20H60c-11.028 0-20-8.972-20-20V188h432v264zm0-304H40v-48c0-11.028 8.972-20 20-20h24v40h40V80h264v40h40V80h24c11.028 0 20 8.972 20 20v48z"></path>
+    <path d="M76 230h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zM76 310h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zM76 390h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zm80-80h40v40h-40z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="github">
+    <path d="M255.968 5.329C114.624 5.329 0 120.401 0 262.353c0 113.536 73.344 209.856 175.104 243.872 12.8 2.368 17.472-5.568 17.472-12.384 0-6.112-.224-22.272-.352-43.712-71.2 15.52-86.24-34.464-86.24-34.464-11.616-29.696-28.416-37.6-28.416-37.6-23.264-15.936 1.728-15.616 1.728-15.616 25.696 1.824 39.2 26.496 39.2 26.496 22.848 39.264 59.936 27.936 74.528 21.344 2.304-16.608 8.928-27.936 16.256-34.368-56.832-6.496-116.608-28.544-116.608-127.008 0-28.064 9.984-51.008 26.368-68.992-2.656-6.496-11.424-32.64 2.496-68 0 0 21.504-6.912 70.4 26.336 20.416-5.696 42.304-8.544 64.096-8.64 21.728.128 43.648 2.944 64.096 8.672 48.864-33.248 70.336-26.336 70.336-26.336 13.952 35.392 5.184 61.504 2.56 68 16.416 17.984 26.304 40.928 26.304 68.992 0 98.72-59.84 120.448-116.864 126.816 9.184 7.936 17.376 23.616 17.376 47.584 0 34.368-.32 62.08-.32 70.496 0 6.88 4.608 14.88 17.6 12.352C438.72 472.145 512 375.857 512 262.353 512 120.401 397.376 5.329 255.968 5.329z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 212 212" id="gitlab">
+    <path d="M12.3 74.7h54L43.3 3c-1-3.6-6.4-3.6-7.6 0L12.3 74.8z" />
+    <path d="M12.3 74.7L.5 111c-1 3.2 0 6.8 3 8.8l101.6 74-92.5-119z"/>
+    <path d="M105 193.7l-38.6-119h-54l92.7 119z"/>
+    <path d="M105 193.7l38.7-119H66.4l38.7 119z"/>
+    <path d="M105 193.7l38.7-119H198l-93 119z"/>
+    <path d="M198 74.7l11.6 36.2c1 3 0 6.6-3 8.6l-101.5 74 93-119z"/>
+    <path d="M198 74.7h-54.3L167 3c1.2-3.6 6.4-3.6 7.6 0L198 74.8z"/> 
+  </symbol>
+  <symbol viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="rss">
+    <circle cx="3.429" cy="20.571" r="3.429"></circle>
+    <path d="M11.429 24h4.57C15.999 15.179 8.821 8.001 0 8v4.572c6.302.001 11.429 5.126 11.429 11.428z"></path>
+    <path d="M24 24C24 10.766 13.234 0 0 0v4.571c10.714 0 19.43 8.714 19.43 19.429z"></path>
+  </symbol>
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="linkedin">
+    <path d="M437 0H75C33.648 0 0 33.648 0 75v362c0 41.352 33.648 75 75 75h362c41.352 0 75-33.648 75-75V75c0-41.352-33.648-75-75-75zM181 406h-60V196h60zm0-240h-60v-60h60zm210 240h-60V286c0-16.54-13.46-30-30-30s-30 13.46-30 30v120h-60V196h60v11.309C286.719 202.422 296.93 196 316 196c40.691.043 75 36.547 75 79.688zm0 0"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612 612" id="arrow">
+    <path d="M604.501 440.509L325.398 134.956c-5.331-5.357-12.423-7.627-19.386-7.27-6.989-.357-14.056 1.913-19.387 7.27L7.499 440.509c-9.999 10.024-9.999 26.298 0 36.323s26.223 10.024 36.222 0l262.293-287.164L568.28 476.832c9.999 10.024 26.222 10.024 36.221 0 9.999-10.023 9.999-26.298 0-36.323z"></path>
+  </symbol>
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="carly">
+    <path d="M504.971 239.029L448 182.059V84c0-46.317-37.682-84-84-84h-44c-13.255 0-24 10.745-24 24s10.745 24 24 24h44c19.851 0 36 16.149 36 36v108c0 6.365 2.529 12.47 7.029 16.971L454.059 256l-47.029 47.029A24.002 24.002 0 0 0 400 320v108c0 19.851-16.149 36-36 36h-44c-13.255 0-24 10.745-24 24s10.745 24 24 24h44c46.318 0 84-37.683 84-84v-98.059l56.971-56.971c9.372-9.372 9.372-24.568 0-33.941zM112 192V84c0-19.851 16.149-36 36-36h44c13.255 0 24-10.745 24-24S205.255 0 192 0h-44c-46.318 0-84 37.683-84 84v98.059l-56.971 56.97c-9.373 9.373-9.373 24.568 0 33.941L64 329.941V428c0 46.317 37.682 84 84 84h44c13.255 0 24-10.745 24-24s-10.745-24-24-24h-44c-19.851 0-36-16.149-36-36V320c0-6.365-2.529-12.47-7.029-16.971L57.941 256l47.029-47.029A24.002 24.002 0 0 0 112 192z"></path>
+  </symbol>
+  <symbol viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="copy">
+    <path d="M23 2.75A2.75 2.75 0 0 0 20.25 0H8.75A2.75 2.75 0 0 0 6 2.75v13.5A2.75 2.75 0 0 0 8.75 19h11.5A2.75 2.75 0 0 0 23 16.25zM18.25 14.5h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5zm0-3h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5zm0-3h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5z"></path>
+    <path d="M8.75 20.5a4.255 4.255 0 0 1-4.25-4.25V2.75c0-.086.02-.166.025-.25H3.75A2.752 2.752 0 0 0 1 5.25v16A2.752 2.752 0 0 0 3.75 24h12a2.752 2.752 0 0 0 2.75-2.75v-.75z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.001 512.001" id="closeme">
+    <path d="M284.286 256.002L506.143 34.144c7.811-7.811 7.811-20.475 0-28.285-7.811-7.81-20.475-7.811-28.285 0L256 227.717 34.143 5.859c-7.811-7.811-20.475-7.811-28.285 0-7.81 7.811-7.811 20.475 0 28.285l221.857 221.857L5.858 477.859c-7.811 7.811-7.811 20.475 0 28.285a19.938 19.938 0 0 0 14.143 5.857 19.94 19.94 0 0 0 14.143-5.857L256 284.287l221.857 221.857c3.905 3.905 9.024 5.857 14.143 5.857s10.237-1.952 14.143-5.857c7.811-7.811 7.811-20.475 0-28.285L284.286 256.002z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="open-menu">
+    <path d="M492 236H20c-11.046 0-20 8.954-20 20s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20zm0-160H20C8.954 76 0 84.954 0 96s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20zm0 320H20c-11.046 0-20 8.954-20 20s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="instagram">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id=youtube>
+    <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="stackoverflow">
+    <path d="M21 27v-8h3v11H0V19h3v8h18z"></path><path d="M17.1.2L15 1.8l7.9 10.6 2.1-1.6L17.1.2zm3.7 14.7L10.6 6.4l1.7-2 10.2 8.5-1.7 2zM7.2 12.3l12 5.6 1.1-2.4-12-5.6-1.1 2.4zm-1.8 6.8l13.56 1.96.17-2.38-13.26-2.55-.47 2.97zM19 25H5v-3h14v3z"></path>
+  </symbol>
+</svg>
 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+<footer class="footer">
+  <div class="footer_inner wrap pale">
+    <img src='http://example.org/icons/apple-touch-icon.png' class="icon icon_2 transparent">
+    <p>Copyright<span class="year"></span> EL BLOG DE MAGMAX. Todos los Derechos Reservados</p><a class="to_top" href="#documentTop">
+  <svg class="icon">
+  <use xlink:href="#arrow"></use>
+</svg>
+</a>
 
+  </div>
+</footer>
 
-
-<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-9308241-3', 'auto');
-  ga('send', 'pageview');
-
-</script>
-</body>
+    <script type="text/javascript" src="http://example.org/js/bundle.min.d47d3d6894e66aa67f2514c171756283d3e8847b56f8f158bdd8430843da5f5af874c7a89a316c6743a845399bdb89649685154dc88b7e9bff1a155ca9e5108a.js" integrity="sha512-1H09aJTmaqZ/JRTBcXVig9PohHtW&#43;PFYvdhDCEPaX1r4dMeomjFsZ0OoRTmb24lkloUVTciLfpv/GhVcqeUQig==" crossorigin="anonymous"></script>
+    
+  </body>
 </html>

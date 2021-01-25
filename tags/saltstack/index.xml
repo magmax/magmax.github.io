@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>saltstack on El blog de MagMax</title>
+    <link>http://example.org/tags/saltstack/</link>
+    <description>Recent content in saltstack on El blog de MagMax</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 23 Mar 2014 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/tags/saltstack/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Gist: instalando Firefox con Salt</title>
+      <link>http://example.org/blog/gist-instalando-firefox-con-salt/</link>
+      <pubDate>Sun, 23 Mar 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/gist-instalando-firefox-con-salt/</guid>
+      <description>
+        
+          &lt;p&gt;En el artículo &lt;a href=&#34;http://example.org/blog/lamp-con-salt/&#34;&gt;LAMP con Salt&lt;/a&gt; vimos los pasos para utilizar &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;. En esta ocasión sólo mostraré cómo instalar &lt;a href=&#34;http://www.mozilla.org/es-ES/firefox/new/&#34;&gt;Firefox&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Hace tiempo que &lt;a href=&#34;http://www.mozilla.org/es-ES/firefox/new/&#34;&gt;Firefox&lt;/a&gt; dejó de estar en Debian. No voy a entrar en si me parece buena idea ni en los motivos, pero sí en el hecho de que no se incluye en mi distribución favorita. Se supone que iban a mantener &lt;a href=&#34;http://es.wikipedia.org/wiki/Iceweasel&#34;&gt;Iceweasel&lt;/a&gt;, pero la realidad es que [Iceweasel está en la versión 10.0 mientras que &lt;a href=&#34;http://www.mozilla.org/es-ES/firefox/new/&#34;&gt;Firefox&lt;/a&gt; en la 28.0.&lt;/p&gt;
+&lt;p&gt;Como estoy intentando manejar mis máquinas con &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;, necesito una manera fácil y repetible de instalarlo.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/saltstack.png&#34;
+         alt=&#34;SaltStack&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h1 id=&#34;obteniendo-el-md5&#34;&gt;Obteniendo el MD5&lt;/h1&gt;
+&lt;p&gt;Lo primero que necesitamos es la URL para descargarnos &lt;a href=&#34;http://www.mozilla.org/es-ES/firefox/new/&#34;&gt;Firefox&lt;/a&gt;. Dependerá, claro, de la versión a descargarnos. En este momento la última versión es la 28.0, por lo que la URL es:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;https://download-installer.cdn.mozilla.net/pub/firefox/releases/28.0/linux-x86_64/en-US/firefox-28.0.tar.bz2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Lo segundo es obtener el MD5 del binario a instalar. Para ello podemos ejecutar la siguiente orden:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;wget -O - https://download-installer.cdn.mozilla.net/pub/firefox/releases/28.0/linux-x86_64/en-US/firefox-28.0.tar.bz2 | md5sum
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Pues ya tenemos todo lo que necesitamos.&lt;/p&gt;
+&lt;h1 id=&#34;módulo-salt&#34;&gt;Módulo Salt&lt;/h1&gt;
+&lt;p&gt;Éste es el módulo Salt:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;firefox-bin&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;archive.extracted&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/srv/&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;    - &lt;span style=&#34;color:#f92672&#34;&gt;source&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://download-installer.cdn.mozilla.net/pub/firefox/releases/28.0/linux-x86_64/en-US/firefox-28.0.tar.bz2&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    - &lt;span style=&#34;color:#f92672&#34;&gt;source_hash&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;md5=8264fda486828d925aa094de902eb182&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;    - &lt;span style=&#34;color:#f92672&#34;&gt;archive_format&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;tar&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    - &lt;span style=&#34;color:#f92672&#34;&gt;tar_options&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;j&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    - &lt;span style=&#34;color:#f92672&#34;&gt;if_missing&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/srv/firefox/&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;/usr/local/bin/firefox&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;file.symlink&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;    - &lt;span style=&#34;color:#f92672&#34;&gt;target&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/srv/firefox/firefox&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Probablemente tengáis que cambiar la dirección y el MD5 de acuerdo a lo explicado más arriba.&lt;/p&gt;
+&lt;p&gt;Una explicación rápida: Se descarga el paquete y lo descomprime en /srv/firefox, creando también un enlace simbólico para que esté accesible en todo el sistema.&lt;/p&gt;
+&lt;p&gt;Este archivo se encuentra en &lt;strong&gt;salt/roots/salt/firefox/init.sls&lt;/strong&gt;, de acuerdo a lo explicado en el artículo &lt;a href=&#34;http://example.org/blog/lamp-con-salt/&#34;&gt;LAMP con Salt&lt;/a&gt;.&lt;/p&gt;
+&lt;h1 id=&#34;conclusión&#34;&gt;Conclusión&lt;/h1&gt;
+&lt;p&gt;Cada vez me gusta más &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;. Aunque cuesta un poco cogerle el tranquillo, la funcionalidad que le han añadido resulta muy acertada y potente.&lt;/p&gt;
+&lt;p&gt;Resulta un poco tedioso tener que calcular el MD5, pero es lógico que prime la seguridad. Aunque en mi caso no la necesito (sólo estoy gestionando una máquina), pero hay que pensar en sistemas más grandes.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>LAMP con Salt</title>
+      <link>http://example.org/blog/lamp-con-salt/</link>
+      <pubDate>Wed, 22 Jan 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/lamp-con-salt/</guid>
+      <description>
+        
+          &lt;p&gt;De la misma manera que hace unos meses conté cómo crear un entorno &lt;a href=&#34;http://es.wikipedia.org/wiki/LAMP&#34;&gt;LAMP&lt;/a&gt; con &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt;, en esta ocasión haremos lo mismo con &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;, también conocido como &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;SaltStack&lt;/a&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;crear una máquina virtual con &lt;a href=&#34;http://www.vagrantup.com/&#34; title=&#34;Web oficial de Vagrant&#34;&gt;Vagrant&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;configurar &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;instalar todo un entorno &lt;a href=&#34;http://es.wikipedia.org/wiki/LAMP&#34;&gt;LAMP&lt;/a&gt; (Linux + Apache + MySQL + Php)&lt;/li&gt;
+&lt;li&gt;descargarnos la web de un repositorio remoto &lt;a href=&#34;http://git-scm.com/&#34;&gt;Git&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;servir su contenido desde el servidor Apache.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Y, nuevamente, todo en unos 10 minutos.&lt;/p&gt;
+&lt;p&gt;Este artículo va por David P., que me habló de &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;, José Antonio, que me preguntó por twitter qué sistema es el mejor, y por &lt;a href=&#34;https://twitter.com/ricbartm&#34;&gt;@ricbartm&lt;/a&gt;, con quien estube hablando este viernes sobre &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt; ;)&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/saltstack.png&#34;
+         alt=&#34;SaltStack&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h1 id=&#34;jerarquía&#34;&gt;Jerarquía&lt;/h1&gt;
+&lt;p&gt;Para facilitaros la vida, ésta es la jerarquía de archivos que vamos a usar:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;.
+├── salt
+│   ├── minion
+│   └── roots
+│       └── salt
+│           ├── apache
+│           │   └── init.sls
+│           ├── logrotate
+│           │   └── init.sls
+│           ├── mysql
+│           │   ├── client.sls
+│           │   └── server.sls
+│           ├── ntp
+│           │   └── init.sls
+│           ├── php
+│           │   └── init.sls
+│           ├── php-example
+│           │   └── init.sls
+│           └── top.sls
+└── Vagrantfile
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Como vereis, voy a instalar también &lt;a href=&#34;http://en.wikipedia.org/wiki/Ntpd&#34; title=&#34;Demonio Network Time Protocol, para sincronizar nuestra máquina&#34;&gt;ntp&lt;/a&gt; y &lt;a href=&#34;http://linuxcommand.org/man_pages/logrotate8.html&#34; title=&#34;Man page de logrotate&#34;&gt;logrotate&lt;/a&gt;, con el fin de hacer un ejemplo exactamente igual que en el artículo de &lt;a href=&#34;http://example.org/blog/lamp-con-puppet/&#34;&gt;LAMP con Puppet&lt;/a&gt;.&lt;/p&gt;
+&lt;h1 id=&#34;lectura-rápida&#34;&gt;Lectura rápida&lt;/h1&gt;
+&lt;p&gt;Resulta que el artículo me ha salido más largo de lo esperado, así que he creado un &lt;a href=&#34;https://github.com/magmax/salt-example&#34;&gt;repositorio Git con los archivos de este artículo&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Sé que muchos de mis lectores agradecen artículos pequeños, así que podéis usar el repositorio y saltar directamente a la sección &amp;ldquo;Al lío&amp;rdquo;. Si queréis ver en detalle alguno de los archivos, podéis ir a su sección más adelante, si lo creéis necesario.&lt;/p&gt;
+&lt;h1 id=&#34;vagrant&#34;&gt;Vagrant&lt;/h1&gt;
+&lt;p&gt;Éste es el contenido del archivo &lt;strong&gt;Vagrantfile&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# -*- coding:utf-8; tab-width:4; mode:ruby -*-&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# vi: set ft=ruby :&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;Vagrant&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;configure(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2&amp;#34;&lt;/span&gt;) &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;config&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;  config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;define &lt;span style=&#34;color:#e6db74&#34;&gt;:saltexample&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;vm_config&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    vm_config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;box &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;wheeze64&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    vm_config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;box_url &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;http://puppet-vagrant-boxes.puppetlabs.com/debian-70rc1-x64-vbox4210.box&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    vm_config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;host_name &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;salt-example&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    vm_config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;synced_folder &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;salt/roots/salt&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/srv/salt&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;    vm_config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;synced_folder &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;salt/roots/pillar&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/srv/pillar&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;    vm_config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;network &lt;span style=&#34;color:#e6db74&#34;&gt;:forwarded_port&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;host&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10080&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;guest&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;80&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;    vm_config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;provision &lt;span style=&#34;color:#e6db74&#34;&gt;:salt&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;salt&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;      salt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;minion_config &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;salt/minion&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;      salt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;run_highstate &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Es similar a lo contado en la receta de &lt;a href=&#34;http://example.org/blog/lamp-con-puppet/&#34;&gt;LAMP con Puppet&lt;/a&gt;, y lo explicaré igual de rápido.&lt;/p&gt;
+&lt;p&gt;Estoy creando una máquina virtual llamada &lt;em&gt;&amp;ldquo;wheeze64&amp;rdquo;&lt;/em&gt; y que me la voy a descargar de esa URL. Si ya no es válida, podéis usar cualquier otra &lt;a href=&#34;http://www.vagrantbox.es/&#34; title=&#34;Lista de Boxes para Vagrant&#34;&gt;máquina virtual de la lista&lt;/a&gt;. Además la he bautizado como &lt;em&gt;&amp;ldquo;salt-example&amp;rdquo;&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Después me aseguro de que voy a poder acceder a mi servidor web, que estará escuchando en el puerto 80 de la VM, y que estará mapeado con el puerto 10080 de la máquina host.&lt;/p&gt;
+&lt;p&gt;En las dos últimas líneas configuro el provisionamiento mediante &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;.&lt;/p&gt;
+&lt;h1 id=&#34;salt&#34;&gt;Salt&lt;/h1&gt;
+&lt;p&gt;El resto de archivos pertenecen a &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;. Pero antes me gustaría aclarar algunos conceptos.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;minion&lt;/strong&gt; es cada una de las máquinas que están bajo el control de &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Los &lt;strong&gt;pillars&lt;/strong&gt; son configuraciones básicas, los hechos (&lt;strong&gt;facts&lt;/strong&gt; en terminología &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt;).&lt;/li&gt;
+&lt;li&gt;Los &lt;strong&gt;states&lt;/strong&gt; son los estados en los que debe quedar la máquina.&lt;/li&gt;
+&lt;li&gt;Un archivo &lt;strong&gt;sls&lt;/strong&gt; es un &lt;em&gt;Salt State&lt;/em&gt;, y equivale vagamente a un módulo de &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.yaml.org/&#34;&gt;Yaml&lt;/a&gt; es un lenguaje de serialización legible por humanos. Os invito a profundizar un poco más en él si os decidís por &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://jinja.pocoo.org/&#34;&gt;jinja2&lt;/a&gt; es un lenguaje de plantillas sencillo y potente, muy típico de entornos Python. También deberíais investigarlo.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Se pueden contar muchas más cosas, pero dejémoslo aquí. Es suficiente para una primera toma de contacto.&lt;/p&gt;
+&lt;p&gt;Ahora describiré cada uno de los archivos. Son pequeños y sencillos. Estos archivos son plantillas &lt;a href=&#34;http://jinja.pocoo.org/&#34;&gt;jinja2&lt;/a&gt; que generarán un archivo &lt;a href=&#34;http://www.yaml.org/&#34;&gt;Yaml&lt;/a&gt;, que es la propia configuración. Parece complicado, pero veremos que no lo es tanto.&lt;/p&gt;
+&lt;p&gt;El primer archivo a tener en cuenta es &lt;strong&gt;salt/minion&lt;/strong&gt;, donde está la configuración genérica:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;file_client: local
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Este archivo contiene configuración básica. En este caso se indica que la configuración es local (no hay estructura cliente-servidor).&lt;/p&gt;
+&lt;p&gt;El siguiente archivo importante es &lt;strong&gt;salt/roots/salt/top.sls&lt;/strong&gt;, que describe cada uno de los &lt;strong&gt;minion&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;base&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;salt-example&amp;#39;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; ntp
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; mysql&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;client
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; mysql&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;server
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; apache
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; php
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; php&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;example
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;9&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; logrotate
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Aquí se han indicado cada uno de los módulos que se van a instalar en la máquina &lt;strong&gt;salt-example&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;logrotate&#34;&gt;logrotate&lt;/h2&gt;
+&lt;p&gt;comencemos por uno de los módulos más sencillos, que se encuentra en &lt;strong&gt;salt/roots/salt/logrotate/init.sls&lt;/strong&gt;. Lo primero, aclarar que el archivo &lt;strong&gt;init.sls&lt;/strong&gt; es el que se buscará por defecto dentro del módulo. Luego veremos cómo utilizar otros. Éste es el contenido:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;logrotate&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; installed
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Realmente estamos seteando propiedades, tales como &lt;code&gt;logrotate.pkg.installed = True&lt;/code&gt;. Estas simples instrucciones crean un estado: el paquete &lt;code&gt;logrotate&lt;/code&gt; (cogido del nombre del módulo) debe estar instalado.&lt;/p&gt;
+&lt;h2 id=&#34;ntp&#34;&gt;ntp&lt;/h2&gt;
+&lt;p&gt;Vamos con algo un poco más difícil, ya que contiene un servicio y el paquete debian no se llama igual que el módulo. El archivo es &lt;strong&gt;salt/roots/salt/ntp/init.sls&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;ntp&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; installed
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; name: ntpdate
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;service&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; running
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;watch&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;: ntpdate
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;En este caso, el estado creado es: el paquete &lt;code&gt;ntp&lt;/code&gt; cuyo paquete debian se llama &lt;code&gt;ntpdate&lt;/code&gt; debe estar instalado. Además, hay un servicio que debe estar &lt;code&gt;running&lt;/code&gt; y se debe reiniciar cada vez que cambie el paquete &lt;code&gt;ntpdate&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Veremos que este mismo esquema se repite para cada uno de nuestros módulos.&lt;/p&gt;
+&lt;h2 id=&#34;php&#34;&gt;php&lt;/h2&gt;
+&lt;p&gt;Archivo: &lt;strong&gt;salt/roots/salt/php/init.sls&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;php5&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; installed
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;php5&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;mysql&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; installed
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;/etc/&lt;/span&gt;php5&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;apache2&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;php&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;ini:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;  file&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;replace:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;pattern&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;;\s*extension=msql.so&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;repl&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;extension=msql.so&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;  require:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;: php5&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;mysql
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;La primera parte ya la hemos visto: se asegura de que tanto los paquetes &lt;code&gt;php5&lt;/code&gt; como &lt;code&gt;php5-mysql&lt;/code&gt; estén instalados. El último apartado lo que hace es asegurarse de que esté habilitada la extensión de mysql en apache. Para ello reemplaza la extensión comentada por la no comentada. Es un poco &lt;em&gt;tricky&lt;/em&gt;, pero funcional.&lt;/p&gt;
+&lt;h2 id=&#34;apache&#34;&gt;apache&lt;/h2&gt;
+&lt;p&gt;Vamos con el archivo &lt;strong&gt;salt/roots/salt/apache/init.sls&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;apache&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; name: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;apache2&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; installed
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;service&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; name: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;apache2&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; running
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;watch&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;: apache2
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;libapache2&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;mod&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;php5&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; installed
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;  require:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;: apache2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Que no contiene nada que no hayamos visto ya.&lt;/p&gt;
+&lt;h2 id=&#34;mysql&#34;&gt;mysql&lt;/h2&gt;
+&lt;p&gt;He dividido mysql en dos partes: una que instalará el cliente y otra el servidor. Por eso el módulo no tiene el archivo &lt;strong&gt;init.sls&lt;/strong&gt;, sino dos:&lt;/p&gt;
+&lt;h3 id=&#34;mysqlclient&#34;&gt;mysql.client&lt;/h3&gt;
+&lt;p&gt;El archivo &lt;strong&gt;salt/roots/salt/mysql/client.sls&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;mysql&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;client&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; installed
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Se asegura de que el cliente mysql esté instalado.&lt;/p&gt;
+&lt;h3 id=&#34;mysqlserver&#34;&gt;mysql.server&lt;/h3&gt;
+&lt;p&gt;El archivo &lt;strong&gt;salt/roots/salt/mysql/server.sls&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;mysql&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;server&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; installed
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;pkgs&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; mysql&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;server
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;service&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; running
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; name: mysql
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;enable&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; require:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;: mysql&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;server
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Taken from https://github.com/saltstack/salt/issues/5918&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;set&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;mysql&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;root&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;password&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;  cmd&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;run:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; name: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;echo &amp;#34;update user set password=PASSWORD(&amp;#39;&amp;#39;secret&amp;#39;&amp;#39;) where User=&amp;#39;&amp;#39;root&amp;#39;&amp;#39;;flush privileges;&amp;#34; | /usr/bin/env HOME=/ mysql -uroot mysql&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;onlyif&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;echo | /usr/bin/env HOME=/ mysql -u root&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; require:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;service&lt;/span&gt;: mysql&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;server
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;: mysql&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;client
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Es, quizá, el módulo más complejo de todos. La primera parte ya la hemos visto. La sección &lt;code&gt;set-mysql-root-password&lt;/code&gt; lo que hace es establecer la password de root del servidor de mysql. Es muy &lt;em&gt;tricky&lt;/em&gt;, pero no he encontrado nada más sencillo.&lt;/p&gt;
+&lt;h2 id=&#34;php-example&#34;&gt;php-example&lt;/h2&gt;
+&lt;p&gt;Finalmente, descargamos nuestra página web. Es la misma que usé en el artículo &lt;a href=&#34;http://example.org/blog/lamp-con-puppet/&#34;&gt;LAMP con Puppet&lt;/a&gt; (archivo &lt;strong&gt;salt/roots/salt/mysql/client.sls&lt;/strong&gt;):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;https&lt;/span&gt;:&lt;span style=&#34;color:#e6db74&#34;&gt;//&lt;/span&gt;github&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;com&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;magmax&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;small_php_example&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;git:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;  git&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;latest:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;target&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;/var/&lt;/span&gt;www&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;example
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Debo decir que esto es lo que me parece más impresionante de todo el artículo: la sencillez para trabajar con &lt;a href=&#34;http://git-scm.com/&#34;&gt;Git&lt;/a&gt;. Estas tres líneas se descargan el repositorio y comprueban que esté actualizado. Así, sin más.&lt;/p&gt;
+&lt;h1 id=&#34;al-lío&#34;&gt;Al lío&lt;/h1&gt;
+&lt;p&gt;Bien, ahora es cuando lanzamos todo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ vagrant up example
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y de nuevo podéis conectaros a &lt;a href=&#34;http://localhost:10080/example&#34;&gt;http://localhost:10080/example&lt;/a&gt;, donde os está esperando la lista de tablas de la base de datos &lt;em&gt;mysql&lt;/em&gt;, servida con PHP.&lt;/p&gt;
+&lt;h2 id=&#34;bug-bug&#34;&gt;¡Bug! ¡Bug!&lt;/h2&gt;
+&lt;p&gt;Supongo que lo corregirán, pero debo advertiros de un bug actual: El provisionamiento &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt; en &lt;a href=&#34;http://www.vagrantup.com/&#34; title=&#34;Web oficial de Vagrant&#34;&gt;Vagrant&lt;/a&gt; está un poco verde, y no os mostrará el resultado, ni cuando sea un error. Esto me trajo de cabeza bastante tiempo. La solución es provisionar desde la propia máquina:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;salt-example# salt-call --local state.highstate -l info
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;conclusiones&#34;&gt;Conclusiones&lt;/h1&gt;
+&lt;p&gt;No puedo evitar comparar &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt; con &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt;. Al fin y al cabo he estado usando &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt; desde hace más de dos años. La evolución que he visto en &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt; ha sido desde módulos totalmente específicos de nuestra empresa a módulos genéricos que se pueden cargar con &lt;a href=&#34;https://github.com/rodjek/librarian-puppet&#34; title=&#34;Proyecto Librarian-Puppet&#34;&gt;librarian-puppet&lt;/a&gt;, posibilitando configurar &lt;a href=&#34;https://projects.puppetlabs.com/projects/hiera&#34;&gt;hiera&lt;/a&gt; y, así, configurarlo todo mediante &lt;a href=&#34;http://www.yaml.org/&#34;&gt;Yaml&lt;/a&gt; (¿os suena?).&lt;/p&gt;
+&lt;p&gt;Hay un montón de módulos para &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt;. De hecho, hay proyectos para crear módulos para &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt;, como &lt;a href=&#34;https://github.com/example42&#34;&gt;example42&lt;/a&gt;. En &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt; hay muchísimos menos, pero la verdad es que no le hacen falta. Se han centrado en lo importante, aunque sí hecho de menos algunas cosas, como configurar &lt;strong&gt;vhosts&lt;/strong&gt; de &lt;a href=&#34;http://httpd.apache.org/&#34; title=&#34;Apache HTTP server&#34;&gt;Apache&lt;/a&gt; directamente por configuración, en lugar de tener que proporcionar archivos. Pero supongo que estos detalles ya se irán completando.&lt;/p&gt;
+&lt;p&gt;También hay que ver otra diferencia: &lt;a href=&#34;https://www.ruby-lang.org&#34;&gt;Ruby&lt;/a&gt; vs &lt;a href=&#34;http://python.org&#34;&gt;Python&lt;/a&gt;. Como bien saben todos los lectores del blog, yo soy más de &lt;a href=&#34;http://python.org&#34;&gt;Python&lt;/a&gt;. De todas maneras, en &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt; se utiliza un DSL bastante interesante, y se ofrece la posibilidad de crear los módulos en &lt;a href=&#34;https://www.ruby-lang.org&#34;&gt;Ruby&lt;/a&gt;. En &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;, que yo sepa, se crean en &lt;a href=&#34;http://python.org&#34;&gt;Python&lt;/a&gt;. Pero me gustaría que juzgáseis vosotros mismos, comparando dos módulos similares: el &lt;a href=&#34;https://github.com/example42/puppet-git/tree/master/manifests&#34;&gt;módulo de Git para Puppet&lt;/a&gt; y el &lt;a href=&#34;https://github.com/saltstack/salt/blob/develop/salt/modules/git.py&#34;&gt;módulo de Git para Salt&lt;/a&gt;. He elegido éste porque es bastante similar.&lt;/p&gt;
+&lt;p&gt;Hay otra diferencia más. Quizá la más importante.&lt;/p&gt;
+&lt;p&gt;En &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt; construyeron un sistema para comunicar máquinas y ejecutar comandos simultáneamente en todas ellas. Una especie de &lt;strong&gt;shell&lt;/strong&gt; múltiple remota. Sobre esta arquitectura construyeron el equivalente a &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt; que permite hacer lo que se cuenta en este artículo. Esto permite algo que en &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt; han tenido que implementar aparte, que sería &lt;a href=&#34;http://puppetlabs.com/mcollective&#34;&gt;MCollective&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Siento no poder comparar cosas como la velocidad, eficiencia, memoria, seguridad, &amp;hellip; En mi opinión no hay una gran diferencia en nada de todo esto, pero no tengo datos. Sinceramente creo que no es lo más importante, ya que ambos necesitarán realizar muchas operaciones de disco para comprobar el estado actual de la máquina, y probablemente esta operación sea similar y se lleve la mayor parte del tiempo y eficiencia.&lt;/p&gt;
+&lt;p&gt;Personalmente he decidido usarlo para mis máquinas en casa. La decisión viene por dos razones: porque en la empresa ya estoy usando &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt; y así aprendo algo nuevo, y porque es &lt;a href=&#34;http://python.org&#34;&gt;Python&lt;/a&gt;. Espero no equivocarme.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

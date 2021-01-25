@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>curses on El blog de MagMax</title>
+    <link>http://example.org/tags/curses/</link>
+    <description>Recent content in curses on El blog de MagMax</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 12 May 2012 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/tags/curses/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python curses</title>
+      <link>http://example.org/blog/python-curses/</link>
+      <pubDate>Sat, 12 May 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/python-curses/</guid>
+      <description>
+        
+          &lt;p&gt;Python no deja de sorprenderme cada día. Y es increíble la cantidad de cosas que trae &amp;ldquo;de serie&amp;rdquo;. A veces me da la sensación de que le saco muy poco provecho.&lt;/p&gt;
+&lt;p&gt;Hace relativamente poco que me puse a pensar: Si casi todo lo que hago lo hago en consola, ¿por qué no hacerlo más bonito con &lt;em&gt;curses&lt;/em&gt;? Pero no me decidía. El otro día decidí ponerme a ello, y he terminado con un sabor agridulce. Por un lado, he descubierto que se pueden hacer muchas cosas. Por otro, casi todas hay que hacerlas a mano.&lt;/p&gt;
+&lt;p&gt;Pero para que decidas por ti mismo, aquí tienes unos pasos básicos.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/python.png&#34;
+         alt=&#34;Python&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;hello-world&#34;&gt;Hello world&lt;/h2&gt;
+&lt;p&gt;Una de las pocas cosas que han añadido en Python frente a la librería de C es un inicializador. Esto nos evita tener que estar inicializando el modo &lt;em&gt;curses&lt;/em&gt;, deshabilitando la salida estándar, controlando errores para restaurar el sistema,&amp;hellip; Ese tipo de tareas repetitivas. Así, usando este inicializador automático, el típico &amp;ldquo;hello world&amp;rdquo; queda así:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; curses
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;(stdscr):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;    stdscr&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;addstr(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;hello world&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;    stdscr&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;getch()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8&lt;/span&gt;    curses&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;wrapper(main)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;No tiene mayor misterio: &lt;em&gt;curses.wrapper&lt;/em&gt; se encarga de inicializar todo lo inicializable y de controlar la salida del programa. Eso nos permite llamar a una función (&lt;em&gt;main&lt;/em&gt;) que recibe como argumento la pantalla (&lt;em&gt;stdscr&lt;/em&gt; por convención).&lt;/p&gt;
+&lt;p&gt;Podemos añadir texto en la pantalla con &lt;em&gt;addstr&lt;/em&gt; y esperamos a que se pulse una tecla con &lt;em&gt;getch&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;No está mal, ¿no? Pero quiero un poco más. Quiero poder tratar bloques como un todo. Quiero &lt;em&gt;moverlos&lt;/em&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;ventanas&#34;&gt;Ventanas&lt;/h2&gt;
+&lt;p&gt;Vamos a realizar lo mismo pero mediante ventanas:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; curses
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;(stdscr):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    win &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; curses&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;newwin(&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;20&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;20&lt;/span&gt;);
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;addstr(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;hello world&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;getch()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    curses&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;wrapper(main)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Aquí hay algo que contar, que son los parámetros de &lt;em&gt;newwin&lt;/em&gt;: &lt;em&gt;filas&lt;/em&gt;, &lt;em&gt;columnas&lt;/em&gt;, &lt;em&gt;posición Y&lt;/em&gt;, &lt;em&gt;posición X&lt;/em&gt;. Resulta que a los autores de ncurses les pareció más lógico usar las coordenadas &lt;em&gt;(Y, X)&lt;/em&gt; en lugar de las típicas (X, Y), y al hacer el wrapper para python no les pareció conveniente cambiarlo. Tenedlo en cuenta en todas vuestras coordenadas.&lt;/p&gt;
+&lt;p&gt;Vamos a darle movimiento al tema:&lt;/p&gt;
+&lt;h2 id=&#34;movimiento&#34;&gt;Movimiento&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; curses
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;(stdscr):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    win &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; curses&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;newwin(&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;20&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;20&lt;/span&gt;);
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;addstr(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;hello world&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;getch()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;mvwin(&lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;30&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    stdscr&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;refresh()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;getch()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;    curses&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;wrapper(main)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Aquí sólo tengo que destacar que hay que hacer a mano el repintado de la pantalla. El modo &lt;em&gt;curses&lt;/em&gt; está pensado para pantallas súper lentas. Por eso trata de optimizar recursos al máximo y espera que sea el programador quien decida que ha dejado de pintar y tiene que refrescar la pantalla.&lt;/p&gt;
+&lt;p&gt;Lo que pasa es que nuestras ventanas son feas. Me gustaría que tuvieran un borde, un título, esas cosas.&lt;/p&gt;
+&lt;h2 id=&#34;bordes&#34;&gt;Bordes&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; curses
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;(stdscr):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    win &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; curses&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;newwin(&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;20&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;20&lt;/span&gt;);
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;box()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;move(&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;addstr(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;title&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;move(&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;addstr(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;hello world&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;getch()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;mvwin(&lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;30&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;    stdscr&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;refresh()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;getch()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;    curses&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;wrapper(main)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Como ya dije: se hace todo a mano. Pintamos el borde, movemos el cursor un cuadro a la derecha (para respetar la esquina), escribimos el título, bajamos a la línea siguiente, y continuamos escribiendo.&lt;/p&gt;
+&lt;p&gt;Vaya mierda de código. Vamos a ponerlo bonito:&lt;/p&gt;
+&lt;h3 id=&#34;modularizando&#34;&gt;Modularizando&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; curses
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;create_window&lt;/span&gt;(rows, cols, y, x, title):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;    win &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; curses&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;newwin(rows, cols, y, x);
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;box()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;move(&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;addstr(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;title&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;move(&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; win
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;(stdscr):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;    win &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; create_window(&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;20&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;title&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;addstr(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;hello world&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;getch()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;mvwin(&lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;30&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;    stdscr&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;refresh()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;getch()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;25&lt;/span&gt;    curses&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;wrapper(main)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y de esta manera tenemos gráficos en consola :D&lt;/p&gt;
+&lt;p&gt;Vamos a utilizarlo en algo real, pidiendo algo:&lt;/p&gt;
+&lt;h2 id=&#34;un-ejemplo&#34;&gt;Un ejemplo&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; curses
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;create_window&lt;/span&gt;(rows, cols, y, x, title):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;    win &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; curses&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;newwin(rows, cols, y, x)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;box()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;move(&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;addstr(title)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;move(&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; win
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;create_centered_window&lt;/span&gt;(rows, cols, title):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;    y &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (curses&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;LINES &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; rows) &lt;span style=&#34;color:#f92672&#34;&gt;//&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;    x &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (curses&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;COLS &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; cols) &lt;span style=&#34;color:#f92672&#34;&gt;//&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; create_window(rows, cols, y, x, title)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;get_name&lt;/span&gt;(win):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;    curses&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;echo()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;    result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;getstr()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;    curses&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;noecho()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; result
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;(stdscr):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24&lt;/span&gt;    win &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; create_centered_window(&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;40&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Introduzca su nombre&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;25&lt;/span&gt;    name &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; get_name(win)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;26&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;erase()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;27&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;28&lt;/span&gt;    win &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; create_centered_window(&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;20&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Saludo&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;29&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;addstr(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;hello, &amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; name)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;30&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;31&lt;/span&gt;    stdscr&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;refresh()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;32&lt;/span&gt;    win&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;getch()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;33&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;34&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;35&lt;/span&gt;    curses&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;wrapper(main)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Aquí hay mogollón de nuevos conceptos que, si has conseguido llegar hasta aquí, no te costará entender :-P&lt;/p&gt;
+&lt;p&gt;De todas maneras, si tienes preguntas, pon un comentario.&lt;/p&gt;
+&lt;h2 id=&#34;tío-vaya-montón-de-mierda&#34;&gt;Tío, vaya montón de mierda.&lt;/h2&gt;
+&lt;p&gt;Pues sí. Hay que decirlo TODO. No hay nada automático.&lt;/p&gt;
+&lt;p&gt;Hay cosas que no hemos visto: gestión de colores, paneles, scroll,&amp;hellip; Pero creo mi intención era adquirir un poco de culturilla general con esta librería y creo que está conseguido con creces.&lt;/p&gt;
+&lt;p&gt;Como véis, &lt;em&gt;curses&lt;/em&gt; no está pensada para hacer aplicaciones, sino más bien scripts pequeños. Aún así, hay quien se ha currado una librería de &lt;em&gt;widgets&lt;/em&gt;, con calendarios y esas cosas tan molonas, que se llama &lt;a href=&#34;http://pycdk.sourceforge.net/&#34;&gt;pycdk&lt;/a&gt;  y que no es más que un wrapper sobre la &lt;a href=&#34;http://invisible-island.net/cdk/cdk.html&#34;&gt;CDK&lt;/a&gt;  o bien la &lt;a href=&#34;http://excess.org/urwid/&#34;&gt;URWID&lt;/a&gt;, bastante más completa, y a la que podéis tener acceso desde python gracias a &lt;a href=&#34;http://bpython-interpreter.org/&#34;&gt;bpython-urwid&lt;/a&gt; . No dejéis de probar &lt;a href=&#34;http://bpython-interpreter.org/&#34;&gt;bpython&lt;/a&gt;. Es paquete debian y mola mucho.&lt;/p&gt;
+&lt;p&gt;El problema de este tipo de librerías es que perdemos algo importante: funcionar sólo con la API estándar de python.&lt;/p&gt;
+&lt;p&gt;De todas maneras, la API estándar tiene algunos &lt;em&gt;widgets&lt;/em&gt;, como son el &lt;a href=&#34;http://docs.python.org/library/curses.html#module-curses.textpad&#34;&gt;TextPad&lt;/a&gt;  (un TextBox que soporta combinaciones de teclas de Emacs) y &lt;a href=&#34;http://docs.python.org/library/curses.panel.html#module-curses.panel&#34;&gt;Panels&lt;/a&gt;, que son ventanas con profundidad.&lt;/p&gt;
+&lt;p&gt;Si queréis saber más, os remito al &lt;a href=&#34;http://docs.python.org/howto/curses.html&#34;&gt;tutorial de Python curses&lt;/a&gt;  o al propio &lt;a href=&#34;http://docs.python.org/library/curses.html&#34;&gt;manual de Python curses&lt;/a&gt;.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

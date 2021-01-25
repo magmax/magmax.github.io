@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>docker on El blog de MagMax</title>
+    <link>http://example.org/tags/docker/</link>
+    <description>Recent content in docker on El blog de MagMax</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 04 Apr 2016 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Limpiando Dockers antiguos</title>
+      <link>http://example.org/blog/limpiando-dockers-antiguos/</link>
+      <pubDate>Mon, 04 Apr 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/limpiando-dockers-antiguos/</guid>
+      <description>
+        
+          &lt;p&gt;En este mini-post voy a explicar cómo eliminar la basura generada por &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt;. Habitualmente esto no se traducirá en liberación de espacio, pero hay veces que sí.&lt;/p&gt;
+&lt;p&gt;Veréis cómo es más fácil de lo que parece :)&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/containers.jpg&#34;
+         alt=&#34;Containers&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;cómo-se-genera-la-basura&#34;&gt;Cómo se genera la basura&lt;/h2&gt;
+&lt;p&gt;Hay dos tipos de cosas a borrar en &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Por un lado, están &lt;strong&gt;los containers&lt;/strong&gt; que ya no están en ejecución. Estos se crean con cada &lt;code&gt;docker run&lt;/code&gt; que ejecutemos, y puede haber varios por imagen. Por suerte no consumen recursos y apenas espacio.&lt;/li&gt;
+&lt;li&gt;Por otro lado, están &lt;strong&gt;las imágenes&lt;/strong&gt;. Éstas suelen estar basadas en otras. Si reutilizamos convenientemente, el espacio liberado será poco, pero esto no suele ser lo habitual. Si hay una imagen grande que no se está utilizando, puede llegar a ocupar 1 Gb o incluso más.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;cómo-limpiar&#34;&gt;Cómo limpiar&lt;/h2&gt;
+&lt;p&gt;La manera más sencilla que he encontrado para &lt;strong&gt;limpiar los containers&lt;/strong&gt; es::&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;docker rm &lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;docker ps -a | awk &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{print $1}&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;NOTA&lt;/strong&gt;: Este paso es &lt;strong&gt;peligroso&lt;/strong&gt;, ya que eliminará todos los containers que no estén en estado &amp;ldquo;started&amp;rdquo;. Si no queréis perder algo, aseguráos de que están en ese estado con &lt;code&gt;docker ps&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;No es bonito, ya que genera errores, pero funciona a las mil maravillas.&lt;/p&gt;
+&lt;p&gt;De la misma forma podemos eliminar imágenes:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;docker rmi &lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;docker images | awk &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{print $1&amp;#34;:&amp;#34;$2}&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Este paso es menos peligroso, ya que habitualmente podremos descargarnos de nuevo las imágenes. De todas maneras, vuelve a dar error en todas las que se están usando.&lt;/p&gt;
+&lt;h3 id=&#34;borrándolo-todo&#34;&gt;Borrándolo todo&lt;/h3&gt;
+&lt;p&gt;Un container que no está en ejecución bloquea el borrado de la imagen que utiliza, por lo que el orden correcto de borrado sería:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;docker rm &lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;docker ps -a | awk &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{print $1}&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;docker rmi &lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;docker images | awk &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{print $1&amp;#34;:&amp;#34;$2}&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;update&lt;/strong&gt;: otra opción más sencilla que funciona en las últimas versiones:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;docker system prune -a --volumes
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;conclusión&#34;&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;Usadlo con cuidado, ya que podríais borrar algo que necesitáis. De todas maneras, en máquinas de pruebas puede venir estupendamente :)&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>LAMP con Docker</title>
+      <link>http://example.org/blog/lamp-con-docker/</link>
+      <pubDate>Mon, 28 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/lamp-con-docker/</guid>
+      <description>
+        
+          &lt;p&gt;Hace algún tiempo que escribí los artículos &lt;a href=&#34;http://example.org/blog/lamp-con-puppet/&#34;&gt;LAMP con Puppet&lt;/a&gt; y &lt;a href=&#34;http://example.org/blog/lamp-con-salt/&#34;&gt;LAMP con Salt&lt;/a&gt;.
+Desde entonces ha llovido mucho y&amp;hellip; bueno, creo que los sistemas tipo &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt; y
+&lt;a href=&#34;http://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt; están casi obsoletos, gracias a nuevas tecnologías como &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Pero antes de criticarme por esa afirmación, ruego al lector que se lea este artículo y luego decida por sí mismo.&lt;/p&gt;
+&lt;p&gt;Igual que en los otros ejercicios, montaremos una arquitectura LAMP (Linux + Apache + MySQL + PHP) que tan de moda ha estado durante mucho tiempo.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/containers.jpg&#34;
+         alt=&#34;Containers&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;código-a-ejecutar&#34;&gt;Código a ejecutar&lt;/h2&gt;
+&lt;p&gt;Como las cosas evolucionan, PHP también lo ha hecho y el programita de ejemplo que usé ya no funciona en PHP 5.6. Así que me he visto obligado a modificar ligeramente el programa de ejemplo.&lt;/p&gt;
+&lt;p&gt;Podéis descargarlo de GitHub así:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ git clone https://github.com/magmax/small_php_example.git -b mysqli
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Veréis que en el directorio &lt;code&gt;small_php_example&lt;/code&gt; tenéis un programa muy sencillito que muestra las tablas disponibles en la base de datos.&lt;/p&gt;
+&lt;h2 id=&#34;docker-para-php-con-mysql&#34;&gt;Docker para PHP con MySQL&lt;/h2&gt;
+&lt;p&gt;Otro problema es que no he encontrado ninguna imagen Docker de PHP con soporte
+para MySQL, pero es muy sencillo construir una, así que vamos a ello. Aquí
+podría ayudar el &lt;a href=&#34;http://example.org/blog/lamp-con-salt/&#34;&gt;artículo que escribí sobre Docker&lt;/a&gt;, que podéis usar para ampliar conceptos.&lt;/p&gt;
+&lt;p&gt;Necesitamos crear el fichero &lt;code&gt;php.dockerfile&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-dockerfile&#34; data-lang=&#34;dockerfile&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;FROM&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; php:5.6-apache&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;RUN&lt;/span&gt;  docker-php-ext-install mysqli&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y ejecutar la siguiente orden:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;docker build -t php-mysql -f php.dockerfile .
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y tendremos disponible la imagen &lt;code&gt;php-mysql&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Con esto tendremos ya todas las piezas. Ahora vamos a unirlas.&lt;/p&gt;
+&lt;h2 id=&#34;docker-compose&#34;&gt;Docker Compose&lt;/h2&gt;
+&lt;p&gt;Existe una aplicación (Python :D) que permite gestionar grupos de Dockers
+llamada &lt;a href=&#34;https://docs.docker.com/compose/&#34;&gt;docker-compose&lt;/a&gt;. Se puede instalar en un &lt;a href=&#34;https://virtualenv.pypa.io/en/latest/&#34;&gt;virtualenv&lt;/a&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ virtualenv venv
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;$ . venv/bin/activate
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;venv&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; $ pip install docker-compose
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;A continuación necesitamos un archivo de definición. Éste es suficiente:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-dockerfile&#34; data-lang=&#34;dockerfile&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;version: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;2&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;services:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;  db:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    image: mysql:5.7.11&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    environment:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - MYSQL_ROOT_PASSWORD&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;foo&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;  app:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    image: php-mysql&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    ports:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - 80:80&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    volumes:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - ./small_php_example:/var/www/html/&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    depends_on:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - db&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    links:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - db&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    environment:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - MYSQL_SERVER&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;db&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - MYSQL_PASSWORD&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;foo&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - MYSQL_USER&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;root&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Poco que explicar&amp;hellip; Tenemos 2 servicios: la base de datos y la aplicación. El primero usa una imagen con MySQL (definiendo la contraseña) y el segundo un Apache con PHP que monta nuestra aplicación en &lt;code&gt;/var/www/html&lt;/code&gt;, expone el puerto del Docker 80 con el local 80 y enlaza con el primer Docker; bueno, y define algunas variables de entorno para poder conectar.&lt;/p&gt;
+&lt;p&gt;Lo único digno de explicar aquí es que al linkar la máquina se añade al &lt;code&gt;/etc/hosts&lt;/code&gt;, por lo que tenemos acceso a la máquina usando su nombre: &lt;code&gt;db&lt;/code&gt;. Por eso el valor de la variable &lt;code&gt;MYSQL_SERVER&lt;/code&gt; es, simplemente, &lt;code&gt;db&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Dicho de otro modo: vamos a crear dos Dockers que trabajarán juntos. Y todo con esta orden:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;venv&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; $ docker-compose up
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Tardará un poquito, pero tendremos nuestra aplicación corriendo en localhost:80&lt;/p&gt;
+&lt;h2 id=&#34;conclusiones&#34;&gt;Conclusiones&lt;/h2&gt;
+&lt;p&gt;Ventajas sobre &lt;a href=&#34;http://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt;, &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt; o &lt;a href=&#34;https://www.chef.io/&#34;&gt;Chef&lt;/a&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;es más sencillo.&lt;/li&gt;
+&lt;li&gt;más ortogonal: se crea el Docker con órdenes típicas del sistema elegido y se usa.&lt;/li&gt;
+&lt;li&gt;permite mezclar distribuciones fácilmente.&lt;/li&gt;
+&lt;li&gt;Se pueden lanzar varias copias de un mismo Docker sobre la misma máquina.&lt;/li&gt;
+&lt;li&gt;Es replicable. Con los sistemas de orquestación puede cambiar una versión de una librería entre ejecuciones, haciendo que una funcione y otra falle.&lt;/li&gt;
+&lt;li&gt;Es más difícil que se rompa. No es extraño que la entrada de una máquina nueva
+en &lt;a href=&#34;http://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt; me descubra un bug en la definición.&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Cómo puede cambiar los despliegues Docker</title>
+      <link>http://example.org/blog/como-puede-cambiar-los-despliegues-docker/</link>
+      <pubDate>Mon, 03 Aug 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/como-puede-cambiar-los-despliegues-docker/</guid>
+      <description>
+        
+          &lt;p&gt;Llevo ya bastante tiempo pensando cómo desplegar correctamente una aplicación.
+La idea es ser capaz de desplegar en un sistema distribuido sin
+&lt;abbr title=&#34;Denial of Service&#34;&gt;DoS&lt;/abbr&gt;
+.&lt;/p&gt;
+&lt;p&gt;El principal problema reside en cómo sincronizar todas las máquinas para realizar el cambio en el menor tiempo posible, así como en evitar puntos de fallo y admitir &lt;em&gt;rollback&lt;/em&gt;. Casi na.&lt;/p&gt;
+&lt;p&gt;Sin embargo, &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; facilita todo esto. Aquí explico cómo se me ha ocurrido, aunque no es nada que probablemente no se os haya pasado por la cabeza a vosotros también.&lt;/p&gt;
+&lt;p&gt;Y mis agradecimientos al grupo &lt;a href=&#34;http://agile-cr.github.io/&#34;&gt;Agile-CR&lt;/a&gt;, que me ayudaron a poner en orden alguna de estas ideas.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/containers.jpg&#34;
+         alt=&#34;Docker es un contenedor&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;problemas-de-despliegue&#34;&gt;Problemas de despliegue&lt;/h2&gt;
+&lt;p&gt;Existen numerosos problemas durante el despliegue:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;¿Cómo llevar el software hasta todas las máquinas de un cluster?&lt;/li&gt;
+&lt;li&gt;¿Cómo configurarlas?&lt;/li&gt;
+&lt;li&gt;¿Cómo reemplazar la versión antigua en el menor plazo de tiempo posible?&lt;/li&gt;
+&lt;li&gt;¿Cuándo sincronizar la Base de Datos?&lt;/li&gt;
+&lt;li&gt;¿Es posible que la aplicación funcione durante un tiempo con una configuración errónea?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Por supuesto, estamos hablando de &lt;a href=&#34;http://example.org/blog/en-busca-de-los-cinco-9s/&#34;&gt;sistemas con una alta disponibilidad, cercana
+al 99.99%&lt;/a&gt;. Esto incluye, principalmente, servicios internos y servicios web.&lt;/p&gt;
+&lt;p&gt;El esquema, por tanto, tendrá esta pinta:&lt;/p&gt;
+&lt;div hidden&gt;
+
+@startuml docker-service-view
+card &#34;Load Balancer&#34; as lb
+package Services {
+  card &#34;Service 1&#34; as s1
+  card &#34;Service 2&#34; as s2
+  card &#34;Service N&#34; as sN
+}
+card &#34;Database Cluster&#34; as dc
+
+lb --&gt; s1
+lb --&gt; s2
+lb --&gt; sN
+s1 --&gt; dc
+s2 --&gt; dc
+sN --&gt; dc
+@enduml
+
+&lt;/div&gt;
+
+&lt;img src=&#34;http://example.org/diagrams/docker-service-view.png&#34;/&gt;
+
+&lt;p&gt;Resulta sencillo ver que:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Si desplegamos primero la base de datos, el sistema estará inconsistente hasta que se despliegue el resto.&lt;/li&gt;
+&lt;li&gt;Si desplegamos primero la configuración, pasará lo mismo.&lt;/li&gt;
+&lt;li&gt;Si desplegamos primero el software, puede estar mal configurado o no ser acorde con la base de datos.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Luego el problema tiene difícil solución.&lt;/p&gt;
+&lt;p&gt;Herramientas como &lt;a href=&#34;https://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt;, &lt;a href=&#34;https://www.chef.io&#34;&gt;Chef&lt;/a&gt;, &lt;a href=&#34;http://saltstack.com/&#34;&gt;Salt&lt;/a&gt; o &lt;a href=&#34;http://www.ansible.com&#34;&gt;Ansible&lt;/a&gt; pueden ayudar, pero
+también pueden ser foco de problemas, ya que suelen ser declarativas. Además, es
+posible que necesitemos realizar operaciones en distintas máquinas, como evitar
+que el balanceador de carga sirva la máquina que estamos alterando o lanzar los
+cambios de base de datos.&lt;/p&gt;
+&lt;h3 id=&#34;desplegando-la-base-de-datos&#34;&gt;Desplegando la base de datos&lt;/h3&gt;
+&lt;p&gt;Quizá el punto de fallo más crítico es la base de datos. La única manera posible de evitar problemas durante el despliegue es dividir los cambios en dos.&lt;/p&gt;
+&lt;p&gt;Por una parte, todos los &lt;code&gt;create&lt;/code&gt;, &lt;code&gt;add column&lt;/code&gt;, &lt;code&gt;insert&lt;/code&gt;, etc. Estas operaciones son inócuas y no deberían afectar al despliegue actual, más allá de una pequeña reducción temporal de rendimiento.&lt;/p&gt;
+&lt;p&gt;Por otra parte, los &lt;code&gt;drop&lt;/code&gt;, &lt;code&gt;delete&lt;/code&gt;, &lt;code&gt;alter&lt;/code&gt;, etc. Que son operaciones que sí pueden tener repercusiones.&lt;/p&gt;
+&lt;p&gt;Los &lt;code&gt;alter&lt;/code&gt; que modifican el nombre de una columna deberían estar prohibidos completamente, ya que se ejecuten donde se ejecuten dejarán el sistema inestable durante un tiempo.&lt;/p&gt;
+&lt;p&gt;Con estas premisas, es fácil ver que podemos ejecutar el primer grupo &lt;strong&gt;antes&lt;/strong&gt; de instalar la nueva versión del software y el segundo grupo &lt;strong&gt;después&lt;/strong&gt; de la instalación de éste.&lt;/p&gt;
+&lt;p&gt;Y con esto, el despliegue de nuestra base de datos es seguro.&lt;/p&gt;
+&lt;h3 id=&#34;desplegando-la-aplicación-y-la-configuración&#34;&gt;Desplegando la aplicación y la configuración&lt;/h3&gt;
+&lt;p&gt;Con la aplicación y la configuración no ocurre lo mismo. No importa qué se despliegue antes, afectará al funcionamiento.&lt;/p&gt;
+&lt;p&gt;Una opción es &lt;strong&gt;centralizar la configuración&lt;/strong&gt;. Básicamente se deja la configuración en una base de datos y se accede a ella directamente o mediante un servicio intermedio (yo recomendaría esto último).&lt;/p&gt;
+&lt;p&gt;Pero hay cierta configuración que no puede moverse a este nuevo sistema: La configuración para conectarse a él. Sin embargo, ésta es una configuración que no cambiará a menudo y que, probablemente, sea igual en todos los servicios de un mismo tipo.&lt;/p&gt;
+&lt;h2 id=&#34;soluciones-al-despliegue&#34;&gt;Soluciones al despliegue&lt;/h2&gt;
+&lt;h3 id=&#34;duplicando-el-sistema&#34;&gt;Duplicando el sistema&lt;/h3&gt;
+&lt;p&gt;Una posible solución es duplicar el sistema. Se duplican las máquinas y se instala la nueva aplicación en las máquinas nuevas. Luego se cambia el &lt;strong&gt;Load balancer&lt;/strong&gt; y todo solucionado.&lt;/p&gt;
+&lt;p&gt;El problema de esta solución es el coste. Si albergamos nuestro propio hardware, necesitamos duplicar el número de máquinas para una acción que se realiza en pocos minutos.&lt;/p&gt;
+&lt;p&gt;Sin embargo, también tiene ventajas adicionales:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;El cambio se realiza en todas las máquinas al mismo tiempo.&lt;/li&gt;
+&lt;li&gt;Se podría probar la nueva versión de la aplicación en distintas máquinas, comprobando que tiene el mismo funcionamiento que la versión anterior (al menos).&lt;/li&gt;
+&lt;li&gt;Permite &lt;strong&gt;A/B Testing&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Permite hacer &lt;strong&gt;rollback&lt;/strong&gt; de forma sencilla.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;dockers&#34;&gt;Dockers&lt;/h3&gt;
+&lt;p&gt;Y aquí es cuando viene &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; al rescate. Si no sabéis qué es, podéis ver mi
+&lt;a href=&#34;http://example.org/blog/docker/&#34;&gt;artículo anterior sobre Docker&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; permite ver la aplicación y su configuración como una caja negra, permitiéndonos desplegar más de un servicio idéntico en la misma máquina.&lt;/p&gt;
+&lt;p&gt;Por lo tanto, podríamos mantener desplegadas las dos versiones de nuestra aplicación al mismo tiempo, quizá en puertos diferentes, y servir ambas. Durante un despliegue, se mira cuál es la activa y se sustituye la inactiva. A continuación se cambia el &lt;strong&gt;Load Balancer&lt;/strong&gt; y todo queda resuelto en milésimas de segundo.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; nos permite, por tanto, duplicar el sistema utilizando el mismo
+hardware. La carga adicional será tan pequeña como permita nuestro contenedor de
+aplicaciones, si es que estamos usando &lt;a href=&#34;http://www.jboss.org/&#34;&gt;JBoss&lt;/a&gt; o similar. Seguramente sea una
+carga en RAM, pero poco en CPU.&lt;/p&gt;
+&lt;p&gt;De esta forma ahorramos los costes y obtenemos todas las ventajas del sistema duplicado y algunas adicionales:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;la gestión de todos nuestros servicios se puede realizar de forma homogénea&lt;/strong&gt;, es decir, que podemos desplegar cualquier servicio de la misma manera.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Podemos mantener desplegadas varias versiones distintas&lt;/strong&gt; para permitirnos hacer &lt;em&gt;rollback&lt;/em&gt; o pruebas del conjunto, con un coste de un &lt;strong&gt;Load Balancer&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Se pueden &lt;strong&gt;guardar las versiones&lt;/strong&gt; como un bloque, usando los &lt;strong&gt;Docker Repositories&lt;/strong&gt;. Esto también facilitará la forma de hacer llegar las imágenes a las máquinas donde se van a desplegar.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Por si esto fuera poco, &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; guarda información en los &lt;em&gt;containers&lt;/em&gt; sobre
+los puertos que expone y los puntos de montaje, lo que puede facilitar la
+gestión de alertas (al menos a nievel básico).&lt;/p&gt;
+&lt;h2 id=&#34;docker-vs-puppet-chef-salt-ansible-&#34;&gt;Docker vs Puppet, Chef, Salt, Ansible, &amp;hellip;&lt;/h2&gt;
+&lt;p&gt;Seguramente penséis que &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; es mejor que los sistemas típicos de
+orquestación, como &lt;a href=&#34;https://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt;, &lt;a href=&#34;https://www.chef.io&#34;&gt;Chef&lt;/a&gt;, &lt;a href=&#34;http://saltstack.com/&#34;&gt;Salt&lt;/a&gt; o &lt;a href=&#34;http://www.ansible.com&#34;&gt;Ansible&lt;/a&gt;. Sin embargo, son
+herramientas diferentes que sirven para objetivos diferentes.&lt;/p&gt;
+&lt;p&gt;Con este nuevo esquema de despliegues, podría usarse cualquiera de estos
+sistemas de orquestación para instalar la nueva aplicación en las máquinas, y
+planificar el momento en que se hará el cambio en el &lt;em&gt;load balancer&lt;/em&gt;. Así,
+Docker y los sistemas de orquestación trabajan juntos.&lt;/p&gt;
+&lt;p&gt;También son útiles para cambiar la configuración a nivel global o configurar
+sistemas de monitorización y alertado.&lt;/p&gt;
+&lt;p&gt;Como vemos, son herramientas complementarias, no competencia.&lt;/p&gt;
+&lt;h2 id=&#34;conclusión&#34;&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; es un nuevo paradigma que ha llegado para quedarse, a pesar de estar
+basado en los &amp;ldquo;Linux Containers&amp;rdquo;, una tecnología que un amigo ya usaba allá por
+el 2004.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Docker</title>
+      <link>http://example.org/blog/docker/</link>
+      <pubDate>Tue, 21 Jul 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/docker/</guid>
+      <description>
+        
+          &lt;p&gt;La vida de un DevOps está llena de &lt;em&gt;palabros&lt;/em&gt; raros. Uno que suena mucho
+últimamente es el de &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt;, pero&amp;hellip; ¿qué es exactamente? ¿Por qué está tan de moda?&lt;/p&gt;
+&lt;p&gt;En este post contaré cómo lo veo yo y por qué no sólo que los &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; han venido para quedarse, sino que están revolucionando la industria.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/containers.jpg&#34;
+         alt=&#34;Docker no es otra cosa más que un container&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;qué-es-un-docker&#34;&gt;Qué es un Docker&lt;/h2&gt;
+&lt;p&gt;Un &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; es una manera de empaquetar una infraestructura.&lt;/p&gt;
+&lt;p&gt;Imaginad un &lt;code&gt;.deb&lt;/code&gt; que lo trae todo configurado como lo necesitáis, listo para trabajar; pues es aún más, ya que permite tener distintas versiones de todas sus dependencias.&lt;/p&gt;
+&lt;p&gt;Otro &lt;em&gt;palabro&lt;/em&gt; que está de moda es la &lt;strong&gt;Orquestación&lt;/strong&gt;. Hay muchas herramientas
+como &lt;a href=&#34;https://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt;, &lt;a href=&#34;https://www.chef.io&#34;&gt;Chef&lt;/a&gt;, &lt;a href=&#34;http://saltstack.com/&#34;&gt;Salt&lt;/a&gt; o &lt;a href=&#34;http://www.ansible.com&#34;&gt;Ansible&lt;/a&gt;, pero &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; va aún más lejos en busca de una &lt;strong&gt;Infraestructura inmutable&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;La idea original detrás de &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; no es nueva. Hace ya muchos años que un
+colega me hablaba de las &lt;strong&gt;jaulas&lt;/strong&gt;, contenedores que permiten correr procesos.
+&lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; ha perfeccionado esas jaulas, permitiendo su empaquetado, distribución y
+definición.&lt;/p&gt;
+&lt;p&gt;Todo comienza en un &lt;strong&gt;Dockerfile&lt;/strong&gt;, como veremos más adelante.&lt;/p&gt;
+&lt;h2 id=&#34;conceptos&#34;&gt;Conceptos&lt;/h2&gt;
+&lt;p&gt;Hay algunos conceptos es importante tener en cuenta a la hora de trabajar con
+&lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Dockerfile&lt;/em&gt;
+Es un archivo que permite definir las &lt;strong&gt;imágenes&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;imagen&lt;/em&gt;
+Consiste en un conjunto de aplicaciones empaquetadas. En este paquete va todo: dependencias, configuración, puertos expuestos, etc. Sin embargo, éstos no son usables, ya que no están en ejecución.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;container o contenedor&lt;/em&gt;
+Es una instancia de una &lt;strong&gt;imagen&lt;/strong&gt; en ejecución. Es lo que usaremos.&lt;/p&gt;
+&lt;p&gt;Tanto las &lt;em&gt;imágenes&lt;/em&gt; como los &lt;em&gt;containers&lt;/em&gt; tienen un nombre consistente en una hash, algo como &lt;code&gt;b02610296ec7&lt;/code&gt;, pero pueden tener un alias más fácil de recordar.&lt;/p&gt;
+&lt;h2 id=&#34;ejemplo-rabbitmq&#34;&gt;Ejemplo: RabbitMQ&lt;/h2&gt;
+&lt;h3 id=&#34;generando-las-imágenes&#34;&gt;Generando las imágenes&lt;/h3&gt;
+&lt;p&gt;Vamos con un ejemplo pequeño: vamos a crear un docker que ejecute un &lt;a href=&#34;https://www.rabbitmq.com/&#34;&gt;RabbitMQ&lt;/a&gt;.
+Vamos a hacer lo mismo que hicimos en el artículo &lt;a href=&#34;http://example.org/blog/colas-de-mensajes-rabbitmq/&#34;&gt;Colas de mensajes: RabbitMQ&lt;/a&gt;.
+Para ello vamos con un &lt;strong&gt;Dockerfile&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-docker&#34; data-lang=&#34;docker&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;FROM&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; debian:8.1&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;MAINTAINER&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; Miguel Angel Garcia &amp;lt;miguelangel@magmax.org&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;RUN&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    apt-get update &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    apt-get install -y rabbitmq-server&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;RUN&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    rabbitmq-plugins enable rabbitmq_management &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    rabbitmqctl add_vhost /my_vhost &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    rabbitmqctl add_user my_user my_pass &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    rabbitmqctl set_permissions -p /my_vhost my_user &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.*&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.*&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.*&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    rabbitmqctl set_user_tags my_user management monitoring &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    /etc/init.d/rabbitmq-server stop&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;CMD&lt;/span&gt; [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;rabbitmq-server&amp;#34;&lt;/span&gt;]&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Expose ports.&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;EXPOSE&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; 5672&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;EXPOSE&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; 15672&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Ahora utilizaremos el &lt;strong&gt;Dockerfile&lt;/strong&gt; para generar una &lt;strong&gt;imagen&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;docker build .
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y nos vamos a tomar un café. Aquí &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; hará de las suyas, descargándose la imagen base (en nuestro caso, &lt;code&gt;debian:8.1&lt;/code&gt;) y ejecutando todas las órdenes de &lt;code&gt;RUN&lt;/code&gt;. Cada orden &lt;code&gt;RUN&lt;/code&gt; generará una imagen intermedia que ocupará espacio, pero son puntos de &lt;em&gt;&amp;ldquo;checkpoint&amp;rdquo;&lt;/em&gt;, ya que generará el resto de imágenes a partir de ahí.&lt;/p&gt;
+&lt;p&gt;Si optamos por varios &lt;code&gt;RUN&lt;/code&gt; es importante el orden, ya que cualquier modificación regenerará todas las imágenes tras ella. Por ejemplo, si creemos que vamos a cambiar la contraseña del usuario con frecuencia, sería más eficiente usar algo así:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-docker&#34; data-lang=&#34;docker&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;FROM&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; debian:8.1&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;MAINTAINER&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; Miguel Angel Garcia &amp;lt;miguelangel@magmax.org&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;RUN&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    apt-get update &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    apt-get install -y rabbitmq-server&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;RUN&lt;/span&gt; rabbitmq-plugins enable rabbitmq_management&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;RUN&lt;/span&gt; rabbitmqctl add_vhost /my_vhost&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;RUN&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    rabbitmqctl add_user my_user my_pass &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    rabbitmqctl set_permissions -p /my_vhost my_user &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.*&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.*&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.*&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;RUN&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    rabbitmqctl set_user_tags my_user management monitoring &lt;span style=&#34;color:#f92672&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    /etc/init.d/rabbitmq-server stop&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Esto generará 5 imágenes reutilizables. Si modificamos la contraseña, hay tres imágenes que se reusarán, haciendo el proceso de &lt;code&gt;build&lt;/code&gt; mucho más rápido.&lt;/p&gt;
+&lt;p&gt;Un poco más abajo vemos la orden &lt;code&gt;CMD&lt;/code&gt;, que es la orden por defecto a ejecutar cuando lancemos el &lt;em&gt;container&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Finalmente, un par de &lt;code&gt;EXPOSE&lt;/code&gt;, que son puertos que queremos exportar. Lo veremos ahora en la parte de ejecución.&lt;/p&gt;
+&lt;p&gt;También podríamos haber visto un &lt;code&gt;ADD&lt;/code&gt;, que copia archivos de la máquina actual a la jaula o &lt;code&gt;VOLUME&lt;/code&gt;, que sirve para crear puntos de montaje, pero para este artículo es suficiente con &lt;code&gt;FROM&lt;/code&gt;, &lt;code&gt;MAINTAINER&lt;/code&gt;, &lt;code&gt;RUN&lt;/code&gt;, &lt;code&gt;CMD&lt;/code&gt; y &lt;code&gt;EXPOSE&lt;/code&gt;. No os creáis que hay muchas órdenes más.&lt;/p&gt;
+&lt;p&gt;Una vez construida la imagen podemos listarla:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ docker images
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;REPOSITORY          TAG                 IMAGE ID            CREATED             VIRTUAL SIZE
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;&amp;lt;none&amp;gt;              &amp;lt;none&amp;gt;              5e98d103b422        &lt;span style=&#34;color:#ae81ff&#34;&gt;22&lt;/span&gt; seconds ago      229.1 MB
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;ejecutando-un-docker&#34;&gt;Ejecutando un docker&lt;/h3&gt;
+&lt;p&gt;Lo siguiente es ejecutar un docker. Lo primero que tenemos que ver son los
+puntos de montaje, variables y puertos que exponga. En este caso sólo explicaré
+los puertos expuestos. Es importante porque alterarán los argumentos con los que
+llamar al &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;En nuestro caso, vamos a mapear los puertos locales 35000 y 35001 a los de la máquina 5672 y 15672, respectivamente:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;docker run -i -p 35000:5672 -p 35001:15672 5e98d103b422
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Explico los argumentos:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;-i&lt;/code&gt; Modo interactivo. Útil para depurar y ver qué está pasando dentro del &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;-p 35000:5672&lt;/code&gt; Mapeo el puerto 35000 local al 5672&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;-p 35001:15672&lt;/code&gt; Mapeo el puerto 35001 local al 15672&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;5e98d103b422&lt;/code&gt; Hash o nombre de la imagen a ejecutar.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Ahora podemos ver el &lt;em&gt;container&lt;/em&gt; corriendo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ docker ps
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;CONTAINER ID        IMAGE                 COMMAND             CREATED             STATUS              PORTS                                               NAMES
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;859bd82d0f8a        5e98d103b422:latest   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;rabbitmq-server&amp;#34;&lt;/span&gt;   &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; minutes ago       Up &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; minutes        0.0.0.0:35000-&amp;gt;5672/tcp, 0.0.0.0:35001-&amp;gt;15672/tcp   suspicious_turing
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Por defecto &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; da nombres graciosos a todos los containers, como &amp;ldquo;suspicious_turing&amp;rdquo; :D&lt;/p&gt;
+&lt;p&gt;Y podemos conectarnos a http://localhost:35001, donde está la interfaz de
+nuestro precioso &lt;a href=&#34;https://www.rabbitmq.com/&#34;&gt;RabbitMQ&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;otras-órdenes-interesantes&#34;&gt;Otras órdenes interesantes&lt;/h2&gt;
+&lt;p&gt;Para terminar, veamos otras órdenes interesantes, como parar un &lt;em&gt;container&lt;/em&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ docker stop 2b415bcb6009
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;O volver a lanzarlo (notad que ya no es necesario indicar el mapeo de puertos):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ docker start 2b415bcb6009
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Mostrar todos los &lt;em&gt;containers&lt;/em&gt; disponibles:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ docker ps -a
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Eliminar un &lt;em&gt;container&lt;/em&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ docker rm 2b415bcb6009
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Mostrar todas las &lt;em&gt;imágenes&lt;/em&gt; disponibles:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ docker images
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Eliminar una &lt;em&gt;imagen&lt;/em&gt; que no tiene &lt;em&gt;containers&lt;/em&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ docker rmi 5e98d103b422
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;O forzar el borrado de una &lt;em&gt;imagen&lt;/em&gt; a pesar de tener &lt;em&gt;containers&lt;/em&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ docker rmi -i 5e98d103b422
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Finalmente, un aviso: &lt;strong&gt;El nombre del container o su hash siempre es el último argumento de cualquier órden&lt;/strong&gt;. Eso es algo que me ha vuelto loco en alguna ocasión.&lt;/p&gt;
+&lt;h2 id=&#34;ventajas-e-inconvenientes&#34;&gt;Ventajas e inconvenientes&lt;/h2&gt;
+&lt;p&gt;¿Qué ventajas ofrece este sistema de empaquetado?&lt;/p&gt;
+&lt;p&gt;La primera, que &lt;strong&gt;una vez creada la imagen podemos lanzar varias instancias de la misma&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ docker run -d -p 35000:5672 -p 35001:15672 5e98d103b422
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;f99518d24970fe5d39787340e25947851daba31c8dea7e8c4380f23f4bb82d19
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;$ docker run -d -p 36000:5672 -p 36001:15672 5e98d103b422
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;2b415bcb600995b80874e1109a1ad1320f20162ce1efac58637a1c8a04b7d439
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;$ docker ps
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;CONTAINER ID        IMAGE                 COMMAND             CREATED             STATUS              PORTS                                               NAMES
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt;2b415bcb6009        5e98d103b422:latest   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;rabbitmq-server&amp;#34;&lt;/span&gt;   &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt; seconds ago       Up &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt; seconds        0.0.0.0:36000-&amp;gt;5672/tcp, 0.0.0.0:36001-&amp;gt;15672/tcp   prickly_babbage
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8&lt;/span&gt;f99518d24970        5e98d103b422:latest   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;rabbitmq-server&amp;#34;&lt;/span&gt;   &lt;span style=&#34;color:#ae81ff&#34;&gt;11&lt;/span&gt; seconds ago      Up &lt;span style=&#34;color:#ae81ff&#34;&gt;11&lt;/span&gt; seconds       0.0.0.0:35000-&amp;gt;5672/tcp, 0.0.0.0:35001-&amp;gt;15672/tcp   grave_stallman
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y tener una escuchando en el pueto 35001 y otra en el 36002 (la opción &lt;code&gt;-d&lt;/code&gt; es para lanzar en segundo plano). Con un par de scripts resultaría sencillo montarse un cluster, ¿no?&lt;/p&gt;
+&lt;p&gt;Otra ventaja es la &lt;strong&gt;inmutabilidad&lt;/strong&gt;. Si tenemos una infraestructura montada con
+&lt;a href=&#34;https://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt;, &lt;a href=&#34;https://www.chef.io&#34;&gt;Chef&lt;/a&gt;, &lt;a href=&#34;http://saltstack.com/&#34;&gt;Salt&lt;/a&gt; o &lt;a href=&#34;http://www.ansible.com&#34;&gt;Ansible&lt;/a&gt;, nada impide que entre dos ejecuciones se
+haya cambiado una librería (la típica &lt;em&gt;libc6&lt;/em&gt;) que provoque fallos de
+instalación o, lo que es mucho peor, de ejecución. Sin embargo, con las imágenes
+de &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; estamos seguros de que todas las máquinas son iguales.&lt;/p&gt;
+&lt;p&gt;Recomiendo leer el artículo &lt;a href=&#34;https://boxfuse.com/blog/no-ssh.html&#34;&gt;Immutable Infrastructure: No SSH&lt;/a&gt; que habla sobre la inmutabilidad y los contenedores, y que ha sido en gran parte la inspiración para este artículo.&lt;/p&gt;
+&lt;p&gt;Sólo queda recordar que todo lo que ocurra dentro de un &lt;em&gt;container&lt;/em&gt; no se replica en otros &lt;em&gt;containers&lt;/em&gt; y se eliminará con éste. Existe la opción de jugar con los &lt;code&gt;VOLUME&lt;/code&gt; (que quizá explique en otro artículo), para compartir un directorio entre el host y el &lt;em&gt;container&lt;/em&gt; .&lt;/p&gt;
+&lt;p&gt;Como inconvenientes (gracias, Ángel), se puede mencionar la propia
+&lt;strong&gt;inmutabilidad&lt;/strong&gt;, ya que hasta que se le coge el truco puede provocar pérdidas
+de datos.&lt;/p&gt;
+&lt;p&gt;Otro inconveniente es el pequeño &lt;em&gt;overhead&lt;/em&gt; que provocan los contenedores,
+aunque si se usan varias imágenes que compartern &lt;em&gt;layers&lt;/em&gt; el resultado final es
+mínimo.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>swing on El blog de MagMax</title>
+    <link>http://example.org/tags/swing/</link>
+    <description>Recent content in swing on El blog de MagMax</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 28 Nov 2011 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/tags/swing/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Java Swing: Cerrando un Dialog</title>
+      <link>http://example.org/blog/swing-cerrar-dialog/</link>
+      <pubDate>Mon, 28 Nov 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/swing-cerrar-dialog/</guid>
+      <description>
+        
+          &lt;p&gt;Trabajando con Swing me he dado cuenta de algunas cosas raras en esta API. Una de ellas es la falta de uniformidad en la gente que lo usa. Esto, a veces, es culpa de una mala información. Otras, de la propia API.&lt;/p&gt;
+&lt;p&gt;En este caso me gustaría ver un ejemplo de lo que digo: cómo cerrar un &lt;code&gt;Dialog&lt;/code&gt;. Para mi desgracia, me llevó casi 1 hora encontrar la manera adecuada.&lt;/p&gt;
+&lt;p&gt;En concreto, estoy tratando de cerrar la ventana desde el típico botón &amp;ldquo;Cerrar&amp;rdquo;.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/java.png&#34;
+         alt=&#34;Java&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;paso-1-ocultarlo&#34;&gt;Paso 1: ocultarlo&lt;/h2&gt;
+&lt;p&gt;Hasta ahora siempre había realizado la siguiente acción:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;setVisible&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;False&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;dispose&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Esta manera está esencialmente bien, pero&amp;hellip; Hay un problema. Es posible que el botón que estamos creando se comporte de forma distinta a la X de la ventana, ya que:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Hay una propiedad que indica qué debe ocurrir al pulsar esta X, llamada &lt;code&gt;DefaultCloseOperation&lt;/code&gt; y cuyos valores pueden ser: &lt;code&gt;DO_NOTHING_ON_CLOSE&lt;/code&gt;, &lt;code&gt;HIDE_ON_CLOSE&lt;/code&gt;, &lt;code&gt;DISPOSE_ON_CLOSE&lt;/code&gt; o &lt;code&gt;EXIT_ON_CLOSE&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;No se lanzarán los eventos asociados al cierre de la ventana.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Como se puede observar, de la forma en que yo cerraba la ventana siempre era un &lt;code&gt;DISPOSE_ON_CLOSE&lt;/code&gt; y, encima, con efectos secundarios que pueden ser indeseables, como que los eventos no se lancen.&lt;/p&gt;
+&lt;h2 id=&#34;forma-correcta&#34;&gt;Forma correcta&lt;/h2&gt;
+&lt;p&gt;Así que parece que cerrar la ventana a lo bestia no es el &lt;em&gt;camino Zen&lt;/em&gt; más adecuado. Tras mucho buscar, encontré esto:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;processWindowEvent&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; WindowEvent&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; WindowEvent&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;WINDOW_CLOSING&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;));&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Lo que se hace así es solicitar que se ejecuten los eventos de cerrar la ventana, lo que desencadenará los eventos que deba desencadenar, y provocará que se ejecute la acción por defecto en la ventana, de manera que se comporte igual que la &amp;ldquo;X&amp;rdquo; de la ventana.&lt;/p&gt;
+&lt;p&gt;Como, personalmente, lo veo horrible y poco intuitivo, suelo encapsularlo en la función &lt;code&gt;fireCloseWindow&lt;/code&gt;, aunque no me termina de convencer el nombre. Dice mucho de lo que hace (lanzar un evento). ¿Sería mejor un simple &lt;code&gt;closeWindow&lt;/code&gt;? Quizá.&lt;/p&gt;
+&lt;p&gt;Comentando un poco el código, para poder lanzar la función &lt;code&gt;processWindowEvent&lt;/code&gt; necesitamos proporcionarle un &lt;code&gt;WindowEvent&lt;/code&gt; que no tenemos&amp;hellip; así que tenemos que creárnoslo, usando las constantes de esta misma clase. Conceptualmente precioso; en la práctica, feo.&lt;/p&gt;
+&lt;h2 id=&#34;más-información&#34;&gt;Más información&lt;/h2&gt;
+&lt;p&gt;Si conocéis otra manera más correcta de cerrar un &lt;code&gt;Dialog&lt;/code&gt; en Java, estoy abierto a opciones.&lt;/p&gt;
+&lt;p&gt;Claro, que si queréis más información, sólo tenéis que consultar la &lt;a href=&#34;http://docs.oracle.com/javase/6/docs/api/index.html&#34;&gt;API de Java&lt;/a&gt; , centrándoos en el método &lt;a href=&#34;http://docs.oracle.com/javase/6/docs/api/javax/swing/JFrame.html#setDefaultCloseOperation%28int%29&#34;&gt;setDefaultCloseOperation&lt;/a&gt;  o bien en el método &lt;a href=&#34;http://docs.oracle.com/javase/6/docs/api/javax/swing/JFrame.html#processWindowEvent%28java.awt.event.WindowEvent%29&#34;&gt;processWindowEvent&lt;/a&gt; .&lt;/p&gt;
+&lt;p&gt;También podéis visitar la clase &lt;a href=&#34;http://docs.oracle.com/javase/6/docs/api/java/awt/event/WindowEvent.html&#34;&gt;WindowEvent&lt;/a&gt; .&lt;/p&gt;
+&lt;p&gt;De todas maneras, quizá el mejor sitio para ver todo esto es en &lt;a href=&#34;http://docs.oracle.com/javase/6/docs/api/index.html&#34;&gt;la página sobre el uso de los diálogos&lt;/a&gt;.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Centrar una ventana en Java (Swing)</title>
+      <link>http://example.org/blog/centrar-ventana-java/</link>
+      <pubDate>Mon, 14 Jun 2010 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/centrar-ventana-java/</guid>
+      <description>
+        
+          &lt;p&gt;A menudo me siento en la necesidad de centrar una ventana cuando trabajo en Swing. En muchos foros se muestra la manera de obtener la altura y anchura de la ventana, la posición de la ventana padre, y realizar complejos cálculos en base a éstas para obtener una ventana centrada.&lt;/p&gt;
+&lt;p&gt;Es triste pensar que la gente que ha hecho java no haya dedicado tiempo a algo tan trivial como centrar una ventana.&lt;/p&gt;
+&lt;p&gt;Y lo han hecho.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/java.png&#34;
+         alt=&#34;Java&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;p&gt;De hecho, han ido más lejos: dependiendo de cómo esté configurado tu sistema,
+centrará la ventana en la ventana padre, en el centro de la pantalla o no la
+centrará en absoluto. La gente tiende a olvidar que hay masoc&amp;hellip;&amp;hellip; otra gente
+que no usa Gnome, KDE, Windows o Mac, sino que también usan Window Maker, LXDE,
+&amp;hellip;. Y otros renderers aún más extraños.&lt;/p&gt;
+&lt;p&gt;Por eso, la manera &lt;em&gt;correcta&lt;/em&gt; de centrar un diálogo o ventana en Java es marcar
+la propiedad &lt;code&gt;setLocationByPlatform&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;mywindow&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;setLocationByPlatform&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;De manera que, dependiendo del sistema y de si establecimos el padre de una ventana, la ventana se centrará donde debe.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

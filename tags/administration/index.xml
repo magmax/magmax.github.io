@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>administration on El blog de MagMax</title>
+    <link>http://example.org/tags/administration/</link>
+    <description>Recent content in administration on El blog de MagMax</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 12 May 2010 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/tags/administration/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Recuperar Grub</title>
+      <link>http://example.org/blog/recuperar-grub/</link>
+      <pubDate>Wed, 12 May 2010 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/recuperar-grub/</guid>
+      <description>
+        
+          &lt;p&gt;A menudo, después de liar una buena o bien de instalar sistemas operativos no permisivos y totalitaristas, nos encontraremos que se han cargado GRUB y no podemos volver a iniciar nuestro GNU/*. Siempre olvido alguno de los pasos, así que voy a ponerlos aquí y así a lo mejor le viene bien a alguien.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/tips.jpg&#34;
+         alt=&#34;Tips&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;recuperando-que-es-gerundio&#34;&gt;Recuperando, que es gerundio&lt;/h2&gt;
+&lt;p&gt;Lo primero es utilizar algún CD live (una Ubuntu, Knoppix, &amp;hellip;). Para este ejemplo usaré una UBUNTU 7.04 (Feisty). Una vez hecho esto, realizaremos las siguientes tareas:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;    CD$ sudo su
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;    CD# mkdir /media/gnu
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    CD# mount /dev/sda5 /media/gnu
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;    CD# mount --bind /dev /media/gnu/dev
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;    CD# mount --bind /proc /media/gnu/proc
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;    CD# mount --bind /sys /media/gnu/sys
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt;    CD# chroot /media/gnu/
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8&lt;/span&gt;    SDA# grub-install /dev/sda
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;consideraciones&#34;&gt;Consideraciones&lt;/h2&gt;
+&lt;p&gt;Para las tareas de arriba he seguido las siguientes consideraciones:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;El disco duro a utilizar es SATA (por eso es SDA en lugar de HDA). Si fuera IDE, es muy probable que no nos hicieran falta las instrucciones &lt;code&gt;mount --bind&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;La partición donde está nuestro sistema GNU es SDA5.&lt;/li&gt;
+&lt;li&gt;Delante del símbolo del sistema (&lt;code&gt;$&lt;/code&gt; o &lt;code&gt;#&lt;/code&gt; según corresponda) he puesto &amp;ldquo;CD&amp;rdquo; o &amp;ldquo;SDA&amp;rdquo; según corresponde al LIVE-CD o a nuestra instalación en el disco duro.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;explicación&#34;&gt;Explicación&lt;/h2&gt;
+&lt;p&gt;Lo que estamos haciendo es montar nuestra distribución, pero utilizando los dispositivos detectados por la LIVE. Cuando el disco duro es IDE, al hacer el chroot suele tomarlo todo bien, pero si es SATA y no hacemos los &lt;code&gt;mount --bind&lt;/code&gt; veremos que en &lt;code&gt;/dev&lt;/code&gt; no tenemos casi nada y que no podemos instalar el grub :-(&lt;/p&gt;
+&lt;h2 id=&#34;referencias&#34;&gt;Referencias&lt;/h2&gt;
+&lt;p&gt;La web original donde encontré la recetilla no la recuerdo, pero he encontrado otra similar en los &lt;a href=&#34;http://ubuntuforums.org/archive/index.php/t-341990.html&#34;&gt;foros de Ubuntu&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;acerca-de&#34;&gt;Acerca de&amp;hellip;&lt;/h2&gt;
+&lt;p&gt;Este artículo se publicó por primera vez en &lt;a href=&#34;http://crysol.org/es/node/714&#34;&gt;la web de Crysol&lt;/a&gt;. Dado que el autor soy yo y que el artículo es CC, lo replico en esta web con el fin de juntar los artículos que he ido escribiendo con el tiempo.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>css on El blog de MagMax</title>
+    <link>http://example.org/tags/css/</link>
+    <description>Recent content in css on El blog de MagMax</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 07 Dec 2015 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/tags/css/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Django no encuentra las CSS del módulo Admin</title>
+      <link>http://example.org/blog/django-no-encuentra-las-css-del-modulo-admin/</link>
+      <pubDate>Mon, 07 Dec 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/django-no-encuentra-las-css-del-modulo-admin/</guid>
+      <description>
+        
+          &lt;p&gt;No es la primera vez que pierdo un montón de tiempo para conseguir que &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt;
+me sirva los estáticos en producción, aunque sólo sea los del &lt;a href=&#34;https://docs.djangoproject.com/en/stable/ref/contrib/admin/&#34;&gt;módulo Admin&lt;/a&gt;,
+así que he decidido escribir un post para no olvidarme.&lt;/p&gt;
+&lt;p&gt;Aunque servir estáticos con &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt; está desaconsejado por la propia
+documentación, ya que puede ser inseguro e ineficiente, yo lo encuentro muy útil
+para servir los estáticos del &lt;a href=&#34;https://docs.djangoproject.com/en/stable/ref/contrib/admin/&#34;&gt;módulo Admin&lt;/a&gt;.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/django.jpg&#34;
+         alt=&#34;Django&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;el-problema&#34;&gt;El problema&lt;/h2&gt;
+&lt;p&gt;El principal problema es que &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt; no sirve los estáticos cuando se tiene &lt;code&gt;DEBUG = False&lt;/code&gt;. Claro está, no nos interesa que cualquier problema con la web muestre todas las variables de entorno (incluyendo contraseñas en algunos servidores).&lt;/p&gt;
+&lt;p&gt;Así que se trata de conseguir servir estáticos cuando &lt;code&gt;DEBUG = True&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;cambios-en-archivos&#34;&gt;Cambios en archivos&lt;/h2&gt;
+&lt;p&gt;Si no indico lo contrario, habrá que modificar el archivo &lt;code&gt;settings.py&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;indicar-dónde-están-los-estáticos&#34;&gt;Indicar dónde están los estáticos&lt;/h3&gt;
+&lt;p&gt;Lo primero es indicar dónde están los estáticos. Para ello tendremos que incluir la applicación &lt;code&gt;django.contrib.staticfiles&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;INSTALLED_APPS &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;django.contrib.staticfiles&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Si hemos sobreescrito la variable &lt;code&gt;STATICFILES_FINDERS&lt;/code&gt;, será importante añadir el &lt;strong&gt;finder&lt;/strong&gt; &lt;code&gt;AppDirectoriesFinder&lt;/code&gt;, con el fin de que se sirvan los estáticos de las aplicaciones:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;STATICFILES_FINDERS &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;django.contrib.staticfiles.finders.AppDirectoriesFinder&amp;#34;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;permisos&#34;&gt;Permisos&lt;/h3&gt;
+&lt;p&gt;Ahora debemos dar permiso de acceso a los estáticos. Bueno&amp;hellip; Estáticos y no estáticos, ya que cuando &lt;code&gt;DEBUG&lt;/code&gt; vale &lt;code&gt;True&lt;/code&gt; podemos acceder a todo, pero cuando vale &lt;code&gt;False&lt;/code&gt; no nos dejará acceder a nada:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; os
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; socket &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; gethostname
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;ALLOWED_HOSTS &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;    gethostname(),
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;    os&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;environ&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;OPENSHIFT_APP_DNS&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;localhost&amp;#39;&lt;/span&gt;),
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Como veis, aquí permito acceder mediante el nombre de la máquina, o desde el DNS
+de [OpenShift], si lo estamos usando. Si no estamos en [OpenShift], entonces usa &lt;code&gt;localhost&lt;/code&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;rutas&#34;&gt;Rutas&lt;/h3&gt;
+&lt;p&gt;Por último, hay que modificar las rutas de acceso. Eso está en el archivo &lt;code&gt;urls.py&lt;/code&gt;, donde tendremos que incluir a mano los estáticos:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; django.conf &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; settings
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; django.conf.urls &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; url
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;urlpatterns &lt;span style=&#34;color:#f92672&#34;&gt;+=&lt;/span&gt; [
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    url(
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;r&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;^static/(?P&amp;lt;path&amp;gt;.*)$&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;django.views.static.serve&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;        {
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;document_root&amp;#39;&lt;/span&gt;: settings&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;STATIC_ROOT,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;show_indexes&amp;#39;&lt;/span&gt;: settings&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;DEBUG,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;        }
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;    ),
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;conclusión&#34;&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;Y eso es todo. No sé ni cuántas horas he perdido con esta tontería, sobre todo hasta descubrir el párrafo:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;During development, if you use &lt;code&gt;django.contrib.staticfiles&lt;/code&gt;, this will be
+done automatically by &lt;code&gt;runserver&lt;/code&gt; when &lt;code&gt;DEBUG&lt;/code&gt; is set to &lt;code&gt;True&lt;/code&gt; (see
+&lt;a href=&#34;https://docs.djangoproject.com/en/1.9/ref/contrib/staticfiles/#django.contrib.staticfiles.views.serve&#34;&gt;django.contrib.staticfiles.views.serve()&lt;/a&gt;).&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Es horrible que se comporte de forma distinta en modo &lt;code&gt;DEBUG&lt;/code&gt; del modo
+producción, y que sea tan complejo imitar el comportamiento. A pesar de lo mucho
+que me gusta &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt;&amp;hellip; :)&lt;/p&gt;
+&lt;p&gt;Tenéis más información en &lt;a href=&#34;https://docs.djangoproject.com/en/stable/howto/static-files/&#34;&gt;Managing static files (e.g. images, JavaScript, CSS)&lt;/a&gt; y
+&lt;a href=&#34;https://docs.djangoproject.com/en/stable/howto/static-files/deployment/&#34;&gt;Deploying static files&lt;/a&gt;.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Selectores CSS</title>
+      <link>http://example.org/blog/selectores-css/</link>
+      <pubDate>Sun, 08 Sep 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/selectores-css/</guid>
+      <description>
+        
+          &lt;p&gt;Hasta hace poco no me había dado cuenta de lo importante que es conocer los selectores CSS. Sirven para muchas cosas: creación de pruebas con &lt;a href=&#34;http://docs.seleniumhq.org/projects/webdriver/&#34; title=&#34;Página de Selenium/Webdriver&#34;&gt;Selenium/Webdriver&lt;/a&gt;, encontrar nodos en un XML o para la creación de páginas web, usándolos con &lt;a href=&#34;http://jquery.com/&#34; title=&#34;Página oficial de JQuery&#34;&gt;JQuery&lt;/a&gt;, &lt;a href=&#34;http://yuilibrary.com/&#34; title=&#34;Página oficial de YUI&#34;&gt;YUI&lt;/a&gt; o cualquier otra librería JavaScript. Es más, estoy convencido de que aún pueden encontrarse otros usos.&lt;/p&gt;
+&lt;p&gt;La verdad es que siempre me lío con algunos de ellos. Es por eso que escribo este artículo: para recordarlo y para apuntar aquéllas cosas que me suelen parece más &amp;ldquo;raras&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;No soy un experto, así que agradeceré cualquier corrección y mejora. Sin embargo, he tratado de incluir algunos apartados que podrían llegar a sorprender al más experto.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/css.jpg&#34;
+         alt=&#34;css&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h1 id=&#34;cómo-probarlos&#34;&gt;Cómo probarlos&lt;/h1&gt;
+&lt;h2 id=&#34;desde-javascript&#34;&gt;Desde JavaScript&lt;/h2&gt;
+&lt;p&gt;Lo primero es saber cómo podemos tener un entorno básico que nos permita probar los selectores CSS.&lt;/p&gt;
+&lt;p&gt;La opción más sencilla es abrir la consola JavaScript de Chrome o Firefox y utilizar las órdenes JavaScript &lt;code&gt;querySelector()&lt;/code&gt; o &lt;code&gt;querySelectorAll()&lt;/code&gt;, dependiendo si queremos el primer nodo o todos ellos (es muy probable que siempre queramos esta última). Ejemplo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;document.&lt;span style=&#34;color:#a6e22e&#34;&gt;querySelectorAll&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;*&amp;#39;&lt;/span&gt;);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;usando-css&#34;&gt;Usando CSS&lt;/h2&gt;
+&lt;p&gt;Otra opción es crear una página y utilizar el CSS para marcar en rojo (o en el color favorito del lector) los elementos que coincidan. Ejemplo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;html&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;head&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;style&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;h1&lt;/span&gt; { &lt;span style=&#34;color:#66d9ef&#34;&gt;background-color&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;red&lt;/span&gt; }
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;style&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;  &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;head&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;  &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;h1&lt;/span&gt;&amp;gt;Hello, world&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;h1&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;Hello!&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;  &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;html&lt;/span&gt;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Podemos usar Chrome o Firefox para no tener que estar modificando un archivo, editando la CSS al vuelo.&lt;/p&gt;
+&lt;p&gt;Este método puede ser el más visual pero el menos exacto, ya que en páginas complejas podemos creer que se selecciona algo diferente de lo que se ha seleccionado realmente. Pero para este artículo es el método más sencillo para ofrecer ejemplos autocontenidos :D&lt;/p&gt;
+&lt;h2 id=&#34;por-línea-de-órdenes&#34;&gt;Por línea de órdenes&lt;/h2&gt;
+&lt;p&gt;La gente de la W3C tiene un conjunto de utilidades llamadas &lt;a href=&#34;http://www.w3.org/Tools/HTML-XML-utils/&#34; title=&#34;Conjunto de utilidades para la manipulación de XML y HTML&#34;&gt;html-xml-utils&lt;/a&gt;. Para los que usáis GNU/Linux, hay paquete Debian para su instalación. Estos programas incluyen &lt;code&gt;hxselect&lt;/code&gt;, que nos permite utilizar los selectores CSS:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ cat file.xml | hxselect &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;SELECTOR&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Esto nos permite hacer cosas un poco más avanzadas, como descargarnos una página y parsearla sobre la marcha. Por ejemplo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;wget -O - -q http://example.org  | hxselect &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;h1&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;selectores-básicos&#34;&gt;Selectores básicos&lt;/h1&gt;
+&lt;h2 id=&#34;selector-universal&#34;&gt;Selector universal&lt;/h2&gt;
+&lt;p&gt;El selector universal es &lt;code&gt;*&lt;/code&gt; y nos permite seleccionarlo todo.&lt;/p&gt;
+&lt;h2 id=&#34;selector-de-tag-tipo-o-etiqueta&#34;&gt;Selector de tag, tipo o etiqueta&lt;/h2&gt;
+&lt;p&gt;Simplemente se utilizará el nombre del tag para la selección: Si queremos todos los &amp;ldquo;h1&amp;rdquo;, se usará el selector &lt;code&gt;h1&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;selector-de-clase&#34;&gt;Selector de clase&lt;/h2&gt;
+&lt;p&gt;Permite seleccionar elementos por alguno de los valores de su atributo &lt;code&gt;class&lt;/code&gt;. Para ello, basta indicar el valor del atributo, precedido por un punto. Por ejemplo, para seleccionar todos los elementos que contengan la clase &amp;ldquo;alert&amp;rdquo;, bastaría con usar &lt;code&gt;.alert&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;selectores-de-id&#34;&gt;Selectores de id&lt;/h2&gt;
+&lt;p&gt;Igualmente se pueden seleccionar los elementos por el valor del atributo &lt;code&gt;id&lt;/code&gt;. Este atributo debería ser único para cada elemento, por lo que sólo debería seleccionarse un elemento.&lt;/p&gt;
+&lt;p&gt;Para usarlo, basta preceder el &lt;code&gt;id&lt;/code&gt; por el símbolo &lt;code&gt;#&lt;/code&gt;. Ejemplo: &lt;code&gt;#alert&lt;/code&gt; seleccionaría un elemento del tipo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;id&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;alert&amp;#34;&lt;/span&gt;&amp;gt;Ey, man!&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;selectores-avanzados&#34;&gt;Selectores avanzados&lt;/h1&gt;
+&lt;h2 id=&#34;selector-descendente&#34;&gt;Selector descendente&lt;/h2&gt;
+&lt;p&gt;Con el fin de buscar elementos dentro de otros elementos, se pueden combinar selectores. De esta manera podemos ir seleccionando elementos de forma descendente, indicando los selectores separados por espacios.&lt;/p&gt;
+&lt;p&gt;Por ejemplo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;html&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;head&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;style&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;      .&lt;span style=&#34;color:#a6e22e&#34;&gt;selectme&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt; { &lt;span style=&#34;color:#66d9ef&#34;&gt;background-color&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;red&lt;/span&gt; }
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;style&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;  &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;head&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;  &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;h1&lt;/span&gt;&amp;gt;Hello, world&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;h1&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;Hello!&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;h2&lt;/span&gt;&amp;gt;Another title&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;h2&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;selectme&amp;#34;&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;      &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;Wow, man!&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;    &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;  &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;html&lt;/span&gt;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Es importante entender que se buscarán todos los &lt;code&gt;p&lt;/code&gt; que estén por debajo de un elemento con clase &lt;code&gt;selectme&lt;/code&gt;, aunque no sea de forma directa. Así, hubiera sido un error buscar en &lt;code&gt;body&lt;/code&gt;, ya que hubiera encontrado todos los &lt;code&gt;p&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;selector-de-hijos&#34;&gt;Selector de hijos&lt;/h2&gt;
+&lt;p&gt;De forma similar, podemos buscar hijos directos mediante el símbolo &amp;ldquo;mayor que&amp;rdquo; &lt;code&gt;&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Por ejemplo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;html&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;head&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;style&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;      .&lt;span style=&#34;color:#a6e22e&#34;&gt;search&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt; { &lt;span style=&#34;color:#66d9ef&#34;&gt;background-color&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;red&lt;/span&gt; }
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;style&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;  &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;head&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;  &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;h1&lt;/span&gt;&amp;gt;Hello, world&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;h1&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.search&amp;#34;&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;      &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;Wow, man!&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;      &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;        &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;Not me!&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;      &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;    &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;  &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;html&lt;/span&gt;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;En este ejemplo podemos ver la diferencia entre usar el selector de hijos &lt;code&gt;.search &amp;gt; p&lt;/code&gt; y el de descendientes &lt;code&gt;.search p&lt;/code&gt;, ya que el selector de hijos sólo seleccionaría el primer elemento &lt;code&gt;p&lt;/code&gt;, mientras que el selector de descendientes los seleccionaría todos.&lt;/p&gt;
+&lt;h2 id=&#34;selector-de-hermanos&#34;&gt;Selector de hermanos&lt;/h2&gt;
+&lt;p&gt;De forma análoga, podemos seleccionar hermanos mediante el símbolo &lt;code&gt;+&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;html&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;head&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;style&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;h2&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt; { &lt;span style=&#34;color:#66d9ef&#34;&gt;background-color&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;red&lt;/span&gt; }
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;style&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;  &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;head&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;  &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;h1&lt;/span&gt;&amp;gt;Hello, world&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;h1&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;whaaaat?&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;h2&lt;/span&gt;&amp;gt;Yeah!&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;h2&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;hello!&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;Not me...&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;  &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;html&lt;/span&gt;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;En el ejemplo, sólo el párrafo &amp;ldquo;Yeah!&amp;rdquo; se mostrará en rojo, ya que es el único párrafo que es hermano directo de &lt;code&gt;h2&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;selector-de-atributos&#34;&gt;Selector de atributos&lt;/h2&gt;
+&lt;p&gt;Aquí rizamos el rizo. Podemos buscar por cualquier atributo, no sólo por &lt;code&gt;id&lt;/code&gt; o &lt;code&gt;class&lt;/code&gt;. Para ello, encerraremos el atributo entre corchetes, teniendo en cuenta, además, que podemos realizar distintos tipos de búsquedas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;[atributo]&lt;/code&gt; buscará los elementos que contengan el atributo, independientemente de su contenido.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;[atributo=valor]&lt;/code&gt; comprobará que el valor sea exactamente igual al indicado.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;[atributo~=valor]&lt;/code&gt; coincidirá cuando el valor se encuentre entre alguno de los valores del atributo. Asume que el atributo puede contener una lista de valores separados por espacios.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;[atributo|=valor&lt;/code&gt; coincide con los valores que comienzan por &lt;code&gt;valor-&lt;/code&gt; (sí, el valor seguido de un guión). Es útil para identificar idiomas, así que sólo suele utilizarse con el tag &lt;code&gt;lang&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;En CSS 3 tendremos también los siguientes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;[atributo^=valor]&lt;/code&gt;, que espera que el valor del atributo comience por el valor indicado.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;[atributo$=valor]&lt;/code&gt;, para indicar el final del valor.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;[atributo*=valor]&lt;/code&gt;, que comprobará si el atributo contiene el valor indicado, en cualquier posición, tratando todo el valor del atributo como una cadena.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;pseudo-clases-y-pseudo-elementos&#34;&gt;pseudo-clases y pseudo-elementos&lt;/h2&gt;
+&lt;p&gt;Existe un conjunto de palabras clave que permiten seleccionar ciertos elementos. Éstas dependen de la versión de CSS y pueden dar muchos dolores de cabeza. Sin embargo, son tan útiles que resulta dificil ignorarlas, ya que pueden evitarnos mucho JavaScript (que nos daría más dolores de cabeza aún).&lt;/p&gt;
+&lt;p&gt;Estas pseudo-clases comienzan siempre por dos puntos &lt;code&gt;:&lt;/code&gt;. Algunas de ellas son:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;:link&lt;/code&gt;, para referirse a los enlaces no visitados&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;:visited&lt;/code&gt;, para los enlaces visitados&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;:focus&lt;/code&gt;, elemento &lt;code&gt;input&lt;/code&gt; con el foco&lt;/li&gt;
+&lt;li&gt;&amp;hellip;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;combinando-selectores&#34;&gt;Combinando selectores&lt;/h1&gt;
+&lt;p&gt;También podemos seleccionar los elementos que cumplan varias condiciones si no los separamos con espacios, sino que los unimos:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;html&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;head&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;style&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;.&lt;span style=&#34;color:#a6e22e&#34;&gt;alert&lt;/span&gt; { &lt;span style=&#34;color:#66d9ef&#34;&gt;background-color&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;red&lt;/span&gt; }
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;style&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;  &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;head&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;  &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;h1&lt;/span&gt;&amp;gt;Hello, world&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;h1&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pepito&amp;#34;&lt;/span&gt;&amp;gt;Hello!&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;h2&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;alert&amp;#34;&lt;/span&gt;&amp;gt;Another title&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;h2&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;alert&amp;#34;&lt;/span&gt;&amp;gt;Wow, man!&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;p&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;  &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;html&lt;/span&gt;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;selectores-eficientes&#34;&gt;Selectores eficientes&lt;/h1&gt;
+&lt;p&gt;No todos los selectores son igual de eficientes. Éste es el orden, del más rápido al más lento (con ejemplos):&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;ID: &lt;code&gt;#header&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Class: &lt;code&gt;.promo&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Type: &lt;code&gt;div&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Adjacent sibling: &lt;code&gt;h2 + p&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Child: &lt;code&gt;li &amp;gt; ul&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Descendant: &lt;code&gt;ul a&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Universal: &lt;code&gt;*&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Attribute: &lt;code&gt;[type=&amp;quot;text&amp;quot;]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Pseudo-classes/-elements: &lt;code&gt;a:hover&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Éste es el orden que propone &lt;a href=&#34;http://stevesouders.com/&#34; title=&#34;Blog de Steve Souders&#34;&gt;Steve Souders&lt;/a&gt; en el libro &lt;a href=&#34;http://www.amazon.com/dp/0596522304?tag=stevsoud-20&amp;amp;camp=213381&amp;amp;linkCode=as4&#34; title=&#34;Libro Even Faster Websites, de Steve Souders&#34;&gt;Even Faster Websites&lt;/a&gt;. Para ser sincero, aún no lo he leído, pero he encontrado la lista en el artículo &lt;a href=&#34;http://csswizardry.com/2011/09/writing-efficient-css-selectors/&#34; title=&#34;Writing efficient CSS selectors&#34;&gt;Writing efficient CSS selectors&lt;/a&gt; :D&lt;/p&gt;
+&lt;p&gt;En esta lista hay que tener en cuenta algunas cosas más, como que la diferencia entre usar &lt;code&gt;id&lt;/code&gt; y &lt;code&gt;class&lt;/code&gt; es inapreciable, mientras que la diferencia con los últimos elementos de la lista puede ser de órdenes de magnitud. Esto se debe a la forma en que los navegadores gestionan el DOM, ya que todos ellos disponen de cachés para los &lt;code&gt;id&lt;/code&gt; y los &lt;code&gt;class&lt;/code&gt;, pero no para otros atributos.&lt;/p&gt;
+&lt;h2 id=&#34;el-selector-principal-o-key&#34;&gt;El selector principal o key&lt;/h2&gt;
+&lt;p&gt;Es &lt;strong&gt;muy importante&lt;/strong&gt; saber que el navegador buscará los elementos en el orden inverso a como se indiquen. Al primer elemento que buscará el navegador se le denomina &lt;strong&gt;selector principal&lt;/strong&gt; o &lt;strong&gt;key&lt;/strong&gt;. Veamos varios ejemplos:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;div p span&lt;/code&gt;: el selector principal es &lt;code&gt;span&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;div p span.myclass&lt;/code&gt;: el selector principal es &lt;code&gt;span.myclass&lt;/code&gt; (complejo)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;div p.myclass span&lt;/code&gt;: el selector principal es &lt;code&gt;span&lt;/code&gt;, nuevamente.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Cuantos más elementos devuelva el selector principal, menos eficiente será nuestro selector. Si queremos hacer un selector totalmente ineficiente, basta con terminarlo siempre con el selector universal &lt;code&gt;*&lt;/code&gt;, ya que siempre devolverá todos los elementos.&lt;/p&gt;
+&lt;h1 id=&#34;referencias&#34;&gt;Referencias&lt;/h1&gt;
+&lt;p&gt;Para crear este artículo he necesitado bastantes referencias, dada mi ignorancia sobre el tema. Conocía lo básico de las CSS, y algo sobre su eficiencia, pero no lo suficiente como para plasmarlo aquí.&lt;/p&gt;
+&lt;p&gt;Por eso me he remitido a la sapiencia de la W3C, donde podéis consultar la &lt;a href=&#34;http://www.w3schools.com/cssref/css_selectors.asp&#34; title=&#34;CSS Selector Reference&#34;&gt;Referencia de selectores CSS en w3schools&lt;/a&gt;. También he consultado el artículo &lt;a href=&#34;http://csswizardry.com/2011/09/writing-efficient-css-selectors/&#34; title=&#34;Writing efficient CSS selectors&#34;&gt;Writing efficient CSS selectors&lt;/a&gt;, de &lt;a href=&#34;https://twitter.com/csswizardry&#34; title=&#34;Twitter de Harry Roberts&#34;&gt;Harry Roberts&lt;/a&gt;, así como los libros web gratuitos &lt;a href=&#34;http://librosweb.es/css/&#34; title=&#34;Libro web gratuito de introducción a las CSS&#34;&gt;Introducción a CSS&lt;/a&gt; y &lt;a href=&#34;http://librosweb.es/css_avanzado/&#34; title=&#34;Libro web gratuito sobre CSS avanzadas&#34;&gt;CSS avanzado&lt;/a&gt;, ambos de &lt;a href=&#34;https://twitter.com/javiereguiluz&#34; title=&#34;Twitter de Javier Eguiluz&#34;&gt;Javier Eguiluz&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;También puede resultaros útil el artículo &lt;a href=&#34;http://net.tutsplus.com/tutorials/html-css-techniques/the-30-css-selectors-you-must-memorize/&#34; title=&#34;Lista de selectores CSS, por Jeffrey Way&#34;&gt;The 30 CSS Selectors you Must Memorize&lt;/a&gt;, quizá no para memorizarlos pero sí para consultarlos.&lt;/p&gt;
+&lt;p&gt;Y, por supuesto, el libro que creo que terminaré leyéndome, &lt;a href=&#34;http://www.amazon.com/dp/0596522304?tag=stevsoud-20&amp;amp;camp=213381&amp;amp;linkCode=as4&#34; title=&#34;Libro Even Faster Websites, de Steve Souders&#34;&gt;Even Faster Websites&lt;/a&gt;, de &lt;a href=&#34;http://stevesouders.com/&#34; title=&#34;Blog de Steve Souders&#34;&gt;Steve Souders&lt;/a&gt;.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Bootstrap en 5 minutos</title>
+      <link>http://example.org/blog/usando-bootstrap/</link>
+      <pubDate>Sat, 17 Aug 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/usando-bootstrap/</guid>
+      <description>
+        
+          &lt;p&gt;En el artículo anterior conté &lt;a href=&#34;http://example.org/blog/bootstrap/&#34;&gt;cómo estructurar un proyecto que utiliza Bootstrap&lt;/a&gt;, la librería CSS/JS de Twitter. Ahora viene el artículo que cuenta cómo usar &lt;a href=&#34;http://twitter.github.io/bootstrap/&#34;&gt;Bootstrap&lt;/a&gt; :D&lt;/p&gt;
+&lt;p&gt;Es importante comenzar con un proyecto nuevo. No tratéis de usar &lt;a href=&#34;http://twitter.github.io/bootstrap/&#34;&gt;Bootstrap&lt;/a&gt; directamente sobre un proyecto existente, ya que es desesperante. Una vez que tengáis un poco de soltura ya no será un problema.&lt;/p&gt;
+&lt;p&gt;Y sabed que soy un completo novato en lo que al tema se refiere, así que estaré hablando desde la mayor de las ignorancias :D&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/bootstrap.png&#34;
+         alt=&#34;Bootstrap&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;maquetación&#34;&gt;Maquetación&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;http://twitter.github.io/bootstrap/&#34;&gt;Bootstrap&lt;/a&gt; nos da algunas clases orientadas a la maquetación. Gracias a ellas resultará muy sencillo soportar dispositivos de pantallas pequeñas. A esto es lo que se le conoce como &lt;a href=&#34;http://twitter.github.io/bootstrap/&#34;&gt;Scaffolding&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;De manera muy básica: todo va dentro de &lt;code&gt;.container&lt;/code&gt;, que a menudo contendrá &lt;code&gt;.row&lt;/code&gt;. Si queremos que un elemento dentro del &lt;code&gt;.row&lt;/code&gt; ocupe varias &amp;ldquo;columnas&amp;rdquo;, basta con pedir que nos lo expanda. Así, se puede usar &lt;code&gt;.span4&lt;/code&gt; para usar 4 columnas. El modelo básico de &lt;a href=&#34;http://twitter.github.io/bootstrap/&#34;&gt;Bootstrap&lt;/a&gt; contiene 12 columnas.&lt;/p&gt;
+&lt;p&gt;Ejemplo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;container&amp;#34;&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;  &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;row&amp;#34;&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;span4&amp;#34;&lt;/span&gt;&amp;gt;...&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;span8&amp;#34;&lt;/span&gt;&amp;gt;...&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;  &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Si estamos usando algún lenguaje de plantillas, como &lt;a href=&#34;http://liquidmarkup.org/&#34;&gt;liquid&lt;/a&gt;, &lt;a href=&#34;http://jinja.pocoo.org/docs/&#34;&gt;jinja2&lt;/a&gt; o algún otro, yo recomiendo utilizar una plantilla sólo para la estructura básica y meter cada elemento en otra plantilla. Eso facilitará la gestión y mobilidad de elementos.&lt;/p&gt;
+&lt;p&gt;Hay mucho que decir sobre la maquetación, pero no voy a contar nada más. Temo que el resto tendréis que descubrirlo vosotros.&lt;/p&gt;
+&lt;h2 id=&#34;elementos-básicos&#34;&gt;Elementos básicos&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;http://twitter.github.io/bootstrap/&#34;&gt;Bootstrap&lt;/a&gt; nos da un estilo bastante molón para los elementos más generales: enlaces, títulos, formularios, listas,&amp;hellip; Así, gratis, sin hacer nada de nada.&lt;/p&gt;
+&lt;p&gt;Además, nos ofrece clases para decorar otros elementos, como los &lt;code&gt;button&lt;/code&gt;, que se pueden decorar con &lt;code&gt;.btn&lt;/code&gt; para obtener una vista más chula e, incluso, cambiarle el color añadiendo &lt;code&gt;.btn-info&lt;/code&gt;, &lt;code&gt;.btn-success&lt;/code&gt;, &lt;code&gt;.btn-warning&lt;/code&gt;, etc. También podremos cambiar el tamaño con &lt;code&gt;.btn-large&lt;/code&gt;, &lt;code&gt;.btn-small&lt;/code&gt; o deshabilitarlos con &lt;code&gt;.disabled&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;También nos ofrece distintos botones que podemos usar sin mucho problema.&lt;/p&gt;
+&lt;p&gt;No pongo ejemplos porque está todo muy clarito en la propia documentación de Bootstrap.&lt;/p&gt;
+&lt;h2 id=&#34;colocación&#34;&gt;Colocación&lt;/h2&gt;
+&lt;p&gt;También tenemos ayuda para colocar los elementos, por lo que podemos usar &lt;code&gt;.pull-left&lt;/code&gt; o &lt;code&gt;.pull-right&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;barras-de-navegación&#34;&gt;Barras de navegación&lt;/h2&gt;
+&lt;p&gt;Una de las cosas más molonas son las barras de navegación (o barra de menú). Resultan muy sencillas de crear y quedan muy vistosas. Voy a centarme un poco en ellas.&lt;/p&gt;
+&lt;p&gt;Una barra de navegación es un &lt;code&gt;.navbar&lt;/code&gt;. Ésta debe incluir un &lt;code&gt;.navbar-inner&lt;/code&gt; que, a su vez, tendrá un &lt;code&gt;.container&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;navbar&amp;#34;&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;  &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;navbar-inner&amp;#34;&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;container&amp;#34;&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;    ...
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;    &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;  &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt;&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt;&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;div&lt;/span&gt;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Podemos fijar el &lt;code&gt;.navbar&lt;/code&gt; arriba con &lt;code&gt;.navbar-fixed-top&lt;/code&gt; o abajo con &lt;code&gt;.navbar-fixed-bottom&lt;/code&gt;. Sin embargo, si hacemos esto será necesario añadir un poco de &lt;em&gt;padding&lt;/em&gt; al &lt;code&gt;body&lt;/code&gt; en nuestra css:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-css&#34; data-lang=&#34;css&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt; {
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;padding-top&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;60&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;px&lt;/span&gt;;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;padding-bottom&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;60&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;px&lt;/span&gt;;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;}
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;@&lt;span style=&#34;color:#66d9ef&#34;&gt;media&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;screen&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;and&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;max-width&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;768px&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; {
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt; {
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;padding-top&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;px&lt;/span&gt;;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;padding-bottom&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;px&lt;/span&gt;;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;  }
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;En este ejemplo he añadido el código necesario para que nuestro menú funcione correctamente en dispositivos pequeños, donde no tendrá el &lt;em&gt;padding&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;No entraré en cómo añadir el título de la página ni formularios de búsqueda, ya que no creo que os cueste si entendéis todo lo demás.&lt;/p&gt;
+&lt;p&gt;También se puede hacer que el menú se minimice en un botón para pantallas pequeñas mediante el atributo &lt;code&gt;data-toggle=&amp;quot;collapse&amp;quot;&lt;/code&gt;, indicando qué tiene que minimizar con el atributo &lt;code&gt;data-target=&amp;quot;.nav-collapse&amp;quot;&lt;/code&gt;. Como véis, este atributo tiene como valor una consulta, que tiene que devolver lo que debe expandirse al pulsar el botón. Será necesario que añadáis &lt;a href=&#34;http://getbootstrap.com/2.3.2/scaffolding.html#responsive&#34;&gt;Bootstrap Responsive&lt;/a&gt; para que funcione correctamente con los dispositivos pequeños. Tenéis ejemplos en la documentación.&lt;/p&gt;
+&lt;h2 id=&#34;otras-pijadas&#34;&gt;Otras pijadas&lt;/h2&gt;
+&lt;p&gt;Además tenéis ventanas modales, desplegables, pestañas, alertas, carrusel de imágenes y otras utilidades típicas de estos frameworks.&lt;/p&gt;
+&lt;p&gt;Lo único que echo en falta es un &lt;code&gt;datepicker&lt;/code&gt;, pero no se puede tener todo :D&lt;/p&gt;
+&lt;p&gt;Si sólo queréis maquetación, no es necesario que añadáis el JavaScript. Para las barras de navegación con subpaneles y otros elementos interactivos sí será necesario. Las hojas de estilos CSS serán necesarias siempre.&lt;/p&gt;
+&lt;h2 id=&#34;utilidad&#34;&gt;Utilidad&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;http://twitter.github.io/bootstrap/&#34;&gt;Bootstrap&lt;/a&gt; nos permite generar un sitio web vistoso en muy poco tiempo. Los que no tenemos dotes de diseñadores hemos visto una verdadera ayuda en esta pequeña librería CSS/js.&lt;/p&gt;
+&lt;p&gt;Espero que vosotros también le veáis utilidad a este pequeño artículo :D&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Bootstrap</title>
+      <link>http://example.org/blog/bootstrap/</link>
+      <pubDate>Wed, 14 Aug 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/bootstrap/</guid>
+      <description>
+        
+          &lt;p&gt;&lt;a href=&#34;http://twitter.github.io/bootstrap/&#34; title=&#34;Twitter bootstrap&#34;&gt;Bootstrap&lt;/a&gt; es un conjunto de librerías creadas por empleados de Twitter. Permiten crear un sitio web con una apariencia moderna en muy poco tiempo.&lt;/p&gt;
+&lt;p&gt;En este artículo me voy a centrar en cómo trabajar con CSS y Bootstrap, no en cómo se utiliza la librería. Es decir: voy a centrarme en cómo organizarse y comenzar a trabajar.&lt;/p&gt;
+&lt;p&gt;Aunque me centro en &lt;a href=&#34;http://twitter.github.io/bootstrap/&#34; title=&#34;Twitter bootstrap&#34;&gt;Bootstrap&lt;/a&gt;, se podría aplicar a otras librerías.&lt;/p&gt;
+&lt;p&gt;Este artículo es más mi camino personal que otra cosa :D&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/bootstrap.png&#34;
+         alt=&#34;Bootstrap&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;distintas-maneras-de-hacer-las-cosas&#34;&gt;Distintas maneras de hacer las cosas&lt;/h2&gt;
+&lt;p&gt;A menudo hay más de una forma de hacer lo mismo. En ocasiones, un camino será mejor que el otro, pero lo más normal en informática es que ambos caminos ofrezcan ventajas. Éste es el caso.&lt;/p&gt;
+&lt;p&gt;En este artículo trataré de contar cómo organizar los archivos para trabajar con &lt;a href=&#34;http://twitter.github.io/bootstrap/&#34; title=&#34;Twitter bootstrap&#34;&gt;Bootstrap&lt;/a&gt;. Explicaré las 4 maneras que yo he utilizado, contando sus cosas buenas y malas. La mejor de ellas y la peor dependerán de cada uno.&lt;/p&gt;
+&lt;h3 id=&#34;descárgatela&#34;&gt;Descárgatela!&lt;/h3&gt;
+&lt;p&gt;Desde la web de &lt;a href=&#34;http://twitter.github.io/bootstrap/&#34; title=&#34;Twitter bootstrap&#34;&gt;Bootstrap&lt;/a&gt; hay muchos enlaces para descargarse todo empaquetado. Una vez en tu máquina, basta descomprimirlo y copiar las CSS y los JS donde se encuentren en tu proyecto. Después se enlazan desde los HTML y&amp;hellip; ¡listo!&lt;/p&gt;
+&lt;p&gt;Éste es el método más habitual y el que usa más gente.&lt;/p&gt;
+&lt;p&gt;El esquema de directorios sería el siguiente:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;.
+├── css
+│   ├── bootstrap.css
+│   └── mycss.css
+└── js
+    ├── bootstrap.js
+    └── myjs.js
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4 id=&#34;ventajas&#34;&gt;Ventajas&lt;/h4&gt;
+&lt;p&gt;Rápido e indoloro. En poco tiempo puedes comenzar a usar la librería.&lt;/p&gt;
+&lt;p&gt;La CSS se combinará en el cliente con las propias, así que no es necesario tocar nada más.&lt;/p&gt;
+&lt;h4 id=&#34;desventajas&#34;&gt;Desventajas&lt;/h4&gt;
+&lt;p&gt;Resulta difícil llevar sincronizados todos los archivos de &lt;a href=&#34;http://twitter.github.io/bootstrap/&#34; title=&#34;Twitter bootstrap&#34;&gt;Bootstrap&lt;/a&gt;, ya que cada uno se encontrará en un directorio distinto. Además, estarán mezclados con los archivos de nuestro proyecto.&lt;/p&gt;
+&lt;p&gt;Actualizar los archivos puede resultar tedioso y propenso a errores.&lt;/p&gt;
+&lt;p&gt;Además, la CSS se combinará con la nuestra en el cliente, lo que puede resultar más lento que si se hubiera hecho previamente.&lt;/p&gt;
+&lt;p&gt;Resulta complicado mantener un estilo común entre las CSS propias y las de bootstrap. Un cambio en cualquiera de ellas puede resultarnos desastroso.&lt;/p&gt;
+&lt;h3 id=&#34;herencia-less&#34;&gt;Herencia (Less)&lt;/h3&gt;
+&lt;p&gt;Tratando de evitar el problema de mantener sincronizadas las CSS propia y de bootstrap decidí combinarlas. Así que utilicé
+&lt;a href=&#34;http://lesscss.org/&#34; title=&#34;Lenguaje dinámico para CSS&#34;&gt;Less&lt;/a&gt; para combinar los estilos de &lt;a href=&#34;http://twitter.github.io/bootstrap/&#34; title=&#34;Twitter bootstrap&#34;&gt;Bootstrap&lt;/a&gt; con los de mi CSS.&lt;/p&gt;
+&lt;p&gt;De esta manera mis CSS se convertían en archivos &lt;a href=&#34;http://lesscss.org/&#34; title=&#34;Lenguaje dinámico para CSS&#34;&gt;Less&lt;/a&gt; que importaban y heredaban los estilos de Bootstrap.&lt;/p&gt;
+&lt;p&gt;El esquema:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;.
+├── css
+│   ├── bootstrap.less
+│   └── mycss.less
+└── js
+    ├── bootstrap.js
+    └── myjs.js
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4 id=&#34;ventajas-1&#34;&gt;Ventajas&lt;/h4&gt;
+&lt;p&gt;Gracias a esto podía realizar pequeños cambios en los estilos de &lt;a href=&#34;http://twitter.github.io/bootstrap/&#34; title=&#34;Twitter bootstrap&#34;&gt;Bootstrap&lt;/a&gt; con compatibilidad de estilos.&lt;/p&gt;
+&lt;h4 id=&#34;desventajas-1&#34;&gt;Desventajas&lt;/h4&gt;
+&lt;p&gt;Aunque al principio parecía muy buena idea, a la larga volvía a hacerse difícil de mantener. Es necesario utilizar los &lt;a href=&#34;http://twitter.github.io/bootstrap/customize.html&#34; title=&#34;Bootstrap customization&#34;&gt;asistentes web de Bootstrap&lt;/a&gt; para cada cambio, lo que resulta enrevesado.&lt;/p&gt;
+&lt;p&gt;Aunque trataba de solucionar un problema, realmente no lo hacía, sino que me daba más dolores de cabeza. La CSS resultante era muy grande.&lt;/p&gt;
+&lt;h3 id=&#34;combinando-repositorios&#34;&gt;Combinando repositorios&lt;/h3&gt;
+&lt;p&gt;Da la casualidad de que &lt;a href=&#34;http://twitter.github.io/bootstrap/&#34; title=&#34;Twitter bootstrap&#34;&gt;Bootstrap&lt;/a&gt; utiliza &lt;a href=&#34;http://git-scm.com/&#34; title=&#34;Sistema de control de versiones distribuido Git&#34;&gt;Git&lt;/a&gt; para gestionarse&amp;hellip; Y a mí me gusta &lt;a href=&#34;http://git-scm.com/&#34; title=&#34;Sistema de control de versiones distribuido Git&#34;&gt;Git&lt;/a&gt;. El proyecto de esta web está en &lt;a href=&#34;http://git-scm.com/&#34; title=&#34;Sistema de control de versiones distribuido Git&#34;&gt;Git&lt;/a&gt;. Así que puedo hacer uso de los &lt;a href=&#34;http://git-scm.com/book/en/Git-Tools-Submodules&#34; title=&#34;Submódulos en Git&#34;&gt;submodules&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Así que decidí añadirme todo &lt;a href=&#34;http://twitter.github.io/bootstrap/&#34; title=&#34;Twitter bootstrap&#34;&gt;Bootstrap&lt;/a&gt; como dependencia de mi web:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;    $ git submodule add git://github.com/twitter/bootstrap.git _less
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;    $ git submodule update --init --reference v2.3.2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;De esta manera añado el módulo en la última versión estable.&lt;/p&gt;
+&lt;p&gt;A continuación modifiqué mi Makefile para que compilara la librería &lt;a href=&#34;http://twitter.github.io/bootstrap/&#34; title=&#34;Twitter bootstrap&#34;&gt;Bootstrap&lt;/a&gt; y me dejara los archivos en los lugares correctos. Así el despliegue será más sencillo.&lt;/p&gt;
+&lt;p&gt;Para compilarla necesité &lt;a href=&#34;https://github.com/twitter/recess&#34; title=&#34;Compilador de Less a CSS&#34;&gt;recess&lt;/a&gt;, &lt;a href=&#34;http://nodejs.org/&#34; title=&#34;Intérprete de consola de JS&#34;&gt;nodejs&lt;/a&gt; y un montón de librerías más, que sólo estaban disponibles en &lt;a href=&#34;http://www.debian.org/releases/sid/index.es.html&#34; title=&#34;Versión inestable de Debian&#34;&gt;Debian SID&lt;/a&gt;. Bueno, como es lo que uso, no tuve mayor problema. Si no usas SID, a lo mejor te lleva un rato instalar todas las dependencias.&lt;/p&gt;
+&lt;p&gt;El esquema:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;.
+├── css
+│   ├── bootstrap
+│   │   └── .git
+│   └── mycss.less
+├── js
+│   └── myjs.js
+└── Makefile
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4 id=&#34;ventajas-2&#34;&gt;Ventajas&lt;/h4&gt;
+&lt;p&gt;Actualizar los archivos resulta trivial: actualizas el repo, cambias la versión y recompilas.&lt;/p&gt;
+&lt;p&gt;No tengo que estar manteniendo los archivos de &lt;a href=&#34;http://twitter.github.io/bootstrap/&#34; title=&#34;Twitter bootstrap&#34;&gt;Bootstrap&lt;/a&gt; en mi repositorio, ya que están en el suyo propio (nunca meto archivos generados en mi repositorio :D)&lt;/p&gt;
+&lt;h4 id=&#34;desventajas-2&#34;&gt;Desventajas&lt;/h4&gt;
+&lt;p&gt;Se sigue combinando con mis CSS en el cliente y siguen siendo terriblemente grandes.&lt;/p&gt;
+&lt;p&gt;La gestión de la configuración sigue siendo difícil.&lt;/p&gt;
+&lt;p&gt;La compilación de bootstrap puede no ser todo lo fácil que debería.&lt;/p&gt;
+&lt;h3 id=&#34;combinando-css&#34;&gt;Combinando CSS&lt;/h3&gt;
+&lt;p&gt;Sin embargo aún era complicado gestionar un cambio&amp;hellip; Tenía que haber otra manera más sencilla. Y llegado a este punto, tenía que mirar el código de &lt;a href=&#34;http://twitter.github.io/bootstrap/&#34; title=&#34;Twitter bootstrap&#34;&gt;Bootstrap&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Resulta que el archivo &lt;code&gt;bootstrap.less&lt;/code&gt; es un índice de todo lo que hay que incluir&amp;hellip; Así que me lo copié en mi proyecto y ajusté los paths. También me copié el archivo &lt;code&gt;variables.less&lt;/code&gt;. Con &lt;code&gt;mixins.less&lt;/code&gt; no me atreví :D&lt;/p&gt;
+&lt;p&gt;Además puedes comentar o eliminar los &lt;code&gt;include&lt;/code&gt; de los módulos que no estés utilizando, obteniendo una CSS aún más pequeña.&lt;/p&gt;
+&lt;p&gt;Ahora viene lo más chungo: adaptar mi archivo &lt;a href=&#34;http://lesscss.org/&#34; title=&#34;Lenguaje dinámico para CSS&#34;&gt;Less&lt;/a&gt; para que se ajuste mejor a &lt;a href=&#34;http://twitter.github.io/bootstrap/&#34; title=&#34;Twitter bootstrap&#34;&gt;Bootstrap&lt;/a&gt;&amp;hellip; Y eso pasa por modificaciones en mis plantillas HTML. Sin embargo, en cuanto empiezas a hacerlo, tu archivo &lt;a href=&#34;http://lesscss.org/&#34; title=&#34;Lenguaje dinámico para CSS&#34;&gt;Less&lt;/a&gt; comienza a ser más y más pequeño&amp;hellip;&lt;/p&gt;
+&lt;p&gt;En este estado estoy ahora. Aún no he terminado de ajustarlo todo, pero creo que se aprecian resultados.&lt;/p&gt;
+&lt;p&gt;Y de nuevo, el esquema de directorios:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;.
+├── css
+│   ├── bootstrap
+│   │   └── .git
+│   ├── mycss.less
+│   └── variables.css
+├── js
+│   └── myjs.js
+└── Makefile
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4 id=&#34;ventajas-3&#34;&gt;Ventajas&lt;/h4&gt;
+&lt;p&gt;Fácil de actualizar, de gestionar y de manejar.&lt;/p&gt;
+&lt;p&gt;Se combina en el servidor, por lo que el cliente tiene que descargarse mucho menos. Además, me permite gestionar lo que no estoy usando.&lt;/p&gt;
+&lt;h4 id=&#34;desventajas-3&#34;&gt;Desventajas&lt;/h4&gt;
+&lt;p&gt;Puede resultar muy tedioso en proyectos pequeños.&lt;/p&gt;
+&lt;p&gt;La detección de errores puede ser un verdadero infierno.&lt;/p&gt;
+&lt;p&gt;Hay que estar compilando cada vez que se hace un cambio en un archivo &lt;a href=&#34;http://lesscss.org/&#34; title=&#34;Lenguaje dinámico para CSS&#34;&gt;Less&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;conclusiones&#34;&gt;Conclusiones&lt;/h2&gt;
+&lt;p&gt;Ahora que lo conozco, y después de haberme peleado un poco con &lt;a href=&#34;http://twitter.github.io/bootstrap/&#34; title=&#34;Twitter bootstrap&#34;&gt;Bootstrap&lt;/a&gt;, debo decir que es una maravilla. Cualquier proyecto de cierta embergadura que haga incluirá la última arquitectura que propongo, ya que es la más sencilla de gestionar a largo plazo.&lt;/p&gt;
+&lt;p&gt;Sin embargo no es apta para principiantes ni para tener algo en poco tiempo. En esos casos recomendaría las primeras opciones.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>jQuery: Usando los estilos</title>
+      <link>http://example.org/blog/jquery-stilos/</link>
+      <pubDate>Mon, 31 Oct 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/jquery-stilos/</guid>
+      <description>
+        
+          &lt;p&gt;Hace poco me puse a cotillear un poco de &lt;a href=&#34;http://jquery.com/&#34;&gt;jQuery&lt;/a&gt; , y me impresionó realmente. Aunque JavaScript no es mi lenguaje de programación favorito, jQuery lo hace casi usable.&lt;/p&gt;
+&lt;p&gt;Pero hoy no vamos a hablar de &lt;a href=&#34;http://w3schools.com/js/default.asp&#34;&gt;JavaScript&lt;/a&gt; . Hoy sólo mencionaremos &lt;a href=&#34;http://w3schools.com/css/default.asp&#34;&gt;CSS&lt;/a&gt;  y estilos.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/jquery.png&#34;
+         alt=&#34;JQuery&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;elegir-un-estilo&#34;&gt;Elegir un estilo&lt;/h2&gt;
+&lt;p&gt;Cuando vamos a utilizar jQuery como nuestra CSS, es importante elegir un estilo.
+Para ello nos ayuda en gran medida &lt;a href=&#34;http://jqueryui.com/themeroller/&#34;&gt;jQuery Theme Roller&lt;/a&gt; . Aquí podremos tomar los &amp;ldquo;sabores&amp;rdquo; clásicos y personalizarlos. Cuando hayamos elegido uno, nos lo podemos descargar.&lt;/p&gt;
+&lt;p&gt;Para utilizarlo, tendremos que añadir la siguiente línea a nuestra cabecera HTML (entre las marcas &amp;ldquo;HEAD&amp;rdquo;), referenciando el lugar donde está la css:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;link&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;rel&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;stylesheet&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;href&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;jquery.css&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;type&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;text/css&amp;#34;&lt;/span&gt; /&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Ojo al atributo &amp;ldquo;href&amp;rdquo;, que es la dirección relativa (desde el punto de vista del servidor web) de nuestra hoja de estilos.&lt;/p&gt;
+&lt;p&gt;A partir de este momento podemos utilizar los estilos.&lt;/p&gt;
+&lt;p&gt;Ahora que estamos en posición de usar el estilo, &lt;em&gt;es importante tratar de evitar usar marcas propias&lt;/em&gt;. De esta manera siempre podremos volver a generar un estilo con ThemeRoller sin tener que retocarlo a mano.&lt;/p&gt;
+&lt;h2 id=&#34;contenedores&#34;&gt;Contenedores&lt;/h2&gt;
+&lt;p&gt;Los contenedores son como las cajas que van a tener otros objetos dentro. Algunos son: TABLE, DIV, UL, OL, &amp;hellip;&lt;/p&gt;
+&lt;p&gt;Si queremos darles un estilo típico de contenedor, bastará con añadirles la clase: &lt;em&gt;ui-widget&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;En el caso de las tablas, que tenemos cabecera y cuerpo, podemos utilizar &lt;em&gt;ui-widget-header&lt;/em&gt; para la cabecera (THEAD) y &lt;em&gt;ui-widget-content&lt;/em&gt; para el contenido(TBODY).&lt;/p&gt;
+&lt;h2 id=&#34;resaltando-cosas&#34;&gt;Resaltando cosas&lt;/h2&gt;
+&lt;p&gt;Cuando queramos resaltar algo, podemos meterlo dentro de un SPAN y asignarle la clase &lt;em&gt;ui-state-highlight&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Si queremos mostrar un error, basta con usar SPAN y la clase &lt;em&gt;ui-state-error&lt;/em&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;iconos&#34;&gt;Iconos&lt;/h2&gt;
+&lt;p&gt;Esta es la mejor parte :D Tenemos un montón de iconos disponibles, para los que tan solo tenemos que saber jugar con las clases asignadas.&lt;/p&gt;
+&lt;p&gt;Para asignar dos clases a un mismo elemento debemos separarlas por espacios.&lt;/p&gt;
+&lt;p&gt;Todos los iconos deben ir en un elemento de tipo SPAN. Si no, es muy probable que no funcionen. Además, el texto que metáis dentro del SPAN no se mostrará.&lt;/p&gt;
+&lt;p&gt;Como icono, tenéis que asignarle la clase &lt;em&gt;ui-icon&lt;/em&gt;, y a continuación el icono
+que queráis mostrar. Algunos de ellos son: &lt;em&gt;ui-icon-plus&lt;/em&gt;, &lt;em&gt;ui-icon-clock&lt;/em&gt;, &amp;hellip;
+Tenéis toda la lista en el &lt;a href=&#34;http://jqueryui.com/themeroller/&#34;&gt;jQuery Theme Roller&lt;/a&gt; , abajo. Basta con que apuntéis con el ratón un icono para que os dé su nombre.&lt;/p&gt;
+&lt;h2 id=&#34;para-saber-más&#34;&gt;Para saber más&lt;/h2&gt;
+&lt;p&gt;Este artículo pretende ser una mera introducción al tema&amp;hellip; Podéis saber más si
+miráis &lt;a href=&#34;http://jqueryui.com/docs/Theming/API&#34;&gt;la propia documentación de jQuery sobre el uso de sus CSS&lt;/a&gt; .&lt;/p&gt;
+&lt;p&gt;Espero que os haya resultado interesante. ¡¡Un saludo!!&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

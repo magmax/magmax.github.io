@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>package on El blog de MagMax</title>
+    <link>http://example.org/tags/package/</link>
+    <description>Recent content in package on El blog de MagMax</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 14 May 2014 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/tags/package/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Publicando artefactos Python</title>
+      <link>http://example.org/blog/publicando-artefactos-python/</link>
+      <pubDate>Wed, 14 May 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/publicando-artefactos-python/</guid>
+      <description>
+        
+          &lt;p&gt;Hace un par de semanas que comencé un proyectillo Python que se ha transformado en mi primer paquete &lt;a href=&#34;https://pypi.python.org/pypi&#34;&gt;pypi&lt;/a&gt; serio. Bueno, realmente se ha transformado en dos paquetes, lo que me ha hecho darme cuenta de lo repetitivo de algunas tareas&amp;hellip; Y cómo no, he decidido compartirlo aquí.&lt;/p&gt;
+&lt;p&gt;Así aprovecharé para contar algunas lecciones aprendidas, ahorrando así tiempo la próxima vez y ayudando a otros. De hecho, ya estoy preparando el siguiente XD&lt;/p&gt;
+&lt;p&gt;Comenzaré desde el principio del todo: la creación del repositorio.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/python.png&#34;
+         alt=&#34;Python&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;antes-de-publicar&#34;&gt;Antes de publicar&lt;/h2&gt;
+&lt;h3 id=&#34;creando-un-repositorio&#34;&gt;Creando un repositorio&lt;/h3&gt;
+&lt;p&gt;Lo primero es crear un repositorio. No me voy a liar aquí a contar cómo hay que hacerlo, porque ya conté en su día &lt;a href=&#34;http://example.org/blog/usando-git/&#34;&gt;cómo crear un repositorio Git&lt;/a&gt;. Baste decir que recomiendo &lt;a href=&#34;http://git-scm.com/&#34;&gt;Git&lt;/a&gt; en &lt;a href=&#34;https://github.com/&#34;&gt;GitHub&lt;/a&gt;, y más tarde veremos por qué.&lt;/p&gt;
+&lt;h3 id=&#34;readme&#34;&gt;README&lt;/h3&gt;
+&lt;p&gt;Lo primero en el repositorio es crear el archivo &lt;strong&gt;README&lt;/strong&gt;. En principio, tenemos varios formatos a elegir&amp;hellip; Pero si queremos reutilizarlo para que se muestre lo mismo en &lt;a href=&#34;https://pypi.python.org/pypi&#34;&gt;pypi&lt;/a&gt; y en &lt;a href=&#34;https://github.com/&#34;&gt;GitHub&lt;/a&gt;, es recomendable usar &lt;a href=&#34;http://docutils.sourceforge.net/rst.html&#34;&gt;ReStructured Text&lt;/a&gt;, que es lo único que entiende &lt;a href=&#34;https://pypi.python.org/pypi&#34;&gt;pypi&lt;/a&gt;. Por lo tanto, debería llamarse &lt;strong&gt;README.rst&lt;/strong&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;estructura&#34;&gt;Estructura&lt;/h3&gt;
+&lt;p&gt;Lo segundo a tener en cuenta es la estructura de directorios. Recomiendo la siguiente:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;.
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;├── .coveragerc
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;├── .travis.yml
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;├── .gitignore
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;├── Makefile
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;├── README.rst
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;├── requirements-dev.txt
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;├── setup.py
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;├── tests
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;│   ├── acceptance
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;│   │   └── __init__.py
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;│   ├── integration
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;│   │   └── __init__.py
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;│   └── unit
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;│       └── __init__.py
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;└── &amp;lt;library name&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;    └── __init__.py
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;En este tutorial me ha quedado muy largo porque tengo que mostrar casi todos ellos, pero podéis ver dos ejemplos funcionales: &lt;a href=&#34;https://github.com/magmax/python-readchar/tree/master/&#34;&gt;python-readchar&lt;/a&gt; y &lt;a href=&#34;https://github.com/magmax/python-inquirer/tree/master/&#34;&gt;python-inquirer&lt;/a&gt;. Recomiendo el primero por ser más sencillo.&lt;/p&gt;
+&lt;p&gt;Pues ya tenemos el repositorio y un archivo&amp;hellip; ¡Comencemos!&lt;/p&gt;
+&lt;h2 id=&#34;comenzando-el-proyecto&#34;&gt;Comenzando el proyecto&lt;/h2&gt;
+&lt;p&gt;Lo mejor es comenzar por definir el proyecto, con el archivo &lt;strong&gt;setup.py&lt;/strong&gt;. Para su concepción recomiendo echar un ojo a las &lt;a href=&#34;https://pypi.python.org/pypi/setuptools&#34;&gt;setuptools&lt;/a&gt;. Como suelo hacerle algún hack, os muestro un ejemplo:&lt;/p&gt;
+&lt;h3 id=&#34;setuppy&#34;&gt;setup.py&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# -*- coding: utf-8 -*-&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; setuptools &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; setup, find_packages
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; readchar &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; __version__, __description__
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;read_full_description&lt;/span&gt;():
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;with&lt;/span&gt; open(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;README.rst&amp;#39;&lt;/span&gt;) &lt;span style=&#34;color:#66d9ef&#34;&gt;as&lt;/span&gt; fd:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; fd&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;read()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;setup(name&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;lt;PACKAGE&amp;gt;&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;      version&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;__version__,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;      description&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;__description__,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;      long_description&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;read_full_description(),
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;      classifiers&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;          &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Development Status :: 4 - Beta&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;          &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Environment :: Console&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;          &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Intended Audience :: Developers&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;          &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;License :: OSI Approved :: MIT License&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;          &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Programming Language :: Python :: 3.3&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;          &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Topic :: Software Development&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;      ],
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24&lt;/span&gt;      keywords&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;stdin,command line&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;25&lt;/span&gt;      author&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;MagMax&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;26&lt;/span&gt;      author_email&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;magmax@example.org&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;27&lt;/span&gt;      url&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://example.org/repository&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;28&lt;/span&gt;      license&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Whatever&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;29&lt;/span&gt;      packages&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;find_packages(exclude&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;tests&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;venv&amp;#39;&lt;/span&gt;]),
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;30&lt;/span&gt;      include_package_data&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;31&lt;/span&gt;      zip_safe&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;False,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;32&lt;/span&gt;      install_requires&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;33&lt;/span&gt;        ],
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;34&lt;/span&gt;      )
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Varias cosas aquí: como veis, importo la &lt;strong&gt;versión&lt;/strong&gt; y la &lt;strong&gt;descripción&lt;/strong&gt; del propio paquete  Eso me facilita tocar un único punto (más o menos) a la hora de crear el paquete. Luego veremos este archivo. El nombre de variable &lt;code&gt;__version__&lt;/code&gt; es estándar, vamos, que se tiene que llamar así.&lt;/p&gt;
+&lt;p&gt;Además, la descripción larga la leo del propio archivo &lt;strong&gt;README.rst&lt;/strong&gt; que comenté antes, de manera que se vea chulo en línea de órdenes y en &lt;a href=&#34;https://pypi.python.org/pypi&#34;&gt;pypi&lt;/a&gt;. Tened cuidado, porque cualquier error y &lt;a href=&#34;https://pypi.python.org/pypi&#34;&gt;pypi&lt;/a&gt; no lo renderizará como debe. &lt;a href=&#34;https://github.com/&#34;&gt;GitHub&lt;/a&gt; es bastante más permisivo.&lt;/p&gt;
+&lt;p&gt;Finalmente, en el apartado &lt;code&gt;install_requires&lt;/code&gt; podéis añadir todas las dependencias de la misma manera que en el &lt;strong&gt;requirements.txt&lt;/strong&gt;. Intenté un &lt;em&gt;hack&lt;/em&gt; para leerlo, pero durante la instalación no me lo encontraba&amp;hellip; Así que opté por eliminar el archivo y gestionar los requisitos desde aquí. Es un tema sobre el que tengo que volver.&lt;/p&gt;
+&lt;h3 id=&#34;paquete__init__py&#34;&gt;&amp;lt;paquete&amp;gt;/__init__.py&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;__version__ &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;0.1&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;__description__ &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Loren Ipsum&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Es necesario algo así para que lo lea bien nuestro programita &lt;strong&gt;setup.py&lt;/strong&gt;. Para la versión hay mogollón de opiniones&amp;hellip; La mía es que con dos ó tres números es suficiente. Tres como mucho si usais la fecha con formato YYYYMMDD (&lt;code&gt;mayor.fecha.minor&lt;/code&gt;).&lt;/p&gt;
+&lt;h2 id=&#34;probando&#34;&gt;Probando&lt;/h2&gt;
+&lt;p&gt;Un paquetito que se precie debe estar acompañado de pruebas&amp;hellip; Y a ser posible de porcentajes de cobertura. Pues podemos usar herramientas gratuitas para ello: &lt;a href=&#34;https://travis-ci.org&#34;&gt;Travis&lt;/a&gt; y &lt;a href=&#34;https://coveralls.io&#34;&gt;Coveralls&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;travis&#34;&gt;Travis&lt;/h3&gt;
+&lt;p&gt;Es un sistema de integración continua gratuito para proyectos libres y de pago para los que no lo son. Permite ejecutar los tests de todos los &lt;em&gt;changesets&lt;/em&gt;. Se configura mediante el archivo &lt;strong&gt;.travis.yml&lt;/strong&gt;, situado en el directorio principal y con formato &lt;a href=&#34;http://es.wikipedia.org/wiki/YAML&#34;&gt;YAML&lt;/a&gt;. Veamos un ejemplo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;language&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;python&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;python&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2.6&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2.7&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;3.2&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;  - &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;3.3&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;install&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;  - &lt;span style=&#34;color:#ae81ff&#34;&gt;pip install -r requirements-dev.txt&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;  - &lt;span style=&#34;color:#ae81ff&#34;&gt;if [[ $TRAVIS_PYTHON_VERSION == 2* ]]; then pip install unittest2; fi&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;  - &lt;span style=&#34;color:#ae81ff&#34;&gt;python setup.py install&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;script&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;  - &lt;span style=&#34;color:#ae81ff&#34;&gt;make pep8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;  - &lt;span style=&#34;color:#ae81ff&#34;&gt;if [[ $TRAVIS_PYTHON_VERSION != &amp;#39;2.6&amp;#39; ]]; then make flakes; fi&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;  - &lt;span style=&#34;color:#ae81ff&#34;&gt;make test&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;after_success&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;  - &lt;span style=&#34;color:#ae81ff&#34;&gt;make coveralls&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;notifications&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;email&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;on_success&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;change&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;on_failure&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;change&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Básicamente crea un ejecutor para cada versión de Python y ejecuta los scripts del &lt;code&gt;install&lt;/code&gt; y &lt;code&gt;script&lt;/code&gt;, y si todo va bien, el &lt;code&gt;after_success&lt;/code&gt;. Hay más pasos en el ciclo de vida, pero podéis verlos en la documentación de &lt;a href=&#34;https://travis-ci.org&#34;&gt;Travis&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Para que funcione, tenéis que:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;daros de alta en &lt;a href=&#34;https://travis-ci.org&#34;&gt;Travis&lt;/a&gt;,&lt;/li&gt;
+&lt;li&gt;sincronizar vuestros proyectos &lt;a href=&#34;https://github.com/&#34;&gt;GitHub&lt;/a&gt; (ahora entendéis por qué lo recomendaba, ¿eh?),&lt;/li&gt;
+&lt;li&gt;dar permisos a &lt;a href=&#34;https://travis-ci.org&#34;&gt;Travis&lt;/a&gt; para instalar un &lt;em&gt;hook&lt;/em&gt; en el repositorio,&lt;/li&gt;
+&lt;li&gt;y activarlo para el repositorio de vuestro proyecto.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Los tres primeros se hacen sólo una vez y el último hay que repetirlo cada vez que comencemos un proyecto.&lt;/p&gt;
+&lt;p&gt;Como veis, el paso de &lt;code&gt;after_success&lt;/code&gt; es llamar al plugin de &lt;a href=&#34;https://coveralls.io&#34;&gt;Coveralls&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;coveralls&#34;&gt;Coveralls&lt;/h3&gt;
+&lt;p&gt;Requiere de un plugin para invocarlo. Yo suelo utilizar &lt;a href=&#34;https://github.com/z4r/python-coveralls&#34;&gt;python-coveralls&lt;/a&gt;, pero también está disponible &lt;a href=&#34;https://github.com/coagulant/coveralls-python&#34;&gt;coveralls-python&lt;/a&gt; (no, no me estoy quedando con vosotros). Se configura con el archivo &lt;strong&gt;.coverage&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ini&#34; data-lang=&#34;ini&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;[run]&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;omit&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;*/tests*&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Además de instalar el paquete correspondiente, es necesario darse de alta en &lt;a href=&#34;https://coveralls.io&#34;&gt;Coveralls&lt;/a&gt;. Veréis información sobre claves SSL en la documentación y tal&amp;hellip; pero eso sólo es para los proyectos privados.&lt;/p&gt;
+&lt;p&gt;Es necesario generar el archivo &lt;strong&gt;.coverage&lt;/strong&gt; para que &lt;a href=&#34;https://coveralls.io&#34;&gt;Coveralls&lt;/a&gt; muestre los resultados correctamente. Si usais &lt;a href=&#34;https://nose.readthedocs.org/en/latest/&#34;&gt;nose&lt;/a&gt;, como yo, necesitaréis también &lt;a href=&#34;https://pypi.python.org/pypi/nosexcover&#34;&gt;nosexcover&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;gestión&#34;&gt;Gestión&lt;/h2&gt;
+&lt;p&gt;Veamos cómo orquesto toda esta maraña de archivos: mediante &lt;a href=&#34;http://virtualenv.readthedocs.org/en/latest/&#34;&gt;virtualenv&lt;/a&gt;. Siempre me creo el entorno &lt;code&gt;venv&lt;/code&gt; y lo añado al archivo &lt;strong&gt;.gitignore&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;*~
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;\#*
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;\.\#*
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;*.pyc
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;*.egg-info/
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;build/
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;dist/
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;venv/
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;.coverage
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;coverage.xml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Claro&amp;hellip; He mencionado mogollón de historias, pero no mis herramientas, que están en el requirements-dev.txt:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;pep8==1.5.1
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;flake8==2.1.0
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;nose==1.3.1
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;coverage==3.7.1
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;nosexcover==1.0.10
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;python-coveralls==2.4.2
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt;doublex==1.8.1
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8&lt;/span&gt;pexpect==3.2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Me gusta indicar las versiones, por si algo se rompe por sorpresa, tenerlo controlado.&lt;/p&gt;
+&lt;p&gt;Además de éstas, suelo instalarme siempre &lt;a href=&#34;http://ipython.org/&#34;&gt;ipython&lt;/a&gt;, pero no lo incluyo aquí porque es meter demasiada carga a &lt;a href=&#34;https://travis-ci.org&#34;&gt;Travis&lt;/a&gt; cuando no lo va a usar.&lt;/p&gt;
+&lt;p&gt;Y, finalmente, el director de la orquesta, el archivo &lt;strong&gt;Makefile&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-make&#34; data-lang=&#34;make&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;MODULES&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&amp;lt;PACKAGE NAME&amp;gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;all&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; pep8 flakes test
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;test&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;::&lt;/span&gt; clear_coverage run_unit_tests run_acceptance_tests
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;unit_test&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;::&lt;/span&gt; run_unit_tests
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;acceptance_test&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;::&lt;/span&gt; run_acceptance_tests
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;analysis&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;::&lt;/span&gt; pep8 flakes
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;pep8&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;	@echo Checking PEP8 style...
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;	@pep8 --statistics &lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;MODULES&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt; tests
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;flakes&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;	@echo Searching &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; static errors...
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;	@pyflakes &lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;MODULES&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;coveralls&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;::&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;	coveralls
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;run_unit_tests&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;25&lt;/span&gt;	@echo Running Tests...
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;26&lt;/span&gt;	@nosetests -dv --exe --with-xcoverage --cover-package&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;MODULES&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt; --cover-tests tests/unit
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;27&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;28&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;run_acceptance_tests&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;29&lt;/span&gt;	@echo Running Tests...
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;30&lt;/span&gt;	@nosetests -dv --exe tests/acceptance
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;31&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;32&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;clear_coverage&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;33&lt;/span&gt;	@echo Cleaning previous coverage...
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;34&lt;/span&gt;	@coverage erase
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;publicación&#34;&gt;Publicación&lt;/h2&gt;
+&lt;p&gt;Ya sólo nos queda publicar el paquete en &lt;a href=&#34;https://pypi.python.org/pypi&#34;&gt;pypi&lt;/a&gt;. Para ello seguiremos los siguientes pasos:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Registrarse en la web de &lt;a href=&#34;https://pypi.python.org/pypi&#34;&gt;pypi&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Registrar el paquete: &lt;code&gt;python setup.py register&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Empaquetar y subir: &lt;code&gt;python setup.py sdist upload&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Como veis, yo distribuyo los fuentes, ya que los binarios me dieron problemas.&lt;/p&gt;
+&lt;h2 id=&#34;afinando&#34;&gt;Afinando&lt;/h2&gt;
+&lt;p&gt;Y sólo me queda contar cómo poner los iconos monos XD&lt;/p&gt;
+&lt;p&gt;Tanto &lt;a href=&#34;https://travis-ci.org&#34;&gt;Travis&lt;/a&gt; como &lt;a href=&#34;https://pypi.python.org/pypi&#34;&gt;pypi&lt;/a&gt; y &lt;a href=&#34;https://coveralls.io&#34;&gt;Coveralls&lt;/a&gt; disponen de unos iconos accesibles con la misma URL. Como hemos dicho, vamos a usar el formato &lt;a href=&#34;http://docutils.sourceforge.net/rst.html&#34;&gt;ReStructured Text&lt;/a&gt;, así que ésta es la manera más chula:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-rst&#34; data-lang=&#34;rst&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;.. Uso:
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;|pip version|&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;|pip downloads|&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;|travis|&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;|coveralls|&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;.. Al final del documento:
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;.. &lt;span style=&#34;color:#f92672&#34;&gt;|travis|&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;:: https://travis-ci.org/&amp;lt;USER&amp;gt;/&amp;lt;REPOSITORY&amp;gt;.png&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;  &lt;span style=&#34;color:#a6e22e&#34;&gt;:target:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;`Travis`_&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;  &lt;span style=&#34;color:#a6e22e&#34;&gt;:alt:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Travis results&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;.. &lt;span style=&#34;color:#f92672&#34;&gt;|coveralls|&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;:: https://coveralls.io/repos/&amp;lt;USER&amp;gt;/&amp;lt;REPOSITORY&amp;gt;/badge.png&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;  &lt;span style=&#34;color:#a6e22e&#34;&gt;:target:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;`Coveralls`_&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;  &lt;span style=&#34;color:#a6e22e&#34;&gt;:alt:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Coveralls results_&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;.. &lt;span style=&#34;color:#f92672&#34;&gt;|pip version|&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;:: https://pypip.in/v/&amp;lt;PIP_NAME&amp;gt;/badge.png&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#a6e22e&#34;&gt;:target:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;https://pypi.python.org/pypi/&amp;lt;PIP_NAME&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#a6e22e&#34;&gt;:alt:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Latest PyPI version&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;.. &lt;span style=&#34;color:#f92672&#34;&gt;|pip downloads|&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;image&lt;/span&gt;:: https://pypip.in/d/&amp;lt;PIP_NAME&amp;gt;/badge.png&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#a6e22e&#34;&gt;:target:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;https://pypi.python.org/pypi/&amp;lt;PIP_NAME&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    &lt;span style=&#34;color:#a6e22e&#34;&gt;:alt:&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Number of PyPI downloads&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;25&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;26&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;.. &lt;span style=&#34;color:#f92672&#34;&gt;_Travis:&lt;/span&gt; https://travis-ci.org/&amp;lt;USER&amp;gt;/&amp;lt;REPOSITORY&amp;gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;27&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;.. &lt;span style=&#34;color:#f92672&#34;&gt;_Coveralls:&lt;/span&gt; https://coveralls.io/r/&amp;lt;USER&amp;gt;/&amp;lt;REPOSITORY&amp;gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Como véis, hay que cambiar &lt;code&gt;&amp;lt;USER&amp;gt;&lt;/code&gt;, &lt;code&gt;&amp;lt;REPOSITORY&amp;gt;&lt;/code&gt; y &lt;code&gt;&amp;lt;PIP_NAME&amp;gt;&lt;/code&gt;, y vale para cualquier proyecto.&lt;/p&gt;
+&lt;h2 id=&#34;más-información&#34;&gt;Más información&lt;/h2&gt;
+&lt;p&gt;Hay muchas cosas en el tintero aún, como subir la documentación a &lt;a href=&#34;https://readthedocs.org/&#34;&gt;read the docs&lt;/a&gt;, pero este artículo ya tiene suficiente caña XD&lt;/p&gt;
+&lt;p&gt;Recomiendo indagar un poquito en cada herramienta si queréis ampliar funcionalidad.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

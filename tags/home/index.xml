@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>home on El blog de MagMax</title>
+    <link>http://example.org/tags/home/</link>
+    <description>Recent content in home on El blog de MagMax</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 01 Dec 2012 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/tags/home/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Guardar la configuración de tu máquina</title>
+      <link>http://example.org/blog/home-en-git/</link>
+      <pubDate>Sat, 01 Dec 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/home-en-git/</guid>
+      <description>
+        
+          &lt;p&gt;Antes, cuando cambiaba mi PC, siempre me encontraba con el mismo problema: tener que reconfigurar todas mis aplicaciones. Gracias a GNU/Linux, descubrí que era más sencillo mantener mi &lt;em&gt;home&lt;/em&gt; en otra partición, de manera que podía conservar esta configuración.&lt;/p&gt;
+&lt;p&gt;Ahora, por suerte o por desgracia, no trabajo en una única máquina: tengo un PC y dos portátiles; en el curro tengo mi portátil, una máquina virtual &lt;em&gt;hosted&lt;/em&gt; donde suelo trabajar, una máquina virtual &lt;em&gt;unhosted&lt;/em&gt; que puedo volver a crear de vez en cuando y&amp;hellip; bueno&amp;hellip; otras 60 máquinas en las que puedo llegar a necesitar hacer algo.&lt;/p&gt;
+&lt;p&gt;Gestionar mi configuración individualmente es&amp;hellip; un coñazo. Así que me planteé la opción de guardar esta configuración en un repositorio, como &lt;a href=&#34;http://git-scm.com/&#34;&gt;Git&lt;/a&gt; (ahora entendéis &lt;a href=&#34;http://example.org/blog/git/&#34;&gt;mi post anterior&lt;/a&gt; :D). Realmente no me entusiasmaba la idea, pero resulta que mi colega Daniel Fanjul me dijo que él ya lo hacía así.&lt;/p&gt;
+&lt;p&gt;Vamos a ver cómo podemos gestionarlo de manera sencilla.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/git.png&#34;
+         alt=&#34;Git&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;dos-aproximaciones&#34;&gt;Dos aproximaciones&lt;/h2&gt;
+&lt;p&gt;Existen dos variantes distintas a esta solución: La primera es hacer que el home &lt;em&gt;sea&lt;/em&gt; un repositorio; la segunda, mantener el repositorio aparte, y crear enlaces a las configuraciones. Veremos que cada aproximación tiene sus ventajas y sus inconvenientes.&lt;/p&gt;
+&lt;h3 id=&#34;el-home-en-git&#34;&gt;El home en Git&lt;/h3&gt;
+&lt;p&gt;Si nuestro home está en &lt;a href=&#34;http://git-scm.com/&#34;&gt;Git&lt;/a&gt;, tendremos mucha basura que no queremos guardar en nuestro repositorio. Pero eso no es un problema: para eso existe el &lt;strong&gt;.gitignore&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Veamos cómo empezar (desde el &lt;em&gt;home&lt;/em&gt;, claro):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;~ $ git init
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;Initialized empty Git repository in /home/magmax/
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;~ $ ls -A1 |grep -v .gitignore &amp;gt; .gitignore
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;~ $ git add .gitignore
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;~ $ git commit -m &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;initial version of my configuration&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;master &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;root-commit&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; 6dfa6ad&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; initial version of my configuration
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; file changed, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; insertions&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;+&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8&lt;/span&gt; create mode &lt;span style=&#34;color:#ae81ff&#34;&gt;100644&lt;/span&gt; .gitignore
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Ahora, cuando queramos conservar una configuración, sólo tendremos que editar el archivo &lt;em&gt;.gitignore&lt;/em&gt; para eliminarlo y añadirlo al repositorio. Poco a poco, el archivo &lt;em&gt;.gitignore&lt;/em&gt; irá quedando más pequeño y apenas será necesario tocarlo.&lt;/p&gt;
+&lt;p&gt;Algunas cosas que podéis añadir ya mismo, a modo de ejercicio: &lt;em&gt;.gitconfig&lt;/em&gt;, &lt;em&gt;.bashrc&lt;/em&gt;, &lt;em&gt;.profile&lt;/em&gt;, &amp;hellip; Y algunas cosas que nunca saldrán del archivo &lt;em&gt;.gitignore&lt;/em&gt;: &lt;em&gt;.bash_history&lt;/em&gt;, &lt;em&gt;.xsession-errors&lt;/em&gt;, &amp;hellip;&lt;/p&gt;
+&lt;h3 id=&#34;manteniendo-enlaces-simbólicos&#34;&gt;Manteniendo enlaces simbólicos&lt;/h3&gt;
+&lt;p&gt;La otra alternativa es crear un repositorio aparte y crear enlaces simbólicos. La estructura del repositorio no tiene por qué ser la misma que la del &lt;em&gt;home&lt;/em&gt;, pero resultará más sencillo encontrar lo que buscas si tratas de mantener la misma estructura.&lt;/p&gt;
+&lt;p&gt;Como ejemplo, vamos a crear el repositorio y a guardar la configuración de mi &lt;em&gt;awesome wm&lt;/em&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;    ~ $ mkdir Config
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;    ~ $ mkdir Config/config
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    ~ $ mv .config/awesome Config/config
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;    ~ $ ln -s Config/config/awesome .config/awesome
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    ~ $ cd Config
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;    ~/Config $ git init
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    Initialized empty Git repository in /home/magmax/Config
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    ~/Config $ git add config
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    ~/Config $ git commit -m &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;initial version of my configuration&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;master &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;root-commit&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; 6dfa6ad&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; initial version of my configuration
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;     &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; file changed, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; insertions&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;+&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;     create mode &lt;span style=&#34;color:#ae81ff&#34;&gt;100644&lt;/span&gt; config
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Dos cosas aquí:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;La primera es hacer notar que he creado el directorio con la C mayúscula. Así quedará al principio cuando hagamos un &amp;ldquo;ls&amp;rdquo; y no estorbará.&lt;/li&gt;
+&lt;li&gt;La segunda, que he evitado el punto al comienzo del nombre. Así no estará oculto el directorio.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;ventajas-e-inconvenientes&#34;&gt;Ventajas e inconvenientes&lt;/h2&gt;
+&lt;p&gt;Cada manera tiene unas ventajas y unos inconvenientes. Vamos a verlos algunos:&lt;/p&gt;
+&lt;h3 id=&#34;todo-en-el-repo&#34;&gt;Todo en el repo&lt;/h3&gt;
+&lt;p&gt;Si usamos la primera aproximación, tendremos estos inconvenientes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;puede crecer mucho y rápido&lt;/li&gt;
+&lt;li&gt;puede contener cosas que no queríamos&lt;/li&gt;
+&lt;li&gt;hay que estar gestionando el .gitignore con todo lo que no queremos&lt;/li&gt;
+&lt;li&gt;si queremos un archivo diferente para distintas máquinas, habrá que utilizar enlaces simbólicos, complicando un poco el despliegue.&lt;/li&gt;
+&lt;li&gt;puede dar lugar a fallos de seguridad, si metemos las claves ssl en el repositorio.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Pero también algunas ventajas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;es dificil que nos olvidemos añadir algo al repo. Cuando preguntemos el estado (&amp;quot;&lt;em&gt;git status&lt;/em&gt;&amp;quot;), cantará todo lo nuevo.&lt;/li&gt;
+&lt;li&gt;si estamos en un entorno gestionado por otros, detectaremos si nos han cambiado algo.&lt;/li&gt;
+&lt;li&gt;también detectaremos si una aplicación ha cambiado algo.&lt;/li&gt;
+&lt;li&gt;en una máquina nueva basta descargarse el repositorio para tenerlo todo configurado, aunque esto puede pisar algo que no nos guste&amp;hellip; ¡Pero para eso están las ramas de Git! :D&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;enlaces-simbólicos&#34;&gt;Enlaces simbólicos&lt;/h3&gt;
+&lt;p&gt;Usando la segunda aproximación tenemos ya unos inconvenientes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Hay que estar creando enlaces para todos y cada uno de los directorios a guardar.&lt;/li&gt;
+&lt;li&gt;en una máquina nueva, hay que volver a crear todos los enlaces.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Pero también ventajas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Es sencillo gestionar distinta configuración en distintas máquinas. Basta con cambiar el enlace.&lt;/li&gt;
+&lt;li&gt;Seguramente ocupará menos.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;conclusión&#34;&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;Yo he optado por tenerlo todo en el repo y debo decir que es una maravilla. Comencé creándome distintos repositorios en mis máquinas y después fui uniéndolos como si fueran ramas (algo que no podría haber hecho con &lt;em&gt;mercurial&lt;/em&gt;, pero sí con &lt;em&gt;Git&lt;/em&gt;).&lt;/p&gt;
+&lt;p&gt;En el trabajo tengo el problema de que no todas las máquinas pueden ver a todas
+las máquinas, aunque desde mi máquina sí puedo verlas todas. En este caso, Git
+vuelve a echarme una mano. Tan solo tengo que definirme distintas fuentes
+remotas y trabajar con &lt;em&gt;push&lt;/em&gt; desde mi máquina en lugar de hacer &lt;em&gt;pull&lt;/em&gt; desde la
+remota. Además, tengo un script &lt;a href=&#34;http://docs.fabfile.org/en/1.5/&#34;&gt;fabric&lt;/a&gt; que me
+ayuda a gestionarlo todo, pero eso será otra historia&amp;hellip;&lt;/p&gt;
+&lt;p&gt;¿Y vosotros? ¿Ya lo usábais? ¿Tenéis otra propuesta? ¿Cuál vais a probar?&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

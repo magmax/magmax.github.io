@@ -1,568 +1,1552 @@
+
 <!DOCTYPE html>
-<html prefix="
-og: https://ogp.me/ns#
-article: https://ogp.me/ns/article#
-" lang="es">
-<head>
+<html lang="es" data-figures="" class="page">
+  <head>
+<title>Hg vs Git | El blog de MagMax</title>
 <meta charset="utf-8">
-<meta name="description" content="Voy a comparar mercurial y git, pero sólo valen formas que sean reproducibles. Pretendo desmitificar o corroborar rumores.">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'43516d322f35b42f7136bc9e4ca4c9c80cc1466c'">
-<title>Hg vs Git | MagMax Blog</title>
-<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
-<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
-<link rel="canonical" href="http://magmax.org/blog/comparativa-mercurial-git/">
-<link rel="icon" href="/favicon.png" sizes="128x128">
-<link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.ico" sizes="16x16">
-<meta name="description" itemprop="description" content="Voy a comparar mercurial y git, pero sólo valen formas que sean reproducibles. Pretendo desmitificar o corroborar rumores.">
-<meta name="author" content="Miguel Ángel García">
-<link rel="prev" href="/blog/interfaces/" title="Interfaces" type="text/html">
-<link rel="next" href="/blog/patentes/" title="Patentes" type="text/html">
-<meta property="og:site_name" content="MagMax Blog">
-<meta property="og:title" content="Hg vs Git">
-<meta property="og:url" content="http://magmax.org/blog/comparativa-mercurial-git/">
-<meta property="og:description" content="Voy a comparar mercurial y git, pero sólo valen formas que sean reproducibles. Pretendo desmitificar o corroborar rumores.">
+<meta name="generator" content="Hugo 0.79.1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta property="og:locale" content="es" />
+
 <meta property="og:type" content="article">
-<meta property="article:author" content="Miguel Ángel García">
-<meta property="article:published_time" content="2013-05-27T00:00:00+00:00">
-<meta property="article:updated" content="2013-05-27T00:00:00">
-<meta property="article:tag" content="dvcs">
-<meta property="article:tag" content="git">
-<meta property="article:tag" content="mercurial">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:site" content="@magmax_en">
-<meta name="twitter:creator" content="@magmax">
-<meta name="twitter:title" content="MagMax Blog">
-<meta name="twitter:description" content="Voy a comparar mercurial y git, pero sólo valen formas que sean reproducibles. Pretendo desmitificar o corroborar rumores.">
-<meta name="twitter:url" content="http://magmax.org//blog/comparativa-mercurial-git/">
-<meta name="twitter:image" content="http://magmax.org/favicon.png">
-</head>
-<body>
-<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+<meta name="description" content="Voy a comparar mercurial y git, pero sólo valen formas que sean reproducibles. Pretendo desmitificar o corroborar rumores.">
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:creator" content="">
+<meta name="twitter:title" content="Hg vs Git" />
+<meta property="og:url" content="http://example.org/blog/comparativa-mercurial-git/" />
+<meta property="og:title" content="Hg vs Git" />
+<meta property="og:description" content="Voy a comparar mercurial y git, pero sólo valen formas que sean reproducibles. Pretendo desmitificar o corroborar rumores." />
+<meta property="og:image" content="http://example.org/" />
+<link rel="apple-touch-icon" sizes="180x180" href='http://example.org/icons/apple-touch-icon.png'>
+<link rel="icon" type="image/png" sizes="32x32" href='http://example.org/icons/favicon-32x32.png'>
+<link rel="manifest" href='http://example.org/icons/site.webmanifest'>
+<link rel="mask-icon" href='http://example.org/safari-pinned-tab.svg' color="#002538">
+<meta name="msapplication-TileColor" content="#002538">
+<meta name="theme-color" content="#002538">
 
-<!-- Menubar -->
+<link rel="canonical" href="http://example.org/blog/comparativa-mercurial-git/">
 
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
-<!-- This keeps the margins nice -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="http://magmax.org/">
+    
 
-        <span id="blog-title">MagMax Blog</span>
-      </a>
-    </div>
-<!-- /.navbar-header -->
-    <div class="collapse navbar-collapse navbar-ex1-collapse">
-      <ul class="nav navbar-nav">
-<li>
-<a href="/">Inicio</a>
-                </li>
-<li>
-<a href="/archive.html">Archivo</a>
-                </li>
-<li>
-<a href="/categories">Categorías</a>
-                </li>
-<li>
-<a href="/projects">Proyectos</a>
-                </li>
-<li>
-<a href="/news">Posts Externos</a>
+    
+    
+    <link rel="preload" href="http://example.org/css/styles.37cea41fe2c1b43e2a17095e01eb999e8701c9f0ba06d4df0a9db514a215e26dfbdb8a606a36c9d3b54bb1c09fd4a9ce41ee8f6788a8c6b17067830f34396135.css" integrity = "sha512-N86kH&#43;LBtD4qFwleAeuZnocByfC6BtTfCp21FKIV4m3724pgajbJ07VLscCf1KnOQe6PZ4ioxrFwZ4MPNDlhNQ==" as="style" crossorigin="anonymous">
+    <link rel="preload" href="http://example.org/js/bundle.min.d47d3d6894e66aa67f2514c171756283d3e8847b56f8f158bdd8430843da5f5af874c7a89a316c6743a845399bdb89649685154dc88b7e9bff1a155ca9e5108a.js" as="script" integrity=
+    "sha512-1H09aJTmaqZ/JRTBcXVig9PohHtW&#43;PFYvdhDCEPaX1r4dMeomjFsZ0OoRTmb24lkloUVTciLfpv/GhVcqeUQig==" crossorigin="anonymous">
 
+    
+    <link rel="stylesheet" type="text/css" href="http://example.org/css/styles.37cea41fe2c1b43e2a17095e01eb999e8701c9f0ba06d4df0a9db514a215e26dfbdb8a606a36c9d3b54bb1c09fd4a9ce41ee8f6788a8c6b17067830f34396135.css" integrity="sha512-N86kH&#43;LBtD4qFwleAeuZnocByfC6BtTfCp21FKIV4m3724pgajbJ07VLscCf1KnOQe6PZ4ioxrFwZ4MPNDlhNQ==" crossorigin="anonymous">
+    
+  </head>
+  
+  
+    
+  
+  <body data-code="20" data-lines="false" id="documentTop">
+
+<header class="nav_header" >
+  <nav class="nav">
+    <a href='http://example.org/' class="nav_brand nav_item">
+        El blog de MagMax
+      <div class="nav_close">
+        <div>
+          <svg class="icon">
+  <use xlink:href="#open-menu"></use>
+</svg>
+          <svg class="icon">
+  <use xlink:href="#closeme"></use>
+</svg>
+        </div>
+      </div>
+    </a>
+    <div class='nav_body nav_body_'>
+      
+      
+      
         
-      </li>
-</ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
-<div class="form-group">
-<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
-</div>
-</form>
-</li>
 
-        <li style="margin-left:0">
-          <a href="http://feeds.feedburner.com/magmax">
-            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
-        </li>
-
-        
-      </ul>
-</div>
-<!-- /.navbar-collapse -->
+  <div class="nav_parent">
+    <a href="http://example.org/" class="nav_item">Inicio </a>
   </div>
-<!-- /.container -->
-</nav><!-- End of Menubar --><div class="container" id="content" role="main">
-  <div class="body-content">
-    <div class="row">
-      <div class="page-content col-md-9">
-        
-        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="https://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/comparativa-mercurial-git/" class="u-url">Hg vs Git</a></h1>
-            <div class="metadata text-muted">
-              <i class="glyphicon glyphicon-calendar"></i>
-              <p class="dateline">
-                <time class="published dt-published" datetime="2013-05-27T00:00:00+00:00" title="2013-05-27">2013-05-27</time>
-                // <time class="updated dt-updated" datetime="2013-05-27T00:00:00" title="2013-05-27">2013-05-27</time></p>
-              <p class="commentline">            <a href="/blog/comparativa-mercurial-git/#disqus_thread" data-disqus-identifier="cache/posts/comparativa-mercurial-git.html">Comments</a>
+  <div class="nav_parent">
+    <a href="http://example.org/en" class="nav_item">English </a>
+  </div>
+      
+      <div class="nav_parent">
+        <a href="#" class="nav_item"></a>
+        <div class="nav_sub">
+          <span class="nav_child"></span>
+          
+          <a href="http://example.org/en/" class="nav_child nav_item">English</a>
+          
+          <a href="http://example.org/" class="nav_child nav_item">Español</a>
+          
+        </div>
+      </div>
+      
+<div class='follow'>
+    
+    
+  <a href="https://github.com/magmax/">
+    <svg class="icon">
+  <use xlink:href="#github"></use>
+</svg>
+  </a>
+    
+    
+  <a href="https://twitter.com/magmax_en">
+    <svg class="icon">
+  <use xlink:href="#twitter"></use>
+</svg>
+  </a>
+    
+    
+  <a href="https://www.linkedin.com/in/miguelangelgarciamartinez/">
+    <svg class="icon">
+  <use xlink:href="#linkedin"></use>
+</svg>
+  </a>
+    
+    
+    
+  <a href="http://example.org/index.xml">
+    <svg class="icon">
+  <use xlink:href="#rss"></use>
+</svg>
+  </a>
+<div class="color_mode">
+  <input type="checkbox" class="color_choice" id="mode">
+</div>
 
-</p>
-              <address class="vcard author"><a class="url fn" href="https://magmax.org">Miguel Ángel García</a></address>
-            </div>
-            <br></header><div class="e-content entry-content" itemprop="articleBody text">
-            <div>
-<p>Vamos con tópicos: Mercurial vs Git.</p>
+</div>
+
+    </div>
+  </nav>
+</header>
+
+    <main>
+  
+<div class="grid-inverse wrap content">
+  <article class="post_content">
+    <h1 class="post_title">Hg vs Git</h1><div class="post_meta">
+  
+    <svg class="icon">
+  <use xlink:href="#calendar"></use>
+</svg>
+    <span class="post_date">
+      May 27, 2013</span>
+      <a href='http://example.org/tags/mercurial' class="post_tag button button_translucent">mercurial
+      </a>
+      <a href='http://example.org/tags/git' class="post_tag button button_translucent">git
+      </a>
+      <a href='http://example.org/tags/dvcs' class="post_tag button button_translucent">dvcs
+      </a>
+</div>
+
+    
+  <div class="post_share">
+    Compartir en:
+    <a href="https://twitter.com/intent/tweet?text=Hg%20vs%20Git&url=http%3a%2f%2fexample.org%2fblog%2fcomparativa-mercurial-git%2f&tw_p=tweetbutton" class="twitter" title="Compartir en Twitter" target="_blank" rel="nofollow">
+      <svg class="icon">
+  <use xlink:href="#twitter"></use>
+</svg>
+    </a>
+    <a href="https://www.facebook.com/sharer.php?u=http%3a%2f%2fexample.org%2fblog%2fcomparativa-mercurial-git%2f&t=Hg%20vs%20Git" class="facebook" title="Compartir en Facebook" target="_blank" rel="nofollow">
+      <svg class="icon">
+  <use xlink:href="#facebook"></use>
+</svg>
+    </a>
+    <a href="#linkedinshare" id = "linkedinshare" class="linkedin" title="Compartir en LinkedIn" rel="nofollow">
+      <svg class="icon">
+  <use xlink:href="#linkedin"></use>
+</svg>
+    </a>
+    <a href="http://example.org/blog/comparativa-mercurial-git/" title="Copy Link" class="link link_yank">
+      <svg class="icon">
+  <use xlink:href="#copy"></use>
+</svg>
+    </a>
+  </div>
+
+    
+    <p>Vamos con tópicos: Mercurial vs Git.</p>
 <p>Voy a intentar desmitificar o corroborar rumores, de manera unívoca y que cualquiera pueda reproducir.</p>
 <p>Este artículo y los siguientes admiten colaboraciones :D</p>
-<!-- TEASER_END -->
-<div class="section" id="este-articulo-es-un-conazo">
-<h2>Este artículo es un coñazo</h2>
+<!-- raw HTML omitted -->
+<figure>
+    <img src="/images/gitvshg.png"
+         alt="Git vs Mercurial"/> 
+</figure>
+
+<h2 id="este-artículo-es-un-coñazo">Este artículo es un coñazo</h2>
 <p>Pues sí. Este artículo es un coñazo total. Por eso voy a comenzar por el final: las conclusiones. Así, los crédulos, pueden evitarse la parte de demostración y leer sólo las conclusiones. Los incrédulos pueden llegar hasta el final y comprobar que he tratado de ser todo lo objetivo posible.</p>
-</div>
-<div class="section" id="conclusiones">
-<h2>Conclusiones</h2>
+<h2 id="conclusiones">Conclusiones</h2>
 <p>Aquí tenemos las conclusiones finales:</p>
-<ul class="simple">
+<ul>
 <li>Si en Mercurial renombras un archivo, el repositorio requiere de nuevo el espacio ocupado por el archivo. En git, la diferencia es inapreciable.</li>
-<li>En Mercurial, dos "push" simultáneos sin conflicto pueden provocar que el segundo se cancele. En git no ocurre.</li>
+<li>En Mercurial, dos &ldquo;push&rdquo; simultáneos sin conflicto pueden provocar que el segundo se cancele. En git no ocurre.</li>
 </ul>
 <p>Esto demuestra que Git da un mejor rendimiento que Mercurial.</p>
-</div>
-<div class="section" id="criticas">
-<h2>Críticas</h2>
+<h2 id="críticas">Críticas</h2>
 <p>Por favor, estoy dispuesto a soportar cualquier tipo de crítica. Sin embargo, me gustaría indicar que este artículo me ha costado <strong>MUCHO</strong>, ya que no es nada sencillo pensar en las demostraciones y menos realizarlas de manera que se puedan repetir. Y también ha sido compleja la maquetación. Por esa razón, espero que cualquier crítica venga acompañada de demostraciones.</p>
 <p>Sé de algunos otros problemas, pero no puedo demostrarlos, así que me los cayo. Estas pruebas son completamente <strong>OBJETIVAS</strong>.</p>
 <p>También acepto demostraciones a favor/en contra de ambos. Sed creativos.</p>
-</div>
-<div class="section" id="agradecimientos">
-<h2>Agradecimientos</h2>
-<p>Agradezco a <a class="reference external" href="http://arco.esi.uclm.es/~david.villa/">David Villa</a> su paciencia haciendo <em>code review</em> de estos scripts. Me equivoqué al pasarle el de Mercurial y se puede decir que lo reizo él solo.</p>
-</div>
-<div class="section" id="scripts">
-<h2>Scripts</h2>
-<p>Los <em>Scripts</em> necesarios para reproducir lo que expongo aquí se pueden encontrar en <a class="reference external" href="https://github.com/magmax/git-vs-hg">github</a>. Allí será donde haga modificaciones a los mismos.</p>
-</div>
-<div class="section" id="demostraciones">
-<h2>Demostraciones</h2>
-<div class="section" id="si-mueves-un-archivo-en-mercurial-ocupara-espacio-de-nuevo">
-<h3>Si mueves un archivo en mercurial, ocupará espacio de nuevo</h3>
-<table border="1" class="docutils">
-<colgroup>
-<col width="50%">
-<col width="50%">
-</colgroup>
-<thead valign="bottom"><tr>
-<th class="head">Mercurial</th>
-<th class="head">Git</th>
-</tr></thead>
-<tbody valign="top">
-<tr>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_99058ff31a9b4df7916b574308b737b3-1"></a>$ <span class="nb">export</span> <span class="nv">WC1</span><span class="o">=</span>/tmp/wc1-hg
-<a name="rest_code_99058ff31a9b4df7916b574308b737b3-2"></a>$ hg init <span class="nv">$WC1</span>
-</pre></div></td>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_64bdcb0f068d44e1bde88a19e6cef0dd-1"></a>$ <span class="nb">export</span> <span class="nv">WC1</span><span class="o">=</span>/tmp/wc1-git
-<a name="rest_code_64bdcb0f068d44e1bde88a19e6cef0dd-2"></a>$ git init <span class="nv">$WC1</span>
-<a name="rest_code_64bdcb0f068d44e1bde88a19e6cef0dd-3"></a>Initialized empty Git repository in /tmp/wc1-git/.git/
-</pre></div></td>
+<h2 id="agradecimientos">Agradecimientos</h2>
+<p>Agradezco a <a href="http://arco.esi.uclm.es/~david.villa/">David Villa</a> su paciencia haciendo <em>code review</em> de estos scripts.
+Me equivoqué al pasarle el de Mercurial y se puede decir que lo rehizo él solo.</p>
+<h2 id="scripts">Scripts</h2>
+<p>Los <em>Scripts</em> necesarios para reproducir lo que expongo aquí se pueden encontrar
+en <a href="https://github.com/magmax/git-vs-hg">github</a>. Allí será donde haga modificaciones a los mismos.</p>
+<h2 id="demostraciones">Demostraciones</h2>
+<h3 id="si-mueves-un-archivo-en-mercurial-ocupará-espacio-de-nuevo">Si mueves un archivo en mercurial, ocupará espacio de nuevo</h3>
+<table>
+
+  <tr>
+
+    <th>Mercurial</th>
+
+    <th>Git</th>
+
+  
 </tr>
-<tr>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_cf52b54019dc46adb4237b936d8375e3-1"></a>$ seq <span class="m">10000000</span> &gt; <span class="nv">$WC1</span>/file
-<a name="rest_code_cf52b54019dc46adb4237b936d8375e3-2"></a>$ ls -lh <span class="nv">$WC1</span>
-<a name="rest_code_cf52b54019dc46adb4237b936d8375e3-3"></a>total <span class="m">6</span>,6M
-<a name="rest_code_cf52b54019dc46adb4237b936d8375e3-4"></a>-rw-r--r-- <span class="m">1</span> miguel miguel <span class="m">6</span>,6M may <span class="m">27</span> <span class="m">19</span>:39 file
-<a name="rest_code_cf52b54019dc46adb4237b936d8375e3-5"></a>$ hg -R <span class="nv">$WC1</span> add <span class="nv">$WC1</span>/file
-</pre></div></td>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_04c4bae6a8654e5d9fb106aa7722daca-1"></a>$ seq <span class="m">10000000</span> &gt; <span class="nv">$WC1</span>/file
-<a name="rest_code_04c4bae6a8654e5d9fb106aa7722daca-2"></a>$ ls -lh <span class="nv">$WC1</span>
-<a name="rest_code_04c4bae6a8654e5d9fb106aa7722daca-3"></a>total <span class="m">6</span>,6M
-<a name="rest_code_04c4bae6a8654e5d9fb106aa7722daca-4"></a>-rw-r--r-- <span class="m">1</span> miguel miguel <span class="m">6</span>,6M may <span class="m">27</span> <span class="m">19</span>:39 file
-<a name="rest_code_04c4bae6a8654e5d9fb106aa7722daca-5"></a>$ git --git-dir<span class="o">=</span><span class="nv">$WC1</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC1</span> add <span class="nv">$WC1</span>/file
-</pre></div></td>
+
+
+  <tr>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ seq <span style="color:#ae81ff">10000000</span> &gt; $WC1/file
+$ ls -lh $WC1
+total 6,6M
+-rw-r--r-- <span style="color:#ae81ff">1</span> miguel miguel 6,6M may <span style="color:#ae81ff">27</span> 19:39 file
+$ hg -R $WC1 add $WC1/file
+      </code></pre></div>
+    </td>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ seq <span style="color:#ae81ff">10000000</span> &gt; $WC1/file
+$ ls -lh $WC1
+total 6,6M
+-rw-r--r-- <span style="color:#ae81ff">1</span> miguel miguel 6,6M may <span style="color:#ae81ff">27</span> 19:39 file
+$ git --git-dir<span style="color:#f92672">=</span>$WC1/.git --work-tree<span style="color:#f92672">=</span>$WC1 add $WC1/file
+      </code></pre></div>
+    </td>
+
+  
 </tr>
-<tr>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_70c275047b1b45e6b834203336e6acd3-1"></a>$ hg -R <span class="nv">$WC1</span> commit -m <span class="s2">"initial"</span>
-</pre></div></td>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_057f903da68c4442a9105ebadb0dde37-1"></a>$ git --git-dir<span class="o">=</span><span class="nv">$WC1</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC1</span> commit -m <span class="s2">"initial"</span>
-<a name="rest_code_057f903da68c4442a9105ebadb0dde37-2"></a><span class="o">[</span>master <span class="o">(</span>root-commit<span class="o">)</span> 50f537c<span class="o">]</span> initial
-<a name="rest_code_057f903da68c4442a9105ebadb0dde37-3"></a> <span class="m">1</span> file changed, <span class="m">1000000</span> insertions<span class="o">(</span>+<span class="o">)</span>
-<a name="rest_code_057f903da68c4442a9105ebadb0dde37-4"></a> create mode <span class="m">100644</span> file
-</pre></div></td>
+
+
+  <tr>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ export WC1<span style="color:#f92672">=</span>/tmp/wc1-hg
+$ hg init $WC1
+      </code></pre></div>
+    </td>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ export WC1<span style="color:#f92672">=</span>/tmp/wc1-git
+$ git init $WC1
+Initialized empty Git repository in /tmp/wc1-git/.git/
+      </code></pre></div>
+    </td>
+
+  
 </tr>
-<tr>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_4704182b6152493989dd02ceacf4fb0a-1"></a>$ du -hs
-<a name="rest_code_4704182b6152493989dd02ceacf4fb0a-2"></a><span class="m">8</span>,7M /tmp/wc1-hg
-</pre></div></td>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_f927f7071fa7415fbb0f4c3ddf800eb8-1"></a>$ du -hs /tmp/wc1-git
-<a name="rest_code_f927f7071fa7415fbb0f4c3ddf800eb8-2"></a><span class="m">8</span>,9M /tmp/wc1-git
-</pre></div></td>
+
+
+  <tr>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ hg -R $WC1 commit -m <span style="color:#e6db74">&#34;initial&#34;</span>
+      </code></pre></div>
+    </td>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ git --git-dir<span style="color:#f92672">=</span>$WC1/.git --work-tree<span style="color:#f92672">=</span>$WC1 commit -m <span style="color:#e6db74">&#34;initial&#34;</span>
+<span style="color:#f92672">[</span>master <span style="color:#f92672">(</span>root-commit<span style="color:#f92672">)</span> 50f537c<span style="color:#f92672">]</span> initial
+ <span style="color:#ae81ff">1</span> file changed, <span style="color:#ae81ff">1000000</span> insertions<span style="color:#f92672">(</span>+<span style="color:#f92672">)</span>
+ create mode <span style="color:#ae81ff">100644</span> file
+      </code></pre></div>
+    </td>
+
+  
 </tr>
-<tr>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_e6b9e35d2f3f4684a477bfffba731634-1"></a>$ hg -R <span class="nv">$WC1</span> mv <span class="nv">$WC1</span>/file <span class="nv">$WC1</span>/example
-<a name="rest_code_e6b9e35d2f3f4684a477bfffba731634-2"></a>$ hg -R <span class="nv">$WC1</span> commit -m <span class="s2">"second"</span>
-<a name="rest_code_e6b9e35d2f3f4684a477bfffba731634-3"></a>$ du -hs <span class="nv">$WC1</span>
-<a name="rest_code_e6b9e35d2f3f4684a477bfffba731634-4"></a>11M /tmp/wc1-hg
-</pre></div></td>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_2721de45055d422ba48deb2d72c69655-1"></a>$ git --git-dir<span class="o">=</span><span class="nv">$WC1</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC1</span> mv file example
-<a name="rest_code_2721de45055d422ba48deb2d72c69655-2"></a>$ git --git-dir<span class="o">=</span><span class="nv">$WC1</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC1</span> commit -am <span class="s2">"second"</span>
-<a name="rest_code_2721de45055d422ba48deb2d72c69655-3"></a><span class="o">[</span>master f206fe1<span class="o">]</span> second
-<a name="rest_code_2721de45055d422ba48deb2d72c69655-4"></a> <span class="m">1</span> file changed, <span class="m">0</span> insertions<span class="o">(</span>+<span class="o">)</span>, <span class="m">0</span> deletions<span class="o">(</span>-<span class="o">)</span>
-<a name="rest_code_2721de45055d422ba48deb2d72c69655-5"></a> rename <span class="nv">file</span> <span class="o">=</span>&gt; example <span class="o">(</span><span class="m">100</span>%<span class="o">)</span>
-<a name="rest_code_2721de45055d422ba48deb2d72c69655-6"></a>$ du -hs <span class="nv">$WC1</span>
-<a name="rest_code_2721de45055d422ba48deb2d72c69655-7"></a><span class="m">8</span>,9M /tmp/wc1-git
-</pre></div></td>
+
+
+  <tr>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ du -hs
+8,7M /tmp/wc1-hg
+      </code></pre></div>
+    </td>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ du -hs /tmp/wc1-git
+8,9M /tmp/wc1-git
+      </code></pre></div>
+    </td>
+
+  
 </tr>
-</tbody>
+
+
+  <tr>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ hg -R $WC1 mv $WC1/file $WC1/example
+$ hg -R $WC1 commit -m <span style="color:#e6db74">&#34;second&#34;</span>
+$ du -hs $WC1
+11M /tmp/wc1-hg
+      </code></pre></div>
+    </td>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ git --git-dir<span style="color:#f92672">=</span>$WC1/.git --work-tree<span style="color:#f92672">=</span>$WC1 mv file example
+$ git --git-dir<span style="color:#f92672">=</span>$WC1/.git --work-tree<span style="color:#f92672">=</span>$WC1 commit -am <span style="color:#e6db74">&#34;second&#34;</span>
+<span style="color:#f92672">[</span>master f206fe1<span style="color:#f92672">]</span> second
+ <span style="color:#ae81ff">1</span> file changed, <span style="color:#ae81ff">0</span> insertions<span style="color:#f92672">(</span>+<span style="color:#f92672">)</span>, <span style="color:#ae81ff">0</span> deletions<span style="color:#f92672">(</span>-<span style="color:#f92672">)</span>
+ rename file <span style="color:#f92672">=</span>&gt; example <span style="color:#f92672">(</span>100%<span style="color:#f92672">)</span>
+$ du -hs $WC1
+8,9M /tmp/wc1-git
+      </code></pre></div>
+    </td>
+
+  
+</tr>
+
+
+
 </table>
+
 <p><strong>Conclusión:</strong> Si mueves un archivo en Mercurial, volverá a ocupar espacio. Si mueves un archivo en git, el repositorio seguirá ocupando lo mismo (prácticamente).</p>
-</div>
-<div class="section" id="conservando-historia-entre-moves">
-<h3>Conservando historia entre moves</h3>
+<h3 id="conservando-historia-entre-moves">Conservando historia entre moves</h3>
 <p>Este apartado continúa el script anterior:</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="50%">
-<col width="50%">
-</colgroup>
-<thead valign="bottom"><tr>
-<th class="head">Mercurial</th>
-<th class="head">Git</th>
-</tr></thead>
-<tbody valign="top"><tr>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-1"></a>$ hg -R <span class="nv">$WC1</span> mv <span class="nv">$WC1</span>/example <span class="nv">$WC1</span>/file
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-2"></a>$ hg -R <span class="nv">$WC1</span> commit -m <span class="s2">"third"</span>
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-3"></a>$ du -hs <span class="nv">$WC1</span>
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-4"></a>11M /tmp/wc1-hg
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-5"></a>$ hg -R <span class="nv">$WC1</span> log <span class="nv">$WC1</span>/file --follow
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-6"></a>changeset: <span class="m">2</span>:3d54fb888504
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-7"></a>tag: tip
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-8"></a>user: Miguel Angel Garcia &lt;magmax@example.org&gt;
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-9"></a>date: Thu Jun <span class="m">13</span> <span class="m">05</span>:31:08 <span class="m">2013</span> +0200
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-10"></a>summary: third
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-11"></a>
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-12"></a>changeset: <span class="m">1</span>:f13ffb871397
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-13"></a>user: Miguel Angel Garcia &lt;magmax@example.org&gt;
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-14"></a>date: Thu Jun <span class="m">13</span> <span class="m">05</span>:31:07 <span class="m">2013</span> +0200
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-15"></a>summary: second
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-16"></a>
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-17"></a>changeset: <span class="m">0</span>:e47df7ca3541
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-18"></a>user: Miguel Angel Garcia &lt;magmax@example.org&gt;
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-19"></a>date: Thu Jun <span class="m">13</span> <span class="m">05</span>:31:07 <span class="m">2013</span> +0200
-<a name="rest_code_2ac4496ef8cd400cab7c9c96f65649ea-20"></a>summary: initial
-</pre></div></td>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_339a22d107144fc6a7d3893fb3719efb-1"></a>$ git --git-dir<span class="o">=</span><span class="nv">$WC1</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC1</span> mv example file
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-2"></a>$ git --git-dir<span class="o">=</span><span class="nv">$WC1</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC1</span> commit -am <span class="s2">"third"</span>
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-3"></a><span class="o">[</span>master dd45fed<span class="o">]</span> third
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-4"></a> <span class="m">1</span> file changed, <span class="m">0</span> insertions<span class="o">(</span>+<span class="o">)</span>, <span class="m">0</span> deletions<span class="o">(</span>-<span class="o">)</span>
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-5"></a> rename <span class="nv">example</span> <span class="o">=</span>&gt; file <span class="o">(</span><span class="m">100</span>%<span class="o">)</span>
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-6"></a>$ du -hs <span class="nv">$WC1</span>
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-7"></a><span class="m">8</span>,9M /tmp/wc1-git
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-8"></a>$ git --git-dir<span class="o">=</span><span class="nv">$WC1</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC1</span> log -- file
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-9"></a>commit dd45fedd449babb33a019f23a2dae244e18f400c
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-10"></a>Author: Miguel Angel Garcia &lt;magmax@example.org&gt;
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-11"></a>Date: Mon May <span class="m">27</span> <span class="m">19</span>:46:49 <span class="m">2013</span> +0200
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-12"></a>
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-13"></a>    third
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-14"></a>
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-15"></a>commit f206fe12540494bf1f6f5193bd6234865da75e13
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-16"></a>Author: Miguel Angel Garcia &lt;magmax@example.org&gt;
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-17"></a>Date: Mon May <span class="m">27</span> <span class="m">19</span>:46:48 <span class="m">2013</span> +0200
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-18"></a>
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-19"></a>    second
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-20"></a>
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-21"></a>commit 50f537cac82b6499c8519af7c7710211bf96c0c3
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-22"></a>Author: Miguel Angel Garcia &lt;magmax@example.org&gt;
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-23"></a>Date: Mon May <span class="m">27</span> <span class="m">19</span>:46:48 <span class="m">2013</span> +0200
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-24"></a>
-<a name="rest_code_339a22d107144fc6a7d3893fb3719efb-25"></a>    initial
-</pre></div></td>
-</tr></tbody>
+<table>
+
+  <tr>
+
+    <th>Mercurial</th>
+
+    <th>Git</th>
+
+  
+</tr>
+
+
+  <tr>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ hg -R $WC1 mv $WC1/example $WC1/file
+$ hg -R $WC1 commit -m <span style="color:#e6db74">&#34;third&#34;</span>
+$ du -hs $WC1
+11M /tmp/wc1-hg
+$ hg -R $WC1 log $WC1/file --follow
+changeset: 2:3d54fb888504
+tag: tip
+user: Miguel Angel Garcia &lt;magmax@example.org&gt;
+date: Thu Jun <span style="color:#ae81ff">13</span> 05:31:08 <span style="color:#ae81ff">2013</span> +0200
+summary: third
+
+changeset: 1:f13ffb871397
+user: Miguel Angel Garcia &lt;magmax@example.org&gt;
+date: Thu Jun <span style="color:#ae81ff">13</span> 05:31:07 <span style="color:#ae81ff">2013</span> +0200
+summary: second
+
+changeset: 0:e47df7ca3541
+user: Miguel Angel Garcia &lt;magmax@example.org&gt;
+date: Thu Jun <span style="color:#ae81ff">13</span> 05:31:07 <span style="color:#ae81ff">2013</span> +0200
+summary: initial
+      </code></pre></div>
+    </td>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ git --git-dir<span style="color:#f92672">=</span>$WC1/.git --work-tree<span style="color:#f92672">=</span>$WC1 mv example file
+$ git --git-dir<span style="color:#f92672">=</span>$WC1/.git --work-tree<span style="color:#f92672">=</span>$WC1 commit -am <span style="color:#e6db74">&#34;third&#34;</span>
+<span style="color:#f92672">[</span>master dd45fed<span style="color:#f92672">]</span> third
+ <span style="color:#ae81ff">1</span> file changed, <span style="color:#ae81ff">0</span> insertions<span style="color:#f92672">(</span>+<span style="color:#f92672">)</span>, <span style="color:#ae81ff">0</span> deletions<span style="color:#f92672">(</span>-<span style="color:#f92672">)</span>
+ rename example <span style="color:#f92672">=</span>&gt; file <span style="color:#f92672">(</span>100%<span style="color:#f92672">)</span>
+$ du -hs $WC1
+8,9M /tmp/wc1-git
+$ git --git-dir<span style="color:#f92672">=</span>$WC1/.git --work-tree<span style="color:#f92672">=</span>$WC1 log -- file
+commit dd45fedd449babb33a019f23a2dae244e18f400c
+Author: Miguel Angel Garcia &lt;magmax@example.org&gt;
+Date: Mon May <span style="color:#ae81ff">27</span> 19:46:49 <span style="color:#ae81ff">2013</span> +0200
+
+    third
+
+commit f206fe12540494bf1f6f5193bd6234865da75e13
+Author: Miguel Angel Garcia &lt;magmax@example.org&gt;
+Date: Mon May <span style="color:#ae81ff">27</span> 19:46:48 <span style="color:#ae81ff">2013</span> +0200
+
+    second
+
+commit 50f537cac82b6499c8519af7c7710211bf96c0c3
+Author: Miguel Angel Garcia &lt;magmax@example.org&gt;
+Date: Mon May <span style="color:#ae81ff">27</span> 19:46:48 <span style="color:#ae81ff">2013</span> +0200
+
+    initial
+      </code></pre></div>
+    </td>
+
+
+  
+</tr>
+
+
+
 </table>
+
 <p><strong>Conclusión</strong>: Tanto Mercurial como Git siguen correctamente la historia del archivo. (Gracias, Juan Penalta)</p>
-<p>Como dato curioso, se observa que al volver a mover el archivo, en esta ocasión no ocupa espacio.</p>
-</div>
-<div class="section" id="dos-pushes-simultaneos-sin-conflicto">
-<h3>Dos <em>pushes</em> simultáneos sin conflicto</h3>
-<p><strong>NOTA:</strong> En esta demostración se utilizará el archivo <cite>annotate-output</cite>, que se encuentra en el paquete "<strong>devscripts</strong>". Tan solo añade la hora y el tipo de salida (<em>stdout</em> o <em>stderr</em>) y redirecciona todo a la salida estándar.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="43%">
-<col width="57%">
-</colgroup>
-<thead valign="bottom"><tr>
-<th class="head">Mercurial</th>
-<th class="head">Git</th>
-</tr></thead>
-<tbody valign="top">
-<tr>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_050f67524ab94fc2be36636a12a5acf8-1"></a>$ <span class="nb">export</span> <span class="nv">SERVER</span><span class="o">=</span>server-hg
-<a name="rest_code_050f67524ab94fc2be36636a12a5acf8-2"></a>$ <span class="nb">export</span> <span class="nv">WC1</span><span class="o">=</span>/tmp/wc1-hg
-<a name="rest_code_050f67524ab94fc2be36636a12a5acf8-3"></a>$ <span class="nb">export</span> <span class="nv">WC2</span><span class="o">=</span>/tmp/wc2-hg
-<a name="rest_code_050f67524ab94fc2be36636a12a5acf8-4"></a>$ hg init <span class="nv">$SERVER</span>
-</pre></div></td>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_de8ab5f2dc114a4f9887cf20ac2df9db-1"></a>$ <span class="nb">export</span> <span class="nv">SERVER</span><span class="o">=</span>/home/miguel/server-git
-<a name="rest_code_de8ab5f2dc114a4f9887cf20ac2df9db-2"></a>$ <span class="nb">export</span> <span class="nv">WC1</span><span class="o">=</span>/tmp/wc1-git
-<a name="rest_code_de8ab5f2dc114a4f9887cf20ac2df9db-3"></a>$ <span class="nb">export</span> <span class="nv">WC2</span><span class="o">=</span>/tmp/wc2-git
-<a name="rest_code_de8ab5f2dc114a4f9887cf20ac2df9db-4"></a>$ git --bare init <span class="nv">$SERVER</span>
-<a name="rest_code_de8ab5f2dc114a4f9887cf20ac2df9db-5"></a>Initialized empty Git repository in /tmp/server-git/
-</pre></div></td>
+<p>Como dato curioso, se observa que al volver a mover el archivo, en esta ocasión
+no ocupa espacio en mercurial.</p>
+<h3 id="dos-pushes-simultáneos-sin-conflicto">Dos <em>pushes</em> simultáneos sin conflicto</h3>
+<p><strong>NOTA:</strong> En esta demostración se utilizará el archivo <code>annotate-output</code>, que se encuentra en el paquete &ldquo;<strong>devscripts</strong>&rdquo;. Tan solo añade la hora y el tipo de salida (<em>stdout</em> o <em>stderr</em>) y redirecciona todo a la salida estándar.</p>
+<table>
+
+  <tr>
+
+    <th>Mercurial</th>
+
+    <th>Git</th>
+
+  
 </tr>
-<tr>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_65797247682448e2a39cd7879f8fcf98-1"></a>$ <span class="nb">echo</span> -e <span class="s1">'[hooks]\npretxnchangegroup.sleep=sleep 2'</span> &gt; <span class="nv">$SERVER</span>/.hg/hgrc
-</pre></div></td>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_ec17a2927915494e9eae899e044d6128-1"></a>$ <span class="nb">echo</span> -e <span class="s1">'#!/bin/bash\nsleep 2'</span> &gt; <span class="nv">$SERVER</span>/hooks/post-receive
-<a name="rest_code_ec17a2927915494e9eae899e044d6128-2"></a>$ chmod <span class="m">755</span> <span class="nv">$SERVER</span>/hooks/post-receive
-</pre></div></td>
+
+
+  <tr>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ export SERVER<span style="color:#f92672">=</span>server-hg
+$ export WC1<span style="color:#f92672">=</span>/tmp/wc1-hg
+$ export WC2<span style="color:#f92672">=</span>/tmp/wc2-hg
+$ hg init $SERVER
+      </code></pre></div>
+    </td>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ export SERVER<span style="color:#f92672">=</span>/home/miguel/server-git
+$ export WC1<span style="color:#f92672">=</span>/tmp/wc1-git
+$ export WC2<span style="color:#f92672">=</span>/tmp/wc2-git
+$ git --bare init $SERVER
+Initialized empty Git repository in /tmp/server-git/
+      </code></pre></div>
+    </td>
+
+  
 </tr>
-<tr>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_8dd38a91a00342cdbbfe45e0355c5902-1"></a>$ hg clone ssh://localhost/<span class="nv">$SERVER</span> <span class="nv">$WC1</span>
-<a name="rest_code_8dd38a91a00342cdbbfe45e0355c5902-2"></a>no changes found
-<a name="rest_code_8dd38a91a00342cdbbfe45e0355c5902-3"></a>updating to branch default
-<a name="rest_code_8dd38a91a00342cdbbfe45e0355c5902-4"></a><span class="m">0</span> files updated, <span class="m">0</span> files merged, <span class="m">0</span> files removed, <span class="m">0</span> files unresolved
-</pre></div></td>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_c976ba663e9b457ca5a572fc22e6c22e-1"></a>$ git clone <span class="nv">$SERVER</span> <span class="nv">$WC1</span>
-<a name="rest_code_c976ba663e9b457ca5a572fc22e6c22e-2"></a>Cloning into <span class="s1">'/tmp/wc1-git'</span>...
-<a name="rest_code_c976ba663e9b457ca5a572fc22e6c22e-3"></a>warning: You appear to have cloned an empty repository.
-<a name="rest_code_c976ba663e9b457ca5a572fc22e6c22e-4"></a><span class="k">done</span>.
-</pre></div></td>
+
+
+  <tr>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ echo -e <span style="color:#e6db74">&#39;[hooks]\npretxnchangegroup.sleep=sleep 2&#39;</span> &gt; $SERVER/.hg/hgrc
+      </code></pre></div>
+    </td>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ echo -e <span style="color:#e6db74">&#39;#!/bin/bash\nsleep 2&#39;</span> &gt; $SERVER/hooks/post-receive
+$ chmod <span style="color:#ae81ff">755</span> $SERVER/hooks/post-receive
+      </code></pre></div>
+    </td>
+
+  
 </tr>
-<tr>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_b358196bae0e4d7e91c56270f225c064-1"></a>$ touch <span class="nv">$WC1</span>/file
-<a name="rest_code_b358196bae0e4d7e91c56270f225c064-2"></a>$ hg -R <span class="nv">$WC1</span> add <span class="nv">$WC1</span>/file
-<a name="rest_code_b358196bae0e4d7e91c56270f225c064-3"></a>$ hg -R <span class="nv">$WC1</span> commit -m <span class="s2">"initial version"</span>
-<a name="rest_code_b358196bae0e4d7e91c56270f225c064-4"></a>$ hg -R <span class="nv">$WC1</span> push
-<a name="rest_code_b358196bae0e4d7e91c56270f225c064-5"></a>pushing to ssh://localhost//tmp/server-hg
-<a name="rest_code_b358196bae0e4d7e91c56270f225c064-6"></a>searching <span class="k">for</span> changes
-<a name="rest_code_b358196bae0e4d7e91c56270f225c064-7"></a>remote: adding changesets
-<a name="rest_code_b358196bae0e4d7e91c56270f225c064-8"></a>remote: adding manifests
-<a name="rest_code_b358196bae0e4d7e91c56270f225c064-9"></a>remote: adding file changes
-<a name="rest_code_b358196bae0e4d7e91c56270f225c064-10"></a>remote: added <span class="m">1</span> changesets with <span class="m">1</span> changes to <span class="m">1</span> files
-</pre></div></td>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_1fcd9044058f42ad8fbf10eace27cc3f-1"></a>$ touch <span class="nv">$WC1</span>/INITIAL
-<a name="rest_code_1fcd9044058f42ad8fbf10eace27cc3f-2"></a>$ git --git-dir<span class="o">=</span><span class="nv">$WC1</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC1</span> add INITIAL
-<a name="rest_code_1fcd9044058f42ad8fbf10eace27cc3f-3"></a>$ git --git-dir<span class="o">=</span><span class="nv">$WC1</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC1</span> commit -m <span class="s2">"master branch creation"</span>
-<a name="rest_code_1fcd9044058f42ad8fbf10eace27cc3f-4"></a><span class="o">[</span>master <span class="o">(</span>root-commit<span class="o">)</span> 38576fe<span class="o">]</span> master branch creation
-<a name="rest_code_1fcd9044058f42ad8fbf10eace27cc3f-5"></a> <span class="m">0</span> files changed
-<a name="rest_code_1fcd9044058f42ad8fbf10eace27cc3f-6"></a> create mode <span class="m">100644</span> INITIAL
-<a name="rest_code_1fcd9044058f42ad8fbf10eace27cc3f-7"></a>$ git --git-dir<span class="o">=</span><span class="nv">$WC1</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC1</span> push origin master
-<a name="rest_code_1fcd9044058f42ad8fbf10eace27cc3f-8"></a>To /tmp/server-git
-<a name="rest_code_1fcd9044058f42ad8fbf10eace27cc3f-9"></a> * <span class="o">[</span>new branch<span class="o">]</span> master -&gt; master
-</pre></div></td>
+
+
+  <tr>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ hg clone ssh://localhost/$SERVER $WC1
+no changes found
+updating to branch default
+<span style="color:#ae81ff">0</span> files updated, <span style="color:#ae81ff">0</span> files merged, <span style="color:#ae81ff">0</span> files removed, <span style="color:#ae81ff">0</span> files unresolved
+      </code></pre></div>
+    </td>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ git clone $SERVER $WC1
+Cloning into <span style="color:#e6db74">&#39;/tmp/wc1-git&#39;</span>...
+warning: You appear to have cloned an empty repository.
+<span style="color:#66d9ef">done</span>.
+      </code></pre></div>
+    </td>
+
+  
 </tr>
-<tr>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_d24f3c6ecf224050a8d0bb8df95e4455-1"></a>$ hg clone ssh://localhost/<span class="nv">$SERVER</span> <span class="nv">$WC2</span>
-<a name="rest_code_d24f3c6ecf224050a8d0bb8df95e4455-2"></a>requesting all changes
-<a name="rest_code_d24f3c6ecf224050a8d0bb8df95e4455-3"></a>adding changesets
-<a name="rest_code_d24f3c6ecf224050a8d0bb8df95e4455-4"></a>adding manifests
-<a name="rest_code_d24f3c6ecf224050a8d0bb8df95e4455-5"></a>adding file changes
-<a name="rest_code_d24f3c6ecf224050a8d0bb8df95e4455-6"></a>added <span class="m">1</span> changesets with <span class="m">1</span> changes to <span class="m">1</span> files
-<a name="rest_code_d24f3c6ecf224050a8d0bb8df95e4455-7"></a>updating to branch default
-<a name="rest_code_d24f3c6ecf224050a8d0bb8df95e4455-8"></a><span class="m">1</span> files updated, <span class="m">0</span> files merged, <span class="m">0</span> files removed, <span class="m">0</span> files unresolved
-</pre></div></td>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_1236d7804c7c40008544375830ec3dd0-1"></a>$ git clone <span class="nv">$SERVER</span> <span class="nv">$WC2</span>
-<a name="rest_code_1236d7804c7c40008544375830ec3dd0-2"></a>Cloning into <span class="s1">'/tmp/wc2-git'</span>...
-<a name="rest_code_1236d7804c7c40008544375830ec3dd0-3"></a><span class="k">done</span>.
-</pre></div></td>
+
+
+  <tr>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ touch $WC1/file
+$ hg -R $WC1 add $WC1/file
+$ hg -R $WC1 commit -m <span style="color:#e6db74">&#34;initial version&#34;</span>
+$ hg -R $WC1 push
+pushing to ssh://localhost//tmp/server-hg
+searching <span style="color:#66d9ef">for</span> changes
+remote: adding changesets
+remote: adding manifests
+remote: adding file changes
+remote: added <span style="color:#ae81ff">1</span> changesets with <span style="color:#ae81ff">1</span> changes to <span style="color:#ae81ff">1</span> files
+      </code></pre></div>
+    </td>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ touch $WC1/INITIAL
+$ git --git-dir<span style="color:#f92672">=</span>$WC1/.git --work-tree<span style="color:#f92672">=</span>$WC1 add INITIAL
+$ git --git-dir<span style="color:#f92672">=</span>$WC1/.git --work-tree<span style="color:#f92672">=</span>$WC1 commit -m <span style="color:#e6db74">&#34;master branch creation&#34;</span>
+<span style="color:#f92672">[</span>master <span style="color:#f92672">(</span>root-commit<span style="color:#f92672">)</span> 38576fe<span style="color:#f92672">]</span> master branch creation
+ <span style="color:#ae81ff">0</span> files changed
+ create mode <span style="color:#ae81ff">100644</span> INITIAL
+$ git --git-dir<span style="color:#f92672">=</span>$WC1/.git --work-tree<span style="color:#f92672">=</span>$WC1 push origin master
+To /tmp/server-git
+ * <span style="color:#f92672">[</span>new branch<span style="color:#f92672">]</span> master -&gt; master
+      </code></pre></div>
+    </td>
+
+  
 </tr>
-<tr>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_d8370d6a73584ebf97d8bb4dd0a6d08c-1"></a>$ touch <span class="nv">$WC1</span>/file2
-<a name="rest_code_d8370d6a73584ebf97d8bb4dd0a6d08c-2"></a>$ hg -R <span class="nv">$WC1</span> branch branch1
-<a name="rest_code_d8370d6a73584ebf97d8bb4dd0a6d08c-3"></a>marked working directory as branch branch1
-<a name="rest_code_d8370d6a73584ebf97d8bb4dd0a6d08c-4"></a><span class="o">(</span>branches are permanent and global, did you want a bookmark?<span class="o">)</span>
-<a name="rest_code_d8370d6a73584ebf97d8bb4dd0a6d08c-5"></a>$ hg -R <span class="nv">$WC1</span> add <span class="nv">$WC2</span>/file2
-<a name="rest_code_d8370d6a73584ebf97d8bb4dd0a6d08c-6"></a>$ hg -R <span class="nv">$WC1</span> commit -m <span class="s2">"changes on wc1"</span>
-</pre></div></td>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_15a9ced2bd314ce2bab6b6f06edfd283-1"></a>$ touch <span class="nv">$WC1</span>/file
-<a name="rest_code_15a9ced2bd314ce2bab6b6f06edfd283-2"></a>$ git --git-dir<span class="o">=</span><span class="nv">$WC1</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC1</span> checkout -b working-copy-1
-<a name="rest_code_15a9ced2bd314ce2bab6b6f06edfd283-3"></a>Switched to a new branch <span class="s1">'working-copy-1'</span>
-<a name="rest_code_15a9ced2bd314ce2bab6b6f06edfd283-4"></a>$ git --git-dir<span class="o">=</span><span class="nv">$WC1</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC1</span> add file
-<a name="rest_code_15a9ced2bd314ce2bab6b6f06edfd283-5"></a>$ git --git-dir<span class="o">=</span><span class="nv">$WC1</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC1</span> commit -m <span class="s2">"change 1"</span>
-<a name="rest_code_15a9ced2bd314ce2bab6b6f06edfd283-6"></a><span class="o">[</span>working-copy-1 de8c105<span class="o">]</span> change <span class="m">1</span>
-<a name="rest_code_15a9ced2bd314ce2bab6b6f06edfd283-7"></a> <span class="m">0</span> files changed
-<a name="rest_code_15a9ced2bd314ce2bab6b6f06edfd283-8"></a> create mode <span class="m">100644</span> file
-</pre></div></td>
+
+
+  <tr>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ hg clone ssh://localhost/$SERVER $WC2
+requesting all changes
+adding changesets
+adding manifests
+adding file changes
+added <span style="color:#ae81ff">1</span> changesets with <span style="color:#ae81ff">1</span> changes to <span style="color:#ae81ff">1</span> files
+updating to branch default
+<span style="color:#ae81ff">1</span> files updated, <span style="color:#ae81ff">0</span> files merged, <span style="color:#ae81ff">0</span> files removed, <span style="color:#ae81ff">0</span> files unresolved
+      </code></pre></div>
+    </td>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ git clone $SERVER $WC2
+Cloning into <span style="color:#e6db74">&#39;/tmp/wc2-git&#39;</span>...
+<span style="color:#66d9ef">done</span>.
+      </code></pre></div>
+    </td>
+
+  
 </tr>
-<tr>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_c4e43ecba0e142e0bc5248e404a9d844-1"></a>$ touch <span class="nv">$WC2</span>/fileB
-<a name="rest_code_c4e43ecba0e142e0bc5248e404a9d844-2"></a>$ hg -R <span class="nv">$WC2</span> branch branch2
-<a name="rest_code_c4e43ecba0e142e0bc5248e404a9d844-3"></a>marked working directory as branch branch2
-<a name="rest_code_c4e43ecba0e142e0bc5248e404a9d844-4"></a><span class="o">(</span>branches are permanent and global, did you want a bookmark?<span class="o">)</span>
-<a name="rest_code_c4e43ecba0e142e0bc5248e404a9d844-5"></a>$ hg -R <span class="nv">$WC2</span> add <span class="nv">$WC2</span>/fileB
-<a name="rest_code_c4e43ecba0e142e0bc5248e404a9d844-6"></a>$ hg -R <span class="nv">$WC2</span> commit -m <span class="s2">"changes on wc2"</span>
-</pre></div></td>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_77a4b308c5974208a135b833182ae218-1"></a>$ touch <span class="nv">$WC2</span>/fileB
-<a name="rest_code_77a4b308c5974208a135b833182ae218-2"></a>$ git --git-dir<span class="o">=</span><span class="nv">$WC2</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC2</span> checkout -b working-copy-2
-<a name="rest_code_77a4b308c5974208a135b833182ae218-3"></a>Switched to a new branch <span class="s1">'working-copy-2'</span>
-<a name="rest_code_77a4b308c5974208a135b833182ae218-4"></a>$ git --git-dir<span class="o">=</span><span class="nv">$WC2</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC2</span> add fileB
-<a name="rest_code_77a4b308c5974208a135b833182ae218-5"></a>$ git --git-dir<span class="o">=</span><span class="nv">$WC2</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC2</span> commit -m <span class="s2">"changes on wc2"</span>
-<a name="rest_code_77a4b308c5974208a135b833182ae218-6"></a><span class="o">[</span>working-copy-2 eee3889<span class="o">]</span> changes on wc2
-<a name="rest_code_77a4b308c5974208a135b833182ae218-7"></a> <span class="m">0</span> files changed
-<a name="rest_code_77a4b308c5974208a135b833182ae218-8"></a> create mode <span class="m">100644</span> fileB
-</pre></div></td>
+
+
+  <tr>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ touch $WC1/file2
+$ hg -R $WC1 branch branch1
+marked working directory as branch branch1
+<span style="color:#f92672">(</span>branches are permanent and global, did you want a bookmark?<span style="color:#f92672">)</span>
+$ hg -R $WC1 add $WC2/file2
+$ hg -R $WC1 commit -m <span style="color:#e6db74">&#34;changes on wc1&#34;</span>
+      </code></pre></div>
+    </td>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ touch $WC1/file
+$ git --git-dir<span style="color:#f92672">=</span>$WC1/.git --work-tree<span style="color:#f92672">=</span>$WC1 checkout -b working-copy-1
+Switched to a new branch <span style="color:#e6db74">&#39;working-copy-1&#39;</span>
+$ git --git-dir<span style="color:#f92672">=</span>$WC1/.git --work-tree<span style="color:#f92672">=</span>$WC1 add file
+$ git --git-dir<span style="color:#f92672">=</span>$WC1/.git --work-tree<span style="color:#f92672">=</span>$WC1 commit -m <span style="color:#e6db74">&#34;change 1&#34;</span>
+<span style="color:#f92672">[</span>working-copy-1 de8c105<span style="color:#f92672">]</span> change <span style="color:#ae81ff">1</span>
+ <span style="color:#ae81ff">0</span> files changed
+ create mode <span style="color:#ae81ff">100644</span> file
+      </code></pre></div>
+    </td>
+
+  
 </tr>
-<tr>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_c87f7c6431f94732b3c9d16b10d62c28-1"></a>$ annotate-output +<span class="s2">"WC__1__%H:%M:%S"</span> hg -R <span class="nv">$WC1</span> push --new-branch <span class="p">&amp;</span>
-<a name="rest_code_c87f7c6431f94732b3c9d16b10d62c28-2"></a>$ annotate-output +<span class="s2">"WC__2__%H:%M:%S"</span> hg -R <span class="nv">$WC2</span> push --new-branch
-<a name="rest_code_c87f7c6431f94732b3c9d16b10d62c28-3"></a>WC__2__13:31:54 I: Started hg -R /tmp/wc2-hg push --new-branch
-<a name="rest_code_c87f7c6431f94732b3c9d16b10d62c28-4"></a>WC__1__13:31:54 I: Started hg -R /tmp/wc1-hg push --new-branch
-<a name="rest_code_c87f7c6431f94732b3c9d16b10d62c28-5"></a>WC__1__13:31:57 O: pushing to ssh://localhost//tmp/server-hg
-<a name="rest_code_c87f7c6431f94732b3c9d16b10d62c28-6"></a>WC__1__13:31:57 O: searching <span class="k">for</span> changes
-<a name="rest_code_c87f7c6431f94732b3c9d16b10d62c28-7"></a>WC__1__13:31:57 O: remote: adding changesets
-<a name="rest_code_c87f7c6431f94732b3c9d16b10d62c28-8"></a>WC__1__13:31:57 O: remote: adding manifests
-<a name="rest_code_c87f7c6431f94732b3c9d16b10d62c28-9"></a>WC__1__13:31:57 O: remote: adding file changes
-<a name="rest_code_c87f7c6431f94732b3c9d16b10d62c28-10"></a>WC__1__13:31:57 O: remote: added <span class="m">1</span> changesets with <span class="m">1</span> changes to <span class="m">1</span> files
-<a name="rest_code_c87f7c6431f94732b3c9d16b10d62c28-11"></a>WC__1__13:31:57 I: Finished with exitcode <span class="m">0</span>
-<a name="rest_code_c87f7c6431f94732b3c9d16b10d62c28-12"></a>WC__2__13:31:58 E: abort: push failed:
-<a name="rest_code_c87f7c6431f94732b3c9d16b10d62c28-13"></a>WC__2__13:31:58 O: pushing to ssh://localhost//tmp/server-hg
-<a name="rest_code_c87f7c6431f94732b3c9d16b10d62c28-14"></a>WC__2__13:31:58 E: <span class="s1">'unsynced changes'</span>
-<a name="rest_code_c87f7c6431f94732b3c9d16b10d62c28-15"></a>WC__2__13:31:58 O: searching <span class="k">for</span> changes
-<a name="rest_code_c87f7c6431f94732b3c9d16b10d62c28-16"></a>WC__2__13:31:58 O: remote: waiting <span class="k">for</span> lock on repository /tmp/server-hg held by <span class="s1">'nightcrawler:6267'</span>
-<a name="rest_code_c87f7c6431f94732b3c9d16b10d62c28-17"></a>WC__2__13:31:58 I: Finished with exitcode <span class="m">255</span>
-</pre></div></td>
-<td><div class="first last"><pre class="code bash"><a name="rest_code_9e47b8ca73444bf58235ab1713396690-1"></a>$ annotate-output +<span class="s2">"WC__1__%H:%M:%S"</span> git --git-dir<span class="o">=</span><span class="nv">$WC1</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC1</span> push origin master <span class="p">&amp;</span>
-<a name="rest_code_9e47b8ca73444bf58235ab1713396690-2"></a>$ annotate-output +<span class="s2">"WC__2__%H:%M:%S"</span> git --git-dir<span class="o">=</span><span class="nv">$WC2</span>/.git --work-tree<span class="o">=</span><span class="nv">$WC2</span> push origin master
-<a name="rest_code_9e47b8ca73444bf58235ab1713396690-3"></a>WC__1__13:30:35 I: Started git --git-dir<span class="o">=</span>/tmp/wc1-git/.git --work-tree<span class="o">=</span>/tmp/wc1-git push origin working-copy-1:working-copy-1
-<a name="rest_code_9e47b8ca73444bf58235ab1713396690-4"></a>WC__2__13:30:35 I: Started git --git-dir<span class="o">=</span>/tmp/wc2-git/.git --work-tree<span class="o">=</span>/tmp/wc2-git push origin working-copy-2:working-copy-2
-<a name="rest_code_9e47b8ca73444bf58235ab1713396690-5"></a>WC__2__13:30:37 E: To /tmp/server-git
-<a name="rest_code_9e47b8ca73444bf58235ab1713396690-6"></a>WC__1__13:30:37 E: To /tmp/server-git
-<a name="rest_code_9e47b8ca73444bf58235ab1713396690-7"></a>WC__2__13:30:37 E: * <span class="o">[</span>new branch<span class="o">]</span> working-copy-2 -&gt; working-copy-2
-<a name="rest_code_9e47b8ca73444bf58235ab1713396690-8"></a>WC__1__13:30:37 E: * <span class="o">[</span>new branch<span class="o">]</span> working-copy-1 -&gt; working-copy-1
-<a name="rest_code_9e47b8ca73444bf58235ab1713396690-9"></a>WC__2__13:30:37 I: Finished with exitcode <span class="m">0</span>
-<a name="rest_code_9e47b8ca73444bf58235ab1713396690-10"></a>WC__1__13:30:37 I: Finished with exitcode <span class="m">0</span>
-</pre></div></td>
+
+
+  <tr>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ touch $WC2/fileB
+$ hg -R $WC2 branch branch2
+marked working directory as branch branch2
+<span style="color:#f92672">(</span>branches are permanent and global, did you want a bookmark?<span style="color:#f92672">)</span>
+$ hg -R $WC2 add $WC2/fileB
+$ hg -R $WC2 commit -m <span style="color:#e6db74">&#34;changes on wc2&#34;</span>
+      </code></pre></div>
+    </td>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ touch $WC2/fileB
+$ git --git-dir<span style="color:#f92672">=</span>$WC2/.git --work-tree<span style="color:#f92672">=</span>$WC2 checkout -b working-copy-2
+Switched to a new branch <span style="color:#e6db74">&#39;working-copy-2&#39;</span>
+$ git --git-dir<span style="color:#f92672">=</span>$WC2/.git --work-tree<span style="color:#f92672">=</span>$WC2 add fileB
+$ git --git-dir<span style="color:#f92672">=</span>$WC2/.git --work-tree<span style="color:#f92672">=</span>$WC2 commit -m <span style="color:#e6db74">&#34;changes on wc2&#34;</span>
+<span style="color:#f92672">[</span>working-copy-2 eee3889<span style="color:#f92672">]</span> changes on wc2
+ <span style="color:#ae81ff">0</span> files changed
+ create mode <span style="color:#ae81ff">100644</span> fileB
+      </code></pre></div>
+    </td>
+
+  
 </tr>
-</tbody>
+
+
+  <tr>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ annotate-output +<span style="color:#e6db74">&#34;WC__1__%H:%M:%S&#34;</span> hg -R $WC1 push --new-branch &amp;
+$ annotate-output +<span style="color:#e6db74">&#34;WC__2__%H:%M:%S&#34;</span> hg -R $WC2 push --new-branch
+WC__2__13:31:54 I: Started hg -R /tmp/wc2-hg push --new-branch
+WC__1__13:31:54 I: Started hg -R /tmp/wc1-hg push --new-branch
+WC__1__13:31:57 O: pushing to ssh://localhost//tmp/server-hg
+WC__1__13:31:57 O: searching <span style="color:#66d9ef">for</span> changes
+WC__1__13:31:57 O: remote: adding changesets
+WC__1__13:31:57 O: remote: adding manifests
+WC__1__13:31:57 O: remote: adding file changes
+WC__1__13:31:57 O: remote: added <span style="color:#ae81ff">1</span> changesets with <span style="color:#ae81ff">1</span> changes to <span style="color:#ae81ff">1</span> files
+WC__1__13:31:57 I: Finished with exitcode <span style="color:#ae81ff">0</span>
+WC__2__13:31:58 E: abort: push failed:
+WC__2__13:31:58 O: pushing to ssh://localhost//tmp/server-hg
+WC__2__13:31:58 E: <span style="color:#e6db74">&#39;unsynced changes&#39;</span>
+WC__2__13:31:58 O: searching <span style="color:#66d9ef">for</span> changes
+WC__2__13:31:58 O: remote: waiting <span style="color:#66d9ef">for</span> lock on repository /tmp/server-hg held by
+<span style="color:#e6db74">&#39;nightcrawler:6267&#39;</span>
+WC__2__13:31:58 I: Finished with exitcode <span style="color:#ae81ff">255</span>
+      </code></pre></div>
+    </td>
+
+    <td>
+      <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ annotate-output +<span style="color:#e6db74">&#34;WC__1__%H:%M:%S&#34;</span> git --git-dir<span style="color:#f92672">=</span>$WC1/.git --work-tree<span style="color:#f92672">=</span>$WC1
+push origin master &amp;
+$ annotate-output +<span style="color:#e6db74">&#34;WC__2__%H:%M:%S&#34;</span> git --git-dir<span style="color:#f92672">=</span>$WC2/.git --work-tree<span style="color:#f92672">=</span>$WC2
+push origin master
+WC__1__13:30:35 I: Started git --git-dir<span style="color:#f92672">=</span>/tmp/wc1-git/.git
+--work-tree<span style="color:#f92672">=</span>/tmp/wc1-git push origin working-copy-1:working-copy-1
+WC__2__13:30:35 I: Started git --git-dir<span style="color:#f92672">=</span>/tmp/wc2-git/.git
+--work-tree<span style="color:#f92672">=</span>/tmp/wc2-git push origin working-copy-2:working-copy-2
+WC__2__13:30:37 E: To /tmp/server-git
+WC__1__13:30:37 E: To /tmp/server-git
+WC__2__13:30:37 E: * <span style="color:#f92672">[</span>new branch<span style="color:#f92672">]</span> working-copy-2 -&gt; working-copy-2
+WC__1__13:30:37 E: * <span style="color:#f92672">[</span>new branch<span style="color:#f92672">]</span> working-copy-1 -&gt; working-copy-1
+WC__2__13:30:37 I: Finished with exitcode <span style="color:#ae81ff">0</span>
+WC__1__13:30:37 I: Finished with exitcode <span style="color:#ae81ff">0</span>
+      </code></pre></div>
+    </td>
+
+  
+</tr>
+
+
+
 </table>
+
 <p><strong>Conclusión:</strong> Dos pushes simultáneos sobre ramas diferentes en Mercurial dará un error a la segunda que entre, si la primera se acepta. En git ambas podrán pasar.</p>
-<p>¿Por qué ha ocurrido esto en Mercurial? ¿Qué es <strong>"Unsynced changes"</strong>? Mirando el código es un problema en el protocolo; Mercurial realiza 4 fases principales:</p>
-<ol class="arabic simple">
+<p>¿Por qué ha ocurrido esto en Mercurial? ¿Qué es <strong>&ldquo;Unsynced changes&rdquo;</strong>? Mirando el código es un problema en el protocolo; Mercurial realiza 4 fases principales:</p>
+<ol>
 <li>Saludo</li>
 <li>Solicitar un hash con el estado de las cabezas del servidor.</li>
 <li>Ejecutar hooks</li>
 <li>Enviar los deltas con el hash. Si el hash no coincide, abortará.</li>
 </ol>
-<p>En nuestro caso, un proceso se ha quedado bloqueado en el paso 3 y el otro ha obtenido una hash que no coincidirá más tarde. El resultado es que ambas ramas se bloquean hasta poder alcanzar el paso 4. La primera que llegue, modificará las cabezas y, por tanto, la hash, que hará que la segunda aborte.
+<p>En nuestro caso, un proceso se ha quedado bloqueado en el paso 3 y el otro ha
+obtenido una hash que no coincidirá más tarde. El resultado es que ambas ramas
+se bloquean hasta poder alcanzar el paso 4. La primera que llegue, modificará
+las cabezas y, por tanto, la hash, que hará que la segunda aborte.
 Si el primer proceso falla (un hook que no devuelve 0), la segunda pasará.</p>
 <p><strong>Nota personal:</strong> Subjetivamente, encuentro mucho más útiles los mensajes de Git que de Mercurial.</p>
-</div>
-</div>
-</div>
-          </div>
-          <br><div>
-            <nav><span class="author">
-                <span class="glyphicon glyphicon-user"></span> 
-                <span>Publicado:Miguel Ángel García</span>
-              </span>
-               
 
-              
-              <span class="dateline">
-                <span class="glyphicon glyphicon-calendar"></span> 
-                <time class="published dt-published" datetime="2013-05-27T00:00:00+00:00" title="2013-05-27">2013-05-27</time></span>
-               
-              <span class="tags">
-                <span class="glyphicon glyphicon-tags"></span> 
-                <a class="label label-primary p-category" href="/categories/dvcs/" rel="tag">dvcs</a>
-                <a class="label label-primary p-category" href="/categories/git/" rel="tag">git</a>
-                <a class="label label-primary p-category" href="/categories/mercurial/" rel="tag">mercurial</a>
-              </span>
-                      <ul class="pager">
-<li class="previous">
-              <a href="/blog/interfaces/" rel="prev" title="Interfaces">
-                <span class="glyphicon glyphicon-arrow-left"></span>
-                Publicación anterior
-              </a>
-            </li>
-            <li class="next">
-              <a href="/blog/patentes/" rel="next" title="Patentes">
-                Siguiente publicación
-                <span class="glyphicon glyphicon-arrow-right"></span>
-              </a>
-            </li>
-        </ul></nav>
-</div>
-          <section class="comments"><h2>Comentarios</h2>
-                            <div id="disqus_thread"></div>
-        <script>
-        var disqus_shortname ="magmax",
-            disqus_url="http://magmax.org/blog/comparativa-mercurial-git/",
-        disqus_title="Hg vs Git",
-        disqus_identifier="cache/posts/comparativa-mercurial-git.html",
-        disqus_config = function () {
-            this.language = "es_ES";
-        };
-        (function() {
-            var dsq = document.createElement('script'); dsq.async = true;
-            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        })();
-    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
-</noscript>
-    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
-
-
-          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
-</div>
-      <aside class="sidebar col-md-3"><div>
-<section class="panel panel-default"><div class="panel-heading">
-    <h3 class="panel-title">Last comments</h3>
-  </div>
-  <div class="panel-body">
-    <div id="disqus_last_comments" class="dsq-widget">
-      <script type="text/javascript" src="https://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
-      </script>
-</div>
-  </div>
-</section>
-</div>
-          <div>
-<section class="panel panel-default"><div class="panel-heading">
-    <h3 class="panel-title">GitHub Repos</h3>
-  </div>
-  <div class="panel-body">
-    <ul id="gh_repos" class="list-unstyled">
-<li class="loading">Status updating…</li>
-    </ul>
-</div>
-  <div class="panel-footer">
-    <a href="https://github.com/magmax">@magmax</a> on GitHub
-  </div>
-</section>
-</div>
-      </aside>
-</div>
-
-    <footer>
-      Contents © 2009-2020 <a href="mailto:">Miguel Ángel García</a> 
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
-<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+    
       
-    </footer>
+    
+  </article>
+<aside class="sidebar">
+  <section class="sidebar_inner">
+    
+    <h2 class="mt-4">Posts recientes</h2>
+    <ul class="flex-column">
+      <li>
+        <a href="http://example.org/blog/argocd/" class="nav-link">ArgoCD con Kind</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/monitorizacion-con-graphite/" class="nav-link">Monitorización con Graphite</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/organizacion/" class="nav-link">Organización</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/hosting/" class="nav-link">Hosting</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/devops-rol-o-metodologia/" class="nav-link">DevOps: ¿Equipo, Rol o metodología?</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/instalando-linux-con-uefi/" class="nav-link">Instalando Linux con UEFI</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/plugins-en-python/" class="nav-link">Plugins en Python</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/ipython-autoreload/" class="nav-link">ipython autoreload</a>
+      </li>
+    </ul>
+    <div>
+      <h2 class="mt-4 taxonomy" id="categories-section">Categorías</h2>
+      <nav class="tags_nav">
+        <a href='http://example.org/categories/django-tutorial/' class="post_tag button button_translucent">
+          DJANGO-TUTORIAL
+          <span class="button_tally">3</span>
+        </a>
+        
+        <a href='http://example.org/categories/translations/' class="post_tag button button_translucent">
+          TRANSLATIONS
+          <span class="button_tally">1</span>
+        </a>
+        
+        
+      </nav>
+    </div>
+    <div>
+      <h2 class="mt-4 taxonomy" id="tags-section">Tags</h2>
+      <nav class="tags_nav">
+        <a href='http://example.org/tags/python/' class="post_tag button button_translucent">
+          PYTHON
+          <span class="button_tally">32</span>
+        </a>
+        
+        <a href='http://example.org/tags/agile/' class="post_tag button button_translucent">
+          AGILE
+          <span class="button_tally">15</span>
+        </a>
+        
+        <a href='http://example.org/tags/engineering/' class="post_tag button button_translucent">
+          ENGINEERING
+          <span class="button_tally">14</span>
+        </a>
+        
+        <a href='http://example.org/tags/retrospective/' class="post_tag button button_translucent">
+          RETROSPECTIVE
+          <span class="button_tally">13</span>
+        </a>
+        
+        <a href='http://example.org/tags/testing/' class="post_tag button button_translucent">
+          TESTING
+          <span class="button_tally">13</span>
+        </a>
+        
+        <a href='http://example.org/tags/life/' class="post_tag button button_translucent">
+          LIFE
+          <span class="button_tally">12</span>
+        </a>
+        
+        <a href='http://example.org/tags/django/' class="post_tag button button_translucent">
+          DJANGO
+          <span class="button_tally">9</span>
+        </a>
+        
+        <a href='http://example.org/tags/drupal/' class="post_tag button button_translucent">
+          DRUPAL
+          <span class="button_tally">9</span>
+        </a>
+        
+        <a href='http://example.org/tags/git/' class="post_tag button button_translucent">
+          GIT
+          <span class="button_tally">9</span>
+        </a>
+        
+        <a href='http://example.org/tags/dvcs/' class="post_tag button button_translucent">
+          DVCS
+          <span class="button_tally">8</span>
+        </a>
+        
+        
+        <br>
+        <div class="post_tags_toggle button">Todos los Tags</div>
+        <div class="post_tags">
+          <div class="tags_list">
+            
+            <a href='http://example.org/tags/acceptance/' class=" post_tag button button_translucent" data-position=2>ACCEPTANCE<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/admin/' class=" post_tag button button_translucent" data-position=1>ADMIN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/administration/' class=" post_tag button button_translucent" data-position=1>ADMINISTRATION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/agile/' class=" post_tag button button_translucent" data-position=15>AGILE<span class="button_tally">15</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ajax/' class=" post_tag button button_translucent" data-position=1>AJAX<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/alerting/' class=" post_tag button button_translucent" data-position=1>ALERTING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/angularjs/' class=" post_tag button button_translucent" data-position=1>ANGULARJS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ansi-c/' class=" post_tag button button_translucent" data-position=5>ANSI-C<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ansi-c-testing/' class=" post_tag button button_translucent" data-position=2>ANSI-C-TESTING<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ant/' class=" post_tag button button_translucent" data-position=1>ANT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/apache/' class=" post_tag button button_translucent" data-position=1>APACHE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/argocd/' class=" post_tag button button_translucent" data-position=1>ARGOCD<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/atheist/' class=" post_tag button button_translucent" data-position=3>ATHEIST<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/automation/' class=" post_tag button button_translucent" data-position=3>AUTOMATION<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/awesome-wm/' class=" post_tag button button_translucent" data-position=1>AWESOME-WM<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/aws/' class=" post_tag button button_translucent" data-position=1>AWS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/bootstrap/' class=" post_tag button button_translucent" data-position=2>BOOTSTRAP<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/bower/' class=" post_tag button button_translucent" data-position=1>BOWER<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/buildbot/' class=" post_tag button button_translucent" data-position=2>BUILDBOT<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/celery/' class=" post_tag button button_translucent" data-position=1>CELERY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/chemistry/' class=" post_tag button button_translucent" data-position=1>CHEMISTRY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/code-coverage/' class=" post_tag button button_translucent" data-position=2>CODE-COVERAGE<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/code-highlight/' class=" post_tag button button_translucent" data-position=1>CODE-HIGHLIGHT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/code-retreat/' class=" post_tag button button_translucent" data-position=1>CODE-RETREAT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/codemotion/' class=" post_tag button button_translucent" data-position=1>CODEMOTION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/codice-software/' class=" post_tag button button_translucent" data-position=1>CODICE-SOFTWARE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/compiler/' class=" post_tag button button_translucent" data-position=1>COMPILER<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/compilers/' class=" post_tag button button_translucent" data-position=1>COMPILERS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/configuration/' class=" post_tag button button_translucent" data-position=2>CONFIGURATION<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/continuous-integration/' class=" post_tag button button_translucent" data-position=4>CONTINUOUS-INTEGRATION<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/coverage/' class=" post_tag button button_translucent" data-position=1>COVERAGE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/crack/' class=" post_tag button button_translucent" data-position=1>CRACK<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/css/' class=" post_tag button button_translucent" data-position=5>CSS<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/curses/' class=" post_tag button button_translucent" data-position=1>CURSES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/db-testing/' class=" post_tag button button_translucent" data-position=2>DB-TESTING<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/dbunit/' class=" post_tag button button_translucent" data-position=1>DBUNIT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/debian/' class=" post_tag button button_translucent" data-position=1>DEBIAN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/deployment/' class=" post_tag button button_translucent" data-position=1>DEPLOYMENT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/derby-db/' class=" post_tag button button_translucent" data-position=1>DERBY-DB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/devops/' class=" post_tag button button_translucent" data-position=4>DEVOPS<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/devscripts/' class=" post_tag button button_translucent" data-position=1>DEVSCRIPTS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/distributed-systems/' class=" post_tag button button_translucent" data-position=1>DISTRIBUTED-SYSTEMS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/django/' class=" post_tag button button_translucent" data-position=9>DJANGO<span class="button_tally">9</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/django-testing/' class=" post_tag button button_translucent" data-position=1>DJANGO-TESTING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/docker/' class=" post_tag button button_translucent" data-position=4>DOCKER<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/docker-compose/' class=" post_tag button button_translucent" data-position=1>DOCKER-COMPOSE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/doctest/' class=" post_tag button button_translucent" data-position=1>DOCTEST<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/domain/' class=" post_tag button button_translucent" data-position=1>DOMAIN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/drupal/' class=" post_tag button button_translucent" data-position=9>DRUPAL<span class="button_tally">9</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/dvcs/' class=" post_tag button button_translucent" data-position=8>DVCS<span class="button_tally">8</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/elasticsearch/' class=" post_tag button button_translucent" data-position=1>ELASTICSEARCH<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/emacs/' class=" post_tag button button_translucent" data-position=1>EMACS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/email/' class=" post_tag button button_translucent" data-position=1>EMAIL<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/engineering/' class=" post_tag button button_translucent" data-position=14>ENGINEERING<span class="button_tally">14</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/firefox/' class=" post_tag button button_translucent" data-position=1>FIREFOX<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/fish/' class=" post_tag button button_translucent" data-position=1>FISH<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/freshen/' class=" post_tag button button_translucent" data-position=1>FRESHEN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/functional-programming/' class=" post_tag button button_translucent" data-position=1>FUNCTIONAL-PROGRAMMING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/games/' class=" post_tag button button_translucent" data-position=1>GAMES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/gettext/' class=" post_tag button button_translucent" data-position=1>GETTEXT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/git/' class=" post_tag button button_translucent" data-position=9>GIT<span class="button_tally">9</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/gnome/' class=" post_tag button button_translucent" data-position=1>GNOME<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/gnu/linux/' class=" post_tag button button_translucent" data-position=3>GNU/LINUX<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/google/' class=" post_tag button button_translucent" data-position=1>GOOGLE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/grammar/' class=" post_tag button button_translucent" data-position=1>GRAMMAR<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/graphite/' class=" post_tag button button_translucent" data-position=2>GRAPHITE<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/grub/' class=" post_tag button button_translucent" data-position=1>GRUB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/grunt/' class=" post_tag button button_translucent" data-position=1>GRUNT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/gtk/' class=" post_tag button button_translucent" data-position=2>GTK<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/hamcrest/' class=" post_tag button button_translucent" data-position=1>HAMCREST<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/hibernate/' class=" post_tag button button_translucent" data-position=1>HIBERNATE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/home/' class=" post_tag button button_translucent" data-position=1>HOME<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/hosting/' class=" post_tag button button_translucent" data-position=1>HOSTING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/hsqldb/' class=" post_tag button button_translucent" data-position=1>HSQLDB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ini-files/' class=" post_tag button button_translucent" data-position=1>INI-FILES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/internationalization/' class=" post_tag button button_translucent" data-position=1>INTERNATIONALIZATION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/internet/' class=" post_tag button button_translucent" data-position=1>INTERNET<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ipython/' class=" post_tag button button_translucent" data-position=1>IPYTHON<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/it/' class=" post_tag button button_translucent" data-position=1>IT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/java/' class=" post_tag button button_translucent" data-position=6>JAVA<span class="button_tally">6</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/java-ide/' class=" post_tag button button_translucent" data-position=3>JAVA-IDE<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/java-testing/' class=" post_tag button button_translucent" data-position=7>JAVA-TESTING<span class="button_tally">7</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/javascript/' class=" post_tag button button_translucent" data-position=6>JAVASCRIPT<span class="button_tally">6</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/jbehave/' class=" post_tag button button_translucent" data-position=2>JBEHAVE<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/jekyll/' class=" post_tag button button_translucent" data-position=2>JEKYLL<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/jenkins/' class=" post_tag button button_translucent" data-position=4>JENKINS<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/job/' class=" post_tag button button_translucent" data-position=1>JOB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/jquery/' class=" post_tag button button_translucent" data-position=1>JQUERY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/json/' class=" post_tag button button_translucent" data-position=2>JSON<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/junit/' class=" post_tag button button_translucent" data-position=1>JUNIT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kibana/' class=" post_tag button button_translucent" data-position=1>KIBANA<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kind/' class=" post_tag button button_translucent" data-position=1>KIND<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kitchen/' class=" post_tag button button_translucent" data-position=2>KITCHEN<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kohana/' class=" post_tag button button_translucent" data-position=2>KOHANA<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kubernetes/' class=" post_tag button button_translucent" data-position=1>KUBERNETES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/lamp/' class=" post_tag button button_translucent" data-position=3>LAMP<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/languages/' class=" post_tag button button_translucent" data-position=7>LANGUAGES<span class="button_tally">7</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/latex/' class=" post_tag button button_translucent" data-position=1>LATEX<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ldap/' class=" post_tag button button_translucent" data-position=1>LDAP<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/life/' class=" post_tag button button_translucent" data-position=12>LIFE<span class="button_tally">12</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/logstash/' class=" post_tag button button_translucent" data-position=1>LOGSTASH<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/make/' class=" post_tag button button_translucent" data-position=1>MAKE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/mathematics/' class=" post_tag button button_translucent" data-position=1>MATHEMATICS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/maven/' class=" post_tag button button_translucent" data-position=2>MAVEN<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/mercurial/' class=" post_tag button button_translucent" data-position=2>MERCURIAL<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/middleware/' class=" post_tag button button_translucent" data-position=1>MIDDLEWARE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/migrating/' class=" post_tag button button_translucent" data-position=4>MIGRATING<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/mock/' class=" post_tag button button_translucent" data-position=1>MOCK<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/mongodb/' class=" post_tag button button_translucent" data-position=2>MONGODB<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/monitor/' class=" post_tag button button_translucent" data-position=2>MONITOR<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/monitoring/' class=" post_tag button button_translucent" data-position=5>MONITORING<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/munin/' class=" post_tag button button_translucent" data-position=2>MUNIN<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/netbeans/' class=" post_tag button button_translucent" data-position=3>NETBEANS<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/nikola/' class=" post_tag button button_translucent" data-position=1>NIKOLA<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/nose/' class=" post_tag button button_translucent" data-position=1>NOSE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/nosql/' class=" post_tag button button_translucent" data-position=3>NOSQL<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/octopress/' class=" post_tag button button_translucent" data-position=1>OCTOPRESS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/openspace/' class=" post_tag button button_translucent" data-position=1>OPENSPACE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/organization/' class=" post_tag button button_translucent" data-position=1>ORGANIZATION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/orm/' class=" post_tag button button_translucent" data-position=1>ORM<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/package/' class=" post_tag button button_translucent" data-position=1>PACKAGE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/patents/' class=" post_tag button button_translucent" data-position=1>PATENTS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/patterns/' class=" post_tag button button_translucent" data-position=7>PATTERNS<span class="button_tally">7</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/peewee/' class=" post_tag button button_translucent" data-position=1>PEEWEE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/permission/' class=" post_tag button button_translucent" data-position=1>PERMISSION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/persistence/' class=" post_tag button button_translucent" data-position=1>PERSISTENCE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/php/' class=" post_tag button button_translucent" data-position=3>PHP<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/php-testing/' class=" post_tag button button_translucent" data-position=1>PHP-TESTING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/plugins/' class=" post_tag button button_translucent" data-position=1>PLUGINS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/programming/' class=" post_tag button button_translucent" data-position=1>PROGRAMMING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/programs/' class=" post_tag button button_translucent" data-position=1>PROGRAMS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/puppet/' class=" post_tag button button_translucent" data-position=3>PUPPET<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/pydoubles/' class=" post_tag button button_translucent" data-position=1>PYDOUBLES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/python/' class=" post_tag button button_translucent" data-position=32>PYTHON<span class="button_tally">32</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/python-testing/' class=" post_tag button button_translucent" data-position=7>PYTHON-TESTING<span class="button_tally">7</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/rabbitmq/' class=" post_tag button button_translucent" data-position=1>RABBITMQ<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/resume/' class=" post_tag button button_translucent" data-position=1>RESUME<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/retrospective/' class=" post_tag button button_translucent" data-position=13>RETROSPECTIVE<span class="button_tally">13</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/rounding/' class=" post_tag button button_translucent" data-position=1>ROUNDING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ruby/' class=" post_tag button button_translucent" data-position=3>RUBY<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ruby-on-rails/' class=" post_tag button button_translucent" data-position=1>RUBY-ON-RAILS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/saltstack/' class=" post_tag button button_translucent" data-position=2>SALTSTACK<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/scrum/' class=" post_tag button button_translucent" data-position=1>SCRUM<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/security/' class=" post_tag button button_translucent" data-position=1>SECURITY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/selenium/' class=" post_tag button button_translucent" data-position=5>SELENIUM<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/shell/' class=" post_tag button button_translucent" data-position=1>SHELL<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/smtp/' class=" post_tag button button_translucent" data-position=1>SMTP<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/spam/' class=" post_tag button button_translucent" data-position=1>SPAM<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/sql/' class=" post_tag button button_translucent" data-position=5>SQL<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ssl/' class=" post_tag button button_translucent" data-position=1>SSL<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/static/' class=" post_tag button button_translucent" data-position=1>STATIC<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/statistic/' class=" post_tag button button_translucent" data-position=1>STATISTIC<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/subversion/' class=" post_tag button button_translucent" data-position=2>SUBVERSION<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/swing/' class=" post_tag button button_translucent" data-position=2>SWING<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/sysadmin/' class=" post_tag button button_translucent" data-position=2>SYSADMIN<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/tdd/' class=" post_tag button button_translucent" data-position=1>TDD<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/test/' class=" post_tag button button_translucent" data-position=2>TEST<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/testing/' class=" post_tag button button_translucent" data-position=13>TESTING<span class="button_tally">13</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/tests/' class=" post_tag button button_translucent" data-position=2>TESTS<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/tornado/' class=" post_tag button button_translucent" data-position=2>TORNADO<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/tuenti/' class=" post_tag button button_translucent" data-position=3>TUENTI<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/unittest/' class=" post_tag button button_translucent" data-position=1>UNITTEST<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/vagrant/' class=" post_tag button button_translucent" data-position=3>VAGRANT<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/virtualbox/' class=" post_tag button button_translucent" data-position=1>VIRTUALBOX<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/virtualenv/' class=" post_tag button button_translucent" data-position=1>VIRTUALENV<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/web/' class=" post_tag button button_translucent" data-position=1>WEB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/webdriver/' class=" post_tag button button_translucent" data-position=2>WEBDRIVER<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/webviews/' class=" post_tag button button_translucent" data-position=1>WEBVIEWS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/windows/' class=" post_tag button button_translucent" data-position=1>WINDOWS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/xml/' class=" post_tag button button_translucent" data-position=2>XML<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/yaml/' class=" post_tag button button_translucent" data-position=1>YAML<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/yeoman/' class=" post_tag button button_translucent" data-position=1>YEOMAN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/zsh/' class=" post_tag button button_translucent" data-position=1>ZSH<span class="button_tally">1</span>
+            </a>
+            
+            <div class="tags_sort"><span title="sort alphabetically">[A~Z]</span><span title="sort by count">[0~9]</span>
+            </div>
+            <span class="tags_hide"><svg class="icon">
+            <use xlink:href="#closeme"></use>
+          </svg></span>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </section>
+</aside>
+
 </div>
-</div>
+    </main><svg width="0" height="0" class="hidden">
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="facebook">
+    <path d="M437 0H75C33.648 0 0 33.648 0 75v362c0 41.352 33.648 75 75 75h151V331h-60v-90h60v-61c0-49.629 40.371-90 90-90h91v90h-91v61h91l-15 90h-76v181h121c41.352 0 75-33.648 75-75V75c0-41.352-33.648-75-75-75zm0 0"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.001 18.001" id="twitter">
+    <path d="M15.891 4.013c.808-.496 1.343-1.173 1.605-2.034a8.68 8.68 0 0 1-2.351.861c-.703-.756-1.593-1.14-2.66-1.14-1.043 0-1.924.366-2.643 1.078a3.56 3.56 0 0 0-1.076 2.605c0 .309.039.585.117.819-3.076-.105-5.622-1.381-7.628-3.837-.34.601-.51 1.213-.51 1.846 0 1.301.549 2.332 1.645 3.089-.625-.053-1.176-.211-1.645-.47 0 .929.273 1.705.82 2.388a3.623 3.623 0 0 0 2.115 1.291c-.312.08-.641.118-.979.118-.312 0-.533-.026-.664-.083.23.757.664 1.371 1.291 1.841a3.652 3.652 0 0 0 2.152.743C4.148 14.173 2.625 14.69.902 14.69c-.422 0-.721-.006-.902-.038 1.697 1.102 3.586 1.649 5.676 1.649 2.139 0 4.029-.542 5.674-1.626 1.645-1.078 2.859-2.408 3.639-3.974a10.77 10.77 0 0 0 1.172-4.892v-.468a7.788 7.788 0 0 0 1.84-1.921 8.142 8.142 0 0 1-2.11.593z"
+      ></path>
+  </symbol>
+  <symbol aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="mail">
+    <path  d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="calendar">
+    <path d="M452 40h-24V0h-40v40H124V0H84v40H60C26.916 40 0 66.916 0 100v352c0 33.084 26.916 60 60 60h392c33.084 0 60-26.916 60-60V100c0-33.084-26.916-60-60-60zm20 412c0 11.028-8.972 20-20 20H60c-11.028 0-20-8.972-20-20V188h432v264zm0-304H40v-48c0-11.028 8.972-20 20-20h24v40h40V80h264v40h40V80h24c11.028 0 20 8.972 20 20v48z"></path>
+    <path d="M76 230h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zM76 310h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zM76 390h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zm80-80h40v40h-40z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="github">
+    <path d="M255.968 5.329C114.624 5.329 0 120.401 0 262.353c0 113.536 73.344 209.856 175.104 243.872 12.8 2.368 17.472-5.568 17.472-12.384 0-6.112-.224-22.272-.352-43.712-71.2 15.52-86.24-34.464-86.24-34.464-11.616-29.696-28.416-37.6-28.416-37.6-23.264-15.936 1.728-15.616 1.728-15.616 25.696 1.824 39.2 26.496 39.2 26.496 22.848 39.264 59.936 27.936 74.528 21.344 2.304-16.608 8.928-27.936 16.256-34.368-56.832-6.496-116.608-28.544-116.608-127.008 0-28.064 9.984-51.008 26.368-68.992-2.656-6.496-11.424-32.64 2.496-68 0 0 21.504-6.912 70.4 26.336 20.416-5.696 42.304-8.544 64.096-8.64 21.728.128 43.648 2.944 64.096 8.672 48.864-33.248 70.336-26.336 70.336-26.336 13.952 35.392 5.184 61.504 2.56 68 16.416 17.984 26.304 40.928 26.304 68.992 0 98.72-59.84 120.448-116.864 126.816 9.184 7.936 17.376 23.616 17.376 47.584 0 34.368-.32 62.08-.32 70.496 0 6.88 4.608 14.88 17.6 12.352C438.72 472.145 512 375.857 512 262.353 512 120.401 397.376 5.329 255.968 5.329z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 212 212" id="gitlab">
+    <path d="M12.3 74.7h54L43.3 3c-1-3.6-6.4-3.6-7.6 0L12.3 74.8z" />
+    <path d="M12.3 74.7L.5 111c-1 3.2 0 6.8 3 8.8l101.6 74-92.5-119z"/>
+    <path d="M105 193.7l-38.6-119h-54l92.7 119z"/>
+    <path d="M105 193.7l38.7-119H66.4l38.7 119z"/>
+    <path d="M105 193.7l38.7-119H198l-93 119z"/>
+    <path d="M198 74.7l11.6 36.2c1 3 0 6.6-3 8.6l-101.5 74 93-119z"/>
+    <path d="M198 74.7h-54.3L167 3c1.2-3.6 6.4-3.6 7.6 0L198 74.8z"/> 
+  </symbol>
+  <symbol viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="rss">
+    <circle cx="3.429" cy="20.571" r="3.429"></circle>
+    <path d="M11.429 24h4.57C15.999 15.179 8.821 8.001 0 8v4.572c6.302.001 11.429 5.126 11.429 11.428z"></path>
+    <path d="M24 24C24 10.766 13.234 0 0 0v4.571c10.714 0 19.43 8.714 19.43 19.429z"></path>
+  </symbol>
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="linkedin">
+    <path d="M437 0H75C33.648 0 0 33.648 0 75v362c0 41.352 33.648 75 75 75h362c41.352 0 75-33.648 75-75V75c0-41.352-33.648-75-75-75zM181 406h-60V196h60zm0-240h-60v-60h60zm210 240h-60V286c0-16.54-13.46-30-30-30s-30 13.46-30 30v120h-60V196h60v11.309C286.719 202.422 296.93 196 316 196c40.691.043 75 36.547 75 79.688zm0 0"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612 612" id="arrow">
+    <path d="M604.501 440.509L325.398 134.956c-5.331-5.357-12.423-7.627-19.386-7.27-6.989-.357-14.056 1.913-19.387 7.27L7.499 440.509c-9.999 10.024-9.999 26.298 0 36.323s26.223 10.024 36.222 0l262.293-287.164L568.28 476.832c9.999 10.024 26.222 10.024 36.221 0 9.999-10.023 9.999-26.298 0-36.323z"></path>
+  </symbol>
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="carly">
+    <path d="M504.971 239.029L448 182.059V84c0-46.317-37.682-84-84-84h-44c-13.255 0-24 10.745-24 24s10.745 24 24 24h44c19.851 0 36 16.149 36 36v108c0 6.365 2.529 12.47 7.029 16.971L454.059 256l-47.029 47.029A24.002 24.002 0 0 0 400 320v108c0 19.851-16.149 36-36 36h-44c-13.255 0-24 10.745-24 24s10.745 24 24 24h44c46.318 0 84-37.683 84-84v-98.059l56.971-56.971c9.372-9.372 9.372-24.568 0-33.941zM112 192V84c0-19.851 16.149-36 36-36h44c13.255 0 24-10.745 24-24S205.255 0 192 0h-44c-46.318 0-84 37.683-84 84v98.059l-56.971 56.97c-9.373 9.373-9.373 24.568 0 33.941L64 329.941V428c0 46.317 37.682 84 84 84h44c13.255 0 24-10.745 24-24s-10.745-24-24-24h-44c-19.851 0-36-16.149-36-36V320c0-6.365-2.529-12.47-7.029-16.971L57.941 256l47.029-47.029A24.002 24.002 0 0 0 112 192z"></path>
+  </symbol>
+  <symbol viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="copy">
+    <path d="M23 2.75A2.75 2.75 0 0 0 20.25 0H8.75A2.75 2.75 0 0 0 6 2.75v13.5A2.75 2.75 0 0 0 8.75 19h11.5A2.75 2.75 0 0 0 23 16.25zM18.25 14.5h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5zm0-3h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5zm0-3h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5z"></path>
+    <path d="M8.75 20.5a4.255 4.255 0 0 1-4.25-4.25V2.75c0-.086.02-.166.025-.25H3.75A2.752 2.752 0 0 0 1 5.25v16A2.752 2.752 0 0 0 3.75 24h12a2.752 2.752 0 0 0 2.75-2.75v-.75z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.001 512.001" id="closeme">
+    <path d="M284.286 256.002L506.143 34.144c7.811-7.811 7.811-20.475 0-28.285-7.811-7.81-20.475-7.811-28.285 0L256 227.717 34.143 5.859c-7.811-7.811-20.475-7.811-28.285 0-7.81 7.811-7.811 20.475 0 28.285l221.857 221.857L5.858 477.859c-7.811 7.811-7.811 20.475 0 28.285a19.938 19.938 0 0 0 14.143 5.857 19.94 19.94 0 0 0 14.143-5.857L256 284.287l221.857 221.857c3.905 3.905 9.024 5.857 14.143 5.857s10.237-1.952 14.143-5.857c7.811-7.811 7.811-20.475 0-28.285L284.286 256.002z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="open-menu">
+    <path d="M492 236H20c-11.046 0-20 8.954-20 20s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20zm0-160H20C8.954 76 0 84.954 0 96s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20zm0 320H20c-11.046 0-20 8.954-20 20s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="instagram">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id=youtube>
+    <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="stackoverflow">
+    <path d="M21 27v-8h3v11H0V19h3v8h18z"></path><path d="M17.1.2L15 1.8l7.9 10.6 2.1-1.6L17.1.2zm3.7 14.7L10.6 6.4l1.7-2 10.2 8.5-1.7 2zM7.2 12.3l12 5.6 1.1-2.4-12-5.6-1.1 2.4zm-1.8 6.8l13.56 1.96.17-2.38-13.26-2.55-.47 2.97zM19 25H5v-3h14v3z"></path>
+  </symbol>
+</svg>
 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+<footer class="footer">
+  <div class="footer_inner wrap pale">
+    <img src='http://example.org/icons/apple-touch-icon.png' class="icon icon_2 transparent">
+    <p>Copyright<span class="year"></span> EL BLOG DE MAGMAX. Todos los Derechos Reservados</p><a class="to_top" href="#documentTop">
+  <svg class="icon">
+  <use xlink:href="#arrow"></use>
+</svg>
+</a>
 
+  </div>
+</footer>
 
-
-<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-9308241-3', 'auto');
-  ga('send', 'pageview');
-
-</script>
-</body>
+    <script type="text/javascript" src="http://example.org/js/bundle.min.d47d3d6894e66aa67f2514c171756283d3e8847b56f8f158bdd8430843da5f5af874c7a89a316c6743a845399bdb89649685154dc88b7e9bff1a155ca9e5108a.js" integrity="sha512-1H09aJTmaqZ/JRTBcXVig9PohHtW&#43;PFYvdhDCEPaX1r4dMeomjFsZ0OoRTmb24lkloUVTciLfpv/GhVcqeUQig==" crossorigin="anonymous"></script>
+    
+  </body>
 </html>

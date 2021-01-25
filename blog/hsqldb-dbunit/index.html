@@ -1,435 +1,1251 @@
+
 <!DOCTYPE html>
-<html prefix="
-og: https://ogp.me/ns#
-article: https://ogp.me/ns/article#
-" lang="es">
-<head>
+<html lang="es" data-figures="" class="page">
+  <head>
+<title>Pruebas con Bases de Datos en memoria: DBUnit &#43; HSQLDB | El blog de MagMax</title>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'43516d322f35b42f7136bc9e4ca4c9c80cc1466c'">
-<title>Pruebas con Bases de Datos en memoria: DBUnit + HSQLDB | MagMax Blog</title>
-<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
-<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
-<link rel="canonical" href="http://magmax.org/blog/hsqldb-dbunit/">
-<link rel="icon" href="/favicon.png" sizes="128x128">
-<link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.ico" sizes="16x16">
-<meta name="author" content="Miguel Ángel García">
-<link rel="prev" href="/blog/formatos-simples/" title="Formatos simples: XML, Yaml, Json, Properties e 'Ini" type="text/html">
-<link rel="next" href="/blog/buenas-practicas-c-1/" title="Buenas prácticas en Ansi C (1)" type="text/html">
-<meta property="og:site_name" content="MagMax Blog">
-<meta property="og:title" content="Pruebas con Bases de Datos en memoria: DBUnit + HSQLDB">
-<meta property="og:url" content="http://magmax.org/blog/hsqldb-dbunit/">
-<meta property="og:description" content="DBUnit es un sistema sencillo que nos permite cargar con datos nuestra base de datos con el fin de realizar tests con estos datos.
-La gran ventaja de DBUnit es poder utilizar un sistema sencillo para ">
+<meta name="generator" content="Hugo 0.79.1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta property="og:locale" content="es" />
+
 <meta property="og:type" content="article">
-<meta property="article:author" content="Miguel Ángel García">
-<meta property="article:published_time" content="2011-06-13T00:00:00+00:00">
-<meta property="article:updated" content="2011-06-13T00:00:00">
-<meta property="article:tag" content="db testing">
-<meta property="article:tag" content="dbunit">
-<meta property="article:tag" content="hsqldb">
-<meta property="article:tag" content="sql">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:site" content="@magmax_en">
-<meta name="twitter:creator" content="@magmax">
-<meta name="twitter:title" content="MagMax Blog">
-<meta name="twitter:description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ...">
-<meta name="twitter:url" content="http://magmax.org//blog/hsqldb-dbunit/">
-<meta name="twitter:image" content="http://magmax.org/favicon.png">
-</head>
-<body>
-<a href="#content" class="sr-only sr-only-focusable">Ir al contenido principal</a>
+<meta name="description" content="DBUnit es un sistema sencillo que nos permite cargar con datos nuestra base de datos con el fin de realizar tests con estos datos.
+La gran ventaja de DBUnit es …">
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:creator" content="">
+<meta name="twitter:title" content="Pruebas con Bases de Datos en memoria: DBUnit &#43; HSQLDB" />
+<meta property="og:url" content="http://example.org/blog/hsqldb-dbunit/" />
+<meta property="og:title" content="Pruebas con Bases de Datos en memoria: DBUnit &#43; HSQLDB" />
+<meta property="og:description" content="DBUnit es un sistema sencillo que nos permite cargar con datos nuestra base de datos con el fin de realizar tests con estos datos.
+La gran ventaja de DBUnit es …" />
+<meta property="og:image" content="http://example.org/" />
+<link rel="apple-touch-icon" sizes="180x180" href='http://example.org/icons/apple-touch-icon.png'>
+<link rel="icon" type="image/png" sizes="32x32" href='http://example.org/icons/favicon-32x32.png'>
+<link rel="manifest" href='http://example.org/icons/site.webmanifest'>
+<link rel="mask-icon" href='http://example.org/safari-pinned-tab.svg' color="#002538">
+<meta name="msapplication-TileColor" content="#002538">
+<meta name="theme-color" content="#002538">
 
-<!-- Menubar -->
+<link rel="canonical" href="http://example.org/blog/hsqldb-dbunit/">
 
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
-<!-- This keeps the margins nice -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="http://magmax.org/">
+    
 
-        <span id="blog-title">MagMax Blog</span>
-      </a>
-    </div>
-<!-- /.navbar-header -->
-    <div class="collapse navbar-collapse navbar-ex1-collapse">
-      <ul class="nav navbar-nav">
-<li>
-<a href="/">Inicio</a>
-                </li>
-<li>
-<a href="/archive.html">Archivo</a>
-                </li>
-<li>
-<a href="/categories">Categorías</a>
-                </li>
-<li>
-<a href="/projects">Proyectos</a>
-                </li>
-<li>
-<a href="/news">Posts Externos</a>
+    
+    
+    <link rel="preload" href="http://example.org/css/styles.37cea41fe2c1b43e2a17095e01eb999e8701c9f0ba06d4df0a9db514a215e26dfbdb8a606a36c9d3b54bb1c09fd4a9ce41ee8f6788a8c6b17067830f34396135.css" integrity = "sha512-N86kH&#43;LBtD4qFwleAeuZnocByfC6BtTfCp21FKIV4m3724pgajbJ07VLscCf1KnOQe6PZ4ioxrFwZ4MPNDlhNQ==" as="style" crossorigin="anonymous">
+    <link rel="preload" href="http://example.org/js/bundle.min.d47d3d6894e66aa67f2514c171756283d3e8847b56f8f158bdd8430843da5f5af874c7a89a316c6743a845399bdb89649685154dc88b7e9bff1a155ca9e5108a.js" as="script" integrity=
+    "sha512-1H09aJTmaqZ/JRTBcXVig9PohHtW&#43;PFYvdhDCEPaX1r4dMeomjFsZ0OoRTmb24lkloUVTciLfpv/GhVcqeUQig==" crossorigin="anonymous">
 
+    
+    <link rel="stylesheet" type="text/css" href="http://example.org/css/styles.37cea41fe2c1b43e2a17095e01eb999e8701c9f0ba06d4df0a9db514a215e26dfbdb8a606a36c9d3b54bb1c09fd4a9ce41ee8f6788a8c6b17067830f34396135.css" integrity="sha512-N86kH&#43;LBtD4qFwleAeuZnocByfC6BtTfCp21FKIV4m3724pgajbJ07VLscCf1KnOQe6PZ4ioxrFwZ4MPNDlhNQ==" crossorigin="anonymous">
+    
+  </head>
+  
+  
+    
+  
+  <body data-code="20" data-lines="false" id="documentTop">
+
+<header class="nav_header" >
+  <nav class="nav">
+    <a href='http://example.org/' class="nav_brand nav_item">
+        El blog de MagMax
+      <div class="nav_close">
+        <div>
+          <svg class="icon">
+  <use xlink:href="#open-menu"></use>
+</svg>
+          <svg class="icon">
+  <use xlink:href="#closeme"></use>
+</svg>
+        </div>
+      </div>
+    </a>
+    <div class='nav_body nav_body_'>
+      
+      
+      
         
-      </li>
-</ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
-<div class="form-group">
-<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
-</div>
-</form>
-</li>
 
-        <li style="margin-left:0">
-          <a href="http://feeds.feedburner.com/magmax">
-            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
-        </li>
-
-        
-      </ul>
-</div>
-<!-- /.navbar-collapse -->
+  <div class="nav_parent">
+    <a href="http://example.org/" class="nav_item">Inicio </a>
   </div>
-<!-- /.container -->
-</nav><!-- End of Menubar --><div class="container" id="content" role="main">
-  <div class="body-content">
-    <div class="row">
-      <div class="page-content col-md-9">
-        
-        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="https://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/blog/hsqldb-dbunit/" class="u-url">Pruebas con Bases de Datos en memoria: DBUnit + HSQLDB</a></h1>
-            <div class="metadata text-muted">
-              <i class="glyphicon glyphicon-calendar"></i>
-              <p class="dateline">
-                <time class="published dt-published" datetime="2011-06-13T00:00:00+00:00" title="2011-06-13">2011-06-13</time>
-                // <time class="updated dt-updated" datetime="2011-06-13T00:00:00" title="2011-06-13">2011-06-13</time></p>
-              <p class="commentline">            <a href="/blog/hsqldb-dbunit/#disqus_thread" data-disqus-identifier="cache/posts/hsqldb-dbunit.html">Comments</a>
+  <div class="nav_parent">
+    <a href="http://example.org/en" class="nav_item">English </a>
+  </div>
+      
+      <div class="nav_parent">
+        <a href="#" class="nav_item"></a>
+        <div class="nav_sub">
+          <span class="nav_child"></span>
+          
+          <a href="http://example.org/en/" class="nav_child nav_item">English</a>
+          
+          <a href="http://example.org/" class="nav_child nav_item">Español</a>
+          
+        </div>
+      </div>
+      
+<div class='follow'>
+    
+    
+  <a href="https://github.com/magmax/">
+    <svg class="icon">
+  <use xlink:href="#github"></use>
+</svg>
+  </a>
+    
+    
+  <a href="https://twitter.com/magmax_en">
+    <svg class="icon">
+  <use xlink:href="#twitter"></use>
+</svg>
+  </a>
+    
+    
+  <a href="https://www.linkedin.com/in/miguelangelgarciamartinez/">
+    <svg class="icon">
+  <use xlink:href="#linkedin"></use>
+</svg>
+  </a>
+    
+    
+    
+  <a href="http://example.org/index.xml">
+    <svg class="icon">
+  <use xlink:href="#rss"></use>
+</svg>
+  </a>
+<div class="color_mode">
+  <input type="checkbox" class="color_choice" id="mode">
+</div>
 
-</p>
-              <address class="vcard author"><a class="url fn" href="https://magmax.org">Miguel Ángel García</a></address>
-            </div>
-            <br></header><div class="e-content entry-content" itemprop="articleBody text">
-            <div>
-<p>DBUnit es un sistema sencillo que nos permite cargar con datos nuestra base de datos con el fin de realizar tests con estos datos.</p>
+</div>
+
+    </div>
+  </nav>
+</header>
+
+    <main>
+  
+<div class="grid-inverse wrap content">
+  <article class="post_content">
+    <h1 class="post_title">Pruebas con Bases de Datos en memoria: DBUnit &#43; HSQLDB</h1><div class="post_meta">
+  
+    <svg class="icon">
+  <use xlink:href="#calendar"></use>
+</svg>
+    <span class="post_date">
+      Jun 13, 2011</span>
+      <a href='http://example.org/tags/dbunit' class="post_tag button button_translucent">dbunit
+      </a>
+      <a href='http://example.org/tags/db-testing' class="post_tag button button_translucent">db testing
+      </a>
+      <a href='http://example.org/tags/hsqldb' class="post_tag button button_translucent">hsqldb
+      </a>
+      <a href='http://example.org/tags/sql' class="post_tag button button_translucent">sql
+      </a>
+</div>
+
+    
+  <div class="post_share">
+    Compartir en:
+    <a href="https://twitter.com/intent/tweet?text=Pruebas%20con%20Bases%20de%20Datos%20en%20memoria%3a%20DBUnit%20%2b%20HSQLDB&url=http%3a%2f%2fexample.org%2fblog%2fhsqldb-dbunit%2f&tw_p=tweetbutton" class="twitter" title="Compartir en Twitter" target="_blank" rel="nofollow">
+      <svg class="icon">
+  <use xlink:href="#twitter"></use>
+</svg>
+    </a>
+    <a href="https://www.facebook.com/sharer.php?u=http%3a%2f%2fexample.org%2fblog%2fhsqldb-dbunit%2f&t=Pruebas%20con%20Bases%20de%20Datos%20en%20memoria%3a%20DBUnit%20%2b%20HSQLDB" class="facebook" title="Compartir en Facebook" target="_blank" rel="nofollow">
+      <svg class="icon">
+  <use xlink:href="#facebook"></use>
+</svg>
+    </a>
+    <a href="#linkedinshare" id = "linkedinshare" class="linkedin" title="Compartir en LinkedIn" rel="nofollow">
+      <svg class="icon">
+  <use xlink:href="#linkedin"></use>
+</svg>
+    </a>
+    <a href="http://example.org/blog/hsqldb-dbunit/" title="Copy Link" class="link link_yank">
+      <svg class="icon">
+  <use xlink:href="#copy"></use>
+</svg>
+    </a>
+  </div>
+
+    
+    <p>DBUnit es un sistema sencillo que nos permite cargar con datos nuestra base de datos con el fin de realizar tests con estos datos.</p>
 <p>La gran ventaja de DBUnit es poder utilizar un sistema sencillo para indicar los datos a insertar mediante un XML, así como poder exportar una BBDD existente.</p>
 <p>Sin embargo, DBUnit no permite la creación de la BBDD, lo que puede ser un problema al intentar usar una BBDD en memoria, como pueda ser HyperSQL o Derby.</p>
-<!-- TEASER_END -->
-<div class="section" id="enunciado">
-<h2>Enunciado</h2>
+<!-- raw HTML omitted -->
+<figure>
+    <img src="/images/java.png"
+         alt="Java"/> 
+</figure>
+
+<h2 id="enunciado">Enunciado</h2>
 <p>Como me gusta resolver los problemas concretos y no los abstractos, veamos cómo usar DBUnit con una base de datos en memoria. Para ello utilizaremos un pequeño gestor de libros con una única tabla, que contendrá el id, título y autor.</p>
-</div>
-<div class="section" id="datos">
-<h2>Datos</h2>
+<h2 id="datos">Datos</h2>
 <p>Nuestros datos serán los siguientes:</p>
-<pre class="code xml"><a name="rest_code_e54385237267498e95415b2128fe9ba7-1"></a><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
-<a name="rest_code_e54385237267498e95415b2128fe9ba7-2"></a><span class="nt">&lt;dataset&gt;</span>
-<a name="rest_code_e54385237267498e95415b2128fe9ba7-3"></a>    <span class="nt">&lt;book</span> <span class="na">id=</span><span class="s">"1"</span> <span class="na">title=</span><span class="s">"Fundación"</span> <span class="na">author=</span><span class="s">"Isaac Asimov"</span><span class="nt">/&gt;</span>
-<a name="rest_code_e54385237267498e95415b2128fe9ba7-4"></a>    <span class="nt">&lt;book</span> <span class="na">id=</span><span class="s">"2"</span> <span class="na">title=</span><span class="s">"Clean Code"</span> <span class="na">author=</span><span class="s">"Robert C. Martin"</span><span class="nt">/&gt;</span>
-<a name="rest_code_e54385237267498e95415b2128fe9ba7-5"></a>    <span class="nt">&lt;book</span> <span class="na">id=</span><span class="s">"3"</span> <span class="na">title=</span><span class="s">"Diseño ágil con TDD"</span> <span class="na">author=</span><span class="s">"Carlos Ble"</span><span class="nt">/&gt;</span>
-<a name="rest_code_e54385237267498e95415b2128fe9ba7-6"></a><span class="nt">&lt;/dataset&gt;</span>
-</pre>
-<p>Aquí ya estamos diseñando. Lo que le estamos diciendo a DBUnit es que vamos a tener una tabla "book" con 3 columnas, que son "id", "title" y "author".</p>
-<p>El archivo anterior se situará en el paquete "tests", de manera que se empaquetará en el JAR con nuestras pruebas.</p>
-</div>
-<div class="section" id="codigo">
-<h2>Código</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#f92672">&lt;dataset&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>    <span style="color:#f92672">&lt;book</span> <span style="color:#a6e22e">id=</span><span style="color:#e6db74">&#34;1&#34;</span> <span style="color:#a6e22e">title=</span><span style="color:#e6db74">&#34;Fundación&#34;</span> <span style="color:#a6e22e">author=</span><span style="color:#e6db74">&#34;Isaac Asimov&#34;</span><span style="color:#f92672">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>    <span style="color:#f92672">&lt;book</span> <span style="color:#a6e22e">id=</span><span style="color:#e6db74">&#34;2&#34;</span> <span style="color:#a6e22e">title=</span><span style="color:#e6db74">&#34;Clean Code&#34;</span> <span style="color:#a6e22e">author=</span><span style="color:#e6db74">&#34;Robert C. Martin&#34;</span><span style="color:#f92672">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>    <span style="color:#f92672">&lt;book</span> <span style="color:#a6e22e">id=</span><span style="color:#e6db74">&#34;3&#34;</span> <span style="color:#a6e22e">title=</span><span style="color:#e6db74">&#34;Diseño ágil con TDD&#34;</span> <span style="color:#a6e22e">author=</span><span style="color:#e6db74">&#34;Carlos Ble&#34;</span><span style="color:#f92672">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span><span style="color:#f92672">&lt;/dataset&gt;</span>
+</code></pre></div><p>Aquí ya estamos diseñando. Lo que le estamos diciendo a DBUnit es que vamos a tener una tabla &ldquo;book&rdquo; con 3 columnas, que son &ldquo;id&rdquo;, &ldquo;title&rdquo; y &ldquo;author&rdquo;.</p>
+<p>El archivo anterior se situará en el paquete &ldquo;tests&rdquo;, de manera que se empaquetará en el JAR con nuestras pruebas.</p>
+<h2 id="código">Código</h2>
 <p>Veamos ahora cómo indicárselo a DBUnit:</p>
-<pre class="code java"><a name="rest_code_591000bf351d46019086a14f2327585e-1"></a><span class="kd">public</span> <span class="kd">class</span> <span class="nc">test1</span> <span class="kd">extends</span> <span class="n">DBTestCase</span> <span class="p">{</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-2"></a>    <span class="kd">static</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-3"></a>    <span class="p">{</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-4"></a>        <span class="k">try</span> <span class="p">{</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-5"></a>            <span class="n">String</span> <span class="n">driver</span> <span class="o">=</span> <span class="s">"org.hsqldb.jdbcDriver"</span><span class="p">;</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-6"></a>            <span class="n">String</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"jdbc:hsqldb:mem:sample"</span><span class="p">;</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-7"></a>            <span class="n">String</span> <span class="n">user</span> <span class="o">=</span><span class="s">"sa"</span><span class="p">;</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-8"></a>            <span class="n">String</span> <span class="n">pass</span> <span class="o">=</span> <span class="s">""</span><span class="p">;</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-9"></a>
-<a name="rest_code_591000bf351d46019086a14f2327585e-10"></a>            <span class="n">System</span><span class="p">.</span><span class="na">setProperty</span><span class="p">(</span><span class="n">PropertiesBasedJdbcDatabaseTester</span><span class="p">.</span><span class="na">DBUNIT_DRIVER_CLASS</span><span class="p">,</span> <span class="n">driver</span><span class="p">);</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-11"></a>            <span class="n">System</span><span class="p">.</span><span class="na">setProperty</span><span class="p">(</span><span class="n">PropertiesBasedJdbcDatabaseTester</span><span class="p">.</span><span class="na">DBUNIT_CONNECTION_URL</span><span class="p">,</span> <span class="n">url</span><span class="p">);</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-12"></a>            <span class="n">System</span><span class="p">.</span><span class="na">setProperty</span><span class="p">(</span><span class="n">PropertiesBasedJdbcDatabaseTester</span><span class="p">.</span><span class="na">DBUNIT_USERNAME</span><span class="p">,</span> <span class="n">user</span><span class="p">);</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-13"></a>            <span class="n">System</span><span class="p">.</span><span class="na">setProperty</span><span class="p">(</span><span class="n">PropertiesBasedJdbcDatabaseTester</span><span class="p">.</span><span class="na">DBUNIT_PASSWORD</span><span class="p">,</span> <span class="n">pass</span><span class="p">);</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-14"></a>
-<a name="rest_code_591000bf351d46019086a14f2327585e-15"></a>            <span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="n">driver</span><span class="p">);</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-16"></a>            <span class="n">Connection</span> <span class="n">con</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">pass</span><span class="p">);</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-17"></a>            <span class="n">Statement</span> <span class="n">st</span> <span class="o">=</span> <span class="n">con</span><span class="p">.</span><span class="na">createStatement</span><span class="p">();</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-18"></a>            <span class="n">st</span><span class="p">.</span><span class="na">execute</span><span class="p">(</span><span class="s">"create table book ("</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-19"></a>                    <span class="o">+</span> <span class="s">"id integer, "</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-20"></a>                    <span class="o">+</span> <span class="s">"title varchar(50), "</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-21"></a>                    <span class="o">+</span> <span class="s">"author varchar(50)"</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-22"></a>                    <span class="o">+</span> <span class="s">")"</span><span class="p">);</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-23"></a>            <span class="n">con</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-24"></a>        <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="n">Exception</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-25"></a>            <span class="n">e</span><span class="p">.</span><span class="na">printStackTrace</span><span class="p">();</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-26"></a>        <span class="p">}</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-27"></a>    <span class="p">}</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-28"></a>
-<a name="rest_code_591000bf351d46019086a14f2327585e-29"></a>    <span class="nd">@Override</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-30"></a>    <span class="kd">protected</span> <span class="n">IDataSet</span> <span class="nf">getDataSet</span><span class="p">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-31"></a>        <span class="n">InputStream</span> <span class="n">file</span> <span class="o">=</span> <span class="n">getClass</span><span class="p">().</span><span class="na">getResourceAsStream</span><span class="p">(</span><span class="s">"/tests/test1.xml"</span><span class="p">);</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-32"></a>        <span class="n">IDataSet</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FlatXmlDataSet</span><span class="p">(</span><span class="n">file</span><span class="p">);</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-33"></a>        <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-34"></a>    <span class="p">}</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-35"></a>
-<a name="rest_code_591000bf351d46019086a14f2327585e-36"></a>    <span class="nd">@Test</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-37"></a>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">test1</span><span class="p">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-38"></a>        <span class="n">IDatabaseConnection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">getConnection</span><span class="p">();</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-39"></a>        <span class="n">assertEquals</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">conn</span><span class="p">.</span><span class="na">getRowCount</span><span class="p">(</span><span class="s">"book"</span><span class="p">));</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-40"></a>        <span class="n">conn</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-41"></a>    <span class="p">}</span>
-<a name="rest_code_591000bf351d46019086a14f2327585e-42"></a><span class="p">}</span>
-</pre>
-<div class="section" id="desglosando-el-codigo">
-<h3>Desglosando el código</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">test1</span> <span style="color:#66d9ef">extends</span> DBTestCase <span style="color:#f92672">{</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>    <span style="color:#66d9ef">static</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>    <span style="color:#f92672">{</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>            String driver <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;org.hsqldb.jdbcDriver&#34;</span><span style="color:#f92672">;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>            String url <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;jdbc:hsqldb:mem:sample&#34;</span><span style="color:#f92672">;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>            String user <span style="color:#f92672">=</span><span style="color:#e6db74">&#34;sa&#34;</span><span style="color:#f92672">;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>            String pass <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>            System<span style="color:#f92672">.</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span>PropertiesBasedJdbcDatabaseTester<span style="color:#f92672">.</span><span style="color:#a6e22e">DBUNIT_DRIVER_CLASS</span><span style="color:#f92672">,</span> driver<span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>            System<span style="color:#f92672">.</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span>PropertiesBasedJdbcDatabaseTester<span style="color:#f92672">.</span><span style="color:#a6e22e">DBUNIT_USERNAME</span><span style="color:#f92672">,</span> user<span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>            System<span style="color:#f92672">.</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span>PropertiesBasedJdbcDatabaseTester<span style="color:#f92672">.</span><span style="color:#a6e22e">DBUNIT_PASSWORD</span><span style="color:#f92672">,</span> pass<span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>            Class<span style="color:#f92672">.</span><span style="color:#a6e22e">forName</span><span style="color:#f92672">(</span>driver<span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>            Connection con <span style="color:#f92672">=</span> DriverManager<span style="color:#f92672">.</span><span style="color:#a6e22e">getConnection</span><span style="color:#f92672">(</span>url<span style="color:#f92672">,</span> user<span style="color:#f92672">,</span> pass<span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>            st<span style="color:#f92672">.</span><span style="color:#a6e22e">execute</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;create table book (&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>                    <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;id integer, &#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>                    <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;title varchar(50), &#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>                    <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;author varchar(50)&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>                    <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;)&#34;</span><span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>            con<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>        <span style="color:#f92672">}</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>    <span style="color:#f92672">}</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>    <span style="color:#a6e22e">@Override</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>    <span style="color:#66d9ef">protected</span> IDataSet <span style="color:#a6e22e">getDataSet</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>        InputStream file <span style="color:#f92672">=</span> getClass<span style="color:#f92672">().</span><span style="color:#a6e22e">getResourceAsStream</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/tests/test1.xml&#34;</span><span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>        IDataSet result <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FlatXmlDataSet<span style="color:#f92672">(</span>file<span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>        <span style="color:#66d9ef">return</span> result<span style="color:#f92672">;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span>    <span style="color:#f92672">}</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span>    <span style="color:#a6e22e">@Test</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test1</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36</span>        IDatabaseConnection conn <span style="color:#f92672">=</span> getConnection<span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37</span>        assertEquals<span style="color:#f92672">(</span>3<span style="color:#f92672">,</span> conn<span style="color:#f92672">.</span><span style="color:#a6e22e">getRowCount</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;book&#34;</span><span style="color:#f92672">));</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38</span>        conn<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39</span>    <span style="color:#f92672">}</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40</span><span style="color:#f92672">}</span>
+</code></pre></div><h3 id="desglosando-el-código">Desglosando el código</h3>
 <p>Veamos ahora qué es lo que hemos hecho.</p>
 <p>Lo primero es indicar que nuestro código hereda de <em>DBTestCase</em>. Eso nos obliga a implementar el método abstracto <em>getDataSet</em>. Este método le indica a DBUnit los datos con los que rellenar la BBDD antes de cada test.</p>
-<pre class="code java"><a name="rest_code_0493e97c10404036a1fb60fe844b62a2-1"></a><span class="nd">@Override</span>
-<a name="rest_code_0493e97c10404036a1fb60fe844b62a2-2"></a><span class="kd">protected</span> <span class="n">IDataSet</span> <span class="nf">getDataSet</span><span class="p">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
-<a name="rest_code_0493e97c10404036a1fb60fe844b62a2-3"></a>    <span class="n">InputStream</span> <span class="n">file</span> <span class="o">=</span> <span class="n">getClass</span><span class="p">().</span><span class="na">getResourceAsStream</span><span class="p">(</span><span class="s">"/tests/test1.xml"</span><span class="p">);</span>
-<a name="rest_code_0493e97c10404036a1fb60fe844b62a2-4"></a>    <span class="n">IDataSet</span> <span class="n">result</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FlatXmlDataSet</span><span class="p">(</span><span class="n">file</span><span class="p">);</span>
-<a name="rest_code_0493e97c10404036a1fb60fe844b62a2-5"></a>    <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
-<a name="rest_code_0493e97c10404036a1fb60fe844b62a2-6"></a><span class="p">}</span>
-</pre>
-<p>Para ello, cargamos el XML anterior como un "FlatXML". Como se encuentra dentro de nuestro propio jar, utilizamos <em>getResourceAsStream</em>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#a6e22e">@Override</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#66d9ef">protected</span> IDataSet <span style="color:#a6e22e">getDataSet</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>    InputStream file <span style="color:#f92672">=</span> getClass<span style="color:#f92672">().</span><span style="color:#a6e22e">getResourceAsStream</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/tests/test1.xml&#34;</span><span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>    IDataSet result <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FlatXmlDataSet<span style="color:#f92672">(</span>file<span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>    <span style="color:#66d9ef">return</span> result<span style="color:#f92672">;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span><span style="color:#f92672">}</span>
+</code></pre></div><p>Para ello, cargamos el XML anterior como un &ldquo;FlatXML&rdquo;. Como se encuentra dentro de nuestro propio jar, utilizamos <em>getResourceAsStream</em>.</p>
 <p>Ahora es necesario inicializar la conexión a BBDD. Como vamos a utilizar todos los argumentos varias veces, los guardamos en variables:</p>
-<pre class="code java"><a name="rest_code_7a5767af9967412ea7e45748cdd8bba0-1"></a><span class="n">String</span> <span class="n">driver</span> <span class="o">=</span> <span class="s">"org.hsqldb.jdbcDriver"</span><span class="p">;</span>
-<a name="rest_code_7a5767af9967412ea7e45748cdd8bba0-2"></a><span class="n">String</span> <span class="n">url</span> <span class="o">=</span> <span class="s">"jdbc:hsqldb:mem:sample"</span><span class="p">;</span>
-<a name="rest_code_7a5767af9967412ea7e45748cdd8bba0-3"></a><span class="n">String</span> <span class="n">user</span> <span class="o">=</span><span class="s">"sa"</span><span class="p">;</span>
-<a name="rest_code_7a5767af9967412ea7e45748cdd8bba0-4"></a><span class="n">String</span> <span class="n">pass</span> <span class="o">=</span> <span class="s">""</span><span class="p">;</span>
-</pre>
-<p>Es importante rellenar el usuario, ya que DBUnit lo requiere. Como véis, utilizamos una base de datos en memoria de tipo <a class="reference external" href="http://hsqldb.org/">HyperSQL</a> .</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>String driver <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;org.hsqldb.jdbcDriver&#34;</span><span style="color:#f92672">;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>String url <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;jdbc:hsqldb:mem:sample&#34;</span><span style="color:#f92672">;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>String user <span style="color:#f92672">=</span><span style="color:#e6db74">&#34;sa&#34;</span><span style="color:#f92672">;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>String pass <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">;</span>
+</code></pre></div><p>Es importante rellenar el usuario, ya que DBUnit lo requiere. Como véis,
+utilizamos una base de datos en memoria de tipo <a href="http://hsqldb.org/">HyperSQL</a> .</p>
 <p>Ahora inicializamos DBUnit. Para ello, establecemos variables de entorno:</p>
-<pre class="code java"><a name="rest_code_c22e52a43b1e4cc4b6eb7eb69ba834e4-1"></a><span class="n">System</span><span class="p">.</span><span class="na">setProperty</span><span class="p">(</span><span class="n">PropertiesBasedJdbcDatabaseTester</span><span class="p">.</span><span class="na">DBUNIT_DRIVER_CLASS</span><span class="p">,</span> <span class="n">driver</span><span class="p">);</span>
-<a name="rest_code_c22e52a43b1e4cc4b6eb7eb69ba834e4-2"></a><span class="n">System</span><span class="p">.</span><span class="na">setProperty</span><span class="p">(</span><span class="n">PropertiesBasedJdbcDatabaseTester</span><span class="p">.</span><span class="na">DBUNIT_CONNECTION_URL</span><span class="p">,</span> <span class="n">url</span><span class="p">);</span>
-<a name="rest_code_c22e52a43b1e4cc4b6eb7eb69ba834e4-3"></a><span class="n">System</span><span class="p">.</span><span class="na">setProperty</span><span class="p">(</span><span class="n">PropertiesBasedJdbcDatabaseTester</span><span class="p">.</span><span class="na">DBUNIT_USERNAME</span><span class="p">,</span> <span class="n">user</span><span class="p">);</span>
-<a name="rest_code_c22e52a43b1e4cc4b6eb7eb69ba834e4-4"></a><span class="n">System</span><span class="p">.</span><span class="na">setProperty</span><span class="p">(</span><span class="n">PropertiesBasedJdbcDatabaseTester</span><span class="p">.</span><span class="na">DBUNIT_PASSWORD</span><span class="p">,</span> <span class="n">pass</span><span class="p">);</span>
-</pre>
-<p>Con esto sería suficiente como para que DBUnit pueda ejecutarse sin problemas, pero la tabla "Book" no existe. Así que lo solucionamos con el acceso estándar a BBDD de Java:</p>
-<pre class="code java"><a name="rest_code_3e6356da68744db1abe62ea6773b1006-1"></a><span class="n">Class</span><span class="p">.</span><span class="na">forName</span><span class="p">(</span><span class="n">driver</span><span class="p">);</span>
-<a name="rest_code_3e6356da68744db1abe62ea6773b1006-2"></a>    <span class="n">Connection</span> <span class="n">con</span> <span class="o">=</span> <span class="n">DriverManager</span><span class="p">.</span><span class="na">getConnection</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">pass</span><span class="p">);</span>
-<a name="rest_code_3e6356da68744db1abe62ea6773b1006-3"></a>    <span class="n">Statement</span> <span class="n">st</span> <span class="o">=</span> <span class="n">con</span><span class="p">.</span><span class="na">createStatement</span><span class="p">();</span>
-<a name="rest_code_3e6356da68744db1abe62ea6773b1006-4"></a>    <span class="n">st</span><span class="p">.</span><span class="na">execute</span><span class="p">(</span><span class="s">"create table book ("</span>
-<a name="rest_code_3e6356da68744db1abe62ea6773b1006-5"></a>            <span class="o">+</span> <span class="s">"id integer, "</span>
-<a name="rest_code_3e6356da68744db1abe62ea6773b1006-6"></a>            <span class="o">+</span> <span class="s">"title varchar(50), "</span>
-<a name="rest_code_3e6356da68744db1abe62ea6773b1006-7"></a>            <span class="o">+</span> <span class="s">"author varchar(50)"</span>
-<a name="rest_code_3e6356da68744db1abe62ea6773b1006-8"></a>            <span class="o">+</span> <span class="s">")"</span><span class="p">);</span>
-<a name="rest_code_3e6356da68744db1abe62ea6773b1006-9"></a>    <span class="n">con</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
-</pre>
-<p>Y ya está todo listo para nuestros tests.</p>
-<pre class="code java"><a name="rest_code_19afb18c125947569bbfaa2b2bb4d1ff-1"></a><span class="nd">@Test</span>
-<a name="rest_code_19afb18c125947569bbfaa2b2bb4d1ff-2"></a><span class="kd">public</span> <span class="kt">void</span> <span class="nf">test1</span><span class="p">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
-<a name="rest_code_19afb18c125947569bbfaa2b2bb4d1ff-3"></a>    <span class="n">IDatabaseConnection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">getConnection</span><span class="p">();</span>
-<a name="rest_code_19afb18c125947569bbfaa2b2bb4d1ff-4"></a>    <span class="n">assertEquals</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">conn</span><span class="p">.</span><span class="na">getRowCount</span><span class="p">(</span><span class="s">"book"</span><span class="p">));</span>
-<a name="rest_code_19afb18c125947569bbfaa2b2bb4d1ff-5"></a>    <span class="n">conn</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
-<a name="rest_code_19afb18c125947569bbfaa2b2bb4d1ff-6"></a><span class="p">}</span>
-</pre>
-<p>En ese caso, obtenemos la conexión (al heredar de <em>DBTestCase</em> tenemos acceso al método <em>getConnection</em>) y comparamos el número de filas en "book" con 3.</p>
-</div>
-</div>
-<div class="section" id="volcado-de-bbdd">
-<h2>Volcado de BBDD</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span>PropertiesBasedJdbcDatabaseTester<span style="color:#f92672">.</span><span style="color:#a6e22e">DBUNIT_DRIVER_CLASS</span><span style="color:#f92672">,</span> driver<span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span>PropertiesBasedJdbcDatabaseTester<span style="color:#f92672">.</span><span style="color:#a6e22e">DBUNIT_CONNECTION_URL</span><span style="color:#f92672">,</span> url<span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span>PropertiesBasedJdbcDatabaseTester<span style="color:#f92672">.</span><span style="color:#a6e22e">DBUNIT_USERNAME</span><span style="color:#f92672">,</span> user<span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>System<span style="color:#f92672">.</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span>PropertiesBasedJdbcDatabaseTester<span style="color:#f92672">.</span><span style="color:#a6e22e">DBUNIT_PASSWORD</span><span style="color:#f92672">,</span> pass<span style="color:#f92672">);</span>
+</code></pre></div><p>Con esto sería suficiente como para que DBUnit pueda ejecutarse sin problemas, pero la tabla &ldquo;Book&rdquo; no existe. Así que lo solucionamos con el acceso estándar a BBDD de Java:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>Class<span style="color:#f92672">.</span><span style="color:#a6e22e">forName</span><span style="color:#f92672">(</span>driver<span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>Connection con <span style="color:#f92672">=</span> DriverManager<span style="color:#f92672">.</span><span style="color:#a6e22e">getConnection</span><span style="color:#f92672">(</span>url<span style="color:#f92672">,</span> user<span style="color:#f92672">,</span> pass<span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>Statement st <span style="color:#f92672">=</span> con<span style="color:#f92672">.</span><span style="color:#a6e22e">createStatement</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>st<span style="color:#f92672">.</span><span style="color:#a6e22e">execute</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;create table book (&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>        <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;id integer, &#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span>        <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;title varchar(50), &#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7</span>        <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;author varchar(50)&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8</span>        <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;)&#34;</span><span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9</span>con<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+</code></pre></div><p>Y ya está todo listo para nuestros tests.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#a6e22e">@Test</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test1</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>    IDatabaseConnection conn <span style="color:#f92672">=</span> getConnection<span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>    assertEquals<span style="color:#f92672">(</span>3<span style="color:#f92672">,</span> conn<span style="color:#f92672">.</span><span style="color:#a6e22e">getRowCount</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;book&#34;</span><span style="color:#f92672">));</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>    conn<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span><span style="color:#f92672">}</span>
+</code></pre></div><p>En ese caso, obtenemos la conexión (al heredar de <em>DBTestCase</em> tenemos acceso al método <em>getConnection</em>) y comparamos el número de filas en &ldquo;book&rdquo; con 3.</p>
+<h2 id="volcado-de-bbdd">Volcado de BBDD</h2>
 <p>Lo normal es crear la BBDD que deseamos probar y volcar los datos. Para ello podemos utilizar lo siguiente:</p>
-<pre class="code java"><a name="rest_code_3c3a0125ae2b4885a2c97e3fff9f17ea-1"></a><span class="nd">@Test</span>
-<a name="rest_code_3c3a0125ae2b4885a2c97e3fff9f17ea-2"></a><span class="kd">public</span> <span class="kt">void</span> <span class="nf">test_volcar_flatxml</span><span class="p">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
-<a name="rest_code_3c3a0125ae2b4885a2c97e3fff9f17ea-3"></a>    <span class="n">IDatabaseConnection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">getConnection</span><span class="p">();</span>
-<a name="rest_code_3c3a0125ae2b4885a2c97e3fff9f17ea-4"></a>    <span class="n">IDataSet</span> <span class="n">dataset</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="na">createDataSet</span><span class="p">();</span>
-<a name="rest_code_3c3a0125ae2b4885a2c97e3fff9f17ea-5"></a>    <span class="n">FlatXmlDataSet</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">);</span>
-<a name="rest_code_3c3a0125ae2b4885a2c97e3fff9f17ea-6"></a>    <span class="n">conn</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
-<a name="rest_code_3c3a0125ae2b4885a2c97e3fff9f17ea-7"></a><span class="p">}</span>
-</pre>
-<p>Además, existe otro formato para el XML utilizado, solo que puede resultar demasiado grande (aunque, técnicamente, más correcto):</p>
-<pre class="code java"><a name="rest_code_870032ee198c430e8ce37cb4371cc184-1"></a><span class="nd">@Test</span>
-<a name="rest_code_870032ee198c430e8ce37cb4371cc184-2"></a><span class="kd">public</span> <span class="kt">void</span> <span class="nf">test_volcar_xml</span><span class="p">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
-<a name="rest_code_870032ee198c430e8ce37cb4371cc184-3"></a>    <span class="n">IDatabaseConnection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">getConnection</span><span class="p">();</span>
-<a name="rest_code_870032ee198c430e8ce37cb4371cc184-4"></a>    <span class="n">IDataSet</span> <span class="n">dataset</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="na">createDataSet</span><span class="p">();</span>
-<a name="rest_code_870032ee198c430e8ce37cb4371cc184-5"></a>    <span class="n">XmlDataSet</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">);</span>
-<a name="rest_code_870032ee198c430e8ce37cb4371cc184-6"></a>    <span class="n">conn</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
-<a name="rest_code_870032ee198c430e8ce37cb4371cc184-7"></a><span class="p">}</span>
-</pre>
-<p>Que generará algo como:</p>
-<pre class="code xml"><a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-1"></a><span class="cp">&lt;?xml version=''1.0'' encoding=''UTF-8''?&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-2"></a><span class="nt">&lt;dataset&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-3"></a>  <span class="nt">&lt;table</span> <span class="na">name=</span><span class="s">"BOOK"</span><span class="nt">&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-4"></a>    <span class="nt">&lt;column&gt;</span>ID<span class="nt">&lt;/column&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-5"></a>    <span class="nt">&lt;column&gt;</span>TITLE<span class="nt">&lt;/column&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-6"></a>    <span class="nt">&lt;column&gt;</span>AUTHOR<span class="nt">&lt;/column&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-7"></a>    <span class="nt">&lt;row&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-8"></a>      <span class="nt">&lt;value&gt;</span>1<span class="nt">&lt;/value&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-9"></a>      <span class="nt">&lt;value&gt;</span>Fundación<span class="nt">&lt;/value&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-10"></a>      <span class="nt">&lt;value&gt;</span><span class="cp">&lt;![CDATA[Isaac Asimov]]&gt;</span><span class="nt">&lt;/value&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-11"></a>    <span class="nt">&lt;/row&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-12"></a>    <span class="nt">&lt;row&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-13"></a>      <span class="nt">&lt;value&gt;</span>2<span class="nt">&lt;/value&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-14"></a>      <span class="nt">&lt;value&gt;</span><span class="cp">&lt;![CDATA[Clean Code]]&gt;</span><span class="nt">&lt;/value&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-15"></a>      <span class="nt">&lt;value&gt;</span><span class="cp">&lt;![CDATA[Robert C. Martin]]&gt;</span><span class="nt">&lt;/value&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-16"></a>    <span class="nt">&lt;/row&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-17"></a>    <span class="nt">&lt;row&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-18"></a>      <span class="nt">&lt;value&gt;</span>3<span class="nt">&lt;/value&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-19"></a>      <span class="nt">&lt;value&gt;</span><span class="cp">&lt;![CDATA[Diseño Ágil con TDD]]&gt;</span><span class="nt">&lt;/value&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-20"></a>      <span class="nt">&lt;value&gt;</span><span class="cp">&lt;![CDATA[Carlos Ble]]&gt;</span><span class="nt">&lt;/value&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-21"></a>    <span class="nt">&lt;/row&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-22"></a>  <span class="nt">&lt;/table&gt;</span>
-<a name="rest_code_0f2d1de483aa4787b50973d442a28ce7-23"></a><span class="nt">&lt;/dataset&gt;</span>
-</pre>
-</div>
-<div class="section" id="comparando-tablas">
-<h2>Comparando tablas</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#a6e22e">@Test</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test_volcar_flatxml</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>    IDatabaseConnection conn <span style="color:#f92672">=</span> getConnection<span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>    IDataSet dataset <span style="color:#f92672">=</span> conn<span style="color:#f92672">.</span><span style="color:#a6e22e">createDataSet</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>    FlatXmlDataSet<span style="color:#f92672">.</span><span style="color:#a6e22e">write</span><span style="color:#f92672">(</span>dataset<span style="color:#f92672">,</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span>    conn<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7</span><span style="color:#f92672">}</span>
+</code></pre></div><p>Además, existe otro formato para el XML utilizado, solo que puede resultar demasiado grande (aunque, técnicamente, más correcto):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#a6e22e">@Test</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test_volcar_xml</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>    IDatabaseConnection conn <span style="color:#f92672">=</span> getConnection<span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>    IDataSet dataset <span style="color:#f92672">=</span> conn<span style="color:#f92672">.</span><span style="color:#a6e22e">createDataSet</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>    XmlDataSet<span style="color:#f92672">.</span><span style="color:#a6e22e">write</span><span style="color:#f92672">(</span>dataset<span style="color:#f92672">,</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span>    conn<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7</span><span style="color:#f92672">}</span>
+</code></pre></div><p>Que generará algo como:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e">&lt;?xml version=&#39;&#39;1.0&#39;&#39; encoding=&#39;&#39;UTF-8&#39;&#39;?&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#f92672">&lt;dataset&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>  <span style="color:#f92672">&lt;table</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;BOOK&#34;</span><span style="color:#f92672">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>    <span style="color:#f92672">&lt;column&gt;</span>ID<span style="color:#f92672">&lt;/column&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>    <span style="color:#f92672">&lt;column&gt;</span>TITLE<span style="color:#f92672">&lt;/column&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>    <span style="color:#f92672">&lt;column&gt;</span>AUTHOR<span style="color:#f92672">&lt;/column&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>    <span style="color:#f92672">&lt;row&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>      <span style="color:#f92672">&lt;value&gt;</span>1<span style="color:#f92672">&lt;/value&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>      <span style="color:#f92672">&lt;value&gt;</span>Fundación<span style="color:#f92672">&lt;/value&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>      <span style="color:#f92672">&lt;value&gt;</span><span style="color:#75715e">&lt;![CDATA[Isaac Asimov]]&gt;</span><span style="color:#f92672">&lt;/value&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>    <span style="color:#f92672">&lt;/row&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>    <span style="color:#f92672">&lt;row&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>      <span style="color:#f92672">&lt;value&gt;</span>2<span style="color:#f92672">&lt;/value&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>      <span style="color:#f92672">&lt;value&gt;</span><span style="color:#75715e">&lt;![CDATA[Clean Code]]&gt;</span><span style="color:#f92672">&lt;/value&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>      <span style="color:#f92672">&lt;value&gt;</span><span style="color:#75715e">&lt;![CDATA[Robert C. Martin]]&gt;</span><span style="color:#f92672">&lt;/value&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>    <span style="color:#f92672">&lt;/row&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>    <span style="color:#f92672">&lt;row&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>      <span style="color:#f92672">&lt;value&gt;</span>3<span style="color:#f92672">&lt;/value&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>      <span style="color:#f92672">&lt;value&gt;</span><span style="color:#75715e">&lt;![CDATA[Diseño Ágil con TDD]]&gt;</span><span style="color:#f92672">&lt;/value&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>      <span style="color:#f92672">&lt;value&gt;</span><span style="color:#75715e">&lt;![CDATA[Carlos Ble]]&gt;</span><span style="color:#f92672">&lt;/value&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>    <span style="color:#f92672">&lt;/row&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>  <span style="color:#f92672">&lt;/table&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span style="color:#f92672">&lt;/dataset&gt;</span>
+</code></pre></div><h2 id="comparando-tablas">Comparando tablas</h2>
 <p>Todo lo anterior está muy bien, pero lo que de verdad nos interesa es comparar datos. El uso habitual es:</p>
-<p># Se cargan unos datos,
-# se realizan operaciones,
-# se comprueba que los datos son correctos.</p>
+<ul>
+<li>Se cargan unos datos,</li>
+<li>se realizan operaciones,</li>
+<li>se comprueba que los datos son correctos.</li>
+</ul>
 <p>Pues esto resulta una tarea sencilla cuando se utiliza dbunit:</p>
-<pre class="code java"><a name="rest_code_d0ccaec4497445ceb0953506778f08a3-1"></a><span class="nd">@Test</span>
-<a name="rest_code_d0ccaec4497445ceb0953506778f08a3-2"></a><span class="kd">public</span> <span class="kt">void</span> <span class="nf">test_comparar_tablas</span><span class="p">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
-<a name="rest_code_d0ccaec4497445ceb0953506778f08a3-3"></a>    <span class="n">IDatabaseConnection</span> <span class="n">conn</span> <span class="o">=</span> <span class="n">getConnection</span><span class="p">();</span>
-<a name="rest_code_d0ccaec4497445ceb0953506778f08a3-4"></a>    <span class="n">InputStream</span> <span class="n">file</span> <span class="o">=</span> <span class="n">getClass</span><span class="p">().</span><span class="na">getResourceAsStream</span><span class="p">(</span><span class="s">"/tests/test2.xml"</span><span class="p">);</span>
-<a name="rest_code_d0ccaec4497445ceb0953506778f08a3-5"></a>    <span class="n">IDataSet</span> <span class="n">expected</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FlatXmlDataSet</span><span class="p">(</span><span class="n">file</span><span class="p">);</span>
-<a name="rest_code_d0ccaec4497445ceb0953506778f08a3-6"></a>    <span class="n">ITable</span> <span class="n">table</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="na">createQueryTable</span><span class="p">(</span> <span class="s">"books"</span><span class="p">,</span>
-<a name="rest_code_d0ccaec4497445ceb0953506778f08a3-7"></a>            <span class="s">"select * from book where author != ''Isaac Asimov''"</span><span class="p">);</span>
-<a name="rest_code_d0ccaec4497445ceb0953506778f08a3-8"></a>    <span class="n">Assertion</span><span class="p">.</span><span class="na">assertEquals</span><span class="p">(</span><span class="n">expected</span><span class="p">.</span><span class="na">getTable</span><span class="p">(</span><span class="s">"book"</span><span class="p">),</span> <span class="n">table</span><span class="p">);</span>
-<a name="rest_code_d0ccaec4497445ceb0953506778f08a3-9"></a>    <span class="n">conn</span><span class="p">.</span><span class="na">close</span><span class="p">();</span>
-<a name="rest_code_d0ccaec4497445ceb0953506778f08a3-10"></a><span class="p">}</span>
-</pre>
-<p>Como se ve, estamos cargamos un nuevo archivo de datos (<em>test2.xml</em>), realizamos una consulta y comparamos los resultados.</p>
-<p>El archivo de datos cargado tendrá esta forma (en el paquete "tests"):</p>
-<pre class="code java"><a name="rest_code_435ce26c145a4205b911784a16c1f63d-1"></a><span class="o">&lt;?</span><span class="n">xml</span> <span class="n">version</span><span class="o">=</span><span class="s">"1.0"</span> <span class="n">encoding</span><span class="o">=</span><span class="s">"UTF-8"</span><span class="o">?&gt;</span>
-<a name="rest_code_435ce26c145a4205b911784a16c1f63d-2"></a><span class="o">&lt;</span><span class="n">dataset</span><span class="o">&gt;</span>
-<a name="rest_code_435ce26c145a4205b911784a16c1f63d-3"></a>    <span class="o">&lt;</span><span class="n">book</span> <span class="n">id</span><span class="o">=</span><span class="s">"2"</span> <span class="n">title</span><span class="o">=</span><span class="s">"Clean Code"</span> <span class="n">author</span><span class="o">=</span><span class="s">"Robert C. Martin"</span><span class="o">/&gt;</span>
-<a name="rest_code_435ce26c145a4205b911784a16c1f63d-4"></a>    <span class="o">&lt;</span><span class="n">book</span> <span class="n">id</span><span class="o">=</span><span class="s">"3"</span> <span class="n">title</span><span class="o">=</span><span class="s">"Diseño Ágil con TDD"</span> <span class="n">author</span><span class="o">=</span><span class="s">"Carlos Ble"</span><span class="o">/&gt;</span>
-<a name="rest_code_435ce26c145a4205b911784a16c1f63d-5"></a><span class="o">&lt;/</span><span class="n">dataset</span><span class="o">&gt;</span>
-</pre>
-</div>
-<div class="section" id="a-tener-en-cuenta">
-<h2>A tener en cuenta</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#a6e22e">@Test</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test_comparar_tablas</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>    IDatabaseConnection conn <span style="color:#f92672">=</span> getConnection<span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>    InputStream file <span style="color:#f92672">=</span> getClass<span style="color:#f92672">().</span><span style="color:#a6e22e">getResourceAsStream</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/tests/test2.xml&#34;</span><span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>    IDataSet expected <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FlatXmlDataSet<span style="color:#f92672">(</span>file<span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>    ITable table <span style="color:#f92672">=</span> conn<span style="color:#f92672">.</span><span style="color:#a6e22e">createQueryTable</span><span style="color:#f92672">(</span> <span style="color:#e6db74">&#34;books&#34;</span><span style="color:#f92672">,</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>            <span style="color:#e6db74">&#34;select * from book where author != &#39;&#39;Isaac Asimov&#39;&#39;&#34;</span><span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>    Assertion<span style="color:#f92672">.</span><span style="color:#a6e22e">assertEquals</span><span style="color:#f92672">(</span>expected<span style="color:#f92672">.</span><span style="color:#a6e22e">getTable</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;book&#34;</span><span style="color:#f92672">),</span> table<span style="color:#f92672">);</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>    conn<span style="color:#f92672">.</span><span style="color:#a6e22e">close</span><span style="color:#f92672">();</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#f92672">}</span>
+</code></pre></div><p>Como se ve, estamos cargamos un nuevo archivo de datos (<em>test2.xml</em>), realizamos una consulta y comparamos los resultados.</p>
+<p>El archivo de datos cargado tendrá esta forma (en el paquete &ldquo;tests&rdquo;):</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#f92672">&lt;?</span>xml version<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;1.0&#34;</span> encoding<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;UTF-8&#34;</span><span style="color:#f92672">?&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#f92672">&lt;</span>dataset<span style="color:#f92672">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>    <span style="color:#f92672">&lt;</span>book id<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2&#34;</span> title<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Clean Code&#34;</span> author<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Robert C. Martin&#34;</span><span style="color:#f92672">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>    <span style="color:#f92672">&lt;</span>book id<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;3&#34;</span> title<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Diseño Ágil con TDD&#34;</span> author<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Carlos Ble&#34;</span><span style="color:#f92672">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span><span style="color:#f92672">&lt;/</span>dataset<span style="color:#f92672">&gt;</span>
+</code></pre></div><h2 id="a-tener-en-cuenta">A tener en cuenta</h2>
 <p>Hay varios puntos a tener en cuenta:</p>
-<ul class="simple">
+<ul>
 <li>Si nuestros tests no comienzan por <em>test</em>, no se ejecutarán (formato de junit 3).</li>
 <li>Podemos utilizar una BBDD en memoria para probar datos para no modificar la BBDD real. Además, resultará más rápido y cómodo.</li>
 <li>Cuanto más pequeños sean los archivos de pruebas, serán menos propensos a cambios y más rápidos de ejecutar</li>
 </ul>
-</div>
-<div class="section" id="mas-informacion">
-<h2>Más información</h2>
-<p>Tenéis más información en la web de <a class="reference external" href="http://www.dbunit.org/">DBUnit</a> , en la de <a class="reference external" href="http://www.junit.org/">JUnit</a>  y en la de <a class="reference external" href="http://hsqldb.org/">HyperSQL</a> . También podría haberse hecho con <a class="reference external" href="http://db.apache.org/derby/">Derby</a> , como "ya comenté":link://slug/apache-derby</p>
-</div>
-</div>
-          </div>
-          <br><div>
-            <nav><span class="author">
-                <span class="glyphicon glyphicon-user"></span> 
-                <span>Publicado:Miguel Ángel García</span>
-              </span>
-               
+<h2 id="más-información">Más información</h2>
+<p>Tenéis más información en la web de <a href="http://www.dbunit.org/">DBUnit</a> , en la de <a href="http://www.junit.org/">JUnit</a>  y en la de
+<a href="http://hsqldb.org/">HyperSQL</a> . También podría haberse hecho con <a href="http://db.apache.org/derby/">Derby</a> , como <a href="http://example.org/blog/apache-derby/">ya comenté</a>.</p>
 
-              
-              <span class="dateline">
-                <span class="glyphicon glyphicon-calendar"></span> 
-                <time class="published dt-published" datetime="2011-06-13T00:00:00+00:00" title="2011-06-13">2011-06-13</time></span>
-               
-              <span class="tags">
-                <span class="glyphicon glyphicon-tags"></span> 
-                <a class="label label-primary p-category" href="/categories/db-testing/" rel="tag">db testing</a>
-                <a class="label label-primary p-category" href="/categories/dbunit/" rel="tag">dbunit</a>
-                <a class="label label-primary p-category" href="/categories/hsqldb/" rel="tag">hsqldb</a>
-                <a class="label label-primary p-category" href="/categories/sql/" rel="tag">sql</a>
-              </span>
-                      <ul class="pager">
-<li class="previous">
-              <a href="/blog/formatos-simples/" rel="prev" title="Formatos simples: XML, Yaml, Json, Properties e 'Ini">
-                <span class="glyphicon glyphicon-arrow-left"></span>
-                Publicación anterior
-              </a>
-            </li>
-            <li class="next">
-              <a href="/blog/buenas-practicas-c-1/" rel="next" title="Buenas prácticas en Ansi C (1)">
-                Siguiente publicación
-                <span class="glyphicon glyphicon-arrow-right"></span>
-              </a>
-            </li>
-        </ul></nav>
-</div>
-          <section class="comments"><h2>Comentarios</h2>
-                            <div id="disqus_thread"></div>
-        <script>
-        var disqus_shortname ="magmax",
-            disqus_url="http://magmax.org/blog/hsqldb-dbunit/",
-        disqus_title="Pruebas con Bases de Datos en memoria: DBUnit + HSQLDB",
-        disqus_identifier="cache/posts/hsqldb-dbunit.html",
-        disqus_config = function () {
-            this.language = "es_ES";
-        };
-        (function() {
-            var dsq = document.createElement('script'); dsq.async = true;
-            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        })();
-    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
-</noscript>
-    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
-
-
-          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
-</div>
-      <aside class="sidebar col-md-3"><div>
-<section class="panel panel-default"><div class="panel-heading">
-    <h3 class="panel-title">Last comments</h3>
-  </div>
-  <div class="panel-body">
-    <div id="disqus_last_comments" class="dsq-widget">
-      <script type="text/javascript" src="https://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
-      </script>
-</div>
-  </div>
-</section>
-</div>
-          <div>
-<section class="panel panel-default"><div class="panel-heading">
-    <h3 class="panel-title">GitHub Repos</h3>
-  </div>
-  <div class="panel-body">
-    <ul id="gh_repos" class="list-unstyled">
-<li class="loading">Status updating…</li>
-    </ul>
-</div>
-  <div class="panel-footer">
-    <a href="https://github.com/magmax">@magmax</a> on GitHub
-  </div>
-</section>
-</div>
-      </aside>
-</div>
-
-    <footer>
-      Contents © 2009-2020 <a href="mailto:">Miguel Ángel García</a> 
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
-<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+    
       
-    </footer>
+    
+  </article>
+<aside class="sidebar">
+  <section class="sidebar_inner">
+    
+    <h2 class="mt-4">Posts recientes</h2>
+    <ul class="flex-column">
+      <li>
+        <a href="http://example.org/blog/argocd/" class="nav-link">ArgoCD con Kind</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/monitorizacion-con-graphite/" class="nav-link">Monitorización con Graphite</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/organizacion/" class="nav-link">Organización</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/hosting/" class="nav-link">Hosting</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/devops-rol-o-metodologia/" class="nav-link">DevOps: ¿Equipo, Rol o metodología?</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/instalando-linux-con-uefi/" class="nav-link">Instalando Linux con UEFI</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/plugins-en-python/" class="nav-link">Plugins en Python</a>
+      </li>
+      <li>
+        <a href="http://example.org/blog/ipython-autoreload/" class="nav-link">ipython autoreload</a>
+      </li>
+    </ul>
+    <div>
+      <h2 class="mt-4 taxonomy" id="categories-section">Categorías</h2>
+      <nav class="tags_nav">
+        <a href='http://example.org/categories/django-tutorial/' class="post_tag button button_translucent">
+          DJANGO-TUTORIAL
+          <span class="button_tally">3</span>
+        </a>
+        
+        <a href='http://example.org/categories/translations/' class="post_tag button button_translucent">
+          TRANSLATIONS
+          <span class="button_tally">1</span>
+        </a>
+        
+        
+      </nav>
+    </div>
+    <div>
+      <h2 class="mt-4 taxonomy" id="tags-section">Tags</h2>
+      <nav class="tags_nav">
+        <a href='http://example.org/tags/python/' class="post_tag button button_translucent">
+          PYTHON
+          <span class="button_tally">32</span>
+        </a>
+        
+        <a href='http://example.org/tags/agile/' class="post_tag button button_translucent">
+          AGILE
+          <span class="button_tally">15</span>
+        </a>
+        
+        <a href='http://example.org/tags/engineering/' class="post_tag button button_translucent">
+          ENGINEERING
+          <span class="button_tally">14</span>
+        </a>
+        
+        <a href='http://example.org/tags/retrospective/' class="post_tag button button_translucent">
+          RETROSPECTIVE
+          <span class="button_tally">13</span>
+        </a>
+        
+        <a href='http://example.org/tags/testing/' class="post_tag button button_translucent">
+          TESTING
+          <span class="button_tally">13</span>
+        </a>
+        
+        <a href='http://example.org/tags/life/' class="post_tag button button_translucent">
+          LIFE
+          <span class="button_tally">12</span>
+        </a>
+        
+        <a href='http://example.org/tags/django/' class="post_tag button button_translucent">
+          DJANGO
+          <span class="button_tally">9</span>
+        </a>
+        
+        <a href='http://example.org/tags/drupal/' class="post_tag button button_translucent">
+          DRUPAL
+          <span class="button_tally">9</span>
+        </a>
+        
+        <a href='http://example.org/tags/git/' class="post_tag button button_translucent">
+          GIT
+          <span class="button_tally">9</span>
+        </a>
+        
+        <a href='http://example.org/tags/dvcs/' class="post_tag button button_translucent">
+          DVCS
+          <span class="button_tally">8</span>
+        </a>
+        
+        
+        <br>
+        <div class="post_tags_toggle button">Todos los Tags</div>
+        <div class="post_tags">
+          <div class="tags_list">
+            
+            <a href='http://example.org/tags/acceptance/' class=" post_tag button button_translucent" data-position=2>ACCEPTANCE<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/admin/' class=" post_tag button button_translucent" data-position=1>ADMIN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/administration/' class=" post_tag button button_translucent" data-position=1>ADMINISTRATION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/agile/' class=" post_tag button button_translucent" data-position=15>AGILE<span class="button_tally">15</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ajax/' class=" post_tag button button_translucent" data-position=1>AJAX<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/alerting/' class=" post_tag button button_translucent" data-position=1>ALERTING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/angularjs/' class=" post_tag button button_translucent" data-position=1>ANGULARJS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ansi-c/' class=" post_tag button button_translucent" data-position=5>ANSI-C<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ansi-c-testing/' class=" post_tag button button_translucent" data-position=2>ANSI-C-TESTING<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ant/' class=" post_tag button button_translucent" data-position=1>ANT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/apache/' class=" post_tag button button_translucent" data-position=1>APACHE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/argocd/' class=" post_tag button button_translucent" data-position=1>ARGOCD<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/atheist/' class=" post_tag button button_translucent" data-position=3>ATHEIST<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/automation/' class=" post_tag button button_translucent" data-position=3>AUTOMATION<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/awesome-wm/' class=" post_tag button button_translucent" data-position=1>AWESOME-WM<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/aws/' class=" post_tag button button_translucent" data-position=1>AWS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/bootstrap/' class=" post_tag button button_translucent" data-position=2>BOOTSTRAP<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/bower/' class=" post_tag button button_translucent" data-position=1>BOWER<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/buildbot/' class=" post_tag button button_translucent" data-position=2>BUILDBOT<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/celery/' class=" post_tag button button_translucent" data-position=1>CELERY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/chemistry/' class=" post_tag button button_translucent" data-position=1>CHEMISTRY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/code-coverage/' class=" post_tag button button_translucent" data-position=2>CODE-COVERAGE<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/code-highlight/' class=" post_tag button button_translucent" data-position=1>CODE-HIGHLIGHT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/code-retreat/' class=" post_tag button button_translucent" data-position=1>CODE-RETREAT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/codemotion/' class=" post_tag button button_translucent" data-position=1>CODEMOTION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/codice-software/' class=" post_tag button button_translucent" data-position=1>CODICE-SOFTWARE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/compiler/' class=" post_tag button button_translucent" data-position=1>COMPILER<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/compilers/' class=" post_tag button button_translucent" data-position=1>COMPILERS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/configuration/' class=" post_tag button button_translucent" data-position=2>CONFIGURATION<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/continuous-integration/' class=" post_tag button button_translucent" data-position=4>CONTINUOUS-INTEGRATION<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/coverage/' class=" post_tag button button_translucent" data-position=1>COVERAGE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/crack/' class=" post_tag button button_translucent" data-position=1>CRACK<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/css/' class=" post_tag button button_translucent" data-position=5>CSS<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/curses/' class=" post_tag button button_translucent" data-position=1>CURSES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/db-testing/' class=" post_tag button button_translucent" data-position=2>DB-TESTING<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/dbunit/' class=" post_tag button button_translucent" data-position=1>DBUNIT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/debian/' class=" post_tag button button_translucent" data-position=1>DEBIAN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/deployment/' class=" post_tag button button_translucent" data-position=1>DEPLOYMENT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/derby-db/' class=" post_tag button button_translucent" data-position=1>DERBY-DB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/devops/' class=" post_tag button button_translucent" data-position=4>DEVOPS<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/devscripts/' class=" post_tag button button_translucent" data-position=1>DEVSCRIPTS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/distributed-systems/' class=" post_tag button button_translucent" data-position=1>DISTRIBUTED-SYSTEMS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/django/' class=" post_tag button button_translucent" data-position=9>DJANGO<span class="button_tally">9</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/django-testing/' class=" post_tag button button_translucent" data-position=1>DJANGO-TESTING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/docker/' class=" post_tag button button_translucent" data-position=4>DOCKER<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/docker-compose/' class=" post_tag button button_translucent" data-position=1>DOCKER-COMPOSE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/doctest/' class=" post_tag button button_translucent" data-position=1>DOCTEST<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/domain/' class=" post_tag button button_translucent" data-position=1>DOMAIN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/drupal/' class=" post_tag button button_translucent" data-position=9>DRUPAL<span class="button_tally">9</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/dvcs/' class=" post_tag button button_translucent" data-position=8>DVCS<span class="button_tally">8</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/elasticsearch/' class=" post_tag button button_translucent" data-position=1>ELASTICSEARCH<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/emacs/' class=" post_tag button button_translucent" data-position=1>EMACS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/email/' class=" post_tag button button_translucent" data-position=1>EMAIL<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/engineering/' class=" post_tag button button_translucent" data-position=14>ENGINEERING<span class="button_tally">14</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/firefox/' class=" post_tag button button_translucent" data-position=1>FIREFOX<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/fish/' class=" post_tag button button_translucent" data-position=1>FISH<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/freshen/' class=" post_tag button button_translucent" data-position=1>FRESHEN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/functional-programming/' class=" post_tag button button_translucent" data-position=1>FUNCTIONAL-PROGRAMMING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/games/' class=" post_tag button button_translucent" data-position=1>GAMES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/gettext/' class=" post_tag button button_translucent" data-position=1>GETTEXT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/git/' class=" post_tag button button_translucent" data-position=9>GIT<span class="button_tally">9</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/gnome/' class=" post_tag button button_translucent" data-position=1>GNOME<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/gnu/linux/' class=" post_tag button button_translucent" data-position=3>GNU/LINUX<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/google/' class=" post_tag button button_translucent" data-position=1>GOOGLE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/grammar/' class=" post_tag button button_translucent" data-position=1>GRAMMAR<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/graphite/' class=" post_tag button button_translucent" data-position=2>GRAPHITE<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/grub/' class=" post_tag button button_translucent" data-position=1>GRUB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/grunt/' class=" post_tag button button_translucent" data-position=1>GRUNT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/gtk/' class=" post_tag button button_translucent" data-position=2>GTK<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/hamcrest/' class=" post_tag button button_translucent" data-position=1>HAMCREST<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/hibernate/' class=" post_tag button button_translucent" data-position=1>HIBERNATE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/home/' class=" post_tag button button_translucent" data-position=1>HOME<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/hosting/' class=" post_tag button button_translucent" data-position=1>HOSTING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/hsqldb/' class=" post_tag button button_translucent" data-position=1>HSQLDB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ini-files/' class=" post_tag button button_translucent" data-position=1>INI-FILES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/internationalization/' class=" post_tag button button_translucent" data-position=1>INTERNATIONALIZATION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/internet/' class=" post_tag button button_translucent" data-position=1>INTERNET<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ipython/' class=" post_tag button button_translucent" data-position=1>IPYTHON<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/it/' class=" post_tag button button_translucent" data-position=1>IT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/java/' class=" post_tag button button_translucent" data-position=6>JAVA<span class="button_tally">6</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/java-ide/' class=" post_tag button button_translucent" data-position=3>JAVA-IDE<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/java-testing/' class=" post_tag button button_translucent" data-position=7>JAVA-TESTING<span class="button_tally">7</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/javascript/' class=" post_tag button button_translucent" data-position=6>JAVASCRIPT<span class="button_tally">6</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/jbehave/' class=" post_tag button button_translucent" data-position=2>JBEHAVE<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/jekyll/' class=" post_tag button button_translucent" data-position=2>JEKYLL<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/jenkins/' class=" post_tag button button_translucent" data-position=4>JENKINS<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/job/' class=" post_tag button button_translucent" data-position=1>JOB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/jquery/' class=" post_tag button button_translucent" data-position=1>JQUERY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/json/' class=" post_tag button button_translucent" data-position=2>JSON<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/junit/' class=" post_tag button button_translucent" data-position=1>JUNIT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kibana/' class=" post_tag button button_translucent" data-position=1>KIBANA<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kind/' class=" post_tag button button_translucent" data-position=1>KIND<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kitchen/' class=" post_tag button button_translucent" data-position=2>KITCHEN<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kohana/' class=" post_tag button button_translucent" data-position=2>KOHANA<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/kubernetes/' class=" post_tag button button_translucent" data-position=1>KUBERNETES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/lamp/' class=" post_tag button button_translucent" data-position=3>LAMP<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/languages/' class=" post_tag button button_translucent" data-position=7>LANGUAGES<span class="button_tally">7</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/latex/' class=" post_tag button button_translucent" data-position=1>LATEX<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ldap/' class=" post_tag button button_translucent" data-position=1>LDAP<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/life/' class=" post_tag button button_translucent" data-position=12>LIFE<span class="button_tally">12</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/logstash/' class=" post_tag button button_translucent" data-position=1>LOGSTASH<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/make/' class=" post_tag button button_translucent" data-position=1>MAKE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/mathematics/' class=" post_tag button button_translucent" data-position=1>MATHEMATICS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/maven/' class=" post_tag button button_translucent" data-position=2>MAVEN<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/mercurial/' class=" post_tag button button_translucent" data-position=2>MERCURIAL<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/middleware/' class=" post_tag button button_translucent" data-position=1>MIDDLEWARE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/migrating/' class=" post_tag button button_translucent" data-position=4>MIGRATING<span class="button_tally">4</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/mock/' class=" post_tag button button_translucent" data-position=1>MOCK<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/mongodb/' class=" post_tag button button_translucent" data-position=2>MONGODB<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/monitor/' class=" post_tag button button_translucent" data-position=2>MONITOR<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/monitoring/' class=" post_tag button button_translucent" data-position=5>MONITORING<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/munin/' class=" post_tag button button_translucent" data-position=2>MUNIN<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/netbeans/' class=" post_tag button button_translucent" data-position=3>NETBEANS<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/nikola/' class=" post_tag button button_translucent" data-position=1>NIKOLA<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/nose/' class=" post_tag button button_translucent" data-position=1>NOSE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/nosql/' class=" post_tag button button_translucent" data-position=3>NOSQL<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/octopress/' class=" post_tag button button_translucent" data-position=1>OCTOPRESS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/openspace/' class=" post_tag button button_translucent" data-position=1>OPENSPACE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/organization/' class=" post_tag button button_translucent" data-position=1>ORGANIZATION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/orm/' class=" post_tag button button_translucent" data-position=1>ORM<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/package/' class=" post_tag button button_translucent" data-position=1>PACKAGE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/patents/' class=" post_tag button button_translucent" data-position=1>PATENTS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/patterns/' class=" post_tag button button_translucent" data-position=7>PATTERNS<span class="button_tally">7</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/peewee/' class=" post_tag button button_translucent" data-position=1>PEEWEE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/permission/' class=" post_tag button button_translucent" data-position=1>PERMISSION<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/persistence/' class=" post_tag button button_translucent" data-position=1>PERSISTENCE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/php/' class=" post_tag button button_translucent" data-position=3>PHP<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/php-testing/' class=" post_tag button button_translucent" data-position=1>PHP-TESTING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/plugins/' class=" post_tag button button_translucent" data-position=1>PLUGINS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/programming/' class=" post_tag button button_translucent" data-position=1>PROGRAMMING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/programs/' class=" post_tag button button_translucent" data-position=1>PROGRAMS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/puppet/' class=" post_tag button button_translucent" data-position=3>PUPPET<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/pydoubles/' class=" post_tag button button_translucent" data-position=1>PYDOUBLES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/python/' class=" post_tag button button_translucent" data-position=32>PYTHON<span class="button_tally">32</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/python-testing/' class=" post_tag button button_translucent" data-position=7>PYTHON-TESTING<span class="button_tally">7</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/rabbitmq/' class=" post_tag button button_translucent" data-position=1>RABBITMQ<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/resume/' class=" post_tag button button_translucent" data-position=1>RESUME<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/retrospective/' class=" post_tag button button_translucent" data-position=13>RETROSPECTIVE<span class="button_tally">13</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/rounding/' class=" post_tag button button_translucent" data-position=1>ROUNDING<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ruby/' class=" post_tag button button_translucent" data-position=3>RUBY<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ruby-on-rails/' class=" post_tag button button_translucent" data-position=1>RUBY-ON-RAILS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/saltstack/' class=" post_tag button button_translucent" data-position=2>SALTSTACK<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/scrum/' class=" post_tag button button_translucent" data-position=1>SCRUM<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/security/' class=" post_tag button button_translucent" data-position=1>SECURITY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/selenium/' class=" post_tag button button_translucent" data-position=5>SELENIUM<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/shell/' class=" post_tag button button_translucent" data-position=1>SHELL<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/smtp/' class=" post_tag button button_translucent" data-position=1>SMTP<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/spam/' class=" post_tag button button_translucent" data-position=1>SPAM<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/sql/' class=" post_tag button button_translucent" data-position=5>SQL<span class="button_tally">5</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/ssl/' class=" post_tag button button_translucent" data-position=1>SSL<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/static/' class=" post_tag button button_translucent" data-position=1>STATIC<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/statistic/' class=" post_tag button button_translucent" data-position=1>STATISTIC<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/subversion/' class=" post_tag button button_translucent" data-position=2>SUBVERSION<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/swing/' class=" post_tag button button_translucent" data-position=2>SWING<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/sysadmin/' class=" post_tag button button_translucent" data-position=2>SYSADMIN<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/tdd/' class=" post_tag button button_translucent" data-position=1>TDD<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/test/' class=" post_tag button button_translucent" data-position=2>TEST<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/testing/' class=" post_tag button button_translucent" data-position=13>TESTING<span class="button_tally">13</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/tests/' class=" post_tag button button_translucent" data-position=2>TESTS<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/tornado/' class=" post_tag button button_translucent" data-position=2>TORNADO<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/tuenti/' class=" post_tag button button_translucent" data-position=3>TUENTI<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/unittest/' class=" post_tag button button_translucent" data-position=1>UNITTEST<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/vagrant/' class=" post_tag button button_translucent" data-position=3>VAGRANT<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/virtualbox/' class=" post_tag button button_translucent" data-position=1>VIRTUALBOX<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/virtualenv/' class=" post_tag button button_translucent" data-position=1>VIRTUALENV<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/web/' class=" post_tag button button_translucent" data-position=1>WEB<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/webdriver/' class=" post_tag button button_translucent" data-position=2>WEBDRIVER<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/webviews/' class=" post_tag button button_translucent" data-position=1>WEBVIEWS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/windows/' class=" post_tag button button_translucent" data-position=1>WINDOWS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/xml/' class=" post_tag button button_translucent" data-position=2>XML<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/yaml/' class=" post_tag button button_translucent" data-position=1>YAML<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/yeoman/' class=" post_tag button button_translucent" data-position=1>YEOMAN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/tags/zsh/' class=" post_tag button button_translucent" data-position=1>ZSH<span class="button_tally">1</span>
+            </a>
+            
+            <div class="tags_sort"><span title="sort alphabetically">[A~Z]</span><span title="sort by count">[0~9]</span>
+            </div>
+            <span class="tags_hide"><svg class="icon">
+            <use xlink:href="#closeme"></use>
+          </svg></span>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </section>
+</aside>
+
 </div>
-</div>
+    </main><svg width="0" height="0" class="hidden">
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="facebook">
+    <path d="M437 0H75C33.648 0 0 33.648 0 75v362c0 41.352 33.648 75 75 75h151V331h-60v-90h60v-61c0-49.629 40.371-90 90-90h91v90h-91v61h91l-15 90h-76v181h121c41.352 0 75-33.648 75-75V75c0-41.352-33.648-75-75-75zm0 0"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.001 18.001" id="twitter">
+    <path d="M15.891 4.013c.808-.496 1.343-1.173 1.605-2.034a8.68 8.68 0 0 1-2.351.861c-.703-.756-1.593-1.14-2.66-1.14-1.043 0-1.924.366-2.643 1.078a3.56 3.56 0 0 0-1.076 2.605c0 .309.039.585.117.819-3.076-.105-5.622-1.381-7.628-3.837-.34.601-.51 1.213-.51 1.846 0 1.301.549 2.332 1.645 3.089-.625-.053-1.176-.211-1.645-.47 0 .929.273 1.705.82 2.388a3.623 3.623 0 0 0 2.115 1.291c-.312.08-.641.118-.979.118-.312 0-.533-.026-.664-.083.23.757.664 1.371 1.291 1.841a3.652 3.652 0 0 0 2.152.743C4.148 14.173 2.625 14.69.902 14.69c-.422 0-.721-.006-.902-.038 1.697 1.102 3.586 1.649 5.676 1.649 2.139 0 4.029-.542 5.674-1.626 1.645-1.078 2.859-2.408 3.639-3.974a10.77 10.77 0 0 0 1.172-4.892v-.468a7.788 7.788 0 0 0 1.84-1.921 8.142 8.142 0 0 1-2.11.593z"
+      ></path>
+  </symbol>
+  <symbol aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="mail">
+    <path  d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="calendar">
+    <path d="M452 40h-24V0h-40v40H124V0H84v40H60C26.916 40 0 66.916 0 100v352c0 33.084 26.916 60 60 60h392c33.084 0 60-26.916 60-60V100c0-33.084-26.916-60-60-60zm20 412c0 11.028-8.972 20-20 20H60c-11.028 0-20-8.972-20-20V188h432v264zm0-304H40v-48c0-11.028 8.972-20 20-20h24v40h40V80h264v40h40V80h24c11.028 0 20 8.972 20 20v48z"></path>
+    <path d="M76 230h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zM76 310h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zM76 390h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zm80-80h40v40h-40z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="github">
+    <path d="M255.968 5.329C114.624 5.329 0 120.401 0 262.353c0 113.536 73.344 209.856 175.104 243.872 12.8 2.368 17.472-5.568 17.472-12.384 0-6.112-.224-22.272-.352-43.712-71.2 15.52-86.24-34.464-86.24-34.464-11.616-29.696-28.416-37.6-28.416-37.6-23.264-15.936 1.728-15.616 1.728-15.616 25.696 1.824 39.2 26.496 39.2 26.496 22.848 39.264 59.936 27.936 74.528 21.344 2.304-16.608 8.928-27.936 16.256-34.368-56.832-6.496-116.608-28.544-116.608-127.008 0-28.064 9.984-51.008 26.368-68.992-2.656-6.496-11.424-32.64 2.496-68 0 0 21.504-6.912 70.4 26.336 20.416-5.696 42.304-8.544 64.096-8.64 21.728.128 43.648 2.944 64.096 8.672 48.864-33.248 70.336-26.336 70.336-26.336 13.952 35.392 5.184 61.504 2.56 68 16.416 17.984 26.304 40.928 26.304 68.992 0 98.72-59.84 120.448-116.864 126.816 9.184 7.936 17.376 23.616 17.376 47.584 0 34.368-.32 62.08-.32 70.496 0 6.88 4.608 14.88 17.6 12.352C438.72 472.145 512 375.857 512 262.353 512 120.401 397.376 5.329 255.968 5.329z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 212 212" id="gitlab">
+    <path d="M12.3 74.7h54L43.3 3c-1-3.6-6.4-3.6-7.6 0L12.3 74.8z" />
+    <path d="M12.3 74.7L.5 111c-1 3.2 0 6.8 3 8.8l101.6 74-92.5-119z"/>
+    <path d="M105 193.7l-38.6-119h-54l92.7 119z"/>
+    <path d="M105 193.7l38.7-119H66.4l38.7 119z"/>
+    <path d="M105 193.7l38.7-119H198l-93 119z"/>
+    <path d="M198 74.7l11.6 36.2c1 3 0 6.6-3 8.6l-101.5 74 93-119z"/>
+    <path d="M198 74.7h-54.3L167 3c1.2-3.6 6.4-3.6 7.6 0L198 74.8z"/> 
+  </symbol>
+  <symbol viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="rss">
+    <circle cx="3.429" cy="20.571" r="3.429"></circle>
+    <path d="M11.429 24h4.57C15.999 15.179 8.821 8.001 0 8v4.572c6.302.001 11.429 5.126 11.429 11.428z"></path>
+    <path d="M24 24C24 10.766 13.234 0 0 0v4.571c10.714 0 19.43 8.714 19.43 19.429z"></path>
+  </symbol>
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="linkedin">
+    <path d="M437 0H75C33.648 0 0 33.648 0 75v362c0 41.352 33.648 75 75 75h362c41.352 0 75-33.648 75-75V75c0-41.352-33.648-75-75-75zM181 406h-60V196h60zm0-240h-60v-60h60zm210 240h-60V286c0-16.54-13.46-30-30-30s-30 13.46-30 30v120h-60V196h60v11.309C286.719 202.422 296.93 196 316 196c40.691.043 75 36.547 75 79.688zm0 0"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612 612" id="arrow">
+    <path d="M604.501 440.509L325.398 134.956c-5.331-5.357-12.423-7.627-19.386-7.27-6.989-.357-14.056 1.913-19.387 7.27L7.499 440.509c-9.999 10.024-9.999 26.298 0 36.323s26.223 10.024 36.222 0l262.293-287.164L568.28 476.832c9.999 10.024 26.222 10.024 36.221 0 9.999-10.023 9.999-26.298 0-36.323z"></path>
+  </symbol>
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="carly">
+    <path d="M504.971 239.029L448 182.059V84c0-46.317-37.682-84-84-84h-44c-13.255 0-24 10.745-24 24s10.745 24 24 24h44c19.851 0 36 16.149 36 36v108c0 6.365 2.529 12.47 7.029 16.971L454.059 256l-47.029 47.029A24.002 24.002 0 0 0 400 320v108c0 19.851-16.149 36-36 36h-44c-13.255 0-24 10.745-24 24s10.745 24 24 24h44c46.318 0 84-37.683 84-84v-98.059l56.971-56.971c9.372-9.372 9.372-24.568 0-33.941zM112 192V84c0-19.851 16.149-36 36-36h44c13.255 0 24-10.745 24-24S205.255 0 192 0h-44c-46.318 0-84 37.683-84 84v98.059l-56.971 56.97c-9.373 9.373-9.373 24.568 0 33.941L64 329.941V428c0 46.317 37.682 84 84 84h44c13.255 0 24-10.745 24-24s-10.745-24-24-24h-44c-19.851 0-36-16.149-36-36V320c0-6.365-2.529-12.47-7.029-16.971L57.941 256l47.029-47.029A24.002 24.002 0 0 0 112 192z"></path>
+  </symbol>
+  <symbol viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="copy">
+    <path d="M23 2.75A2.75 2.75 0 0 0 20.25 0H8.75A2.75 2.75 0 0 0 6 2.75v13.5A2.75 2.75 0 0 0 8.75 19h11.5A2.75 2.75 0 0 0 23 16.25zM18.25 14.5h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5zm0-3h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5zm0-3h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5z"></path>
+    <path d="M8.75 20.5a4.255 4.255 0 0 1-4.25-4.25V2.75c0-.086.02-.166.025-.25H3.75A2.752 2.752 0 0 0 1 5.25v16A2.752 2.752 0 0 0 3.75 24h12a2.752 2.752 0 0 0 2.75-2.75v-.75z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.001 512.001" id="closeme">
+    <path d="M284.286 256.002L506.143 34.144c7.811-7.811 7.811-20.475 0-28.285-7.811-7.81-20.475-7.811-28.285 0L256 227.717 34.143 5.859c-7.811-7.811-20.475-7.811-28.285 0-7.81 7.811-7.811 20.475 0 28.285l221.857 221.857L5.858 477.859c-7.811 7.811-7.811 20.475 0 28.285a19.938 19.938 0 0 0 14.143 5.857 19.94 19.94 0 0 0 14.143-5.857L256 284.287l221.857 221.857c3.905 3.905 9.024 5.857 14.143 5.857s10.237-1.952 14.143-5.857c7.811-7.811 7.811-20.475 0-28.285L284.286 256.002z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="open-menu">
+    <path d="M492 236H20c-11.046 0-20 8.954-20 20s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20zm0-160H20C8.954 76 0 84.954 0 96s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20zm0 320H20c-11.046 0-20 8.954-20 20s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="instagram">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id=youtube>
+    <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="stackoverflow">
+    <path d="M21 27v-8h3v11H0V19h3v8h18z"></path><path d="M17.1.2L15 1.8l7.9 10.6 2.1-1.6L17.1.2zm3.7 14.7L10.6 6.4l1.7-2 10.2 8.5-1.7 2zM7.2 12.3l12 5.6 1.1-2.4-12-5.6-1.1 2.4zm-1.8 6.8l13.56 1.96.17-2.38-13.26-2.55-.47 2.97zM19 25H5v-3h14v3z"></path>
+  </symbol>
+</svg>
 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+<footer class="footer">
+  <div class="footer_inner wrap pale">
+    <img src='http://example.org/icons/apple-touch-icon.png' class="icon icon_2 transparent">
+    <p>Copyright<span class="year"></span> EL BLOG DE MAGMAX. Todos los Derechos Reservados</p><a class="to_top" href="#documentTop">
+  <svg class="icon">
+  <use xlink:href="#arrow"></use>
+</svg>
+</a>
 
+  </div>
+</footer>
 
-
-<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-9308241-3', 'auto');
-  ga('send', 'pageview');
-
-</script>
-</body>
+    <script type="text/javascript" src="http://example.org/js/bundle.min.d47d3d6894e66aa67f2514c171756283d3e8847b56f8f158bdd8430843da5f5af874c7a89a316c6743a845399bdb89649685154dc88b7e9bff1a155ca9e5108a.js" integrity="sha512-1H09aJTmaqZ/JRTBcXVig9PohHtW&#43;PFYvdhDCEPaX1r4dMeomjFsZ0OoRTmb24lkloUVTciLfpv/GhVcqeUQig==" crossorigin="anonymous"></script>
+    
+  </body>
 </html>

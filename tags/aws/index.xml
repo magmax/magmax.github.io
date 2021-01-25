@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>aws on El blog de MagMax</title>
+    <link>http://example.org/tags/aws/</link>
+    <description>Recent content in aws on El blog de MagMax</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 11 Dec 2015 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/tags/aws/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Dominios con AWS Route 53</title>
+      <link>http://example.org/blog/dominios-con-aws-route-53/</link>
+      <pubDate>Fri, 11 Dec 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/dominios-con-aws-route-53/</guid>
+      <description>
+        
+          &lt;p&gt;Recientemente he comenzado a utilizar &lt;a href=&#34;https://aws.amazon.com/route53&#34;&gt;AWS Route 53&lt;/a&gt;. Como era novato, la lié parda y me ha costado bastante reestablecer los valores necesarios para que funcione, pero me ha servido para aprender por el camino :)&lt;/p&gt;
+&lt;p&gt;Aquí voy a contar cómo hacer lo que he necesitado: gestionar un dominio con &lt;a href=&#34;https://aws.amazon.com/route53&#34;&gt;AWS
+Route 53&lt;/a&gt; sin utilizar el hosting de Amazon.&lt;/p&gt;
+&lt;p&gt;Si no estáis interesados en &lt;a href=&#34;https://aws.amazon.com/route53&#34;&gt;Route 53&lt;/a&gt; pero sí en cómo comprobar vuestro dominio, podéis saltar directamente a la sección &amp;ldquo;Comprobando nuestro dominio&amp;rdquo;.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/aws.jpg&#34;
+         alt=&#34;Amazon Web Services&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;solicitando-el-dominio&#34;&gt;Solicitando el dominio&lt;/h2&gt;
+&lt;p&gt;Lo primero, claro está es solicitar el dominio. Y eso pasa por encontrar un dominio que no esté ya reservado, cosa nada trivial.&lt;/p&gt;
+&lt;p&gt;Para ello necesitamos cuenta en AWS, lo que nos regalará un año de hosting en una máquina pequeñita. Podéis aprovechar para guarrear. Desgraciadamente no hay regalos en cuanto al dominio.&lt;/p&gt;
+&lt;p&gt;Accederemos a la &lt;a href=&#34;https://console.aws.amazon.com/route53/home&#34;&gt;consola de Route 53&lt;/a&gt; y pulsamos sobre &lt;code&gt;Domains&lt;/code&gt;. A continuación sobre &lt;code&gt;Register Domain&lt;/code&gt; y buscaremos un dominio libre. Cuando lo tengamos, seguimos las instrucciones, introduciendo nuestros datos y tal.&lt;/p&gt;
+&lt;p&gt;Al poco tiempo recibiremos un email diciendo que ya tenemos nuestro dominio disponible.&lt;/p&gt;
+&lt;h2 id=&#34;sirviendo-nuestro-site&#34;&gt;Sirviendo nuestro site&lt;/h2&gt;
+&lt;p&gt;Ahora hay dos cosas que hacer: por un lado, decirle a nuestro hosting que
+disponemos del nuevo dominio, para que abra firewalls y demás. En mi caso estaba
+en &lt;a href=&#34;https://openshift.redhat.com&#34;&gt;OpenShift&lt;/a&gt;, pero eso cambia de un hosting a otro. Incluso hay algunos que no requieren este paso.&lt;/p&gt;
+&lt;p&gt;Por otra parte, hay que unir el dominio con la dirección de nuestro hosting.
+Esta parte sí es enteramente &lt;a href=&#34;https://aws.amazon.com/route53&#34;&gt;Route 53&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Para ello, y desde la &lt;a href=&#34;https://console.aws.amazon.com/route53/home&#34;&gt;consola de Route 53&lt;/a&gt;,  nos vamos a &lt;code&gt;Hosted Zones&lt;/code&gt; (en el menú de la izquierda). Seguramente nos haya creado ya una &lt;strong&gt;hosted zone&lt;/strong&gt; con el nombre de nuestro dominio y podemos usarla directamente. Si no es así, podeis leer la siguiente sección.&lt;/p&gt;
+&lt;p&gt;Al entrar en la &lt;strong&gt;hosted zone&lt;/strong&gt; de nuestro dominio, veremos que hay varias &lt;strong&gt;record set&lt;/strong&gt; ya creadas: una de tipo &lt;strong&gt;NS&lt;/strong&gt; y otra de tipo &lt;strong&gt;SOA&lt;/strong&gt;. Lo que necesitamos es crear un &lt;strong&gt;record set&lt;/strong&gt; más (botón &lt;code&gt;Create Record Set&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;Usaremos &lt;code&gt;www&lt;/code&gt; o &lt;code&gt;*&lt;/code&gt; como nombre, y el tipo &lt;code&gt;CNAME&lt;/code&gt;. No es un &lt;strong&gt;Alias&lt;/strong&gt;, &lt;strong&gt;TTL&lt;/strong&gt; por defecto, &lt;strong&gt;Routing Policy&lt;/strong&gt; de tipo &lt;code&gt;Simple&lt;/code&gt;. En &lt;strong&gt;Value&lt;/strong&gt; tenemos que poner la ruta que nos dio el proveedor, que suelen ser subdominios de un dominio más largo (algo como &lt;em&gt;blablabla.rhcloud.com&lt;/em&gt;).&lt;/p&gt;
+&lt;p&gt;Poco después nos llegará un mail y nuestro dominio estará disponible.&lt;/p&gt;
+&lt;h3 id=&#34;creando-el-hosted-zone&#34;&gt;Creando el hosted zone&lt;/h3&gt;
+&lt;p&gt;Como he dicho, era novato y borré el &lt;strong&gt;hosted zone&lt;/strong&gt;, ya que AWS no iba a tener mi &lt;em&gt;hosting&lt;/em&gt;&amp;hellip; ¡Error! Y encima no encontré la documentación necesaria para reestablecerlo. No es difícil, pero tiene un pequeño truco.&lt;/p&gt;
+&lt;p&gt;Lo primero es crear una &lt;strong&gt;hosted zone&lt;/strong&gt; con nuestro dominio. No tiene pérdida y ya nos crea las entradas &lt;strong&gt;NS&lt;/strong&gt; y &lt;strong&gt;SOA&lt;/strong&gt;. No las toquéis, ya que son los servidores de AWS que nos han configurado para con nuestro DNS. Eso sí: apuntáos los servidores asociados al &lt;strong&gt;NS&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;A continuación volvemos al &lt;code&gt;Dashboard&lt;/code&gt; y seleccionamos &lt;code&gt;Domains&lt;/code&gt;, eligiendo nuestro dominio. A la derecha veremos los &lt;strong&gt;Name Servers&lt;/strong&gt; que están asociados con nuestro dominio y que no coinciden con los de nuestra &lt;strong&gt;hosted zone&lt;/strong&gt;, así que es necesario editarlos, eliminar los valores actuales y meter los que nos apuntamos previamente.&lt;/p&gt;
+&lt;p&gt;Éste era el paso mágico que no encontré por ningún sitio, y viene a llamarse &lt;strong&gt;configurar el Domain Register&lt;/strong&gt;. Hay webs que incluso me mandaban a otros servicios de DNS externos para poder hacer eso.&lt;/p&gt;
+&lt;p&gt;Al cabo de un buen rato (incluso una hora) llegará un mail diciendo que está todo bien, y al cabo de aún más rato (unas pocas horas) podremos acceder normalmente.&lt;/p&gt;
+&lt;h2 id=&#34;comprobando-nuestro-dominio&#34;&gt;Comprobando nuestro dominio&lt;/h2&gt;
+&lt;p&gt;En cualquier momento podemos comprobar nuestro dominio con la orden &lt;a href=&#34;http://linuxcommand.org/man_pages/dig1.html&#34;&gt;dig&lt;/a&gt; (disponible en el paquete de bind_).&lt;/p&gt;
+&lt;p&gt;Para ver si nuestra &lt;strong&gt;hosted zone&lt;/strong&gt; está disponible, basta con coger cualquier servidor del &lt;strong&gt;record set&lt;/strong&gt; llamado &lt;strong&gt;NS&lt;/strong&gt; (en mi ejemplo, &amp;ldquo;ns-905.awsdns-49.net&amp;rdquo;) y hacer:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;$ dig @ns-905.awsdns-49.net example.org
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG 9.10.3 &amp;lt;&amp;lt;&amp;gt;&amp;gt; @ns-905.awsdns-49.net example.org
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;; &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; server found&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;;; global options: +cmd
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;;; Got answer:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;;; -&amp;gt;&amp;gt;HEADER&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt;- opco&lt;/span&gt;de: QUERY, status: NOERROR, id: &lt;span style=&#34;color:#ae81ff&#34;&gt;28833&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;;; flags: qr aa rd; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;;; WARNING: recursion requested but not available
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;;; OPT PSEUDOSECTION:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;; EDNS: version: 0, flags:; udp: &lt;span style=&#34;color:#ae81ff&#34;&gt;4096&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;;; QUESTION SECTION:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;;example.org.                  IN      A
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;;; AUTHORITY SECTION:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;example.org.           &lt;span style=&#34;color:#ae81ff&#34;&gt;900&lt;/span&gt;     IN      SOA     ns-905.awsdns-49.net. awsdns-hostmaster.amazon.com. &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;7200&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;900&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1209600&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;86400&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;;; Query time: &lt;span style=&#34;color:#ae81ff&#34;&gt;26&lt;/span&gt; msec
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;;; SERVER: 205.251.195.137#53&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;205.251.195.137&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;;; WHEN: vie dic &lt;span style=&#34;color:#ae81ff&#34;&gt;11&lt;/span&gt; 10:47:45 CET &lt;span style=&#34;color:#ae81ff&#34;&gt;2015&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;;; MSG SIZE  rcvd: &lt;span style=&#34;color:#ae81ff&#34;&gt;121&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Con esto estamos preguntando directamente al servidor DNS por nuestro dominio.&lt;/p&gt;
+&lt;p&gt;Lo siguiente es ver si nuestro dominio ya se ha registrado en los &lt;strong&gt;Name Servers&lt;/strong&gt; del mundo mundial, preguntando a otros &lt;strong&gt;Name Servers&lt;/strong&gt; que, en principio, no sabían de la existencia de nuestro dominio:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;$ dig example.org
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG 9.10.3 &amp;lt;&amp;lt;&amp;gt;&amp;gt; example.org
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;;; global options: +cmd
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;;; Got answer:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;;; -&amp;gt;&amp;gt;HEADER&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt;- opco&lt;/span&gt;de: QUERY, status: NOERROR, id: &lt;span style=&#34;color:#ae81ff&#34;&gt;13962&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;;; flags: qr rd ra; QUERY: 1, ANSWER: 0, AUTHORITY: 1, ADDITIONAL: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;;; OPT PSEUDOSECTION:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;; EDNS: version: 0, flags:; udp: &lt;span style=&#34;color:#ae81ff&#34;&gt;512&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;;; QUESTION SECTION:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;;example.org.                   IN      A
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;;; AUTHORITY SECTION:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;example.org.            &lt;span style=&#34;color:#ae81ff&#34;&gt;900&lt;/span&gt;     IN      SOA     ns-905.awsdns-49.net. awsdns-hostmaster.amazon.com. &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;7200&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;900&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1209600&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;86400&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;;; Query time: &lt;span style=&#34;color:#ae81ff&#34;&gt;110&lt;/span&gt; msec
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;;; SERVER: 192.168.1.1#53&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;192.168.1.1&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;;; WHEN: vie dic &lt;span style=&#34;color:#ae81ff&#34;&gt;11&lt;/span&gt; 10:51:14 CET &lt;span style=&#34;color:#ae81ff&#34;&gt;2015&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;;; MSG SIZE  rcvd: &lt;span style=&#34;color:#ae81ff&#34;&gt;121&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y, finalmente, podemos preguntar por el hosting concreto, con subdominio incluido:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;$ dig www.example.org
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;; &amp;lt;&amp;lt;&amp;gt;&amp;gt; DiG 9.10.3 &amp;lt;&amp;lt;&amp;gt;&amp;gt; www.example.org
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;;; global options: +cmd
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;;; Got answer:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;;; -&amp;gt;&amp;gt;HEADER&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;lt;&amp;lt;- opco&lt;/span&gt;de: QUERY, status: NOERROR, id: &lt;span style=&#34;color:#ae81ff&#34;&gt;47347&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;;; flags: qr rd ra; QUERY: 1, ANSWER: 4, AUTHORITY: 0, ADDITIONAL: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;;; OPT PSEUDOSECTION:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;; EDNS: version: 0, flags:; udp: &lt;span style=&#34;color:#ae81ff&#34;&gt;512&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;;; QUESTION SECTION:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;;www.example.org.               IN      A
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;;; ANSWER SECTION:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;www.example.org.        &lt;span style=&#34;color:#ae81ff&#34;&gt;300&lt;/span&gt;     IN      CNAME   example-example.rhcloud.com.
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;example-example.rhcloud.com. &lt;span style=&#34;color:#ae81ff&#34;&gt;60&lt;/span&gt;     IN      CNAME   ex-std-node724.prod.rhcloud.com.
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;ex-whatever.prod.rhcloud.com. &lt;span style=&#34;color:#ae81ff&#34;&gt;60&lt;/span&gt; IN  CNAME   ec2-whatever.compute-1.amazonaws.com.
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;ec2-whatever.compute-1.amazonaws.com. &lt;span style=&#34;color:#ae81ff&#34;&gt;604800&lt;/span&gt; IN A 92.23.179.44
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;;; Query time: &lt;span style=&#34;color:#ae81ff&#34;&gt;160&lt;/span&gt; msec
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;;; SERVER: 192.168.1.1#53&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;192.168.1.1&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;;; WHEN: vie dic &lt;span style=&#34;color:#ae81ff&#34;&gt;11&lt;/span&gt; 10:51:19 CET &lt;span style=&#34;color:#ae81ff&#34;&gt;2015&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;;; MSG SIZE  rcvd: &lt;span style=&#34;color:#ae81ff&#34;&gt;179&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Donde se ve toda la ruta necesaria para obtener la IP de nuestro &lt;em&gt;hosting&lt;/em&gt;.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

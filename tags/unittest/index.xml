@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>unittest on El blog de MagMax</title>
+    <link>http://example.org/tags/unittest/</link>
+    <description>Recent content in unittest on El blog de MagMax</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 27 Sep 2011 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/tags/unittest/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Python: Cómo hacer pruebas 2: unittest</title>
+      <link>http://example.org/blog/python-pruebas-2/</link>
+      <pubDate>Tue, 27 Sep 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/python-pruebas-2/</guid>
+      <description>
+        
+          &lt;p&gt;Tras el artículo &lt;a href=&#34;http://example.org/blog/python-pruebas-1/&#34;&gt;Python: Cómo hacer pruebas (1)&lt;/a&gt; es lógico pensar que vendrá la segunda parte.&lt;/p&gt;
+&lt;p&gt;En esta ocasión nos centraremos en UnitTest.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/python.png&#34;
+         alt=&#34;Python&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;construcción-básica&#34;&gt;Construcción básica&lt;/h2&gt;
+&lt;p&gt;Hay muchas ocasiones en las que las pruebas realizadas con doctest se nos quedarán cortas. Por ejemplo, ¿cómo probamos un acceso a base de datos? ¿Y una interacción entre clases? Con este fin está unittest. Hay gente que lo denomina &amp;ldquo;PyUnit&amp;rdquo;, ya que es similar a JUnit.&lt;/p&gt;
+&lt;p&gt;Unittest nos ofrece toda la potencia del lenguaje para probar nuestros programas. De esta manera, escribiremos &amp;ldquo;Casos de pruebas&amp;rdquo; que podremos agrupar en &amp;ldquo;Suites de pruebas&amp;rdquo;. Además, nos permitirá agrupar funcionalidad común, de manera que preparemos nuestro entorno (a esto se le conoce como &amp;ldquo;fixture&amp;rdquo;).&lt;/p&gt;
+&lt;p&gt;Como en el tutorial anterior, vamos a poner un ejemplo y a probarlo. Voy a utilizar la función &lt;code&gt;factorial&lt;/code&gt; del otro ejemplo que ya sabemos que funciona:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; unittest
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;factorial&lt;/span&gt;(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; factorial(n&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;tester&lt;/span&gt; (unittest&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;TestCase):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;test_1&lt;/span&gt;(self):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;assertEqual(&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, factorial(&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;))
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;__main__&amp;#34;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    unittest&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;main()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Como podemos ver, creamos una clase que hereda de &lt;em&gt;unittest.TestCase&lt;/em&gt;, ya que es un caso de pruebas. Python facilita la tarea de crear numerosas clases y así aislar los casos de uso que necesitemos, a menudo con una inicialización diferente. A continuación vienen los tests, que deben comenzar por la palabra &amp;ldquo;&lt;em&gt;test&lt;/em&gt;&amp;rdquo; o no se ejecutarán.&lt;/p&gt;
+&lt;p&gt;En el &lt;code&gt;main&lt;/code&gt; ejecutamos el programa principal de unittest, lo que permitirá descubrir los tests de la clase en la que estamos. Esto se puede hacer en línea de órdenes mediante (sólo a partir de Python 2.7):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ python -m unittest MODULO_A_PROBAR_SIN_EXTENSIÓN
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;partes-de-un-test&#34;&gt;Partes de un test&lt;/h2&gt;
+&lt;p&gt;Los tests, por lo general, constan de 3 partes que recomiendo diferenciar:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Inicialización&lt;/em&gt;, que es donde se establecen valores necesarios para nuestros tests. Debe ser pequeña. A menudo ni siquiera es necesaria y se elimina. Por ejemplo, puede ser la construción del SUT (&lt;em&gt;Subject Under Test&lt;/em&gt;).&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Ejecución&lt;/em&gt;, que es la línea en la que se llama a la funcionalidad a probar. No debe ocupar más de una línea.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Comprobación&lt;/em&gt;, que es el test propiamente dicho, expresado en forma de verificaciones.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Veamos el test desglosado:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;class tester &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;unittest.TestCase&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;    def test_1&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;self&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;        &lt;span style=&#34;color:#75715e&#34;&gt;# inicialización (vacío)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;        result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; factorial&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;1&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# ejecución&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;        self.assertEqual&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;1, result&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;# comprobación&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;funciones-especiales&#34;&gt;Funciones especiales&lt;/h2&gt;
+&lt;p&gt;Hay algunas funciones especiales, que son:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;setUp&lt;/em&gt;, que permite inicializar la &lt;em&gt;fixture&lt;/em&gt;, es decir, establecer un entorno de pruebas para cada prueba. Se ejecutará siempre antes de cada test.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;tearDown&lt;/em&gt;, que realiza la operación contraria, es decir, se ejecuta siempre después de cada test.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;setUpClass&lt;/em&gt;, que se ejecuta una única vez al comienzo de la clase.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;tearDownClass&lt;/em&gt;, que se lanza cuando se han terminado todos los tests.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;comprobaciones&#34;&gt;Comprobaciones&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;http://docs.python.org/library/unittest.html#unittest.TestCase.assertEqual&#34;&gt;Hay muchos tipos de comprobaciones a realizar&lt;/a&gt; . Se puede comprobar si el resultado es igual, menor, mayor, contiene, etc. el valor esperado o, incluso, si lanza una excepción.&lt;/p&gt;
+&lt;p&gt;Hay escuelas de pensamiento que opinan que &lt;em&gt;un test debe contener una única verificación&lt;/em&gt;. No es un grupo de radicales, sino que tiene su sentido: los tests nos evitan tener que depurar, y si el nombre del test está bien elegido, un fallo en una comprobación nos dirá exactamente dónde está el problema. Si tenemos varias comprobaciones en un test, esta comprobación no será inmediata.&lt;/p&gt;
+&lt;p&gt;Realmente Python nos facilita esta tarea, ya que si necesitamos una nueva comprobación, podemos desglosarlo en una clase nueva, de manera que en la inicialización de la clase establezcamos la sección de inicialización del test y dejar para las funciones sólo las comprobaciones.&lt;/p&gt;
+&lt;h2 id=&#34;comprobaciones-adicionales&#34;&gt;Comprobaciones adicionales&lt;/h2&gt;
+&lt;p&gt;Si necesitamos realizar comprobaciones más complejas, podemos utilizar módulos dedicados a ello, como &lt;a href=&#34;http://code.google.com/p/hamcrest/wiki/TutorialPython&#34;&gt;Hamcrest&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;ineficiente&#34;&gt;Ineficiente&lt;/h2&gt;
+&lt;p&gt;Alguien puede pensar que es peor utilizar Unittest frente a doctest. En algunos
+casos, esta afirmación es totalmente cierta, como en el caso de la función
+&lt;em&gt;factorial&lt;/em&gt;. Sin embargo, doctest no ofrece la versatilidad que permite
+unittest. Esto quedará demostrado en la siguiente entrega de &lt;a href=&#34;http://example.org/blog/python-pruebas-1/&#34;&gt;Python: Cómo
+hacer pruebas&lt;/a&gt;, donde estudiaremos herramientas que nos faciliten las pruebas,
+y seguiremos con otro tutorial más con los dobles o &lt;em&gt;mocks&lt;/em&gt;, que facilitarán
+aún más la creación de pruebas.&lt;/p&gt;
+&lt;h2 id=&#34;más-información&#34;&gt;Más información&lt;/h2&gt;
+&lt;p&gt;Podemos encontrar más información en la web de &lt;a href=&#34;http://docs.python.org/library/unittest.html&#34;&gt;unittest&lt;/a&gt; .&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>middleware on El blog de MagMax</title>
+    <link>http://example.org/tags/middleware/</link>
+    <description>Recent content in middleware on El blog de MagMax</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 21 Feb 2010 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/tags/middleware/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Middleware</title>
+      <link>http://example.org/blog/middleware/</link>
+      <pubDate>Sun, 21 Feb 2010 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/middleware/</guid>
+      <description>
+        
+          &lt;p&gt;Recientemente, por motivos de trabajo, estoy investigando diferentes tipos de &lt;em&gt;middleware&lt;/em&gt;. &lt;em&gt;Middleware&lt;/em&gt; es:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;un software de conectividad que ofrece un conjunto de servicios que hacen posible el funcionamiento de aplicaciones distribuidas sobre plataformas heterogéneas&lt;/p&gt;
+&lt;p&gt;&amp;ndash; &lt;a href=&#34;http://es.wikipedia.org/wiki/Middleware&#34;&gt;wikipedia&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Esta definición se parece mucho a lo que nosotros necesitamos en el trabajo, ya que necesitamos soportar no pocos sistemas operativos y plataformas diferentes.&lt;/p&gt;
+&lt;p&gt;Como este tema lo estoy realizando en mis ratos libres, he decidido dejar constancia en mi página web. Quien sabe: tal vez a alguien le puede resultar útil.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/engineering.jpg&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;división&#34;&gt;División&lt;/h2&gt;
+&lt;p&gt;Voy a categorizar los &lt;em&gt;middleware&lt;/em&gt; en tres grupos. Seguramente no sea la mejor división del mundo, pero creo que es una diferencia importante: RPCs, Sistemas de colas de mensajes y Sistemas genéricos.&lt;/p&gt;
+&lt;p&gt;Los &lt;strong&gt;RPCs&lt;/strong&gt; son llamadas a procedimientos remotos. No suelen estar orientados a objetos, sino a funcionalidades específicas. El programa que lanza un &lt;em&gt;RPC&lt;/em&gt; recibirá una respuesta de forma similar a como se invoca una función local.&lt;/p&gt;
+&lt;p&gt;Los &lt;strong&gt;sistemas genéricos&lt;/strong&gt;, como he decidido bautizarlos, permiten una comunicación directa punto a punto (p2p) o bien multipunto. El escenario típico es que un programa crea un mensaje y lo pone en la red, y después otro (o varios) reciben este mensaje. Aunque permiten implementar servicios de colas de mensajes, en principio tienen una arquitectura clientes-servidores (no cliente-servidor, ya que puede haber muchos clientes y muchos servidores, todos interrelacionados). Suelen estar orientados a objetos.&lt;/p&gt;
+&lt;p&gt;Los &lt;strong&gt;sistemas de colas de mensajes&lt;/strong&gt; son parecidos a los sistemas genéricos pero, además, tienen un sistema de almacenamiento interno. Permiten comunicaciones asíncronas, en las que los &amp;quot;servidores&amp;quot; pueden estar caídos y atender las peticiones cuando se levantan. Suelen proporcionar una serie de beneficios a costa de aumentar la latencia de los mensajes. Manejan dos conceptos distintos, como son los &lt;strong&gt;Topics&lt;/strong&gt; o Temas y las &lt;strong&gt;Queues&lt;/strong&gt; o Colas. A menudo se suele dividir a los programas en dos grupos: productores y consumidores, aunque el escenário más típico suele ser un compuesto de productor/consumidor, pero se suelen dividir en productores si primero envían mensajes y en consumidores si lo primero que hacen es recibir un mensaje.&lt;/p&gt;
+&lt;p&gt;Tanto los sistemas genéricos como los sistemas de colas de mensajes requieren un &lt;em&gt;Broker&lt;/em&gt; que permita comunicar los programas. El esquema general es el siguiente: Un programa se conecta a un &lt;em&gt;broker&lt;/em&gt; y comienza a enviar o recibir mensajes. No importa dónde se encuentre el programa que va a consumir/producir los mensajes: tan sólo importa dónde está el &lt;em&gt;broker&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;El broker puede realizar muchas operaciones más, a parte de encargarse del enrutamiento: puede facilitar la conexión entre distintos &lt;em&gt;brokers&lt;/em&gt;, permitir un sistema de nombrado similar a cómo actúa un DNS, dividir el mensaje en fragmentos más pequeños y manejables, volver a juntarlos, patrón &lt;em&gt;evictor&lt;/em&gt;, &amp;hellip;&lt;/p&gt;
+&lt;p&gt;En los tres tipos se observará una cabecera y una carga. La cabecera contiene metainformación del mensaje, a menudo dirigida al &lt;em&gt;broker&lt;/em&gt;, con el fin de poder dirigir el mensaje al destinatario deseado.&lt;/p&gt;
+&lt;p&gt;Los &amp;ldquo;sistemas genéricos&amp;rdquo; suelen implementar un IDL que facilita la especificación del protocolo de comunicaciones que van a utilizar para enviar los datos de un mensaje. Estos IDL son mucho menos comunes en los sistemas orientados a mensajes.&lt;/p&gt;
+&lt;h2 id=&#34;rpcs&#34;&gt;RPCs&lt;/h2&gt;
+&lt;p&gt;El mayor problema de los RPCs es que suelen estar muy ligados al lenguaje de programación. Así, los RPCs de python no van a poder comunicarse, a priori, con los RPCs de Java. Cada uno utiliza su propio protocolo de comunicaciones y no es fácil encontrar nodos de unión.&lt;/p&gt;
+&lt;h2 id=&#34;sistemas-genéricos&#34;&gt;Sistemas genéricos&lt;/h2&gt;
+&lt;h3 id=&#34;corba&#34;&gt;CORBA&lt;/h3&gt;
+&lt;p&gt;Una de sus ventajas es que tiene a más de 300 empresas detrás, como IBM, SUN o Microsoft. Esto obliga a CORBA a varias cosas: a soportar absolutamente todo, a ser compatible con todo y a retrasar terriblemente sus especificaciones. A demás, requieren hacer tantas cosas que, en ocasiones, no es posible.&lt;/p&gt;
+&lt;p&gt;El &lt;em&gt;broker&lt;/em&gt; se llama ORB (&lt;em&gt;Object Request Broker&lt;/em&gt;). CORBA es tan grande que no hay ningún ORB que soporte todos los servicios que se especifican en el estándar CORBA.&lt;/p&gt;
+&lt;p&gt;CORBA se ha ganado la fama de ser demasiado pesado, aunque se ha demostrado la posibilidad de embeberlo en dispositivos bastante pequeños. Esta dualidad grande-pequeño se debe al número de servicios de su ORB: si quisiéramos utilizarlos todos, sería enorme, mientras que si los eliminamos todos nos queda algo mucho más ligero.&lt;/p&gt;
+&lt;p&gt;Su IDL se llama, precisamente, IDL y permite especificar de forma sencilla cómo se va a realizar la comunicación entre programas.&lt;/p&gt;
+&lt;p&gt;Es libre y gratuíto: cualquiera puede usarlo -con un ORB apropiado- o realizar su propia implementación.&lt;/p&gt;
+&lt;h3 id=&#34;ice&#34;&gt;ICE&lt;/h3&gt;
+&lt;p&gt;Son las siglas de &lt;em&gt;Internet Comunication Engine&lt;/em&gt;. Según sus propios autores, una de sus ventajas es que no tiene 300 empresas detrás, sino sólo una: ZeroC.&lt;/p&gt;
+&lt;p&gt;Es muy similar a CORBA en muchos aspectos, pero mejorado: muchísimo más ligero y completamente orientado al programador. Siguen una filosofía por la que prefieren hacerlo incompatible hacia atrás antes que complicarle la vida al programador.&lt;/p&gt;
+&lt;p&gt;Su IDL se llama &lt;em&gt;slice&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Ofrece servicios como persistencia (&lt;em&gt;freeze&lt;/em&gt;), evictors, firewall (&lt;em&gt;glaciar&lt;/em&gt;), mensajes multipunto (&lt;em&gt;storm&lt;/em&gt;), nombrado, &amp;hellip;&lt;/p&gt;
+&lt;p&gt;Soporta numerosos lenguajes: C++, Java, .Net, Python, &amp;hellip;&lt;/p&gt;
+&lt;p&gt;Es libre para los que quieran realizar aplicaciones libres, pero no para los que quieran aplicaciones privativas.&lt;/p&gt;
+&lt;h3 id=&#34;web-services&#34;&gt;Web Services&lt;/h3&gt;
+&lt;p&gt;Es un término bastante confuso y que da lugar a bastantes malentendidos. No es un protocolo, sino un conjunto de protocolos y estándares de comunicación entre aplicaciones.&lt;/p&gt;
+&lt;p&gt;Teóricamente son multiplataforma y multilenguaje, pero resultan muy pesados ya que requieren el uso de XML. Este uso de XML le confiere unas características de versatilidad intrínsecas que otros no tienen.&lt;/p&gt;
+&lt;p&gt;Su IDL se denomina WSDL.&lt;/p&gt;
+&lt;h2 id=&#34;sistemas-de-colas-de-mensajes&#34;&gt;Sistemas de colas de mensajes&lt;/h2&gt;
+&lt;p&gt;Dadas las características de lo que buscamos, me he centrado en éstos, por lo que veréis que son los que están más desarrollados. Sin embargo, el objetivo de este artículo es dar una visión general de los middlewares y pretendo englobar la mayor cantidad de middleware posible.&lt;/p&gt;
+&lt;h3 id=&#34;activemq&#34;&gt;ActiveMQ&lt;/h3&gt;
+&lt;p&gt;Implementado por Apache, basado en Java pero con interfaces C++ (CMS) y .Net (NMS). También soporta lenguajes de script y C mediante la implementación del protocolo STOMP.&lt;/p&gt;
+&lt;p&gt;Soporta mensajes persistentes, temporales, enrutado, servidores de aplicaciones (jetty), consola de mantenimiento, &amp;hellip;&lt;/p&gt;
+&lt;p&gt;Ofrece un servicio llamado &amp;ldquo;camel&amp;rdquo; que permite implementar los patrones de
+&lt;a href=&#34;http://www.enterpriseintegrationpatterns.com/toc.html&#34;&gt;Enterprise Integration Patterns&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Licencia Apache.&lt;/p&gt;
+&lt;p&gt;Para más información, consultar la &lt;a href=&#34;http://activemq.apache.org/&#34;&gt;web de ActiveMQ&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;spring&#34;&gt;Spring&lt;/h3&gt;
+&lt;p&gt;Implementado por SpringSource, basado en Java.&lt;/p&gt;
+&lt;p&gt;Licencia Apache.&lt;/p&gt;
+&lt;p&gt;Para más información, consultar la web de [Spring]&lt;/p&gt;
+&lt;h3 id=&#34;glashfish-message-queue&#34;&gt;Glashfish Message Queue&lt;/h3&gt;
+&lt;p&gt;Acceso desde Java o C. Muy completa, soporta muchos sistemas operativos.&lt;/p&gt;
+&lt;p&gt;Guarda los datos en una base de datos, soportando Oracle, mysql y alguna más.&lt;/p&gt;
+&lt;p&gt;Tiene puente JMS y STOMP.&lt;/p&gt;
+&lt;p&gt;Licencia: Totalmente privativa. Su uso implica contratar a SUN.&lt;/p&gt;
+&lt;p&gt;Para más información, consultar la web de &lt;a href=&#34;http://www.sun.com/software/products/message_queue/index.xml&#34;&gt;Glashfish&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;openmq&#34;&gt;OpenMQ&lt;/h3&gt;
+&lt;p&gt;Proyecto libre similar a Glashfish MQ.&lt;/p&gt;
+&lt;p&gt;Puente JMS y STOMP, broker embebido, acceso desde C.&lt;/p&gt;
+&lt;p&gt;Licencia: dual, CDDL y GPLv2 con la excepción ClassPath.&lt;/p&gt;
+&lt;p&gt;Para más información, consultar la web de &lt;a href=&#34;https://mq.dev.java.net/&#34;&gt;OpenMQ&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;glosario&#34;&gt;Glosario&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Broker: Canal lógico de comunicaciones. Se encarga de la transmisión de los mensajes, aunque puede tener muchas funcionalidades -o servicios- más.&lt;/li&gt;
+&lt;li&gt;Cola de mensajes: Ver Queue.&lt;/li&gt;
+&lt;li&gt;Evictor: Es un patrón mediante el cual los servidores pueden dormirse cuando no se utilizan, levantándose automáticamente cuando alguien les solicita una operación. Esta característica otorga mayor sencillez al programador y mejora la utilización de los recursos.&lt;/li&gt;
+&lt;li&gt;IDL: &lt;em&gt;Interface Definition Language&lt;/em&gt;, es un lenguaje que permite definir la interfaz entre un cliente y un servidor.&lt;/li&gt;
+&lt;li&gt;Marshall: Ver Serialización.&lt;/li&gt;
+&lt;li&gt;Multipunto: Un programa envía un dato y varios lo reciben.&lt;/li&gt;
+&lt;li&gt;P2p: Ver Punto a punto.&lt;/li&gt;
+&lt;li&gt;Punto a punto: Una comunicación de un programa a otro de manera que lo que se envía se obtiene en el otro lado.&lt;/li&gt;
+&lt;li&gt;Queue: Cola de un mensaje. Los mensajes siguen un patrón uno a uno, de manera que alguien los produce y sólo uno los consume. Sólo habrá una instancia del mensaje en toda la comunicación. Es similar al correo habitual.&lt;/li&gt;
+&lt;li&gt;RPC: &lt;em&gt;Remote Procedure Call&lt;/em&gt; o llamada a procedimiento remoto, permite realizar una operación remota de forma similar a una operación local.&lt;/li&gt;
+&lt;li&gt;Serialización: Tomar un grupo de objetos o variables y convertirlas en un vector de bytes con significado, de manera que, en el otro lado de las comunicaciones, alguien pueda deserializarlo otorgándole un contexto.&lt;/li&gt;
+&lt;li&gt;Tema: Ver Topic.&lt;/li&gt;
+&lt;li&gt;Topic: Cola de mensajes en la que éstos siguen un patrón uno a muchos mediante la replicación del mensaje. Se creará un mensaje por cada subscriptor al Topic. Es similar a la subscripción a una revista, donde el broker haría de imprenta.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;fin&#34;&gt;Fin&lt;/h2&gt;
+&lt;p&gt;Este artículo no está cerrado. Espero poder completarlo a medida que vaya adquiriendo más conocimientos y sacando más tiempo para ir redactándolo.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

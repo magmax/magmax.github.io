@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>LAMP on El blog de MagMax</title>
+    <link>http://example.org/tags/lamp/</link>
+    <description>Recent content in LAMP on El blog de MagMax</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 28 Mar 2016 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/tags/lamp/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LAMP con Docker</title>
+      <link>http://example.org/blog/lamp-con-docker/</link>
+      <pubDate>Mon, 28 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/lamp-con-docker/</guid>
+      <description>
+        
+          &lt;p&gt;Hace algún tiempo que escribí los artículos &lt;a href=&#34;http://example.org/blog/lamp-con-puppet/&#34;&gt;LAMP con Puppet&lt;/a&gt; y &lt;a href=&#34;http://example.org/blog/lamp-con-salt/&#34;&gt;LAMP con Salt&lt;/a&gt;.
+Desde entonces ha llovido mucho y&amp;hellip; bueno, creo que los sistemas tipo &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt; y
+&lt;a href=&#34;http://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt; están casi obsoletos, gracias a nuevas tecnologías como &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Pero antes de criticarme por esa afirmación, ruego al lector que se lea este artículo y luego decida por sí mismo.&lt;/p&gt;
+&lt;p&gt;Igual que en los otros ejercicios, montaremos una arquitectura LAMP (Linux + Apache + MySQL + PHP) que tan de moda ha estado durante mucho tiempo.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/containers.jpg&#34;
+         alt=&#34;Containers&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;código-a-ejecutar&#34;&gt;Código a ejecutar&lt;/h2&gt;
+&lt;p&gt;Como las cosas evolucionan, PHP también lo ha hecho y el programita de ejemplo que usé ya no funciona en PHP 5.6. Así que me he visto obligado a modificar ligeramente el programa de ejemplo.&lt;/p&gt;
+&lt;p&gt;Podéis descargarlo de GitHub así:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ git clone https://github.com/magmax/small_php_example.git -b mysqli
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Veréis que en el directorio &lt;code&gt;small_php_example&lt;/code&gt; tenéis un programa muy sencillito que muestra las tablas disponibles en la base de datos.&lt;/p&gt;
+&lt;h2 id=&#34;docker-para-php-con-mysql&#34;&gt;Docker para PHP con MySQL&lt;/h2&gt;
+&lt;p&gt;Otro problema es que no he encontrado ninguna imagen Docker de PHP con soporte
+para MySQL, pero es muy sencillo construir una, así que vamos a ello. Aquí
+podría ayudar el &lt;a href=&#34;http://example.org/blog/lamp-con-salt/&#34;&gt;artículo que escribí sobre Docker&lt;/a&gt;, que podéis usar para ampliar conceptos.&lt;/p&gt;
+&lt;p&gt;Necesitamos crear el fichero &lt;code&gt;php.dockerfile&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-dockerfile&#34; data-lang=&#34;dockerfile&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;FROM&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; php:5.6-apache&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;RUN&lt;/span&gt;  docker-php-ext-install mysqli&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y ejecutar la siguiente orden:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;docker build -t php-mysql -f php.dockerfile .
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y tendremos disponible la imagen &lt;code&gt;php-mysql&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Con esto tendremos ya todas las piezas. Ahora vamos a unirlas.&lt;/p&gt;
+&lt;h2 id=&#34;docker-compose&#34;&gt;Docker Compose&lt;/h2&gt;
+&lt;p&gt;Existe una aplicación (Python :D) que permite gestionar grupos de Dockers
+llamada &lt;a href=&#34;https://docs.docker.com/compose/&#34;&gt;docker-compose&lt;/a&gt;. Se puede instalar en un &lt;a href=&#34;https://virtualenv.pypa.io/en/latest/&#34;&gt;virtualenv&lt;/a&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ virtualenv venv
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;$ . venv/bin/activate
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;venv&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; $ pip install docker-compose
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;A continuación necesitamos un archivo de definición. Éste es suficiente:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-dockerfile&#34; data-lang=&#34;dockerfile&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;version: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;2&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;services:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;  db:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    image: mysql:5.7.11&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    environment:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - MYSQL_ROOT_PASSWORD&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;foo&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;  app:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    image: php-mysql&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    ports:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - 80:80&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    volumes:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - ./small_php_example:/var/www/html/&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    depends_on:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - db&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    links:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - db&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    environment:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - MYSQL_SERVER&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;db&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - MYSQL_PASSWORD&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;foo&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - MYSQL_USER&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;root&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Poco que explicar&amp;hellip; Tenemos 2 servicios: la base de datos y la aplicación. El primero usa una imagen con MySQL (definiendo la contraseña) y el segundo un Apache con PHP que monta nuestra aplicación en &lt;code&gt;/var/www/html&lt;/code&gt;, expone el puerto del Docker 80 con el local 80 y enlaza con el primer Docker; bueno, y define algunas variables de entorno para poder conectar.&lt;/p&gt;
+&lt;p&gt;Lo único digno de explicar aquí es que al linkar la máquina se añade al &lt;code&gt;/etc/hosts&lt;/code&gt;, por lo que tenemos acceso a la máquina usando su nombre: &lt;code&gt;db&lt;/code&gt;. Por eso el valor de la variable &lt;code&gt;MYSQL_SERVER&lt;/code&gt; es, simplemente, &lt;code&gt;db&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Dicho de otro modo: vamos a crear dos Dockers que trabajarán juntos. Y todo con esta orden:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;venv&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; $ docker-compose up
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Tardará un poquito, pero tendremos nuestra aplicación corriendo en localhost:80&lt;/p&gt;
+&lt;h2 id=&#34;conclusiones&#34;&gt;Conclusiones&lt;/h2&gt;
+&lt;p&gt;Ventajas sobre &lt;a href=&#34;http://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt;, &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt; o &lt;a href=&#34;https://www.chef.io/&#34;&gt;Chef&lt;/a&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;es más sencillo.&lt;/li&gt;
+&lt;li&gt;más ortogonal: se crea el Docker con órdenes típicas del sistema elegido y se usa.&lt;/li&gt;
+&lt;li&gt;permite mezclar distribuciones fácilmente.&lt;/li&gt;
+&lt;li&gt;Se pueden lanzar varias copias de un mismo Docker sobre la misma máquina.&lt;/li&gt;
+&lt;li&gt;Es replicable. Con los sistemas de orquestación puede cambiar una versión de una librería entre ejecuciones, haciendo que una funcione y otra falle.&lt;/li&gt;
+&lt;li&gt;Es más difícil que se rompa. No es extraño que la entrada de una máquina nueva
+en &lt;a href=&#34;http://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt; me descubra un bug en la definición.&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>LAMP con Salt</title>
+      <link>http://example.org/blog/lamp-con-salt/</link>
+      <pubDate>Wed, 22 Jan 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/lamp-con-salt/</guid>
+      <description>
+        
+          &lt;p&gt;De la misma manera que hace unos meses conté cómo crear un entorno &lt;a href=&#34;http://es.wikipedia.org/wiki/LAMP&#34;&gt;LAMP&lt;/a&gt; con &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt;, en esta ocasión haremos lo mismo con &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;, también conocido como &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;SaltStack&lt;/a&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;crear una máquina virtual con &lt;a href=&#34;http://www.vagrantup.com/&#34; title=&#34;Web oficial de Vagrant&#34;&gt;Vagrant&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;configurar &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;instalar todo un entorno &lt;a href=&#34;http://es.wikipedia.org/wiki/LAMP&#34;&gt;LAMP&lt;/a&gt; (Linux + Apache + MySQL + Php)&lt;/li&gt;
+&lt;li&gt;descargarnos la web de un repositorio remoto &lt;a href=&#34;http://git-scm.com/&#34;&gt;Git&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;servir su contenido desde el servidor Apache.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Y, nuevamente, todo en unos 10 minutos.&lt;/p&gt;
+&lt;p&gt;Este artículo va por David P., que me habló de &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;, José Antonio, que me preguntó por twitter qué sistema es el mejor, y por &lt;a href=&#34;https://twitter.com/ricbartm&#34;&gt;@ricbartm&lt;/a&gt;, con quien estube hablando este viernes sobre &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt; ;)&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/saltstack.png&#34;
+         alt=&#34;SaltStack&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h1 id=&#34;jerarquía&#34;&gt;Jerarquía&lt;/h1&gt;
+&lt;p&gt;Para facilitaros la vida, ésta es la jerarquía de archivos que vamos a usar:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;.
+├── salt
+│   ├── minion
+│   └── roots
+│       └── salt
+│           ├── apache
+│           │   └── init.sls
+│           ├── logrotate
+│           │   └── init.sls
+│           ├── mysql
+│           │   ├── client.sls
+│           │   └── server.sls
+│           ├── ntp
+│           │   └── init.sls
+│           ├── php
+│           │   └── init.sls
+│           ├── php-example
+│           │   └── init.sls
+│           └── top.sls
+└── Vagrantfile
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Como vereis, voy a instalar también &lt;a href=&#34;http://en.wikipedia.org/wiki/Ntpd&#34; title=&#34;Demonio Network Time Protocol, para sincronizar nuestra máquina&#34;&gt;ntp&lt;/a&gt; y &lt;a href=&#34;http://linuxcommand.org/man_pages/logrotate8.html&#34; title=&#34;Man page de logrotate&#34;&gt;logrotate&lt;/a&gt;, con el fin de hacer un ejemplo exactamente igual que en el artículo de &lt;a href=&#34;http://example.org/blog/lamp-con-puppet/&#34;&gt;LAMP con Puppet&lt;/a&gt;.&lt;/p&gt;
+&lt;h1 id=&#34;lectura-rápida&#34;&gt;Lectura rápida&lt;/h1&gt;
+&lt;p&gt;Resulta que el artículo me ha salido más largo de lo esperado, así que he creado un &lt;a href=&#34;https://github.com/magmax/salt-example&#34;&gt;repositorio Git con los archivos de este artículo&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Sé que muchos de mis lectores agradecen artículos pequeños, así que podéis usar el repositorio y saltar directamente a la sección &amp;ldquo;Al lío&amp;rdquo;. Si queréis ver en detalle alguno de los archivos, podéis ir a su sección más adelante, si lo creéis necesario.&lt;/p&gt;
+&lt;h1 id=&#34;vagrant&#34;&gt;Vagrant&lt;/h1&gt;
+&lt;p&gt;Éste es el contenido del archivo &lt;strong&gt;Vagrantfile&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# -*- coding:utf-8; tab-width:4; mode:ruby -*-&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# vi: set ft=ruby :&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;Vagrant&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;configure(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2&amp;#34;&lt;/span&gt;) &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;config&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;  config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;define &lt;span style=&#34;color:#e6db74&#34;&gt;:saltexample&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;vm_config&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    vm_config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;box &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;wheeze64&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    vm_config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;box_url &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;http://puppet-vagrant-boxes.puppetlabs.com/debian-70rc1-x64-vbox4210.box&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    vm_config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;host_name &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;salt-example&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    vm_config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;synced_folder &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;salt/roots/salt&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/srv/salt&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;    vm_config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;synced_folder &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;salt/roots/pillar&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;/srv/pillar&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;    vm_config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;network &lt;span style=&#34;color:#e6db74&#34;&gt;:forwarded_port&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;host&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;10080&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;guest&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;80&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;    vm_config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;provision &lt;span style=&#34;color:#e6db74&#34;&gt;:salt&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;salt&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;      salt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;minion_config &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;salt/minion&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;      salt&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;run_highstate &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Es similar a lo contado en la receta de &lt;a href=&#34;http://example.org/blog/lamp-con-puppet/&#34;&gt;LAMP con Puppet&lt;/a&gt;, y lo explicaré igual de rápido.&lt;/p&gt;
+&lt;p&gt;Estoy creando una máquina virtual llamada &lt;em&gt;&amp;ldquo;wheeze64&amp;rdquo;&lt;/em&gt; y que me la voy a descargar de esa URL. Si ya no es válida, podéis usar cualquier otra &lt;a href=&#34;http://www.vagrantbox.es/&#34; title=&#34;Lista de Boxes para Vagrant&#34;&gt;máquina virtual de la lista&lt;/a&gt;. Además la he bautizado como &lt;em&gt;&amp;ldquo;salt-example&amp;rdquo;&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Después me aseguro de que voy a poder acceder a mi servidor web, que estará escuchando en el puerto 80 de la VM, y que estará mapeado con el puerto 10080 de la máquina host.&lt;/p&gt;
+&lt;p&gt;En las dos últimas líneas configuro el provisionamiento mediante &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;.&lt;/p&gt;
+&lt;h1 id=&#34;salt&#34;&gt;Salt&lt;/h1&gt;
+&lt;p&gt;El resto de archivos pertenecen a &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;. Pero antes me gustaría aclarar algunos conceptos.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;minion&lt;/strong&gt; es cada una de las máquinas que están bajo el control de &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Los &lt;strong&gt;pillars&lt;/strong&gt; son configuraciones básicas, los hechos (&lt;strong&gt;facts&lt;/strong&gt; en terminología &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt;).&lt;/li&gt;
+&lt;li&gt;Los &lt;strong&gt;states&lt;/strong&gt; son los estados en los que debe quedar la máquina.&lt;/li&gt;
+&lt;li&gt;Un archivo &lt;strong&gt;sls&lt;/strong&gt; es un &lt;em&gt;Salt State&lt;/em&gt;, y equivale vagamente a un módulo de &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.yaml.org/&#34;&gt;Yaml&lt;/a&gt; es un lenguaje de serialización legible por humanos. Os invito a profundizar un poco más en él si os decidís por &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://jinja.pocoo.org/&#34;&gt;jinja2&lt;/a&gt; es un lenguaje de plantillas sencillo y potente, muy típico de entornos Python. También deberíais investigarlo.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Se pueden contar muchas más cosas, pero dejémoslo aquí. Es suficiente para una primera toma de contacto.&lt;/p&gt;
+&lt;p&gt;Ahora describiré cada uno de los archivos. Son pequeños y sencillos. Estos archivos son plantillas &lt;a href=&#34;http://jinja.pocoo.org/&#34;&gt;jinja2&lt;/a&gt; que generarán un archivo &lt;a href=&#34;http://www.yaml.org/&#34;&gt;Yaml&lt;/a&gt;, que es la propia configuración. Parece complicado, pero veremos que no lo es tanto.&lt;/p&gt;
+&lt;p&gt;El primer archivo a tener en cuenta es &lt;strong&gt;salt/minion&lt;/strong&gt;, donde está la configuración genérica:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;file_client: local
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Este archivo contiene configuración básica. En este caso se indica que la configuración es local (no hay estructura cliente-servidor).&lt;/p&gt;
+&lt;p&gt;El siguiente archivo importante es &lt;strong&gt;salt/roots/salt/top.sls&lt;/strong&gt;, que describe cada uno de los &lt;strong&gt;minion&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;base&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;salt-example&amp;#39;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; ntp
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; mysql&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;client
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; mysql&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;server
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; apache
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; php
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; php&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;example
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;9&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; logrotate
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Aquí se han indicado cada uno de los módulos que se van a instalar en la máquina &lt;strong&gt;salt-example&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;logrotate&#34;&gt;logrotate&lt;/h2&gt;
+&lt;p&gt;comencemos por uno de los módulos más sencillos, que se encuentra en &lt;strong&gt;salt/roots/salt/logrotate/init.sls&lt;/strong&gt;. Lo primero, aclarar que el archivo &lt;strong&gt;init.sls&lt;/strong&gt; es el que se buscará por defecto dentro del módulo. Luego veremos cómo utilizar otros. Éste es el contenido:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;logrotate&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; installed
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Realmente estamos seteando propiedades, tales como &lt;code&gt;logrotate.pkg.installed = True&lt;/code&gt;. Estas simples instrucciones crean un estado: el paquete &lt;code&gt;logrotate&lt;/code&gt; (cogido del nombre del módulo) debe estar instalado.&lt;/p&gt;
+&lt;h2 id=&#34;ntp&#34;&gt;ntp&lt;/h2&gt;
+&lt;p&gt;Vamos con algo un poco más difícil, ya que contiene un servicio y el paquete debian no se llama igual que el módulo. El archivo es &lt;strong&gt;salt/roots/salt/ntp/init.sls&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;ntp&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; installed
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; name: ntpdate
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;service&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; running
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;watch&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;: ntpdate
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;En este caso, el estado creado es: el paquete &lt;code&gt;ntp&lt;/code&gt; cuyo paquete debian se llama &lt;code&gt;ntpdate&lt;/code&gt; debe estar instalado. Además, hay un servicio que debe estar &lt;code&gt;running&lt;/code&gt; y se debe reiniciar cada vez que cambie el paquete &lt;code&gt;ntpdate&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Veremos que este mismo esquema se repite para cada uno de nuestros módulos.&lt;/p&gt;
+&lt;h2 id=&#34;php&#34;&gt;php&lt;/h2&gt;
+&lt;p&gt;Archivo: &lt;strong&gt;salt/roots/salt/php/init.sls&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;php5&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; installed
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;php5&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;mysql&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; installed
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;/etc/&lt;/span&gt;php5&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;apache2&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;php&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;ini:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;  file&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;replace:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;pattern&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;;\s*extension=msql.so&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;repl&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;extension=msql.so&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;  require:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;: php5&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;mysql
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;La primera parte ya la hemos visto: se asegura de que tanto los paquetes &lt;code&gt;php5&lt;/code&gt; como &lt;code&gt;php5-mysql&lt;/code&gt; estén instalados. El último apartado lo que hace es asegurarse de que esté habilitada la extensión de mysql en apache. Para ello reemplaza la extensión comentada por la no comentada. Es un poco &lt;em&gt;tricky&lt;/em&gt;, pero funcional.&lt;/p&gt;
+&lt;h2 id=&#34;apache&#34;&gt;apache&lt;/h2&gt;
+&lt;p&gt;Vamos con el archivo &lt;strong&gt;salt/roots/salt/apache/init.sls&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;apache&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; name: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;apache2&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; installed
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;service&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; name: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;apache2&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; running
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;watch&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;: apache2
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;libapache2&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;mod&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;php5&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; installed
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;  require:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;: apache2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Que no contiene nada que no hayamos visto ya.&lt;/p&gt;
+&lt;h2 id=&#34;mysql&#34;&gt;mysql&lt;/h2&gt;
+&lt;p&gt;He dividido mysql en dos partes: una que instalará el cliente y otra el servidor. Por eso el módulo no tiene el archivo &lt;strong&gt;init.sls&lt;/strong&gt;, sino dos:&lt;/p&gt;
+&lt;h3 id=&#34;mysqlclient&#34;&gt;mysql.client&lt;/h3&gt;
+&lt;p&gt;El archivo &lt;strong&gt;salt/roots/salt/mysql/client.sls&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;mysql&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;client&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; installed
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Se asegura de que el cliente mysql esté instalado.&lt;/p&gt;
+&lt;h3 id=&#34;mysqlserver&#34;&gt;mysql.server&lt;/h3&gt;
+&lt;p&gt;El archivo &lt;strong&gt;salt/roots/salt/mysql/server.sls&lt;/strong&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;mysql&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;server&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; installed
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;pkgs&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; mysql&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;server
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;service&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; running
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; name: mysql
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;enable&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;True&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; require:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;: mysql&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;server
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Taken from https://github.com/saltstack/salt/issues/5918&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;set&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;mysql&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;root&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;password&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;  cmd&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;run:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; name: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;echo &amp;#34;update user set password=PASSWORD(&amp;#39;&amp;#39;secret&amp;#39;&amp;#39;) where User=&amp;#39;&amp;#39;root&amp;#39;&amp;#39;;flush privileges;&amp;#34; | /usr/bin/env HOME=/ mysql -uroot mysql&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;onlyif&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;echo | /usr/bin/env HOME=/ mysql -u root&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; require:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;service&lt;/span&gt;: mysql&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;server
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;pkg&lt;/span&gt;: mysql&lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt;client
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Es, quizá, el módulo más complejo de todos. La primera parte ya la hemos visto. La sección &lt;code&gt;set-mysql-root-password&lt;/code&gt; lo que hace es establecer la password de root del servidor de mysql. Es muy &lt;em&gt;tricky&lt;/em&gt;, pero no he encontrado nada más sencillo.&lt;/p&gt;
+&lt;h2 id=&#34;php-example&#34;&gt;php-example&lt;/h2&gt;
+&lt;p&gt;Finalmente, descargamos nuestra página web. Es la misma que usé en el artículo &lt;a href=&#34;http://example.org/blog/lamp-con-puppet/&#34;&gt;LAMP con Puppet&lt;/a&gt; (archivo &lt;strong&gt;salt/roots/salt/mysql/client.sls&lt;/strong&gt;):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;https&lt;/span&gt;:&lt;span style=&#34;color:#e6db74&#34;&gt;//&lt;/span&gt;github&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;com&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;magmax&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;small_php_example&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;git:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;  git&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;latest:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;-&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;target&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;/var/&lt;/span&gt;www&lt;span style=&#34;color:#f92672&#34;&gt;/&lt;/span&gt;example
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Debo decir que esto es lo que me parece más impresionante de todo el artículo: la sencillez para trabajar con &lt;a href=&#34;http://git-scm.com/&#34;&gt;Git&lt;/a&gt;. Estas tres líneas se descargan el repositorio y comprueban que esté actualizado. Así, sin más.&lt;/p&gt;
+&lt;h1 id=&#34;al-lío&#34;&gt;Al lío&lt;/h1&gt;
+&lt;p&gt;Bien, ahora es cuando lanzamos todo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ vagrant up example
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y de nuevo podéis conectaros a &lt;a href=&#34;http://localhost:10080/example&#34;&gt;http://localhost:10080/example&lt;/a&gt;, donde os está esperando la lista de tablas de la base de datos &lt;em&gt;mysql&lt;/em&gt;, servida con PHP.&lt;/p&gt;
+&lt;h2 id=&#34;bug-bug&#34;&gt;¡Bug! ¡Bug!&lt;/h2&gt;
+&lt;p&gt;Supongo que lo corregirán, pero debo advertiros de un bug actual: El provisionamiento &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt; en &lt;a href=&#34;http://www.vagrantup.com/&#34; title=&#34;Web oficial de Vagrant&#34;&gt;Vagrant&lt;/a&gt; está un poco verde, y no os mostrará el resultado, ni cuando sea un error. Esto me trajo de cabeza bastante tiempo. La solución es provisionar desde la propia máquina:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;salt-example# salt-call --local state.highstate -l info
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;conclusiones&#34;&gt;Conclusiones&lt;/h1&gt;
+&lt;p&gt;No puedo evitar comparar &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt; con &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt;. Al fin y al cabo he estado usando &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt; desde hace más de dos años. La evolución que he visto en &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt; ha sido desde módulos totalmente específicos de nuestra empresa a módulos genéricos que se pueden cargar con &lt;a href=&#34;https://github.com/rodjek/librarian-puppet&#34; title=&#34;Proyecto Librarian-Puppet&#34;&gt;librarian-puppet&lt;/a&gt;, posibilitando configurar &lt;a href=&#34;https://projects.puppetlabs.com/projects/hiera&#34;&gt;hiera&lt;/a&gt; y, así, configurarlo todo mediante &lt;a href=&#34;http://www.yaml.org/&#34;&gt;Yaml&lt;/a&gt; (¿os suena?).&lt;/p&gt;
+&lt;p&gt;Hay un montón de módulos para &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt;. De hecho, hay proyectos para crear módulos para &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt;, como &lt;a href=&#34;https://github.com/example42&#34;&gt;example42&lt;/a&gt;. En &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt; hay muchísimos menos, pero la verdad es que no le hacen falta. Se han centrado en lo importante, aunque sí hecho de menos algunas cosas, como configurar &lt;strong&gt;vhosts&lt;/strong&gt; de &lt;a href=&#34;http://httpd.apache.org/&#34; title=&#34;Apache HTTP server&#34;&gt;Apache&lt;/a&gt; directamente por configuración, en lugar de tener que proporcionar archivos. Pero supongo que estos detalles ya se irán completando.&lt;/p&gt;
+&lt;p&gt;También hay que ver otra diferencia: &lt;a href=&#34;https://www.ruby-lang.org&#34;&gt;Ruby&lt;/a&gt; vs &lt;a href=&#34;http://python.org&#34;&gt;Python&lt;/a&gt;. Como bien saben todos los lectores del blog, yo soy más de &lt;a href=&#34;http://python.org&#34;&gt;Python&lt;/a&gt;. De todas maneras, en &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt; se utiliza un DSL bastante interesante, y se ofrece la posibilidad de crear los módulos en &lt;a href=&#34;https://www.ruby-lang.org&#34;&gt;Ruby&lt;/a&gt;. En &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt;, que yo sepa, se crean en &lt;a href=&#34;http://python.org&#34;&gt;Python&lt;/a&gt;. Pero me gustaría que juzgáseis vosotros mismos, comparando dos módulos similares: el &lt;a href=&#34;https://github.com/example42/puppet-git/tree/master/manifests&#34;&gt;módulo de Git para Puppet&lt;/a&gt; y el &lt;a href=&#34;https://github.com/saltstack/salt/blob/develop/salt/modules/git.py&#34;&gt;módulo de Git para Salt&lt;/a&gt;. He elegido éste porque es bastante similar.&lt;/p&gt;
+&lt;p&gt;Hay otra diferencia más. Quizá la más importante.&lt;/p&gt;
+&lt;p&gt;En &lt;a href=&#34;http://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt; construyeron un sistema para comunicar máquinas y ejecutar comandos simultáneamente en todas ellas. Una especie de &lt;strong&gt;shell&lt;/strong&gt; múltiple remota. Sobre esta arquitectura construyeron el equivalente a &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt; que permite hacer lo que se cuenta en este artículo. Esto permite algo que en &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt; han tenido que implementar aparte, que sería &lt;a href=&#34;http://puppetlabs.com/mcollective&#34;&gt;MCollective&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Siento no poder comparar cosas como la velocidad, eficiencia, memoria, seguridad, &amp;hellip; En mi opinión no hay una gran diferencia en nada de todo esto, pero no tengo datos. Sinceramente creo que no es lo más importante, ya que ambos necesitarán realizar muchas operaciones de disco para comprobar el estado actual de la máquina, y probablemente esta operación sea similar y se lleve la mayor parte del tiempo y eficiencia.&lt;/p&gt;
+&lt;p&gt;Personalmente he decidido usarlo para mis máquinas en casa. La decisión viene por dos razones: porque en la empresa ya estoy usando &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt; y así aprendo algo nuevo, y porque es &lt;a href=&#34;http://python.org&#34;&gt;Python&lt;/a&gt;. Espero no equivocarme.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>LAMP con Puppet</title>
+      <link>http://example.org/blog/lamp-con-puppet/</link>
+      <pubDate>Fri, 01 Nov 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/lamp-con-puppet/</guid>
+      <description>
+        
+          &lt;p&gt;En esta ocasión se me ha ido la pelota. En un solo artículo vamos a:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;crear una máquina virtual con &lt;a href=&#34;http://www.vagrantup.com/&#34; title=&#34;Web oficial de Vagrant&#34;&gt;Vagrant&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;configurar &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;configurar &lt;a href=&#34;https://github.com/rodjek/librarian-puppet&#34; title=&#34;Proyecto Librarian-Puppet&#34;&gt;librarian-puppet&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;instalar todo un entorno &lt;a href=&#34;http://es.wikipedia.org/wiki/LAMP&#34;&gt;LAMP&lt;/a&gt; (Linux + Apache + MySQL + Php)&lt;/li&gt;
+&lt;li&gt;descargarnos la web de un repositorio remoto &lt;a href=&#34;http://git-scm.com/&#34;&gt;Git&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;servir su contenido desde el servidor Apache.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Y sabéis que mis artículos se leen en unos 10 minutos.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/puppet.png&#34;
+         alt=&#34;Puppet&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;jerarquía&#34;&gt;Jerarquía&lt;/h2&gt;
+&lt;p&gt;Ésta es la jerarquía de archivos que se van a emplear. Así no tendréis que romperos la cabeza más adelante:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;.
+├── bootstrap.sh
+├── manifests/
+│   └── site.pp
+├── modules/
+├── puppet.conf
+├── Puppetfile
+├── Puppetfile.lock
+└── Vagrantfile
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Los directorios son los que tienen la barra al final. Creadlos para evitar problemas posteriores.&lt;/p&gt;
+&lt;h2 id=&#34;vagrant&#34;&gt;Vagrant&lt;/h2&gt;
+&lt;p&gt;Lo primero es que no queremos romper nuestra máquina. Así que vamos a usar una máquina virtual. En esta ocasión será una &lt;a href=&#34;http://www.debian.org/releases/stable/&#34; title=&#34;Debian 7.2 &#39;Wheezy&#39; es la versión estable a día de hoy&#34;&gt;Debian Wheezy&lt;/a&gt; de 64 bytes. Pero no os aburriré con tonterías:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# -*- coding:utf-8; tab-width:4; mode:ruby -*-&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# vi: set ft=ruby :&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# filename: Vagrantfile&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;Vagrant&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;::&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;Config&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;run &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;config&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;  config&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;define &lt;span style=&#34;color:#e6db74&#34;&gt;:example&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;c&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# VM creation&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    c&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;box &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;wheeze64&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    c&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;box_url &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;http://puppet-vagrant-boxes.puppetlabs.com/debian-70rc1-x64-vbox4210.box&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    c&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;host_name &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;vagrant-example&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Manual provisioning&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;    c&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;provision &lt;span style=&#34;color:#e6db74&#34;&gt;:shell&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;:path&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;bootstrap.sh&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# Port forwarding&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;    c&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;forward_port &lt;span style=&#34;color:#ae81ff&#34;&gt;80&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;9090&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;	&lt;span style=&#34;color:#75715e&#34;&gt;# Puppet configuration&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;    c&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;vm&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;provision &lt;span style=&#34;color:#e6db74&#34;&gt;:puppet&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;puppet&lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;      puppet&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;manifests_path &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;manifests&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;      puppet&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;module_path &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;modules&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;      puppet&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;manifest_file &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;site.pp&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;25&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;26&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;27&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Hay mucho que explicar aquí, pero voy a ser rápido. A parte de toda la parafernalia Ruby que requiere este archivo de configuración, vemos que estoy creando una máquina virtual llamada &lt;em&gt;&amp;ldquo;wheeze64&amp;rdquo;&lt;/em&gt; y que me la voy a descargar de esa URL. Espero que siga siendo válida, y si no, podéis usar cualquier otra &lt;a href=&#34;http://www.vagrantbox.es/&#34; title=&#34;Lista de Boxes para Vagrant&#34;&gt;máquina virtual de la lista&lt;/a&gt;. Además la he bautizado como &lt;em&gt;&amp;ldquo;vagrant-example&amp;rdquo;&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Lo primero que hago es un provisionamiento inicial mediante un script mío que luego veremos. Después me aseguro de que voy a poder acceder a mi servidor web, que estará escuchando en el puerto 80 de la VM, y que estará mapeado con el puerto 9090 de la máquina host.&lt;/p&gt;
+&lt;p&gt;Finalmente rollos de configuración típicos de &lt;a href=&#34;http://www.vagrantup.com/&#34; title=&#34;Web oficial de Vagrant&#34;&gt;Vagrant&lt;/a&gt; para que funcione bien con &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;bootstrap&#34;&gt;Bootstrap&lt;/h3&gt;
+&lt;p&gt;Mi pequeño script de provisionamiento inicial:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/bin/bash
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# filename: bootstrap.sh&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; install &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;		package&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;$1
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;		min_version&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;$2
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;		version&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;apt-cache policy $package | grep &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;\*\*\*&amp;#39;&lt;/span&gt; | cut -f3 -d&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39; &amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;		dpkg -l $package &amp;gt; /dev/null
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;		installed&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;$?
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;		dpkg --compare-versions $min_version lt $version
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;		updated&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;$?
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;		echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$package&lt;span style=&#34;color:#e6db74&#34;&gt; version: &lt;/span&gt;$version&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;		&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt; $installed !&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;||&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt; $updated !&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;				apt-get install -y $package
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;		&lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; ! &lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;grep &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;deb http://ftp.es.debian.org/debian unstable main contrib non-free&amp;#34;&lt;/span&gt; /etc/apt/sources.list&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;				echo deb http://ftp.es.debian.org/debian unstable main contrib non-free
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;				echo deb http://ftp.es.debian.org/debian testing main contrib non-free
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24&lt;/span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &amp;gt; /etc/apt/sources.list
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;25&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;26&lt;/span&gt;		apt-get update
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;27&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;28&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;29&lt;/span&gt;install facter 1.6
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;30&lt;/span&gt;install puppet 3.3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Básicamente: le meto una configuración de APT fija (así dará igual qué VM hayais elegido) y me aseguro de tener dos cosas instaladas: facter y puppet (en una versión superior a la 3.3). Todo esto ocurrirá en la VM, por lo que no tenéis que temer por vuestras máquinas reales. Estos paquetes me hacen falta para poder ejecutar &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt;, así que en una máquina real tendría que instalarlos a mano.&lt;/p&gt;
+&lt;h2 id=&#34;puppet&#34;&gt;Puppet&lt;/h2&gt;
+&lt;p&gt;Vamos con puppet, aunque no estoy seguro de que este archivo haga falta:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# filename: puppet.conf&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;main&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;logdir&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/var/log/puppet
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;vardir&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/var/lib/puppet
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;ssldir&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/var/lib/puppet/ssl
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;rundir&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/var/run/puppet
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;factpath&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;$vardir/lib/facter
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;templatedir&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;$confdir/templates
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;prerun_command&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/etc/puppet/etckeeper-commit-pre
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;postrun_command&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;/etc/puppet/etckeeper-commit-post
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;modulepath &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; /etc/puppet/modules:/usr/share/puppet/modules:modules
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;storeconfigs &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; true
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;dbadapter &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; sqlite3
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;dblocation &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; storeconfigs.sqlite
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y ahora lo que sí hace falta, la configuración de los nodos:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ruby&#34; data-lang=&#34;ruby&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# filename: site.pp&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;File&lt;/span&gt; {
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;  owner &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; root,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;  group &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; root,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;  mode &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;644&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;}
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;node &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;example&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;vagrant-example&amp;#39;&lt;/span&gt; {
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;include&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;ntp&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;include&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;logrotate&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;include&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;apache&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; { &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;mysql&amp;#34;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;    root_password &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;secret&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;  }
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;include&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;php&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;include&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;git&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;  logrotate&lt;span style=&#34;color:#f92672&#34;&gt;::&lt;/span&gt;rule { &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;messages&amp;#39;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;    path         &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;/var/log/messages&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;    copytruncate &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;    missingok    &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;    rotate_every &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;day&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24&lt;/span&gt;    rotate       &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;7&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;25&lt;/span&gt;    compress     &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;26&lt;/span&gt;    ifempty      &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;27&lt;/span&gt;  }
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;28&lt;/span&gt;  php&lt;span style=&#34;color:#f92672&#34;&gt;::&lt;/span&gt;module { &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;mysql&amp;#34;&lt;/span&gt;: }
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;29&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;30&lt;/span&gt;  git&lt;span style=&#34;color:#f92672&#34;&gt;::&lt;/span&gt;reposync {&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;web&amp;#39;&lt;/span&gt;: source_url &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://github.com/magmax/small_php_example.git&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;31&lt;/span&gt;                        destination_dir &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;/var/www/example&amp;#39;&lt;/span&gt;}
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;32&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;33&lt;/span&gt;  apache&lt;span style=&#34;color:#f92672&#34;&gt;::&lt;/span&gt;vhost { &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;default&amp;#39;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;34&lt;/span&gt;    docroot  &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;/var/www/example&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;35&lt;/span&gt;    priority &lt;span style=&#34;color:#f92672&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;000&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;36&lt;/span&gt;  }
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;37&lt;/span&gt;}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Aquí sí que hay telita. Primero establezco la configuración por defecto para los archivos. No es necesario, pero lo he puesto porque siempre lo hago. Luego configuro dos nodos: &lt;em&gt;&amp;lsquo;example&amp;rsquo;&lt;/em&gt; y &lt;em&gt;&amp;lsquo;vagrant-example&amp;rsquo;&lt;/em&gt;. Eso es porque hay dos máquinas que tendrán esta configuración: la real y la que vamos a usar nosotros, que sería la de &lt;a href=&#34;http://www.vagrantup.com/&#34; title=&#34;Web oficial de Vagrant&#34;&gt;Vagrant&lt;/a&gt;. Así la misma configuración de &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt; os vale para ambas y podéis guarrear en la VM sin romper el servidor.&lt;/p&gt;
+&lt;p&gt;Luego viene todo lo que instalo: [ntp], &lt;a href=&#34;http://linuxcommand.org/man_pages/logrotate8.html&#34; title=&#34;Man page de logrotate&#34;&gt;logrotate&lt;/a&gt;, &lt;a href=&#34;http://httpd.apache.org/&#34; title=&#34;Apache HTTP server&#34;&gt;Apache&lt;/a&gt;, &lt;a href=&#34;http://www.mysql.com/&#34; title=&#34;Web de MySQL&#34;&gt;MySQL&lt;/a&gt; (con la contraseña &amp;lsquo;secret&amp;rsquo;), &lt;a href=&#34;http://php.net/&#34; title=&#34;Página de PHP&#34;&gt;Php&lt;/a&gt; y &lt;a href=&#34;http://git-scm.com/&#34;&gt;Git&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Finalmente un poco de configuración básica para &lt;a href=&#34;http://linuxcommand.org/man_pages/logrotate8.html&#34; title=&#34;Man page de logrotate&#34;&gt;logrotate&lt;/a&gt; a modo de ejemplo, indico que quiero usar el módulo de &lt;a href=&#34;http://php.net/&#34; title=&#34;Página de PHP&#34;&gt;Php&lt;/a&gt; para &lt;a href=&#34;http://www.mysql.com/&#34; title=&#34;Web de MySQL&#34;&gt;MySQL&lt;/a&gt;, llamo a una macro para instalar una pequeña página de ejemplo que mostrará todas las tablas de la base de datos &lt;em&gt;&amp;ldquo;mysql&amp;rdquo;&lt;/em&gt; desde PHP y configuro &lt;a href=&#34;http://httpd.apache.org/&#34; title=&#34;Apache HTTP server&#34;&gt;Apache&lt;/a&gt; para que sirva esa configuración. &lt;strong&gt;Todo esto en menos de 20 líneas de código&lt;/strong&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;librarian&#34;&gt;Librarian&lt;/h3&gt;
+&lt;p&gt;Bueno, pero&amp;hellip; ¿de dónde saco los módulos de puppet que necesito?&lt;/p&gt;
+&lt;p&gt;Para eso está &lt;a href=&#34;https://github.com/rodjek/librarian-puppet&#34; title=&#34;Proyecto Librarian-Puppet&#34;&gt;librarian-puppet&lt;/a&gt;, y aquí está su configuración:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-puppet&#34; data-lang=&#34;puppet&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# filename: Puppetfile&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;forge&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;http://forge.puppetlabs.com&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;mod&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;example42/puppi&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;mod&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;example42/ntp&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;mod&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;example42/git&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;mod&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;example42/mysql&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;mod&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;example42/apache&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;mod&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;example42/logrotate&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;mod&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;example42/php&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;En dos palabras: configuro la fuente de módulos y los que quiero seleccionar.&lt;/p&gt;
+&lt;p&gt;También se habrá creado el archivo &lt;em&gt;Puppetfile.lock&lt;/em&gt;, que contiene las versiones de los módulos que se instalaron. Si metéis esta configuración en un repositorio (cosa que deberíais hacer si lo vais a usar de verdad), recomiendo subirlo también junto con &lt;em&gt;Puppetfile&lt;/em&gt; a pesar de ser generado, para evitar disgustos si éstas cambian. Si os cargáis el directorio &lt;em&gt;modules&lt;/em&gt;, &lt;a href=&#34;https://github.com/rodjek/librarian-puppet&#34; title=&#34;Proyecto Librarian-Puppet&#34;&gt;librarian-puppet&lt;/a&gt; tratará de reinstalar las versiones que tiene ese archivo.&lt;/p&gt;
+&lt;h2 id=&#34;al-lío&#34;&gt;Al lío&lt;/h2&gt;
+&lt;p&gt;Pues ya lo tenemos todo. Ahora viene lo mejor. Queremos lanzar la máquina virtual y que se configure sola, pero no tenemos los módulos de &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt;. Así que lo primero es traérselos:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ librarian-puppet install
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y con eso ya está todo. Podréis verlos en el directorio &lt;em&gt;modules&lt;/em&gt;. Y ahora la magia: Descargamos, instalamos, proveemos y levantamos la máquina virtual:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ vagrant up example
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y podéis conectaros a &lt;a href=&#34;http://localhost:9090/example&#34;&gt;http://localhost:9090/example&lt;/a&gt;, donde os está esperando la lista de tablas de la base de datos &lt;em&gt;mysql&lt;/em&gt;, servida con PHP.&lt;/p&gt;
+&lt;p&gt;También podéis entrar en vuestra VM con:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ vagrant ssh example
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;example $ sudo su
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;example &lt;span style=&#34;color:#75715e&#34;&gt;#&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Simplemente &lt;strong&gt;Acojonante&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;más-ventajas&#34;&gt;Más ventajas&lt;/h2&gt;
+&lt;p&gt;Bueno, pues eso no es todo. Aún hay más.&lt;/p&gt;
+&lt;p&gt;Si la rama principal del repositorio cambiara, la siguiente ejecución de &lt;a href=&#34;http://puppetlabs.com/&#34; title=&#34;Web oficial de Puppet&#34;&gt;Puppet&lt;/a&gt; la actualizaría. Eso facilita bastante el despliegue y la gestión de un sistema de &lt;a href=&#34;http://es.wikipedia.org/wiki/Integraci%C3%B3n_continua&#34;&gt;integración contínua&lt;/a&gt;, ¿verdad?&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

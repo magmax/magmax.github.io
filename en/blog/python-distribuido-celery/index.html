@@ -1,201 +1,240 @@
+
 <!DOCTYPE html>
-<html prefix="
-og: https://ogp.me/ns#
-article: https://ogp.me/ns/article#
-" lang="en">
-<head>
+<html lang="en" data-figures="" class="page">
+  <head>
+<title>Distributed Python: Celery | MagMax&#39;s blog</title>
 <meta charset="utf-8">
-<meta name="description" content="Python service oriented by using message queues, using Celery">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Cache-Control" content="max-age=43200">
-<meta http-equiv="ETag" content="b'43516d322f35b42f7136bc9e4ca4c9c80cc1466c'">
-<title>Distributed Python: Celery | MagMax Blog</title>
-<link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/rst.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/code.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/colorbox.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/theme.css" rel="stylesheet" type="text/css">
-<link href="/assets/css/custom.css" rel="stylesheet" type="text/css">
-<link rel="alternate" type="application/rss+xml" title="RSS" href="http://feeds.feedburner.com/magmax">
-<link rel="canonical" href="http://magmax.org/en/blog/python-distribuido-celery/">
-<link rel="icon" href="/favicon.png" sizes="128x128">
-<link rel="icon" href="/favicon_330.png" sizes="330x330">
-<link rel="icon" href="/favicon.ico" sizes="16x16">
-<meta name="description" itemprop="description" content="Python service oriented by using message queues, using Celery">
-<meta name="author" content="Miguel Ángel García">
-<link rel="prev" href="/en/blog/gashlycode-tinies/" title="Gashlycode Tinies" type="text/html">
-<link rel="next" href="/en/blog/is-code-coverage-irrelevant/" title="Is Code Coverage Irrelevant?" type="text/html">
-<meta property="og:site_name" content="MagMax Blog">
-<meta property="og:title" content="Distributed Python: Celery">
-<meta property="og:url" content="http://magmax.org/en/blog/python-distribuido-celery/">
-<meta property="og:description" content="Python service oriented by using message queues, using Celery">
+<meta name="generator" content="Hugo 0.79.1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta property="og:locale" content="en" />
+
+<meta property="og:locale:alternate" content="es" />
+
 <meta property="og:type" content="article">
-<meta property="article:author" content="Miguel Ángel García">
-<meta property="article:published_time" content="2015-03-20T00:00:00+00:00">
-<meta property="article:updated" content="2015-03-20T00:00:00+00:00">
-<meta property="article:tag" content="celery">
-<meta property="article:tag" content="python">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:site" content="@magmax_en">
-<meta name="twitter:creator" content="@magmax">
-<meta name="twitter:title" content="MagMax Blog">
-<meta name="twitter:description" content="Python service oriented by using message queues, using Celery">
-<meta name="twitter:url" content="http://magmax.org//en/blog/python-distribuido-celery/">
-<meta name="twitter:image" content="http://magmax.org/favicon.png">
-<link rel="alternate" hreflang="es" href="/blog/python-distribuido-celery/">
-</head>
-<body>
-<a href="#content" class="sr-only sr-only-focusable">Skip to main content</a>
+<meta name="description" content="Python service oriented by using message queues, using Celery">
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:creator" content="">
+<meta name="twitter:title" content="Distributed Python: Celery" />
+<meta property="og:url" content="http://example.org/en/blog/python-distribuido-celery/" />
+<meta property="og:title" content="Distributed Python: Celery" />
+<meta property="og:description" content="Python service oriented by using message queues, using Celery" />
+<meta property="og:image" content="http://example.org/" />
+<link rel="apple-touch-icon" sizes="180x180" href='http://example.org/icons/apple-touch-icon.png'>
+<link rel="icon" type="image/png" sizes="32x32" href='http://example.org/icons/favicon-32x32.png'>
+<link rel="manifest" href='http://example.org/icons/site.webmanifest'>
+<link rel="mask-icon" href='http://example.org/safari-pinned-tab.svg' color="#002538">
+<meta name="msapplication-TileColor" content="#002538">
+<meta name="theme-color" content="#002538">
 
-<!-- Menubar -->
+<link rel="canonical" href="http://example.org/en/blog/python-distribuido-celery/">
 
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"><div class="container">
-<!-- This keeps the margins nice -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="http://magmax.org/en/">
+    
 
-        <span id="blog-title">MagMax Blog</span>
-      </a>
-    </div>
-<!-- /.navbar-header -->
-    <div class="collapse navbar-collapse navbar-ex1-collapse">
-      <ul class="nav navbar-nav">
-<li>
-<a href="/">Home</a>
-                </li>
-<li>
-<a href="/archive.html">Archives</a>
-                </li>
-<li>
-<a href="/categories">Tags</a>
-                </li>
-<li>
-<a href="/projects">Projects</a>
-                </li>
-<li>
-<a href="/news">External Posts</a>
+    
+    
+    <link rel="preload" href="http://example.org/css/styles.37cea41fe2c1b43e2a17095e01eb999e8701c9f0ba06d4df0a9db514a215e26dfbdb8a606a36c9d3b54bb1c09fd4a9ce41ee8f6788a8c6b17067830f34396135.css" integrity = "sha512-N86kH&#43;LBtD4qFwleAeuZnocByfC6BtTfCp21FKIV4m3724pgajbJ07VLscCf1KnOQe6PZ4ioxrFwZ4MPNDlhNQ==" as="style" crossorigin="anonymous">
+    <link rel="preload" href="http://example.org/js/bundle.min.d47d3d6894e66aa67f2514c171756283d3e8847b56f8f158bdd8430843da5f5af874c7a89a316c6743a845399bdb89649685154dc88b7e9bff1a155ca9e5108a.js" as="script" integrity=
+    "sha512-1H09aJTmaqZ/JRTBcXVig9PohHtW&#43;PFYvdhDCEPaX1r4dMeomjFsZ0OoRTmb24lkloUVTciLfpv/GhVcqeUQig==" crossorigin="anonymous">
 
+    
+    <link rel="stylesheet" type="text/css" href="http://example.org/css/styles.37cea41fe2c1b43e2a17095e01eb999e8701c9f0ba06d4df0a9db514a215e26dfbdb8a606a36c9d3b54bb1c09fd4a9ce41ee8f6788a8c6b17067830f34396135.css" integrity="sha512-N86kH&#43;LBtD4qFwleAeuZnocByfC6BtTfCp21FKIV4m3724pgajbJ07VLscCf1KnOQe6PZ4ioxrFwZ4MPNDlhNQ==" crossorigin="anonymous">
+    
+  </head>
+  
+  
+    
+  
+  <body data-code="20" data-lines="false" id="documentTop">
+
+<header class="nav_header" >
+  <nav class="nav">
+    <a href='http://example.org/en/' class="nav_brand nav_item">
+        MagMax&#39;s blog
+      <div class="nav_close">
+        <div>
+          <svg class="icon">
+  <use xlink:href="#open-menu"></use>
+</svg>
+          <svg class="icon">
+  <use xlink:href="#closeme"></use>
+</svg>
+        </div>
+      </div>
+    </a>
+    <div class='nav_body nav_body_'>
+      
+      
+      
         
-      </li>
-</ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-<form class="navbar-form navbar-left" role="search" action="http://google.com/search" method="get">
-<div class="form-group">
-<input type="hidden" name="sitesearch" value="magmax.org"><input type="text" name="q" class="form-control" placeholder="Search / Buscar">
-</div>
-</form>
-</li>
 
-        <li style="margin-left:0">
-          <a href="http://feeds.feedburner.com/magmax">
-            <img src="/assets/images/rss.png" style="width:22px;height:22px"></a>
-        </li>
-
-        
-      </ul>
-</div>
-<!-- /.navbar-collapse -->
+  <div class="nav_parent">
+    <a href="http://example.org/en/" class="nav_item">Home </a>
   </div>
-<!-- /.container -->
-</nav><!-- End of Menubar --><div class="container" id="content" role="main">
-  <div class="body-content">
-    <div class="row">
-      <div class="page-content col-md-9">
-        
-        <article class="post-text h-entry hentry postpage" itemscope="itemscope" itemtype="https://schema.org/Article"><header><h1 class="p-name entry-title" itemprop="headline name"><a href="/en/blog/python-distribuido-celery/" class="u-url">Distributed Python: Celery</a></h1>
-            <div class="metadata text-muted">
-              <i class="glyphicon glyphicon-calendar"></i>
-              <p class="dateline">
-                <time class="published dt-published updated dt-updated" datetime="2015-03-20T00:00:00+00:00" title="2015-03-20">2015-03-20</time></p>
-              <p class="commentline">            <a href="/en/blog/python-distribuido-celery/#disqus_thread" data-disqus-identifier="cache/posts/python-distribuido-celery.html">Comments</a>
+  <div class="nav_parent">
+    <a href="http://example.org/es" class="nav_item">Español </a>
+  </div>
+      
+      <div class="nav_parent">
+        <a href="#" class="nav_item"></a>
+        <div class="nav_sub">
+          <span class="nav_child"></span>
+          
+          <a href="http://example.org/en/" class="nav_child nav_item">English</a>
+          
+          <a href="http://example.org/" class="nav_child nav_item">Español</a>
+          
+        </div>
+      </div>
+      
+<div class='follow'>
+    
+    
+  <a href="https://github.com/magmax/">
+    <svg class="icon">
+  <use xlink:href="#github"></use>
+</svg>
+  </a>
+    
+    
+  <a href="https://twitter.com/magmax_en">
+    <svg class="icon">
+  <use xlink:href="#twitter"></use>
+</svg>
+  </a>
+    
+    
+  <a href="https://www.linkedin.com/in/miguelangelgarciamartinez/">
+    <svg class="icon">
+  <use xlink:href="#linkedin"></use>
+</svg>
+  </a>
+    
+    
+    
+  <a href="http://example.org/en/index.xml">
+    <svg class="icon">
+  <use xlink:href="#rss"></use>
+</svg>
+  </a>
+<div class="color_mode">
+  <input type="checkbox" class="color_choice" id="mode">
+</div>
 
-</p>
-              <address class="vcard author"><a class="url fn" href="https://magmax.org">Miguel Ángel García</a></address>
-            </div>
-            <br><div class="metadata posttranslations translations">
-              <h3 class="posttranslations-intro">Also available in:</h3>
-              <p><a href="/blog/python-distribuido-celery/" rel="alternate" hreflang="es"><img src="/images/es.png"> Español</a></p>
-            </div>
-          </header><div class="e-content entry-content" itemprop="articleBody text">
-            <div>
-<p>Nowadays, <abbr title="Service Oriented Architectures">SOA</abbr> architectures is in fashion. These architectures use little and very specific services, so they interact each other.</p>
-<p>In this post I'll show how to use <a class="reference external" href="http://www.celeryproject.org/">Celery</a> in order to create a SOA architecture.</p>
-<!-- TEASER_END -->
-<div class="section" id="about-celery">
-<h2>About Celery</h2>
-<p><a class="reference external" href="http://www.celeryproject.org/">Celery</a> is not a communication system, because it uses <a class="reference external" href="https://www.rabbitmq.com">RabbitMQ</a>, <a class="reference external" href="http://redis.io/">Redis</a>, etc. as communication system. The same applies to argue it is not a message queue system. Neither it is a protocol, because it uses <a class="reference external" href="https://www.amqp.org/">AMQP</a>. Neither it is an abstraction over all these, because <a class="reference external" href="https://kombu.readthedocs.org/en/latest/">Kombu</a> does that work, the communications library it uses under the hood.</p>
-<p><a class="reference external" href="http://www.celeryproject.org/">Celery</a> is a set ot tools to work easily with several services, something like syntactic sugar. It allows to launch services as <strong>tasks</strong>.</p>
 </div>
-<div class="section" id="how-to-install-it">
-<h2>How to install it</h2>
-<p>It is very easy to install; with <cite>pip</cite>:</p>
-<pre class="code bash"><a name="rest_code_2031db08cb09468b8dc46bea96a1cb3c-1"></a>pip install celery
-</pre>
-<p>or <cite>apt</cite>:</p>
-<pre class="code bash"><a name="rest_code_3a83a7a7fbe54213917f76cc92241f60-1"></a>apt-get install python-celery
-</pre>
-<p>The problem here is we need a <strong>Broker</strong>. The <strong>Broker</strong> is the way to transport messages from a service to another. In this case, we need a message queue.</p>
-<p>We will use two of them as example: <a class="reference external" href="https://www.rabbitmq.com">RabbitMQ</a> and <a class="reference external" href="http://redis.io/">Redis</a>. The first one is somehow... complicated, but very interesting if you already know and install the <a class="reference external" href="https://www.rabbitmq.com/management.html">management plugin</a>. The second one is easier to be installed, but more difficult to see what is happening internally. To use <a class="reference external" href="http://redis.io/">Redis</a> you will also require the library; with <cite>pip</cite>:</p>
-<pre class="code bash"><a name="rest_code_607e92c7a07645c78052cbb9cfc8d979-1"></a>pip install redis
-</pre>
-<p>or with <cite>apt</cite>:</p>
-<pre class="code bash"><a name="rest_code_36752b1d6fb141999343fca14b8e3a53-1"></a>apt-get install python-redis
-</pre>
+
+    </div>
+  </nav>
+</header>
+
+    <main>
+  
+<div class="grid-inverse wrap content">
+  <article class="post_content">
+    <h1 class="post_title">Distributed Python: Celery</h1><div class="post_meta">
+  
+    <svg class="icon">
+  <use xlink:href="#calendar"></use>
+</svg>
+    <span class="post_date">
+      Aug 22, 2015</span>
+      <a href='http://example.org/en/tags/python' class="post_tag button button_translucent">python
+      </a>
+      <a href='http://example.org/en/tags/celery' class="post_tag button button_translucent">celery
+      </a>
 </div>
-<div class="section" id="example">
-<h2>Example</h2>
-<div class="section" id="creating-services">
-<h3>Creating services</h3>
-<p>Let's start creating a little service to multiply two numbers:</p>
-<p><a class="reference external" href="/listings/python-celery/001/tasks.py.html">python-celery/001/tasks.py</a></p>
-<pre class="code python"><a name="rest_code_05640e006c414b3fbf64ea68a786e9c4-1"></a><span class="c1"># Celery service example: task to multiply two numbers</span>
-<a name="rest_code_05640e006c414b3fbf64ea68a786e9c4-2"></a><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
-<a name="rest_code_05640e006c414b3fbf64ea68a786e9c4-3"></a>
-<a name="rest_code_05640e006c414b3fbf64ea68a786e9c4-4"></a><span class="c1"># RabbitMQ</span>
-<a name="rest_code_05640e006c414b3fbf64ea68a786e9c4-5"></a><span class="c1">#app = Celery('tasks', broker='amqp://guest@localhost//', backend='amqp')</span>
-<a name="rest_code_05640e006c414b3fbf64ea68a786e9c4-6"></a><span class="c1"># Redis</span>
-<a name="rest_code_05640e006c414b3fbf64ea68a786e9c4-7"></a><span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s1">'tasks'</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s1">'redis://localhost:6379/0'</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">'redis://localhost:6379/0'</span><span class="p">)</span>
-<a name="rest_code_05640e006c414b3fbf64ea68a786e9c4-8"></a>
-<a name="rest_code_05640e006c414b3fbf64ea68a786e9c4-9"></a><span class="nd">@app</span><span class="o">.</span><span class="n">task</span>
-<a name="rest_code_05640e006c414b3fbf64ea68a786e9c4-10"></a><span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-<a name="rest_code_05640e006c414b3fbf64ea68a786e9c4-11"></a>    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
-</pre>
-<p>The overhead added by <a class="reference external" href="http://www.celeryproject.org/">Celery</a> is quite small: importing the library, connecting (<tt class="docutils literal">app</tt>) and adding a decorator to our service.</p>
+
+    
+  <div class="post_share">
+    Share on:
+    <a href="https://twitter.com/intent/tweet?text=Distributed%20Python%3a%20Celery&url=http%3a%2f%2fexample.org%2fen%2fblog%2fpython-distribuido-celery%2f&tw_p=tweetbutton" class="twitter" title="Share on Twitter" target="_blank" rel="nofollow">
+      <svg class="icon">
+  <use xlink:href="#twitter"></use>
+</svg>
+    </a>
+    <a href="https://www.facebook.com/sharer.php?u=http%3a%2f%2fexample.org%2fen%2fblog%2fpython-distribuido-celery%2f&t=Distributed%20Python%3a%20Celery" class="facebook" title="Share on Facebook" target="_blank" rel="nofollow">
+      <svg class="icon">
+  <use xlink:href="#facebook"></use>
+</svg>
+    </a>
+    <a href="#linkedinshare" id = "linkedinshare" class="linkedin" title="Share on LinkedIn" rel="nofollow">
+      <svg class="icon">
+  <use xlink:href="#linkedin"></use>
+</svg>
+    </a>
+    <a href="http://example.org/en/blog/python-distribuido-celery/" title="Copy Link" class="link link_yank">
+      <svg class="icon">
+  <use xlink:href="#copy"></use>
+</svg>
+    </a>
+  </div>
+
+    
+    <p>Nowadays,
+<abbr title="Service Oriented Architectures">SOA</abbr>
+
+architectures is in fashion. These architectures use little and very specific services, so they interact each other.</p>
+<p>In this post I&rsquo;ll show how to use <a href="http://www.celeryproject.org/">Celery</a> in order to create a SOA architecture.</p>
+<!-- raw HTML omitted -->
+<figure>
+    <img src="/images/python.png"
+         alt="Python"/> 
+</figure>
+
+<h2 id="about-celery">About Celery</h2>
+<p><a href="http://www.celeryproject.org/">Celery</a> is not a communication system, because it uses <a href="https://www.rabbitmq.com">RabbitMQ</a>, <a href="http://redis.io/">Redis</a>, etc. as communication system. The same applies to argue it is not a message queue system. Neither it is a protocol, because it uses <a href="https://www.amqp.org/">AMQP</a>. Neither it is an abstraction over all these, because <a href="https://kombu.readthedocs.org/en/latest/">Kombu</a> does that work, the communications library it uses under the hood.</p>
+<p><a href="http://www.celeryproject.org/">Celery</a> is a set ot tools to work easily with several services, something like syntactic sugar. It allows to launch services as <strong>tasks</strong>.</p>
+<h2 id="how-to-install-it">How to install it</h2>
+<p>It is very easy to install; with <code>pip</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>pip install celery
+</code></pre></div><p>or <code>apt</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>apt-get install python-celery
+</code></pre></div><p>The problem here is we need a <strong>Broker</strong>. The <strong>Broker</strong> is the way to transport messages from a service to another. In this case, we need a message queue.</p>
+<p>We will use two of them as example: <a href="https://www.rabbitmq.com">RabbitMQ</a> and <a href="http://redis.io/">Redis</a>. The first one is somehow&hellip; complicated, but very interesting if you already know and install the <a href="https://www.rabbitmq.com/management.html">management plugin</a>. The second one is easier to be installed, but more difficult to see what is happening internally. To use <a href="http://redis.io/">Redis</a> you will also require the library; with <code>pip</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>pip install redis
+</code></pre></div><p>or with <code>apt</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>apt-get install python-redis
+</code></pre></div><h2 id="example">Example</h2>
+<h3 id="creating-services">Creating services</h3>
+<p>Let&rsquo;s start creating a little service to multiply two numbers:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e"># Celery service example: task to multiply two numbers</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#f92672">from</span> celery <span style="color:#f92672">import</span> Celery
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#75715e"># RabbitMQ</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#75715e">#app = Celery(&#39;tasks&#39;, broker=&#39;amqp://guest@localhost//&#39;, backend=&#39;amqp&#39;)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#75715e"># Redis</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>app <span style="color:#f92672">=</span> Celery(<span style="color:#e6db74">&#39;tasks&#39;</span>, broker<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>, backend<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#a6e22e">@app.task</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">multiply</span>(a, b):
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>    <span style="color:#66d9ef">return</span> a <span style="color:#f92672">*</span> b</code></pre></div>
+<p>The overhead added by <a href="http://www.celeryproject.org/">Celery</a> is quite small: importing the library, connecting (<code>app</code>) and adding a decorator to our service.</p>
 <p>It is already executable:</p>
-<p><a class="reference external" href="/listings/python-celery/001/output.txt.html">python-celery/001/output.txt</a></p>
-<pre class="code bash"><a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-1"></a>$ celery worker --loglevel<span class="o">=</span>info -A tasks
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-2"></a>
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-3"></a> -------------- celery@nightcrawler v3.1.17 <span class="o">(</span>Cipater<span class="o">)</span>
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-4"></a>---- **** -----
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-5"></a>--- * ***  * -- Linux-3.16.0-4-amd64-x86_64-with-debian-8.0
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-6"></a>-- * - **** ---
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-7"></a>- ** ---------- <span class="o">[</span>config<span class="o">]</span>
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-8"></a>- ** ---------- .&gt; app:         tasks:0x7f3476eb9b90
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-9"></a>- ** ---------- .&gt; transport:   redis://localhost:6379/0
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-10"></a>- ** ---------- .&gt; results:     redis://localhost:6379/0
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-11"></a>- *** --- * --- .&gt; concurrency: <span class="m">4</span> <span class="o">(</span>prefork<span class="o">)</span>
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-12"></a>-- ******* ----
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-13"></a>--- ***** ----- <span class="o">[</span>queues<span class="o">]</span>
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-14"></a> -------------- .&gt; celery           <span class="nv">exchange</span><span class="o">=</span>celery<span class="o">(</span>direct<span class="o">)</span> <span class="nv">key</span><span class="o">=</span>celery
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-15"></a>
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-16"></a>
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-17"></a><span class="o">[</span>tasks<span class="o">]</span>
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-18"></a>  . tasks.multiply
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-19"></a>
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-20"></a><span class="o">[</span><span class="m">2015</span>-03-20 <span class="m">21</span>:56:16,526: INFO/MainProcess<span class="o">]</span> Connected to redis://localhost:6379/0
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-21"></a><span class="o">[</span><span class="m">2015</span>-03-20 <span class="m">21</span>:56:16,541: INFO/MainProcess<span class="o">]</span> mingle: searching <span class="k">for</span> neighbors
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-22"></a><span class="o">[</span><span class="m">2015</span>-03-20 <span class="m">21</span>:56:17,780: INFO/MainProcess<span class="o">]</span> mingle: all alone
-<a name="rest_code_8849ad7ee1e2423a84939f1b57955d49-23"></a><span class="o">[</span><span class="m">2015</span>-03-20 <span class="m">21</span>:56:17,791: WARNING/MainProcess<span class="o">]</span> celery@nightcrawler ready.
-</pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>$ celery worker --loglevel<span style="color:#f92672">=</span>info -A tasks
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span> -------------- celery@nightcrawler v3.1.17 <span style="color:#f92672">(</span>Cipater<span style="color:#f92672">)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>---- **** -----
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>--- * ***  * -- Linux-3.16.0-4-amd64-x86_64-with-debian-8.0
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>-- * - **** ---
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>- ** ---------- <span style="color:#f92672">[</span>config<span style="color:#f92672">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>- ** ---------- .&gt; app:         tasks:0x7f3476eb9b90
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>- ** ---------- .&gt; transport:   redis://localhost:6379/0
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>- ** ---------- .&gt; results:     redis://localhost:6379/0
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>- *** --- * --- .&gt; concurrency: <span style="color:#ae81ff">4</span> <span style="color:#f92672">(</span>prefork<span style="color:#f92672">)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>-- ******* ----
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>--- ***** ----- <span style="color:#f92672">[</span>queues<span style="color:#f92672">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span> -------------- .&gt; celery           exchange<span style="color:#f92672">=</span>celery<span style="color:#f92672">(</span>direct<span style="color:#f92672">)</span> key<span style="color:#f92672">=</span>celery
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span style="color:#f92672">[</span>tasks<span style="color:#f92672">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>  . tasks.multiply
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span style="color:#f92672">[</span>2015-03-20 21:56:16,526: INFO/MainProcess<span style="color:#f92672">]</span> Connected to redis://localhost:6379/0
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span style="color:#f92672">[</span>2015-03-20 21:56:16,541: INFO/MainProcess<span style="color:#f92672">]</span> mingle: searching <span style="color:#66d9ef">for</span> neighbors
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span style="color:#f92672">[</span>2015-03-20 21:56:17,780: INFO/MainProcess<span style="color:#f92672">]</span> mingle: all alone
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span style="color:#f92672">[</span>2015-03-20 21:56:17,791: WARNING/MainProcess<span style="color:#f92672">]</span> celery@nightcrawler ready.</code></pre></div>
 <p>There is a lot of information here:</p>
-<ul class="simple">
+<ul>
 <li>Used versions</li>
 <li>Created queues</li>
 <li>Brokers used to transport and retrieve results</li>
@@ -203,327 +242,541 @@ article: https://ogp.me/ns/article#
 </ul>
 <p>And more, but it can be ignored right now.</p>
 <p>We will leave it running.</p>
-</div>
-<div class="section" id="running-services">
-<h3>Running services</h3>
+<h3 id="running-services">Running services</h3>
 <p>That was the <em>subscriptor</em>. Let create the <em>publisher</em>.</p>
-<p><a class="reference external" href="/listings/python-celery/001/subscriber.py.html">python-celery/001/subscriber.py</a></p>
-<pre class="code python"><a name="rest_code_5d52d2a1527644559b54aab0194188a1-1"></a><span class="c1"># Celery client example: request for two numbers multiplication</span>
-<a name="rest_code_5d52d2a1527644559b54aab0194188a1-2"></a><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
-<a name="rest_code_5d52d2a1527644559b54aab0194188a1-3"></a>
-<a name="rest_code_5d52d2a1527644559b54aab0194188a1-4"></a><span class="c1"># RabbitMQ</span>
-<a name="rest_code_5d52d2a1527644559b54aab0194188a1-5"></a><span class="c1">#app = Celery('tasks', broker='amqp://guest@localhost//', backend='amqp')</span>
-<a name="rest_code_5d52d2a1527644559b54aab0194188a1-6"></a><span class="c1"># Redis</span>
-<a name="rest_code_5d52d2a1527644559b54aab0194188a1-7"></a><span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s1">'tasks'</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s1">'redis://localhost:6379/0'</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">'redis://localhost:6379/0'</span><span class="p">)</span>
-<a name="rest_code_5d52d2a1527644559b54aab0194188a1-8"></a>
-<a name="rest_code_5d52d2a1527644559b54aab0194188a1-9"></a><span class="n">promise</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_task</span><span class="p">(</span><span class="s1">'tasks.multiply'</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
-<a name="rest_code_5d52d2a1527644559b54aab0194188a1-10"></a>
-<a name="rest_code_5d52d2a1527644559b54aab0194188a1-11"></a><span class="nb">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
-</pre>
-<p>This is more complicated... but quick to be explained:</p>
-<ul class="simple">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e"># Celery client example: request for two numbers multiplication</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#f92672">from</span> celery <span style="color:#f92672">import</span> Celery
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#75715e"># RabbitMQ</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#75715e">#app = Celery(&#39;tasks&#39;, broker=&#39;amqp://guest@localhost//&#39;, backend=&#39;amqp&#39;)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#75715e"># Redis</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>app <span style="color:#f92672">=</span> Celery(<span style="color:#e6db74">&#39;tasks&#39;</span>, broker<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>, backend<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>promise <span style="color:#f92672">=</span> app<span style="color:#f92672">.</span>send_task(<span style="color:#e6db74">&#39;tasks.multiply&#39;</span>, args<span style="color:#f92672">=</span>[<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">2</span>])
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span style="color:#66d9ef">print</span>(promise<span style="color:#f92672">.</span>get())</code></pre></div>
+<p>This is more complicated&hellip; but quick to be explained:</p>
+<ul>
 <li>First part is the same than before, because we need to conect to the same server.</li>
 <li>Second part runs the task with its name, passing the arguments. That returns a <em>promise</em>. At this point we have leaved a message in the queue.</li>
-<li>Finally, the <em>promise</em> is resolved with <tt class="docutils literal">promise.get()</tt>. Whenever, the service had read and processed the message, and it has leaved the result in other queue and, with this method, it is read.</li>
+<li>Finally, the <em>promise</em> is resolved with <code>promise.get()</code>. Whenever, the service had read and processed the message, and it has leaved the result in other queue and, with this method, it is read.</li>
 </ul>
-<p>So it seems complicated... but it could be even more.</p>
-<p>Anyways, I've saved a video to see it all:</p>
-<iframe width="425" height="344" src="//www.youtube.com/embed/Lf4Q7K6Ab_g?rel=0&amp;hd=1&amp;wmode=transparent"></iframe>
+<p>So it seems complicated&hellip; but it could be even more.</p>
+<p>Anyways, I&rsquo;ve saved a video to see it all:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/Lf4Q7K6Ab_g" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
 </div>
-<div class="section" id="everything-together-is-easier">
-<h3>Everything together is easier</h3>
+
+<h3 id="everything-together-is-easier">Everything together is easier</h3>
 <p>You can put it all together in the same file, and everything become easier. This is not always possible and can give problems (like every change implies to reboot both client and service), but is very educational:</p>
-<p><a class="reference external" href="/listings/python-celery/002/tasks.py.html">python-celery/002/tasks.py</a></p>
-<pre class="code python"><a name="rest_code_0593d76c66304829b43b9278873b7130-1"></a><span class="c1"># Celery full example: publisher/subscriber to request a multiplication</span>
-<a name="rest_code_0593d76c66304829b43b9278873b7130-2"></a><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
-<a name="rest_code_0593d76c66304829b43b9278873b7130-3"></a>
-<a name="rest_code_0593d76c66304829b43b9278873b7130-4"></a><span class="c1"># RabbitMQ</span>
-<a name="rest_code_0593d76c66304829b43b9278873b7130-5"></a><span class="c1">#app = Celery('tasks', broker='amqp://guest@localhost//', backend='amqp')</span>
-<a name="rest_code_0593d76c66304829b43b9278873b7130-6"></a><span class="c1"># Redis</span>
-<a name="rest_code_0593d76c66304829b43b9278873b7130-7"></a><span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s1">'tasks'</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s1">'redis://localhost:6379/0'</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">'redis://localhost:6379/0'</span><span class="p">)</span>
-<a name="rest_code_0593d76c66304829b43b9278873b7130-8"></a>
-<a name="rest_code_0593d76c66304829b43b9278873b7130-9"></a><span class="nd">@app</span><span class="o">.</span><span class="n">task</span>
-<a name="rest_code_0593d76c66304829b43b9278873b7130-10"></a><span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-<a name="rest_code_0593d76c66304829b43b9278873b7130-11"></a>    <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
-<a name="rest_code_0593d76c66304829b43b9278873b7130-12"></a>
-<a name="rest_code_0593d76c66304829b43b9278873b7130-13"></a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-<a name="rest_code_0593d76c66304829b43b9278873b7130-14"></a>    <span class="n">promise</span> <span class="o">=</span> <span class="n">multiply</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-<a name="rest_code_0593d76c66304829b43b9278873b7130-15"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
-<a name="rest_code_0593d76c66304829b43b9278873b7130-16"></a>
-<a name="rest_code_0593d76c66304829b43b9278873b7130-17"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
-<a name="rest_code_0593d76c66304829b43b9278873b7130-18"></a>    <span class="n">main</span><span class="p">()</span>
-</pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e"># Celery full example: publisher/subscriber to request a multiplication</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#f92672">from</span> celery <span style="color:#f92672">import</span> Celery
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#75715e"># RabbitMQ</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#75715e">#app = Celery(&#39;tasks&#39;, broker=&#39;amqp://guest@localhost//&#39;, backend=&#39;amqp&#39;)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#75715e"># Redis</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>app <span style="color:#f92672">=</span> Celery(<span style="color:#e6db74">&#39;tasks&#39;</span>, broker<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>, backend<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#a6e22e">@app.task</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">multiply</span>(a, b):
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>    <span style="color:#66d9ef">return</span> a <span style="color:#f92672">*</span> b
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>    promise <span style="color:#f92672">=</span> multiply<span style="color:#f92672">.</span>delay(<span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>    <span style="color:#66d9ef">print</span>(promise<span style="color:#f92672">.</span>get())
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>    main()</code></pre></div>
 <p>Now we are running a task method directly, so we get the task.</p>
 <p>And now we have a very complicated way to multiply two numbers :)</p>
-</div>
-</div>
-<div class="section" id="tools">
-<h2>Tools</h2>
-<p>As I said before, <a class="reference external" href="http://www.celeryproject.org/">Celery</a> gives you tools and syntactic sugar.</p>
-<p>First of all, we'll see <em>partials</em>. They are functions with some parameters already set.</p>
-<p>It is very easy to create the <em>partial</em> <tt class="docutils literal">duplicate</tt> by forcing the first parameter of <tt class="docutils literal">multiply</tt>:</p>
-<p><a class="reference external" href="/listings/python-celery/003/tasks.py.html">python-celery/003/tasks.py</a></p>
-<table class="codetable"><tr>
-<td class="linenos"><div class="linenodiv"><pre><a href="/en/blog/python-distribuido-celery/#rest_code_bdbff9a9fc4542afa80170dcc3153d24-13">13</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_bdbff9a9fc4542afa80170dcc3153d24-14">14</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_bdbff9a9fc4542afa80170dcc3153d24-15">15</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_bdbff9a9fc4542afa80170dcc3153d24-16">16</a></pre></div></td>
-<td class="code"><pre class="code python"><a name="rest_code_bdbff9a9fc4542afa80170dcc3153d24-13"></a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-<a name="rest_code_bdbff9a9fc4542afa80170dcc3153d24-14"></a>    <span class="n">duplicate</span> <span class="o">=</span> <span class="n">multiply</span><span class="o">.</span><span class="n">si</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<a name="rest_code_bdbff9a9fc4542afa80170dcc3153d24-15"></a>    <span class="n">promise</span> <span class="o">=</span> <span class="n">duplicate</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-<a name="rest_code_bdbff9a9fc4542afa80170dcc3153d24-16"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
-</pre></td>
-</tr></table>
-<p>Yeah, partials are built with method <tt class="docutils literal">.si</tt>, despite we can use <tt class="docutils literal">.s</tt> too. The fist one is <em>immutable</em> (that explains the <tt class="docutils literal">i</tt>). It is very difficult to explain this before explaining another <a class="reference external" href="http://www.celeryproject.org/">Celery</a> tool: <tt class="docutils literal">Chains</tt>.</p>
-<p><a class="reference external" href="http://www.celeryproject.org/">Celery</a> allows to chain tasks, so the result of one is the first parameter of the next one. Why the first one? It works so. It is a fucking shit, but works so.</p>
-<p>Sometimes we will require chained tasks just to set an order, so we can ignore the previous result. Here is when we can use the immutable functions, because they won't use the previous task result.</p>
-<p>I suppose you have noticed I use "functions" or "services" equally.</p>
-<p>But too much talk; let's concat something:</p>
-<p><a class="reference external" href="/listings/python-celery/004/tasks.py.html">python-celery/004/tasks.py</a></p>
-<table class="codetable"><tr>
-<td class="linenos"><div class="linenodiv"><pre><a href="/en/blog/python-distribuido-celery/#rest_code_fcfe1163362545998c68954dfb6e90ad-13">13</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_fcfe1163362545998c68954dfb6e90ad-14">14</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_fcfe1163362545998c68954dfb6e90ad-15">15</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_fcfe1163362545998c68954dfb6e90ad-16">16</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_fcfe1163362545998c68954dfb6e90ad-17">17</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_fcfe1163362545998c68954dfb6e90ad-18">18</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_fcfe1163362545998c68954dfb6e90ad-19">19</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_fcfe1163362545998c68954dfb6e90ad-20">20</a></pre></div></td>
-<td class="code"><pre class="code python"><a name="rest_code_fcfe1163362545998c68954dfb6e90ad-13"></a><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">chain</span>
-<a name="rest_code_fcfe1163362545998c68954dfb6e90ad-14"></a>
-<a name="rest_code_fcfe1163362545998c68954dfb6e90ad-15"></a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-<a name="rest_code_fcfe1163362545998c68954dfb6e90ad-16"></a>    <span class="n">duplicate</span> <span class="o">=</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<a name="rest_code_fcfe1163362545998c68954dfb6e90ad-17"></a>
-<a name="rest_code_fcfe1163362545998c68954dfb6e90ad-18"></a>    <span class="n">task</span> <span class="o">=</span> <span class="n">chain</span><span class="p">(</span><span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-<a name="rest_code_fcfe1163362545998c68954dfb6e90ad-19"></a>    <span class="n">promise</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">delay</span><span class="p">()</span>
-<a name="rest_code_fcfe1163362545998c68954dfb6e90ad-20"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
-</pre></td>
-</tr></table>
-<p>As I said before, <a class="reference external" href="http://www.celeryproject.org/">Celery</a> gives syntactic sugar, so it can be rewritten to:</p>
-<p><a class="reference external" href="/listings/python-celery/005/tasks.py.html">python-celery/005/tasks.py</a></p>
-<table class="codetable"><tr>
-<td class="linenos"><div class="linenodiv"><pre><a href="/en/blog/python-distribuido-celery/#rest_code_2491ff5f68194d9d805793271457c790-13">13</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_2491ff5f68194d9d805793271457c790-14">14</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_2491ff5f68194d9d805793271457c790-15">15</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_2491ff5f68194d9d805793271457c790-16">16</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_2491ff5f68194d9d805793271457c790-17">17</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_2491ff5f68194d9d805793271457c790-18">18</a></pre></div></td>
-<td class="code"><pre class="code python"><a name="rest_code_2491ff5f68194d9d805793271457c790-13"></a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-<a name="rest_code_2491ff5f68194d9d805793271457c790-14"></a>    <span class="n">duplicate</span> <span class="o">=</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<a name="rest_code_2491ff5f68194d9d805793271457c790-15"></a>
-<a name="rest_code_2491ff5f68194d9d805793271457c790-16"></a>    <span class="n">task</span> <span class="o">=</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">|</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<a name="rest_code_2491ff5f68194d9d805793271457c790-17"></a>    <span class="n">promise</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">delay</span><span class="p">()</span>
-<a name="rest_code_2491ff5f68194d9d805793271457c790-18"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
-</pre></td>
-</tr></table>
+<h2 id="tools">Tools</h2>
+<p>As I said before, <a href="http://www.celeryproject.org/">Celery</a> gives you tools and syntactic sugar.</p>
+<p>First of all, we&rsquo;ll see <em>partials</em>. They are functions with some parameters already set.</p>
+<p>It is very easy to create the <em>partial</em> <code>duplicate</code> by forcing the first parameter of <code>multiply</code>:</p>
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e"># Celery full example: multiply two numbers with partials</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#f92672">from</span> celery <span style="color:#f92672">import</span> Celery
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#75715e"># RabbitMQ</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#75715e">#app = Celery(&#39;tasks&#39;, broker=&#39;amqp://guest@localhost//&#39;, backend=&#39;amqp&#39;)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#75715e"># Redis</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>app <span style="color:#f92672">=</span> Celery(<span style="color:#e6db74">&#39;tasks&#39;</span>, broker<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>, backend<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#a6e22e">@app.task</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">multiply</span>(a, b):
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>    <span style="color:#66d9ef">return</span> a <span style="color:#f92672">*</span> b
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>
+<span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>    duplicate <span style="color:#f92672">=</span> multiply<span style="color:#f92672">.</span>si(<span style="color:#ae81ff">2</span>)
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>    promise <span style="color:#f92672">=</span> duplicate<span style="color:#f92672">.</span>delay(<span style="color:#ae81ff">5</span>)
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>    <span style="color:#66d9ef">print</span>(promise<span style="color:#f92672">.</span>get())
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>    main()</code></pre></div>
+:start-line: 12
+:end-line: 16
+:number-lines: 13</p>
+<p>Yeah, partials are built with method <code>.si</code>, despite we can use <code>.s</code> too. The fist one is <em>immutable</em> (that explains the <code>i</code>). It is very difficult to explain this before explaining another <a href="http://www.celeryproject.org/">Celery</a> tool: <code>Chains</code>.</p>
+<p><a href="http://www.celeryproject.org/">Celery</a> allows to chain tasks, so the result of one is the first parameter of the next one. Why the first one? It works so. It is a fucking shit, but works so.</p>
+<p>Sometimes we will require chained tasks just to set an order, so we can ignore the previous result. Here is when we can use the immutable functions, because they won&rsquo;t use the previous task result.</p>
+<p>I suppose you have noticed I use &ldquo;functions&rdquo; or &ldquo;services&rdquo; equally.</p>
+<p>But too much talk; let&rsquo;s concat something:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e"># Celery example: multiply with chains</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#f92672">from</span> celery <span style="color:#f92672">import</span> Celery
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#75715e"># RabbitMQ</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#75715e">#app = Celery(&#39;tasks&#39;, broker=&#39;amqp://guest@localhost//&#39;, backend=&#39;amqp&#39;)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#75715e"># Redis</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>app <span style="color:#f92672">=</span> Celery(<span style="color:#e6db74">&#39;tasks&#39;</span>, broker<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>, backend<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#a6e22e">@app.task</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">multiply</span>(a, b):
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>    <span style="color:#66d9ef">return</span> a <span style="color:#f92672">*</span> b
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>
+<span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span style="color:#f92672">from</span> celery <span style="color:#f92672">import</span> chain
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>    duplicate <span style="color:#f92672">=</span> multiply<span style="color:#f92672">.</span>s(<span style="color:#ae81ff">2</span>)
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>    task <span style="color:#f92672">=</span> chain(multiply<span style="color:#f92672">.</span>s(<span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>), multiply<span style="color:#f92672">.</span>s(<span style="color:#ae81ff">2</span>))
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>    promise <span style="color:#f92672">=</span> task<span style="color:#f92672">.</span>delay()
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>    <span style="color:#66d9ef">print</span>(promise<span style="color:#f92672">.</span>get())
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>    main()</code></pre></div>
+<p>As I said before, <a href="http://www.celeryproject.org/">Celery</a> gives syntactic sugar, so it can be rewritten to:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e"># Celery example: multiply with chains using pipes (syntactic sugar)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#f92672">from</span> celery <span style="color:#f92672">import</span> Celery
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#75715e"># RabbitMQ</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#75715e">#app = Celery(&#39;tasks&#39;, broker=&#39;amqp://guest@localhost//&#39;, backend=&#39;amqp&#39;)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#75715e"># Redis</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>app <span style="color:#f92672">=</span> Celery(<span style="color:#e6db74">&#39;tasks&#39;</span>, broker<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>, backend<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#a6e22e">@app.task</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">multiply</span>(a, b):
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>    <span style="color:#66d9ef">return</span> a <span style="color:#f92672">*</span> b
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>
+<span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>    duplicate <span style="color:#f92672">=</span> multiply<span style="color:#f92672">.</span>s(<span style="color:#ae81ff">2</span>)
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>    task <span style="color:#f92672">=</span> multiply<span style="color:#f92672">.</span>s(<span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>) <span style="color:#f92672">|</span> multiply<span style="color:#f92672">.</span>s(<span style="color:#ae81ff">2</span>)
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>    promise <span style="color:#f92672">=</span> task<span style="color:#f92672">.</span>delay()
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>    <span style="color:#66d9ef">print</span>(promise<span style="color:#f92672">.</span>get())
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>    main()</code></pre></div>
 <p>And here is where fun starts: we have a <strong>canvas</strong>, that is, a task workflow. Believe ir or not, if you launch several <em>workers</em> in different hosts and all of them are connected to the same <em>broker</em>, each operation could run in a different host.</p>
-<p>But... Why the <em>canvas</em> if all the operations run sequentially? Because we can process them concurrently with <tt class="docutils literal">Groups</tt>:</p>
-<p><a class="reference external" href="/listings/python-celery/006/tasks.py.html">python-celery/006/tasks.py</a></p>
-<table class="codetable"><tr>
-<td class="linenos"><div class="linenodiv"><pre><a href="/en/blog/python-distribuido-celery/#rest_code_752f78a2b65740df83ae358baf65593c-13">13</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_752f78a2b65740df83ae358baf65593c-14">14</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_752f78a2b65740df83ae358baf65593c-15">15</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_752f78a2b65740df83ae358baf65593c-16">16</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_752f78a2b65740df83ae358baf65593c-17">17</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_752f78a2b65740df83ae358baf65593c-18">18</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_752f78a2b65740df83ae358baf65593c-19">19</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_752f78a2b65740df83ae358baf65593c-20">20</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_752f78a2b65740df83ae358baf65593c-21">21</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_752f78a2b65740df83ae358baf65593c-22">22</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_752f78a2b65740df83ae358baf65593c-23">23</a>
-<a href="/en/blog/python-distribuido-celery/#rest_code_752f78a2b65740df83ae358baf65593c-24">24</a></pre></div></td>
-<td class="code"><pre class="code python"><a name="rest_code_752f78a2b65740df83ae358baf65593c-13"></a><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">group</span>
-<a name="rest_code_752f78a2b65740df83ae358baf65593c-14"></a>
-<a name="rest_code_752f78a2b65740df83ae358baf65593c-15"></a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-<a name="rest_code_752f78a2b65740df83ae358baf65593c-16"></a>    <span class="n">duplicate</span> <span class="o">=</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<a name="rest_code_752f78a2b65740df83ae358baf65593c-17"></a>
-<a name="rest_code_752f78a2b65740df83ae358baf65593c-18"></a>    <span class="n">task</span> <span class="o">=</span> <span class="n">group</span><span class="p">(</span>
-<a name="rest_code_752f78a2b65740df83ae358baf65593c-19"></a>        <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">|</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span>
-<a name="rest_code_752f78a2b65740df83ae358baf65593c-20"></a>        <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">|</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span>
-<a name="rest_code_752f78a2b65740df83ae358baf65593c-21"></a>        <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span> <span class="o">|</span> <span class="n">duplicate</span><span class="p">,</span>
-<a name="rest_code_752f78a2b65740df83ae358baf65593c-22"></a>    <span class="p">)</span>
-<a name="rest_code_752f78a2b65740df83ae358baf65593c-23"></a>    <span class="n">promise</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">delay</span><span class="p">()</span>
-<a name="rest_code_752f78a2b65740df83ae358baf65593c-24"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
-</pre></td>
-</tr></table>
-<p>There is even more syntactic sugar, like <tt class="docutils literal">chords</tt>, <tt class="docutils literal">maps</tt>, <tt class="docutils literal">starmaps</tt> and <tt class="docutils literal">chunks</tt>, but we won't browse them. This is an introductory post. <a class="reference external" href="http://celery.readthedocs.org/en/latest/userguide/canvas.html">You can read more about Canvas</a>.</p>
-<div class="section" id="the-beat">
-<h3>The Beat</h3>
-<p>Other important tool in <a class="reference external" href="http://www.celeryproject.org/">Celery</a> is the <strong>Beat</strong>. It is a beat or a periodic signal. We can start it in the worker with <tt class="docutils literal"><span class="pre">--beat</span></tt> option. While <a class="reference external" href="https://github.com/celery/celery/issues/1495">Beat exclusiveness</a> is not added, it is important to run just one or we will receive more than one <em>beat</em>.</p>
+<p>But&hellip; Why the <em>canvas</em> if all the operations run sequentially? Because we can process them concurrently with <code>Groups</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e"># Celery example: several multiplications with chains and groups (canvas)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#f92672">from</span> celery <span style="color:#f92672">import</span> Celery
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#75715e"># RabbitMQ</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#75715e">#app = Celery(&#39;tasks&#39;, broker=&#39;amqp://guest@localhost//&#39;, backend=&#39;amqp&#39;)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#75715e"># Redis</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>app <span style="color:#f92672">=</span> Celery(<span style="color:#e6db74">&#39;tasks&#39;</span>, broker<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>, backend<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#a6e22e">@app.task</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">multiply</span>(a, b):
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>    <span style="color:#66d9ef">return</span> a <span style="color:#f92672">*</span> b
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>
+<span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span style="color:#f92672">from</span> celery <span style="color:#f92672">import</span> group
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">main</span>():
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>    duplicate <span style="color:#f92672">=</span> multiply<span style="color:#f92672">.</span>s(<span style="color:#ae81ff">2</span>)
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>    task <span style="color:#f92672">=</span> group(
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>        multiply<span style="color:#f92672">.</span>s(<span style="color:#ae81ff">4</span>, <span style="color:#ae81ff">5</span>) <span style="color:#f92672">|</span> multiply<span style="color:#f92672">.</span>s(<span style="color:#ae81ff">2</span>),
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>        multiply<span style="color:#f92672">.</span>s(<span style="color:#ae81ff">9</span>, <span style="color:#ae81ff">2</span>) <span style="color:#f92672">|</span> multiply<span style="color:#f92672">.</span>s(<span style="color:#ae81ff">4</span>),
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>        multiply<span style="color:#f92672">.</span>s(<span style="color:#ae81ff">9</span>, <span style="color:#ae81ff">7</span>) <span style="color:#f92672">|</span> duplicate,
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>    )
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>    promise <span style="color:#f92672">=</span> task<span style="color:#f92672">.</span>delay()
+</span><span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>    <span style="color:#66d9ef">print</span>(promise<span style="color:#f92672">.</span>get())
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span style="color:#66d9ef">if</span> __name__ <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;__main__&#39;</span>:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>    main()</code></pre></div>
+<p>There is even more syntactic sugar, like <code>chords</code>, <code>maps</code>, <code>starmaps</code> and <code>chunks</code>, but we won&rsquo;t browse them. This is an introductory post. <a href="http://celery.readthedocs.org/en/latest/userguide/canvas.html">You can read more about Canvas</a>.</p>
+<h3 id="the-beat">The Beat</h3>
+<p>Other important tool in <a href="http://www.celeryproject.org/">Celery</a> is the <strong>Beat</strong>. It is a beat or a periodic signal. We can start it in the worker with <code>--beat</code> option. While <a href="https://github.com/celery/celery/issues/1495">Beat exclusiveness</a> is not added, it is important to run just one or we will receive more than one <em>beat</em>.</p>
 <p>This <em>beat</em> allows us to run periodic tasks.</p>
-<p>Let's see a small example: we are going to multiply the hour by 2 every 10 seconds:</p>
-<p><a class="reference external" href="/listings/python-celery/007/tasks.py.html">python-celery/007/tasks.py</a></p>
-<pre class="code python"><a name="rest_code_943fbf55e9584674b7cee2025811c5f8-1"></a><span class="c1"># Celery beat example: periodic date operation</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-2"></a><span class="kn">import</span> <span class="nn">datetime</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-3"></a><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-4"></a><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">group</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-5"></a>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-6"></a><span class="c1"># RabbitMQ</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-7"></a><span class="c1">#app = Celery('tasks', broker='amqp://guest@localhost//', backend='amqp')</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-8"></a><span class="c1"># Redis</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-9"></a><span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s1">'tasks'</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s1">'redis://localhost:6379/0'</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">'redis://localhost:6379/0'</span><span class="p">)</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-10"></a>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-11"></a><span class="nd">@app</span><span class="o">.</span><span class="n">task</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-12"></a><span class="k">def</span> <span class="nf">add_days</span><span class="p">(</span><span class="n">days</span><span class="p">):</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-13"></a>    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">)</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-14"></a>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-15"></a><span class="n">app</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-16"></a>    <span class="n">CELERYBEAT_SCHEDULE</span><span class="o">=</span><span class="p">{</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-17"></a>        <span class="s1">'multiply-each-10-seconds'</span><span class="p">:</span> <span class="p">{</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-18"></a>            <span class="s1">'task'</span><span class="p">:</span> <span class="s1">'tasks.add_days'</span><span class="p">,</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-19"></a>            <span class="s1">'schedule'</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-20"></a>            <span class="s1">'args'</span><span class="p">:</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">)</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-21"></a>        <span class="p">},</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-22"></a>    <span class="p">},</span>
-<a name="rest_code_943fbf55e9584674b7cee2025811c5f8-23"></a><span class="p">)</span>
-</pre>
+<p>Let&rsquo;s see a small example: we are going to multiply the hour by 2 every 10 seconds:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e"># Celery beat example: periodic date operation</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#f92672">import</span> datetime
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#f92672">from</span> celery <span style="color:#f92672">import</span> Celery
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#f92672">from</span> celery <span style="color:#f92672">import</span> group
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#75715e"># RabbitMQ</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span style="color:#75715e">#app = Celery(&#39;tasks&#39;, broker=&#39;amqp://guest@localhost//&#39;, backend=&#39;amqp&#39;)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span style="color:#75715e"># Redis</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>app <span style="color:#f92672">=</span> Celery(<span style="color:#e6db74">&#39;tasks&#39;</span>, broker<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>, backend<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span style="color:#a6e22e">@app.task</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">add_days</span>(days):
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>    <span style="color:#66d9ef">return</span> datetime<span style="color:#f92672">.</span>datetime<span style="color:#f92672">.</span>now() <span style="color:#f92672">+</span> datetime<span style="color:#f92672">.</span>timedelta(days<span style="color:#f92672">=</span>days)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>app<span style="color:#f92672">.</span>conf<span style="color:#f92672">.</span>update(
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>    CELERYBEAT_SCHEDULE<span style="color:#f92672">=</span>{
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>        <span style="color:#e6db74">&#39;multiply-each-10-seconds&#39;</span>: {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>            <span style="color:#e6db74">&#39;task&#39;</span>: <span style="color:#e6db74">&#39;tasks.add_days&#39;</span>,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>            <span style="color:#e6db74">&#39;schedule&#39;</span>: datetime<span style="color:#f92672">.</span>timedelta(seconds<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>),
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>            <span style="color:#e6db74">&#39;args&#39;</span>: (<span style="color:#ae81ff">2</span>, )
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>        },
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>    },
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>)</code></pre></div>
 <p>And here you have the video:</p>
-<iframe width="425" height="344" src="//www.youtube.com/embed/qTXJUnV0oHU?rel=0&amp;hd=1&amp;wmode=transparent"></iframe><p>Again, I'm going to stop here; I can only show a little about it. You can read more about <a class="reference external" href="http://celery.readthedocs.org/en/latest/userguide/periodic-tasks.html">periodic tasks</a> if you are interested in.</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="https://www.youtube.com/embed/qTXJUnV0oHU" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
 </div>
-<div class="section" id="warning-pickle">
-<h3>Warning: pickle</h3>
-<p>Perhaps you see a warning like <tt class="docutils literal">warnings.warn(CDeprecationWarning(W_PICKLE_DEPRECATED))</tt>. This is because we are using the <a class="reference external" href="https://docs.python.org/3.4/library/pickle.html">pickle</a> serializer, which is deprecated. You can avoid it by adding:</p>
-<p><a class="reference external" href="/listings/python-celery/008/tasks.py.html">python-celery/008/tasks.py</a></p>
-<table class="codetable"><tr>
-<td class="linenos"><div class="linenodiv"><pre><a href="/en/blog/python-distribuido-celery/#rest_code_6f5742086ae14d5bba77497b453a037f-23">23</a></pre></div></td>
-<td class="code"><pre class="code python"><a name="rest_code_6f5742086ae14d5bba77497b453a037f-23"></a>    <span class="n">CELERY_ACCEPT_CONTENT</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'json'</span><span class="p">],</span>
-</pre></td>
-</tr></table>
-</div>
-</div>
-<div class="section" id="complex-environments">
-<h2>Complex environments</h2>
-<p>Obviously, I've talked just about basic <a class="reference external" href="http://www.celeryproject.org/">Celery</a>. We've used just a queue to communicate. As long as <a class="reference external" href="https://www.rabbitmq.com">RabbitMQ</a> allows queue operations, <a class="reference external" href="http://www.celeryproject.org/">Celery</a> too.</p>
+
+<p>Again, I&rsquo;m going to stop here; I can only show a little about it. You can read more about <a href="http://celery.readthedocs.org/en/latest/userguide/periodic-tasks.html">periodic tasks</a> if you are interested in.</p>
+<h3 id="warning-pickle">Warning: pickle</h3>
+<p>Perhaps you see a warning like <code>warnings.warn(CDeprecationWarning(W_PICKLE_DEPRECATED))</code>. This is because we are using the <a href="https://docs.python.org/3.4/library/pickle.html">pickle</a> serializer, which is deprecated. You can avoid it by adding:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#75715e"># Celery beat example: periodic date operation</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#f92672">import</span> datetime
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#f92672">from</span> celery <span style="color:#f92672">import</span> Celery
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#f92672">from</span> celery <span style="color:#f92672">import</span> group
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#75715e"># RabbitMQ</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span style="color:#75715e">#app = Celery(&#39;tasks&#39;, broker=&#39;amqp://guest@localhost//&#39;, backend=&#39;amqp&#39;)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span style="color:#75715e"># Redis</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>app <span style="color:#f92672">=</span> Celery(<span style="color:#e6db74">&#39;tasks&#39;</span>, broker<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>, backend<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;redis://localhost:6379/0&#39;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span style="color:#a6e22e">@app.task</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">add_days</span>(days):
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>    <span style="color:#66d9ef">return</span> datetime<span style="color:#f92672">.</span>datetime<span style="color:#f92672">.</span>now() <span style="color:#f92672">+</span> datetime<span style="color:#f92672">.</span>timedelta(days<span style="color:#f92672">=</span>days)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>app<span style="color:#f92672">.</span>conf<span style="color:#f92672">.</span>update(
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>    CELERYBEAT_SCHEDULE<span style="color:#f92672">=</span>{
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>        <span style="color:#e6db74">&#39;multiply-each-10-seconds&#39;</span>: {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>            <span style="color:#e6db74">&#39;task&#39;</span>: <span style="color:#e6db74">&#39;tasks.add_days&#39;</span>,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>            <span style="color:#e6db74">&#39;schedule&#39;</span>: datetime<span style="color:#f92672">.</span>timedelta(seconds<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>),
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>            <span style="color:#e6db74">&#39;args&#39;</span>: (<span style="color:#ae81ff">2</span>, )
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>        },
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>    },
+<span style="display:block;width:100%;background-color:#3c3d38"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>    CELERY_ACCEPT_CONTENT <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;json&#39;</span>],
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>)</code></pre></div>
+<h2 id="complex-environments">Complex environments</h2>
+<p>Obviously, I&rsquo;ve talked just about basic <a href="http://www.celeryproject.org/">Celery</a>. We&rsquo;ve used just a queue to communicate. As long as <a href="https://www.rabbitmq.com">RabbitMQ</a> allows queue operations, <a href="http://www.celeryproject.org/">Celery</a> too.</p>
 <p>You can:</p>
-<ul class="simple">
+<ul>
 <li>assign different queues to perform different tasks, so not all workers listen all requests or to assign different workers to different queues.</li>
 <li>route messages between queues.</li>
 <li>send messages to all queues (<strong>topic</strong>).</li>
-<li>...</li>
+<li>&hellip;</li>
 </ul>
-<p>I'm not going to explain it deeply, but I'm going to describe the message path. This information is required to understand how routing works (found at <a class="reference external" href="http://celery.readthedocs.org/en/latest/userguide/routing.html#exchanges-queues-and-routing-keys">Exchanges, queues and routing keys</a>):</p>
-<ol class="arabic simple">
-<li>Message is sent. It is leaved in an <strong>EXCHANGE</strong>. If it doesn't exist, <a class="reference external" href="http://www.celeryproject.org/">Celery</a> will create it.</li>
-<li>The <strong>EXCHANGE</strong> routes the message to one or more queues, depending on its configuration. If queues doesn't exist, <a class="reference external" href="http://www.celeryproject.org/">Celery</a> will care.</li>
+<p>I&rsquo;m not going to explain it deeply, but I&rsquo;m going to describe the message path. This information is required to understand how routing works (found at <a href="http://celery.readthedocs.org/en/latest/userguide/routing.html#exchanges-queues-and-routing-keys">Exchanges, queues and routing keys</a>):</p>
+<ol>
+<li>Message is sent. It is leaved in an <strong>EXCHANGE</strong>. If it doesn&rsquo;t exist, <a href="http://www.celeryproject.org/">Celery</a> will create it.</li>
+<li>The <strong>EXCHANGE</strong> routes the message to one or more queues, depending on its configuration. If queues doesn&rsquo;t exist, <a href="http://www.celeryproject.org/">Celery</a> will care.</li>
 <li>The message waits in the queue until a consumer takeExchanges it. At this moment, the message is blocked to avoid other consumers to take it.</li>
 <li>After processing it, consumer sends an <strong>ACK</strong> and the message is finally removed.</li>
 </ol>
-<p>By default, <a class="reference external" href="http://www.celeryproject.org/">Celery</a> creates queues with the <em>exchange</em> name and binds them in a direct way, that is, every message that gets the <em>exchange</em> is routed to that queue.</p>
+<p>By default, <a href="http://www.celeryproject.org/">Celery</a> creates queues with the <em>exchange</em> name and binds them in a direct way, that is, every message that gets the <em>exchange</em> is routed to that queue.</p>
 <p>You can play with routings and create really complex architectures, so any message arrives to its target depending on the operation.</p>
-</div>
-<div class="section" id="more-information">
-<h2>More information</h2>
-<p>The post <a class="reference external" href="http://abhishek-tiwari.com/post/amqp-rabbitmq-and-celery-a-visual-guide-for-dummies">AMQP, RabbitMQ and Celery - A Visual Guide For Dummies</a> has beginner level, but I like it a lot because it explains everything with images. <a class="reference external" href="https://www.digitalocean.com/community/tutorials/how-to-use-celery-with-rabbitmq-to-queue-tasks-on-an-ubuntu-vps">How To Use Celery with RabbitMQ to Queue Tasks on an Ubuntu VPS</a> is good too, and the PyCon slides <a class="reference external" href="http://www.imankulov.name/posts/celery-for-internal-api.html">Celery for Internal API in SOA infrastructure</a> too.</p>
-<p><a class="reference external" href="http://www.caktusgroup.com/blog/2014/06/23/scheduling-tasks-celery/">Getting Started Scheduling Tasks with Celery</a> is about configuring periodic tasks in a dynamic way by using <a class="reference external" href="https://pypi.python.org/pypi/django-celery">DJCelery</a>, quite interesting to use it with <a class="reference external" href="https://www.djangoproject.com/">Django</a>.</p>
-<p>In order to understand it under the hood, I recommend <a class="reference external" href="http://www.rabbitmq.com/tutorials/amqp-concepts.html">AMQP 0-9-1 Model Explained</a>, where <a class="reference external" href="https://www.amqp.org/">AMQP</a> protocol is explained. It is very interesing to try complex routings. <a class="reference external" href="http://rajith.2rlabs.com/2007/10/13/amqp-in-10-mins-part3-flexible-routing-model/">AMQP in 10 mins : Part3 – Flexible Routing Model</a> talks about that too, but is easier and just explains the basic concepts.</p>
-<p>If you want to participate in a project using <a class="reference external" href="http://www.celeryproject.org/">Celery</a>, I can cheer you to help me with <a class="reference external" href="https://github.com/djcron-project/">DJCron</a>, a wrapper over <a class="reference external" href="https://pypi.python.org/pypi/django-celery">DJCelery</a> that allows to configure distributed tasks dinamically, adding some extra features over  <a class="reference external" href="https://pypi.python.org/pypi/django-celery">DJCelery</a>.</p>
-</div>
-</div>
-          </div>
-          <br><div>
-            <nav><span class="author">
-                <span class="glyphicon glyphicon-user"></span> 
-                <span>Posted:Miguel Ángel García</span>
-              </span>
-               
+<h2 id="more-information">More information</h2>
+<p>The post <a href="http://abhishek-tiwari.com/post/amqp-rabbitmq-and-celery-a-visual-guide-for-dummies">AMQP, RabbitMQ and Celery - A Visual Guide For Dummies</a> has beginner level, but I like it a lot because it explains everything with images. <a href="https://www.digitalocean.com/community/tutorials/how-to-use-celery-with-rabbitmq-to-queue-tasks-on-an-ubuntu-vps">How To Use Celery with RabbitMQ to Queue Tasks on an Ubuntu VPS</a> is good too, and the PyCon slides <a href="http://www.imankulov.name/posts/celery-for-internal-api.html">Celery for Internal API in SOA infrastructure</a> too.</p>
+<p><a href="http://www.caktusgroup.com/blog/2014/06/23/scheduling-tasks-celery/">Getting Started Scheduling Tasks with Celery</a> is about configuring periodic tasks in a dynamic way by using <a href="https://pypi.python.org/pypi/django-celery">DJCelery</a>, quite interesting to use it with <a href="https://www.djangoproject.com/">Django</a>.</p>
+<p>In order to understand it under the hood, I recommend <a href="http://www.rabbitmq.com/tutorials/amqp-concepts.html">AMQP 0-9-1 Model Explained</a>, where <a href="https://www.amqp.org/">AMQP</a> protocol is explained. It is very interesing to try complex routings. <a href="http://rajith.2rlabs.com/2007/10/13/amqp-in-10-mins-part3-flexible-routing-model/">AMQP in 10 mins : Part3 – Flexible Routing Model</a> talks about that too, but is easier and just explains the basic concepts.</p>
+<p>If you want to participate in a project using <a href="http://www.celeryproject.org/">Celery</a>, I can cheer you to help me with <a href="https://github.com/djcron-project/">DJCron</a>, a wrapper over <a href="https://pypi.python.org/pypi/django-celery">DJCelery</a> that allows to configure distributed tasks dinamically, adding some extra features over  <a href="https://pypi.python.org/pypi/django-celery">DJCelery</a>.</p>
 
-              
-              <span class="dateline">
-                <span class="glyphicon glyphicon-calendar"></span> 
-                <time class="published dt-published" datetime="2015-03-20T00:00:00+00:00" title="2015-03-20">2015-03-20</time></span>
-               
-              <span class="tags">
-                <span class="glyphicon glyphicon-tags"></span> 
-                <a class="label label-primary p-category" href="/en/categories/celery/" rel="tag">celery</a>
-                <a class="label label-primary p-category" href="/en/categories/python/" rel="tag">python</a>
-              </span>
-                      <ul class="pager">
-<li class="previous">
-              <a href="/en/blog/gashlycode-tinies/" rel="prev" title="Gashlycode Tinies">
-                <span class="glyphicon glyphicon-arrow-left"></span>
-                Previous post
-              </a>
-            </li>
-            <li class="next">
-              <a href="/en/blog/is-code-coverage-irrelevant/" rel="next" title="Is Code Coverage Irrelevant?">
-                Next post
-                <span class="glyphicon glyphicon-arrow-right"></span>
-              </a>
-            </li>
-        </ul></nav>
-</div>
-          <section class="comments"><h2>Comments</h2>
-                            <div id="disqus_thread"></div>
-        <script>
-        var disqus_shortname ="magmax",
-            disqus_url="http://magmax.org/en/blog/python-distribuido-celery/",
-        disqus_title="Distributed Python: Celery",
-        disqus_identifier="cache/posts/python-distribuido-celery.html",
-        disqus_config = function () {
-            this.language = "en";
-        };
-        (function() {
-            var dsq = document.createElement('script'); dsq.async = true;
-            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        })();
-    </script><noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a>
-</noscript>
-    <a href="//disqus.com" class="dsq-brlink" rel="nofollow">Comments powered by <span class="logo-disqus">Disqus</span></a>
-
-
-          </section></article><script>var disqus_shortname="magmax";(function(){var a=document.createElement("script");a.async=true;a.src="//"+disqus_shortname+".disqus.com/count.js";(document.getElementsByTagName("head")[0]||document.getElementsByTagName("body")[0]).appendChild(a)}());</script>
-</div>
-      <aside class="sidebar col-md-3"><div>
-<section class="panel panel-default"><div class="panel-heading">
-    <h3 class="panel-title">Last comments</h3>
-  </div>
-  <div class="panel-body">
-    <div id="disqus_last_comments" class="dsq-widget">
-      <script type="text/javascript" src="https://magmax.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=0&amp;avatar_size=32&amp;excerpt_length=150">
-      </script>
-</div>
-  </div>
-</section>
-</div>
-          <div>
-<section class="panel panel-default"><div class="panel-heading">
-    <h3 class="panel-title">GitHub Repos</h3>
-  </div>
-  <div class="panel-body">
-    <ul id="gh_repos" class="list-unstyled">
-<li class="loading">Status updating…</li>
-    </ul>
-</div>
-  <div class="panel-footer">
-    <a href="https://github.com/magmax">@magmax</a> on GitHub
-  </div>
-</section>
-</div>
-      </aside>
-</div>
-
-    <footer>
-      Contents © 2009-2020 <a href="mailto:">Miguel Ángel García</a> 
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/es/">
-<img alt="Creative Commons License BY-NC-SA" style="border-width:0; margin-bottom:12px;width:80px;height:15px;vertical-align:middle" src="https://i.creativecommons.org/l/by-nc-sa/2.5/es/80x15.png"></a>; Using <a href="/stories/credits/">a lot of free software</a>
+    
       
-    </footer>
+    
+<h3>Translations:</h3>
+<ul>
+  
+    <li>
+      <a href="http://example.org/blog/python-distribuido-celery/">&#34;Español&#34; |</a>
+    </li>
+  
+</ul> 
+
+  </article>
+<aside class="sidebar">
+  <section class="sidebar_inner">
+    
+    <h2 class="mt-4">Recent Posts</h2>
+    <ul class="flex-column">
+      <li>
+        <a href="http://example.org/en/blog/argocd/" class="nav-link">ArgoCD with Kind</a>
+      </li>
+      <li>
+        <a href="http://example.org/en/blog/is-code-coverage-irrelevant/" class="nav-link">Is Code Coverage Irrelevant?</a>
+      </li>
+      <li>
+        <a href="http://example.org/en/blog/que-es-ingeniero/" class="nav-link">What is an Engineer?</a>
+      </li>
+      <li>
+        <a href="http://example.org/en/blog/gashlycode-tinies/" class="nav-link">Gashlycode Tinies</a>
+      </li>
+      <li>
+        <a href="http://example.org/en/blog/why-python-rocks/" class="nav-link">Why Python rocks</a>
+      </li>
+      <li>
+        <a href="http://example.org/en/blog/why-java-rocks/" class="nav-link">Why Java Rocks</a>
+      </li>
+      <li>
+        <a href="http://example.org/en/blog/constructores-simples/" class="nav-link">Constructors as simple as you can</a>
+      </li>
+      <li>
+        <a href="http://example.org/en/blog/asegura/" class="nav-link">Do not comment. Assert it!</a>
+      </li>
+    </ul>
+    <div>
+      <h2 class="mt-4 taxonomy" id="tags-section">Tags</h2>
+      <nav class="tags_nav">
+        <a href='http://example.org/en/tags/debaday/' class="post_tag button button_translucent">
+          DEBADAY
+          <span class="button_tally">8</span>
+        </a>
+        
+        <a href='http://example.org/en/tags/engineering/' class="post_tag button button_translucent">
+          ENGINEERING
+          <span class="button_tally">3</span>
+        </a>
+        
+        <a href='http://example.org/en/tags/python/' class="post_tag button button_translucent">
+          PYTHON
+          <span class="button_tally">3</span>
+        </a>
+        
+        <a href='http://example.org/en/tags/languages/' class="post_tag button button_translucent">
+          LANGUAGES
+          <span class="button_tally">2</span>
+        </a>
+        
+        <a href='http://example.org/en/tags/agile/' class="post_tag button button_translucent">
+          AGILE
+          <span class="button_tally">1</span>
+        </a>
+        
+        <a href='http://example.org/en/tags/argocd/' class="post_tag button button_translucent">
+          ARGOCD
+          <span class="button_tally">1</span>
+        </a>
+        
+        <a href='http://example.org/en/tags/bash/' class="post_tag button button_translucent">
+          BASH
+          <span class="button_tally">1</span>
+        </a>
+        
+        <a href='http://example.org/en/tags/celery/' class="post_tag button button_translucent">
+          CELERY
+          <span class="button_tally">1</span>
+        </a>
+        
+        <a href='http://example.org/en/tags/clean-code/' class="post_tag button button_translucent">
+          CLEAN-CODE
+          <span class="button_tally">1</span>
+        </a>
+        
+        <a href='http://example.org/en/tags/code-retreat/' class="post_tag button button_translucent">
+          CODE-RETREAT
+          <span class="button_tally">1</span>
+        </a>
+        
+        
+        <br>
+        <div class="post_tags_toggle button">All Tags</div>
+        <div class="post_tags">
+          <div class="tags_list">
+            
+            <a href='http://example.org/en/tags/agile/' class=" post_tag button button_translucent" data-position=1>AGILE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/argocd/' class=" post_tag button button_translucent" data-position=1>ARGOCD<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/bash/' class=" post_tag button button_translucent" data-position=1>BASH<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/celery/' class=" post_tag button button_translucent" data-position=1>CELERY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/clean-code/' class=" post_tag button button_translucent" data-position=1>CLEAN-CODE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/code-retreat/' class=" post_tag button button_translucent" data-position=1>CODE-RETREAT<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/coverage/' class=" post_tag button button_translucent" data-position=1>COVERAGE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/debaday/' class=" post_tag button button_translucent" data-position=8>DEBADAY<span class="button_tally">8</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/django/' class=" post_tag button button_translucent" data-position=1>DJANGO<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/engineering/' class=" post_tag button button_translucent" data-position=3>ENGINEERING<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/java/' class=" post_tag button button_translucent" data-position=1>JAVA<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/java-ide/' class=" post_tag button button_translucent" data-position=1>JAVA-IDE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/json/' class=" post_tag button button_translucent" data-position=1>JSON<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/kind/' class=" post_tag button button_translucent" data-position=1>KIND<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/kohana/' class=" post_tag button button_translucent" data-position=1>KOHANA<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/kubernetes/' class=" post_tag button button_translucent" data-position=1>KUBERNETES<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/languages/' class=" post_tag button button_translucent" data-position=2>LANGUAGES<span class="button_tally">2</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/life/' class=" post_tag button button_translucent" data-position=1>LIFE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/music/' class=" post_tag button button_translucent" data-position=1>MUSIC<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/netbeans/' class=" post_tag button button_translucent" data-position=1>NETBEANS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/patterns/' class=" post_tag button button_translucent" data-position=1>PATTERNS<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/php/' class=" post_tag button button_translucent" data-position=1>PHP<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/python/' class=" post_tag button button_translucent" data-position=3>PYTHON<span class="button_tally">3</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/retrospective/' class=" post_tag button button_translucent" data-position=1>RETROSPECTIVE<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/security/' class=" post_tag button button_translucent" data-position=1>SECURITY<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='http://example.org/en/tags/xml/' class=" post_tag button button_translucent" data-position=1>XML<span class="button_tally">1</span>
+            </a>
+            
+            <div class="tags_sort"><span title="sort alphabetically">[A~Z]</span><span title="sort by count">[0~9]</span>
+            </div>
+            <span class="tags_hide"><svg class="icon">
+            <use xlink:href="#closeme"></use>
+          </svg></span>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </section>
+</aside>
+
 </div>
-</div>
+    </main><svg width="0" height="0" class="hidden">
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="facebook">
+    <path d="M437 0H75C33.648 0 0 33.648 0 75v362c0 41.352 33.648 75 75 75h151V331h-60v-90h60v-61c0-49.629 40.371-90 90-90h91v90h-91v61h91l-15 90h-76v181h121c41.352 0 75-33.648 75-75V75c0-41.352-33.648-75-75-75zm0 0"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18.001 18.001" id="twitter">
+    <path d="M15.891 4.013c.808-.496 1.343-1.173 1.605-2.034a8.68 8.68 0 0 1-2.351.861c-.703-.756-1.593-1.14-2.66-1.14-1.043 0-1.924.366-2.643 1.078a3.56 3.56 0 0 0-1.076 2.605c0 .309.039.585.117.819-3.076-.105-5.622-1.381-7.628-3.837-.34.601-.51 1.213-.51 1.846 0 1.301.549 2.332 1.645 3.089-.625-.053-1.176-.211-1.645-.47 0 .929.273 1.705.82 2.388a3.623 3.623 0 0 0 2.115 1.291c-.312.08-.641.118-.979.118-.312 0-.533-.026-.664-.083.23.757.664 1.371 1.291 1.841a3.652 3.652 0 0 0 2.152.743C4.148 14.173 2.625 14.69.902 14.69c-.422 0-.721-.006-.902-.038 1.697 1.102 3.586 1.649 5.676 1.649 2.139 0 4.029-.542 5.674-1.626 1.645-1.078 2.859-2.408 3.639-3.974a10.77 10.77 0 0 0 1.172-4.892v-.468a7.788 7.788 0 0 0 1.84-1.921 8.142 8.142 0 0 1-2.11.593z"
+      ></path>
+  </symbol>
+  <symbol aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="mail">
+    <path  d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="calendar">
+    <path d="M452 40h-24V0h-40v40H124V0H84v40H60C26.916 40 0 66.916 0 100v352c0 33.084 26.916 60 60 60h392c33.084 0 60-26.916 60-60V100c0-33.084-26.916-60-60-60zm20 412c0 11.028-8.972 20-20 20H60c-11.028 0-20-8.972-20-20V188h432v264zm0-304H40v-48c0-11.028 8.972-20 20-20h24v40h40V80h264v40h40V80h24c11.028 0 20 8.972 20 20v48z"></path>
+    <path d="M76 230h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zM76 310h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zM76 390h40v40H76zm80 0h40v40h-40zm80 0h40v40h-40zm80 0h40v40h-40zm80-80h40v40h-40z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="github">
+    <path d="M255.968 5.329C114.624 5.329 0 120.401 0 262.353c0 113.536 73.344 209.856 175.104 243.872 12.8 2.368 17.472-5.568 17.472-12.384 0-6.112-.224-22.272-.352-43.712-71.2 15.52-86.24-34.464-86.24-34.464-11.616-29.696-28.416-37.6-28.416-37.6-23.264-15.936 1.728-15.616 1.728-15.616 25.696 1.824 39.2 26.496 39.2 26.496 22.848 39.264 59.936 27.936 74.528 21.344 2.304-16.608 8.928-27.936 16.256-34.368-56.832-6.496-116.608-28.544-116.608-127.008 0-28.064 9.984-51.008 26.368-68.992-2.656-6.496-11.424-32.64 2.496-68 0 0 21.504-6.912 70.4 26.336 20.416-5.696 42.304-8.544 64.096-8.64 21.728.128 43.648 2.944 64.096 8.672 48.864-33.248 70.336-26.336 70.336-26.336 13.952 35.392 5.184 61.504 2.56 68 16.416 17.984 26.304 40.928 26.304 68.992 0 98.72-59.84 120.448-116.864 126.816 9.184 7.936 17.376 23.616 17.376 47.584 0 34.368-.32 62.08-.32 70.496 0 6.88 4.608 14.88 17.6 12.352C438.72 472.145 512 375.857 512 262.353 512 120.401 397.376 5.329 255.968 5.329z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 212 212" id="gitlab">
+    <path d="M12.3 74.7h54L43.3 3c-1-3.6-6.4-3.6-7.6 0L12.3 74.8z" />
+    <path d="M12.3 74.7L.5 111c-1 3.2 0 6.8 3 8.8l101.6 74-92.5-119z"/>
+    <path d="M105 193.7l-38.6-119h-54l92.7 119z"/>
+    <path d="M105 193.7l38.7-119H66.4l38.7 119z"/>
+    <path d="M105 193.7l38.7-119H198l-93 119z"/>
+    <path d="M198 74.7l11.6 36.2c1 3 0 6.6-3 8.6l-101.5 74 93-119z"/>
+    <path d="M198 74.7h-54.3L167 3c1.2-3.6 6.4-3.6 7.6 0L198 74.8z"/> 
+  </symbol>
+  <symbol viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="rss">
+    <circle cx="3.429" cy="20.571" r="3.429"></circle>
+    <path d="M11.429 24h4.57C15.999 15.179 8.821 8.001 0 8v4.572c6.302.001 11.429 5.126 11.429 11.428z"></path>
+    <path d="M24 24C24 10.766 13.234 0 0 0v4.571c10.714 0 19.43 8.714 19.43 19.429z"></path>
+  </symbol>
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="linkedin">
+    <path d="M437 0H75C33.648 0 0 33.648 0 75v362c0 41.352 33.648 75 75 75h362c41.352 0 75-33.648 75-75V75c0-41.352-33.648-75-75-75zM181 406h-60V196h60zm0-240h-60v-60h60zm210 240h-60V286c0-16.54-13.46-30-30-30s-30 13.46-30 30v120h-60V196h60v11.309C286.719 202.422 296.93 196 316 196c40.691.043 75 36.547 75 79.688zm0 0"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 612 612" id="arrow">
+    <path d="M604.501 440.509L325.398 134.956c-5.331-5.357-12.423-7.627-19.386-7.27-6.989-.357-14.056 1.913-19.387 7.27L7.499 440.509c-9.999 10.024-9.999 26.298 0 36.323s26.223 10.024 36.222 0l262.293-287.164L568.28 476.832c9.999 10.024 26.222 10.024 36.221 0 9.999-10.023 9.999-26.298 0-36.323z"></path>
+  </symbol>
+  <symbol viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" id="carly">
+    <path d="M504.971 239.029L448 182.059V84c0-46.317-37.682-84-84-84h-44c-13.255 0-24 10.745-24 24s10.745 24 24 24h44c19.851 0 36 16.149 36 36v108c0 6.365 2.529 12.47 7.029 16.971L454.059 256l-47.029 47.029A24.002 24.002 0 0 0 400 320v108c0 19.851-16.149 36-36 36h-44c-13.255 0-24 10.745-24 24s10.745 24 24 24h44c46.318 0 84-37.683 84-84v-98.059l56.971-56.971c9.372-9.372 9.372-24.568 0-33.941zM112 192V84c0-19.851 16.149-36 36-36h44c13.255 0 24-10.745 24-24S205.255 0 192 0h-44c-46.318 0-84 37.683-84 84v98.059l-56.971 56.97c-9.373 9.373-9.373 24.568 0 33.941L64 329.941V428c0 46.317 37.682 84 84 84h44c13.255 0 24-10.745 24-24s-10.745-24-24-24h-44c-19.851 0-36-16.149-36-36V320c0-6.365-2.529-12.47-7.029-16.971L57.941 256l47.029-47.029A24.002 24.002 0 0 0 112 192z"></path>
+  </symbol>
+  <symbol viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="copy">
+    <path d="M23 2.75A2.75 2.75 0 0 0 20.25 0H8.75A2.75 2.75 0 0 0 6 2.75v13.5A2.75 2.75 0 0 0 8.75 19h11.5A2.75 2.75 0 0 0 23 16.25zM18.25 14.5h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5zm0-3h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5zm0-3h-7.5a.75.75 0 0 1 0-1.5h7.5a.75.75 0 0 1 0 1.5z"></path>
+    <path d="M8.75 20.5a4.255 4.255 0 0 1-4.25-4.25V2.75c0-.086.02-.166.025-.25H3.75A2.752 2.752 0 0 0 1 5.25v16A2.752 2.752 0 0 0 3.75 24h12a2.752 2.752 0 0 0 2.75-2.75v-.75z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512.001 512.001" id="closeme">
+    <path d="M284.286 256.002L506.143 34.144c7.811-7.811 7.811-20.475 0-28.285-7.811-7.81-20.475-7.811-28.285 0L256 227.717 34.143 5.859c-7.811-7.811-20.475-7.811-28.285 0-7.81 7.811-7.811 20.475 0 28.285l221.857 221.857L5.858 477.859c-7.811 7.811-7.811 20.475 0 28.285a19.938 19.938 0 0 0 14.143 5.857 19.94 19.94 0 0 0 14.143-5.857L256 284.287l221.857 221.857c3.905 3.905 9.024 5.857 14.143 5.857s10.237-1.952 14.143-5.857c7.811-7.811 7.811-20.475 0-28.285L284.286 256.002z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="open-menu">
+    <path d="M492 236H20c-11.046 0-20 8.954-20 20s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20zm0-160H20C8.954 76 0 84.954 0 96s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20zm0 320H20c-11.046 0-20 8.954-20 20s8.954 20 20 20h472c11.046 0 20-8.954 20-20s-8.954-20-20-20z"></path>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="instagram">
+    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id=youtube>
+    <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+  </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="stackoverflow">
+    <path d="M21 27v-8h3v11H0V19h3v8h18z"></path><path d="M17.1.2L15 1.8l7.9 10.6 2.1-1.6L17.1.2zm3.7 14.7L10.6 6.4l1.7-2 10.2 8.5-1.7 2zM7.2 12.3l12 5.6 1.1-2.4-12-5.6-1.1 2.4zm-1.8 6.8l13.56 1.96.17-2.38-13.26-2.55-.47 2.97zM19 25H5v-3h14v3z"></path>
+  </symbol>
+</svg>
 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQFJfxn0IYznZYonOWZ644AWYC+Pt2cHqMaRhXVrursRwvLnLaebdGIlYNa" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+<footer class="footer">
+  <div class="footer_inner wrap pale">
+    <img src='http://example.org/icons/apple-touch-icon.png' class="icon icon_2 transparent">
+    <p>Copyright<span class="year"></span> MAGMAX&#39;S BLOG. All Rights Reserved</p><a class="to_top" href="#documentTop">
+  <svg class="icon">
+  <use xlink:href="#arrow"></use>
+</svg>
+</a>
 
+  </div>
+</footer>
 
-
-<script data-main="/assets/js/main" src="/assets/js/libs/require/require.min.js"></script><script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-9308241-3', 'auto');
-  ga('send', 'pageview');
-
-</script>
-</body>
+    <script type="text/javascript" src="http://example.org/js/bundle.min.d47d3d6894e66aa67f2514c171756283d3e8847b56f8f158bdd8430843da5f5af874c7a89a316c6743a845399bdb89649685154dc88b7e9bff1a155ca9e5108a.js" integrity="sha512-1H09aJTmaqZ/JRTBcXVig9PohHtW&#43;PFYvdhDCEPaX1r4dMeomjFsZ0OoRTmb24lkloUVTciLfpv/GhVcqeUQig==" crossorigin="anonymous"></script>
+    
+  </body>
 </html>

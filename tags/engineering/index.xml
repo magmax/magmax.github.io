@@ -1,0 +1,1699 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>engineering on El blog de MagMax</title>
+    <link>http://example.org/tags/engineering/</link>
+    <description>Recent content in engineering on El blog de MagMax</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 13 Jun 2015 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/tags/engineering/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>En busca de los cinco 9s: Calculando la disponibilidad de sistemas complejos</title>
+      <link>http://example.org/blog/en-busca-de-los-cinco-9s/</link>
+      <pubDate>Sat, 13 Jun 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/en-busca-de-los-cinco-9s/</guid>
+      <description>
+        
+          &lt;p&gt;Este artículo es la traducción del artículo &lt;a href=&#34;http://www.edgeblog.net/2007/in-search-of-five-9s/&#34;&gt;In search of five 9s: Calculating
+Availability of Complex Systems&lt;/a&gt;, publicado por Bill el 29 de Octubre de 2007.
+Dado que el artículo original tiene demasiado texto, me he visto obligado a
+modificar la maquetación y añadir títulos.&lt;/p&gt;
+&lt;p&gt;Puede parecer un poco largo, pero es realmente interesante. Aunque tiene muchas
+fórmulas es sencillo de entender, gracias a los ejemplos.&lt;/p&gt;
+&lt;p&gt;Y he elegido este artículo porque con el &lt;strong&gt;cloud&lt;/strong&gt; que está tan de moda resulta
+sencillo y relativamente barato redundar máquinas.&lt;/p&gt;
+&lt;p&gt;Además, éste es el tipo de artículos que realmente me hacen sentir como Ingeniero.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;hr&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/uptime.jpg&#34;
+         alt=&#34;Uptime&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;disponibilidad-y-sla&#34;&gt;Disponibilidad y SLA&lt;/h2&gt;
+&lt;p&gt;He pasado los últimos días tratando de desarrollar un modelo matemático simple para predecir la disponibilidad esperada en sistemas complejos. En IT se nos suele pedir que desarrollemos y cumplamos acuerdos de nivel de servicio
+(&lt;abbr title=&#34;Acuerdos de Nivel de Servicio o Server Level Agreements&#34;&gt;SLAs&lt;/abbr&gt;
+).
+Si no se analizan los puntos de fallo de un sistema, y después se calcula la
+disponibilidad del sistema, el
+(&lt;abbr title=&#34;Acuerdo de Nivel de Servicio o Server Level Agreement&#34;&gt;SLA&lt;/abbr&gt;
+).
+es defectuoso desde el principio. Para
+complicar aún más las cosas, diferentes personas tienen diferentes definiciones
+de disponibilidad. Por ejemplo: ¿cuenta un &lt;em&gt;downtime&lt;/em&gt; planificado de
+mantenimiento en sus cálculos de disponibilidad del sistema?&lt;/p&gt;
+&lt;p&gt;Definiciones de Disponibilidad Comunes:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Disponibilidad =
+&lt;abbr title=&#34;Media del tiempo entre fallos&#34;&gt;MTBF&lt;/abbr&gt;
+ / (
+&lt;abbr title=&#34;Media del tiempo de recuperación&#34;&gt;MTTR&lt;/abbr&gt;
+ +
+&lt;abbr title=&#34;Media del tiempo entre fallos&#34;&gt;MTBF&lt;/abbr&gt;
+
+). Ésta es una definición clásica de disponibilidad y es frecuentemente usada por fabricantes de hardware cuando publican una métrica de disponibilidad para un determinado servidor.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Disponibilidad = (Uptime + Scheduled Maintenance)/(Unscheduled Downtime + Uptime + Scheduled Maintenance). Consiste en una métrica centrada en IT donde el negocio puede permitirse &lt;em&gt;downtimes&lt;/em&gt; durante horas. Este modelo funciona para determinados sistemas, como un servidor de ficheros que no se necesita durante la noche, pero no funciona bien para servicios web, a pesar de que muchas compañías aún lo usan para sus
+&lt;abbr title=&#34;SLAs (Acuerdos de Nivel de Servicio o Server Level Agreement)&#34;&gt;SLAs&lt;/abbr&gt;
+.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Disponibilidad = Uptime/(Uptime + Downtime). Es la métrica que mejor aplica para servicios que se necesitan 24x7, como sitios de comercio electrónico.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Normalmente se expresa la disponibilidad como un porcentaje. En ocasiones, la gente hace referencia a los &lt;em&gt;&amp;ldquo;cuatro nueves&amp;rdquo;&lt;/em&gt; (99.99%) o los &lt;em&gt;&amp;ldquo;cinco nueves&amp;rdquo;&lt;/em&gt; (99.999%). Para simplificar las cosas, en la siguiente tabla se muestran los minutos de &lt;em&gt;downtime&lt;/em&gt; al año permitidos para un nivel determinado:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Disponiblidad&lt;/th&gt;
+&lt;th&gt;Min Downtime/Año&lt;/th&gt;
+&lt;th&gt;HorasDowntime/Año&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;95.000%&lt;/td&gt;
+&lt;td&gt;26,298&lt;/td&gt;
+&lt;td&gt;438&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;98.000%&lt;/td&gt;
+&lt;td&gt;10,519&lt;/td&gt;
+&lt;td&gt;175&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;98.500%&lt;/td&gt;
+&lt;td&gt;7,889&lt;/td&gt;
+&lt;td&gt;131&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;99.000%&lt;/td&gt;
+&lt;td&gt;5,260&lt;/td&gt;
+&lt;td&gt;88&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;99.500%&lt;/td&gt;
+&lt;td&gt;2,630&lt;/td&gt;
+&lt;td&gt;44&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;99.900%&lt;/td&gt;
+&lt;td&gt;526&lt;/td&gt;
+&lt;td&gt;8.8&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;99.990%&lt;/td&gt;
+&lt;td&gt;52.6&lt;/td&gt;
+&lt;td&gt;.88&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;99.999%&lt;/td&gt;
+&lt;td&gt;5.26&lt;/td&gt;
+&lt;td&gt;.088&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Basándose en la tabla anterior, se puede comprobar que hay una gran diferencia entre un
+&lt;abbr title=&#34;Acuerdo de Nivel de Servicio o Server Level Agreement&#34;&gt;SLA&lt;/abbr&gt;
+
+que especifique  un 99% de disponibilidad (88 horas de &lt;em&gt;downtime&lt;/em&gt; al año) y 99.9% de disponibilidad (8.8 horas de &lt;em&gt;downtime&lt;/em&gt; al año). Pero ¿cómo se puede estar seguro de cuál es el &lt;em&gt;downtime&lt;/em&gt; esperado de un sistema? En su form más simplista, la disponibilidad esperada de un sistema es la disponibilidad esperada de cada una de sus partes multiplicadas entre sí. De esta manera, si el sistema tiene dos servidores, y cada servidor tiene una disponibilidad esperada del 99%, entonces la disponibilidad del sistema sería \(99\% * 99\% = 98.01\%\). Nota: He usado la expresión &amp;ldquo;disponibilidad esperada&amp;rdquo;. Estamos calculando el futuro esperado de un sistema sobre un periodo de tiempo, no la disponibilidad histórica. Para el resto de este artículo, eliminaré el término &amp;ldquo;esperada&amp;rdquo; por brevedad, pero está siempre implícito.&lt;/p&gt;
+&lt;h2 id=&#34;sistemas-compuestos&#34;&gt;Sistemas compuestos&lt;/h2&gt;
+&lt;p&gt;El modelo simplista de más arriba es útil para mostrar que el &lt;em&gt;downtime&lt;/em&gt; es acumulativo. En otras palabras, si se espera que un componente esté fuera de línea 88 horas/año, y un fallo de cualquier componente es un fallo del sistema, entonces el sistema tiene un &lt;em&gt;downtime&lt;/em&gt; esperado de 174 horas. ¿Por qué no 176 horas? Bueno, ocasionalmente ambos componentes estarán caídos al mismo tiempo.&lt;/p&gt;
+&lt;p&gt;Los sistemas del mundo real nunca son tan simples. Típicamente el sistema estará compuesto de múltiples componentes, con redundancia, y cada uno con distinto nivel de disponibilidad por componente. Modelar esto requiere fórmulas algo más complicadas, pero en cuanto se tengan claros los conceptos, los nuevos cálculos pueden hacerse rápidamente en una hoja Excel. Antes de continuar necesitamos algo de notación básica para simplificar nuestras fórmulas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Disponibilidad del componente 1: \(Ac_1\)&lt;/li&gt;
+&lt;li&gt;Disponibilidad del componente 2: \(Ac_2\)&lt;/li&gt;
+&lt;li&gt;Disponibilidad del componente 3: \(Ac_3\)&lt;/li&gt;
+&lt;li&gt;Disponibilidad del componente N: \(Ac_N\)&lt;/li&gt;
+&lt;li&gt;Sistema de disponibilidad: \(As\)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Y dicho esto, estamos listos para nuestra primera fórmula. Cuando un sistema está constituído por N componentes que son puntos únicos de fallo, la disponibilidad del sistema se puede calcular como:&lt;/p&gt;
+&lt;p&gt;$$
+As = Ac_1 * Ac_2 * Ac_3 * &amp;hellip; Ac_n
+$$&lt;/p&gt;
+&lt;h3 id=&#34;ejemplo&#34;&gt;Ejemplo&lt;/h3&gt;
+&lt;p&gt;Consideremos un sitio de comercio electrónico 24x7 con muchos puntos únicos de fallo. Se podría modelar el sistema con los 8 componentes siguientes:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Component&lt;/th&gt;
+&lt;th&gt;Availability&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Web&lt;/td&gt;
+&lt;td&gt;85%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Application&lt;/td&gt;
+&lt;td&gt;90%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Database&lt;/td&gt;
+&lt;td&gt;99.9%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;DNS&lt;/td&gt;
+&lt;td&gt;98%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Firewall&lt;/td&gt;
+&lt;td&gt;85%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Switch&lt;/td&gt;
+&lt;td&gt;99%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Data Center&lt;/td&gt;
+&lt;td&gt;99.99%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;ISP&lt;/td&gt;
+&lt;td&gt;95%&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Si cualquiera de estos componentes falla, el sistema caerá. La disponibilidad esperada del sistema sería \(85\%*90\%*99.9\%*98\%*85\%*99\%*99.99\%*95\% = 59.87\%\). Nótese que se modela cada componente como un todo, en lugar de mirar cada una de sus partes. Se podría dividir el servicio web en el software (Apache), el código (nuestra web) y el hardware (placa base, discos duros, etc). Para nuestros propósitos, la complejidad no mejora necesariamente el modelo, así que trabajaremos con el servicio como un todo. Además, para esta discusión se utilizará la tercera definición de disponibilidad de arriba. Para nuestros usuarios, no importa si el sistema está caído por mantenimiento o por un disco duro roto.&lt;/p&gt;
+&lt;h2 id=&#34;mejorar-la-disponibilidad&#34;&gt;Mejorar la disponibilidad&lt;/h2&gt;
+&lt;p&gt;Si queremos conservar nuestros trabajos, necesitamos encontrar una manera de mejorar esta disponibilidad. Los objetivos obvios para mejorar la estabilidad del sitio son la web y el firewall. La pregunta es qué efecto tendría en la disponibilidad de la web añadir otro servidor. Con esto llegamos a la segunda ecuación. Cuando un sistema está compuesto por dos componentes redundantes, la disponibilidad del sistema se puede calcular como:&lt;/p&gt;
+&lt;p&gt;$$
+As = Ac_1 + ((1 – Ac_1) * Ac_2)
+$$&lt;/p&gt;
+&lt;h3 id=&#34;ejemplo-1&#34;&gt;Ejemplo&lt;/h3&gt;
+&lt;p&gt;Usando nuestro ejemplo del servidor web con disponibilidad de 85%, añadir un segundo servidor incrementaría la disponibilidad a \(85\% + (1-85\%)*85\% = 97.75\%\). La lógica detrás de esto es que mientras el primer servidor está caído (15% del tiempo) el segundo servidor estará arriba el 85% del tiempo. Esto podría traducirse o no a la disponibilidad en el mundo real. Por ejemplo, si el servicio web está caído tan a menudo porque necesitamos desplegar nuestro código constantemente, añadir un segundo servidor debería traducirse en un incremento de la disponibilidad, ya que se puede desplegar código en el servidor fuera de línea mientras el otro servidor continúa funcionando. En este caso, el incremento de nuestra disponibilidad real debería ser mayor del 12.75%. En caso contrario, si el servicio se cae por errores de código, añadir un segundo servidor podría empeorar la disponibilidad debido al desesperante error.&lt;/p&gt;
+&lt;p&gt;La idea es que, en general, si has calculado rigurosamente la disponibilidad del componente, la ecuación funcionará. Nótese que la ecuación funcionará igualmente si los componentes tienen distinta estimación de disponibilidad. Supongamos que el servidor web tiene un problema de disponibilidad porque el hardware está subdimensionado. Ahora supongamos que el segundo servidor que hemos comprado tiene el doble de capacidad y determinamos que por sí mismo daría una disponibilidad del 90%, por lo que la ecuación cambia a \(85\% + (1-85\%)*90\% = 98.5\%\).&lt;/p&gt;
+&lt;p&gt;Volvamos al cálculo del sistema anterior y añadamos esto. Asumiendo que se ha añadido un segundo servidor web y un segundo firewall, incrementando la disponibilidad de estos componentes del sistema a 97.75%. Ahora la disponibilidad de nuestro nuevo sistema sería \(97.75\%*90\%*99.9\%*98\%*97.75\%*99\%*99.99\%*95\% = 79.10\%\). Mejor, pero aún no es buena. Es difícil conseguir cualquier nivel de alta disponibilidad cuando se tienen puntos únicos de fallo. Así que asumamos que añadimos componentes redundantes en todos nuestros servidores y equipos de red. Asumamos un segundo ISP para diversificar el transporte, pero aún estamos en un único
+&lt;abbr title=&#34;Centro de Proceso de Datos, o DataCenter&#34;&gt;CPD&lt;/abbr&gt;
+.
+Nuestra ecuación sería ahora: \(97.75\%*99\%*99.9999\%*99.96\%*97.75\%*99.99\%*99.99\%*99.75\% = 94.3\%\). Mejorando. Eliminando los puntos únicos de fallo se mejoró la disponibilidad del sistema del 60% (3506 horas de downtime/año) a 94.3% (500 horas de downtime/año).&lt;/p&gt;
+&lt;h3 id=&#34;generalizando-la-fórmula&#34;&gt;Generalizando la fórmula&lt;/h3&gt;
+&lt;p&gt;La ecuación #2 de más arriba modelaba cómo añadir un único componente. En algunos casos es necesario añadir más de un componente redundante. Por ejemplo, se podrían tener más de dos servidores web. En este caso es necesario iterar la ecuación #2 varias veces para agrupar el efecto de los componentes adicionales, lo que implica una tercera ecuación. Cuando se intenta calcular la disponibilidad de un servicio con n componentes redundantes, se calcula:&lt;/p&gt;
+&lt;p&gt;$$
+As = Ac_{n-1} + ((1 – Ac_{n-1}) * Ac_n)
+$$&lt;/p&gt;
+&lt;h3 id=&#34;ejemplo-2&#34;&gt;Ejemplo&lt;/h3&gt;
+&lt;p&gt;En el caso de nuestro servidor web, añadir un tercer servidor cambia la disponibilidad a: \(97.75\% + (1-97.75\%)*85\% = 99.6625\%\). Añadiendo un cuarto servidor incrementaría la disponibilidad a: \(99.6625\% + (1-99.6625\%)*85\% = 99.949\%\). Nótese que hay una disminución de ganancia. Añadiendo el segundo servidor incrementó la disponibilidad en un 12.75%. Añadir el tercero sólo hizo ganar 1.9125%. El cuarto servidor nos da un insignificante .2865%. E incluso con 3 servidores más para distribuir nuestra carga, aún no se han conseguido los elusivos cuatro nueves de disponibilidad. Diseñar un sistema altamente disponible requiere que cada componente individual sea altamente disponible Y añadir redundancia en los componentes. Si el servidor web individual de nuestro sistema tuviera una disponibilidad del 90% en lugar del 85%, entonces la disponibilidad de los dos servidores sería del 99% y los tres servidores tendrían un 99.99%.&lt;/p&gt;
+&lt;p&gt;Las ecuaciones #2 y #3 tienen un defecto, ya que asumen que cada componente independiente puede manejar la carga, y que la carga es constante. ¿Qué ocurre si bajo operativa normal un servidor web puede manejar la carga, pero en pico se necesitan tres servidores? En ese caso la disponibilidad de los tres servidores en carga normal sería de 99.775%, mientras que en pico bajaría hasta el 85%. En un pico de carga, la caída de uno de los servidores podría significar una pérdida de servicio, por lo que se transforma a la disponibilidad de una única caja. ¿Y si el pico de carga requiere 2 servidores? En este caso la disponibilidad en pico sería del 97.75%. Si el pico require dos servidores y tenemos tres, la disponibilidad sería equivalente a tener dos servidores. El concepto importante aquí es que &lt;strong&gt;hay una relación inversa entre la carga y la disponibilidad&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;redundando-el-cpd&#34;&gt;Redundando el CPD&lt;/h2&gt;
+&lt;p&gt;Debería ser obvio a estas alturas unos verdaderos altos niveles de disponibilidad (99.9% - 99.999%) es muy difícil y muy caro. Uno de los puntos únicos de fallo más caros a eliminar es el propio
+&lt;abbr title=&#34;Centro de Proceso de Datos, o DataCenter&#34;&gt;CPD&lt;/abbr&gt;
+.
+En la mayoría de los casos, doblará el coste de la infraestructura, e incluso podría ser más del doble, ya que será necesario invertir en tecnologías para sincronizar ambos
+&lt;abbr title=&#34;Centros de Proceso de Datos, o DataCenters&#34;&gt;CPDs&lt;/abbr&gt;
+.&lt;/p&gt;
+&lt;p&gt;De todas formas consideremos añadir un nuevo
+&lt;abbr title=&#34;Centro de Proceso de Datos, o DataCenter&#34;&gt;CPD&lt;/abbr&gt;
+.
+En el ejemplo de arriba, la disponibilidad de nuestro sistema con servidores e
+ISPs redundantes era del 94.3%. Añadir un segundo
+&lt;abbr title=&#34;Centro de Proceso de Datos, o DataCenter&#34;&gt;CPD&lt;/abbr&gt;
+
+con la tecnología
+necesaria para permitir que ambos trabajen de forma activo-activo (ambos centros
+reciben tráfico al mismo tiempo) incrementaría nuestra disponibilidad a
+\(94.3\% + (1-94.3\%)*94.3\% = 99.675\%\). ¡Añadir un nuevo
+&lt;abbr title=&#34;Centro de Proceso de Datos, o DataCenter&#34;&gt;CPD&lt;/abbr&gt;
+
+puede ahorrar hasta 471 horas de downtime al año!&lt;/p&gt;
+&lt;p&gt;En este ejemplo se asume que cada
+&lt;abbr title=&#34;Centro de Proceso de Datos, o DataCenter&#34;&gt;CPD&lt;/abbr&gt;
+
+es un sistema independiente, por lo que el fallo de un sistema en un
+&lt;abbr title=&#34;Centro de Proceso de Datos, o DataCenter&#34;&gt;CPD&lt;/abbr&gt;
+
+sería un fallo de todo el sistema en ese centro. No siempre es así. Por ejemplo,
+si se diseña correctamente, un servidor web podría conectarse a la base de datos
+del otro
+&lt;abbr title=&#34;Centro de Proceso de Datos, o DataCenter&#34;&gt;CPD&lt;/abbr&gt;
+.
+En este caso la disponibilidad sería mayor del 99.675%. Si se pudiera diseñar el
+&lt;em&gt;site&lt;/em&gt; de manera que cada sistema operara de forma independiente al resto de
+servicios, la disponibilidad en el ejemplo se incrementaría del 99.675% al
+99.888% (cada servicio tendría 3 componentes redundantes, excepto el
+&lt;abbr title=&#34;Centro de Proceso de Datos, o DataCenter&#34;&gt;CPD&lt;/abbr&gt;
+
+que sólo tendría uno).&lt;/p&gt;
+&lt;h3 id=&#34;excel&#34;&gt;Excel&lt;/h3&gt;
+&lt;p&gt;Estas fórmulas son mucho más sencillas de mostrar en Excel. Pegue la siguiente tabla en una hoja de cálculo, comenzando en la casilla A1:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Avail %&lt;/th&gt;
+&lt;th&gt;1 Component&lt;/th&gt;
+&lt;th&gt;2 Components&lt;/th&gt;
+&lt;th&gt;3 Components&lt;/th&gt;
+&lt;th&gt;4 Components&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Web&lt;/td&gt;
+&lt;td&gt;85%&lt;/td&gt;
+&lt;td&gt;=B2+((1-B2)*$B2)&lt;/td&gt;
+&lt;td&gt;=C2+((1-C2)*$B2)&lt;/td&gt;
+&lt;td&gt;=D2+((1-D2)*$B2)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Application&lt;/td&gt;
+&lt;td&gt;90%&lt;/td&gt;
+&lt;td&gt;=B3+((1-B3)*$B3)&lt;/td&gt;
+&lt;td&gt;=C3+((1-C3)*$B3)&lt;/td&gt;
+&lt;td&gt;=D3+((1-D3)*$B3)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Database&lt;/td&gt;
+&lt;td&gt;99.9%&lt;/td&gt;
+&lt;td&gt;=B4+((1-B4)*$B4)&lt;/td&gt;
+&lt;td&gt;=C4+((1-C4)*$B4)&lt;/td&gt;
+&lt;td&gt;=D4+((1-D4)*$B4)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;DNS&lt;/td&gt;
+&lt;td&gt;98%&lt;/td&gt;
+&lt;td&gt;=B5+((1-B5)*$B5)&lt;/td&gt;
+&lt;td&gt;=C5+((1-C5)*$B5)&lt;/td&gt;
+&lt;td&gt;=D5+((1-D5)*$B5)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Firewall&lt;/td&gt;
+&lt;td&gt;85%&lt;/td&gt;
+&lt;td&gt;=B6+((1-B6)*$B6)&lt;/td&gt;
+&lt;td&gt;=C6+((1-C6)*$B6)&lt;/td&gt;
+&lt;td&gt;=D6+((1-D6)*$B6)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Switch&lt;/td&gt;
+&lt;td&gt;99%&lt;/td&gt;
+&lt;td&gt;=B7+((1-B7)*$B7)&lt;/td&gt;
+&lt;td&gt;=C7+((1-C7)*$B7)&lt;/td&gt;
+&lt;td&gt;=D7+((1-D7)*$B7)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Data Center&lt;/td&gt;
+&lt;td&gt;99.99%&lt;/td&gt;
+&lt;td&gt;?&lt;/td&gt;
+&lt;td&gt;=B8+((1-B8)*$B8)&lt;/td&gt;
+&lt;td&gt;?&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;ISP&lt;/td&gt;
+&lt;td&gt;95%&lt;/td&gt;
+&lt;td&gt;=B9+((1-B9)*$B9)&lt;/td&gt;
+&lt;td&gt;=C9+((1-C9)*$B9)&lt;/td&gt;
+&lt;td&gt;=D9+((1-D9)*$B9)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;System Avail %&lt;/td&gt;
+&lt;td&gt;=b2&lt;em&gt;b3&lt;/em&gt;b4&lt;em&gt;b5&lt;/em&gt;b6&lt;em&gt;b7&lt;/em&gt;b8*b9&lt;/td&gt;
+&lt;td&gt;=c2&lt;em&gt;c3&lt;/em&gt;c4&lt;em&gt;c5&lt;/em&gt;c6&lt;em&gt;c7&lt;/em&gt;b8*c9&lt;/td&gt;
+&lt;td&gt;=d2&lt;em&gt;d3&lt;/em&gt;d4&lt;em&gt;d5&lt;/em&gt;d6&lt;em&gt;d7&lt;/em&gt;d8*d9&lt;/td&gt;
+&lt;td&gt;=e2&lt;em&gt;e3&lt;/em&gt;e4&lt;em&gt;e5&lt;/em&gt;e6&lt;em&gt;e7&lt;/em&gt;d8*e9&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Ahora que tiene los conceptos claros y el principio de una hoja de cálculo para calcular los cambios de premisas, se puede centrar en aplicar estas teorías a su situación particular. Comenzando por descomponer su sistema, sea una web simple, un sistema de contabilidad o un sistema de ficheros, en servicios de componentes independientes. Para cada servicio, determine el número mínimo de unidades necesarias para trabajar, y la disponibilidad necesaria de cada unidad.&lt;/p&gt;
+&lt;p&gt;Estimar la disponibilidad puede ser un reto. Una manera es mirar datos históricos. Si no se tiene acceso a buenos datos, se puede formar una estimación basada en los parámetros de su operativa estándar. Por ejemplo, si se despliega código nuevo del servicio web dos veces al mes y cada una causa un &lt;em&gt;downtime&lt;/em&gt; de 2 horas, se traduce en 48 horas de parada al año. Si se espera realizar labores de mantenimiento del sistema operativo una vez por trimestre, con un &lt;em&gt;downtime&lt;/em&gt; estimado de 2 horas por trimestre, serían otras 8 horas más al año. Si además se anticipa a un fallo hardware al año, con garantía de entrega el siguiente día hábil, se traduciría en 41 horas de &lt;em&gt;downtime&lt;/em&gt; al año (fallos en viernes se repararían el lunes, los sábados y domingos en martes). Sumando estos números obtenemos \(48 + 8 + 41 = 98\) horas de &lt;em&gt;downtime&lt;/em&gt; al año, o una disponibilidad estimada del 98.882%.&lt;/p&gt;
+&lt;p&gt;Con un poco de esfuerzo, se puede estimar un nivel de disponibilidad realista
+para su sistema. Éste es el pilar para crear
+&lt;abbr title=&#34;Acuerdos de Nivel de Servicio o Server Level Agreements&#34;&gt;SLAs&lt;/abbr&gt;
+
+realistas y cumplibles. Estas fórmulas pueden ayudar a IT a negociar los
+&lt;abbr title=&#34;Acuerdos de Nivel de Servicio o Server Level Agreements&#34;&gt;SLAs&lt;/abbr&gt;
+
+con negocio, y puede ayudar a comparar el
+&lt;abbr title=&#34;Retorno Sobre la Inversión&#34;&gt;RSI&lt;/abbr&gt;
+
+de diferentes soluciones. Por ejemplo, digamos que se está
+intentando elegir una solución para el servidor web, y se tienen dos elecciones:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;La opción 1 consiste en 4 servidores usando hardware barato sin redundancia interna. Cada servidor cuesta 3.000 €. Estimamos la disponibilidad en un 75%.&lt;/li&gt;
+&lt;li&gt;La opción 2 consiste en 2 servidores usando hardware caro con discos duros y fuentes de alimentación redundantes. Cada servidor cuesta 20.000 €. Estimas la disponibilidad de cada servidor en un 99%.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Se estima que el coste por &lt;em&gt;downtime&lt;/em&gt; es de 500€/hora, y se espera que estos servidores aguanten la carga del sistema los próximos 3 años, tras los cuales se reemplazarán. Usando los números de arriba, la solución #1 tiene una disponibilidad esperada del 99.6% a un coste de 12.000€. La solución #2 tiene una disponibilidad esperada del 99.99%, a un coste de $40.000€. La solución #1 experimentaría 34 horas/año, o 102 horas en los tres años, de &lt;em&gt;downtime&lt;/em&gt; más que la solución #2. En tres años, este &lt;em&gt;downtime&lt;/em&gt; extra costaría $51.000€. Por lo que el gasto de 28.000€ previo proporcionará un
+&lt;abbr title=&#34;Retorno Sobre la Inversión&#34;&gt;RSI&lt;/abbr&gt;
+
+en 3 años del 182%. Nótese que el modelo es tan bueno como lo sean las estimaciones. Si los servidores de la solución #2 sólo tuvieran el 95% de disponibilidad, la disponibilidad combinada sería del 99.75%, lo que sólo proporciona 13 horas menos de &lt;em&gt;downtime&lt;/em&gt; anual. En este caso sólo se ahorrarían 20,000€ en los 3 años por la inversión de 28.000€, por lo que podría ser mejor la opción #1.&lt;/p&gt;
+&lt;h2 id=&#34;conclusión&#34;&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;Diseñar y operar sistemas de alta disponibilidad es un trabajo complicado, pero con unas pocas fórmulas sencillas, es posible entender y predecir su comportamiento general. Esto permitirá realizar mejores decisiones al elegir entre múltiples opciones, y hacer predicciones más realistas a la hora de negociar los
+&lt;abbr title=&#34;Acuerdos de Nivel de Servicio o Server Level Agreement&#34;&gt;SLAs&lt;/abbr&gt;
+.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;Artículo original&lt;/strong&gt;: &lt;a href=&#34;http://www.edgeblog.net/2007/in-search-of-five-9s/&#34;&gt;In search of five 9s: Calculating Availability of Complex Systems&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://example.org/blog/en-busca-de-los-cinco-9s/&#34;&gt;Traducido por Miguel Ángel García&lt;/a&gt;.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Niveles de automatización</title>
+      <link>http://example.org/blog/niveles-de-automatizacion/</link>
+      <pubDate>Wed, 17 Sep 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/niveles-de-automatizacion/</guid>
+      <description>
+        
+          &lt;p&gt;Hace poco escribí un &lt;a href=&#34;https://twitter.com/magmax_en/status/505777648493416448&#34;&gt;twit sobre los niveles de automatización&lt;/a&gt;. Desgraciadamente, en 140 caracteres no podía meter todo lo que me gustaría y tampoco podía corregir el error cometido, a pesar de ser importante. Aunque parece que nadie se dio cuenta :D&lt;/p&gt;
+&lt;p&gt;Pero para eso tengo mi blog.&lt;/p&gt;
+&lt;p&gt;Aquí contaré cómo veo yo los distintos niveles de automatización, desde la automatización más básica a la más avanzada, con ejemplos y software que puede ayudar a obtener ese nivel.&lt;/p&gt;
+&lt;p&gt;Faltarán cosas&amp;hellip; Sobre todo programas. Agradecería si pudiérais completarlo en comentarios. Si es software privativo, es bienvenido si la entrada no es publicidad cantosa; pero si es libre, mucho mejor.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/engineering.jpg&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;estructura&#34;&gt;Estructura&lt;/h2&gt;
+&lt;p&gt;Desgraciadamente, los niveles no son lineales. O al menos, no del todo.&lt;/p&gt;
+&lt;p&gt;De hecho, habrá ciertos niveles que nunca se puedan alcanzar, como acciones que
+se realizan una única vez, que no estarán dentro de un &lt;a href=&#34;http://es.wikipedia.org/wiki/Cron*(Unix)&#34;&gt;cron&lt;/a&gt; (aunque es posible
+que estén dentro de &lt;a href=&#34;http://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt; y éste, dentro de &lt;a href=&#34;http://es.wikipedia.org/wiki/Cron*(Unix)&#34;&gt;cron&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;Por ello, puede decirse que la automatización sigue este esquema:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;+--------------------------------------------------+
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;|                   Documentación                  |
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;+--------------------------------------------------+
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;|                      Script                      |
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;+--------------------------------------------------+
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;|                |                | Monitorización |
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;| Temporización  |  Replicación   +----------------+
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;|                |                |  Autorecovery  |
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;+--------------------------------------------------+
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;|                Sistemas Autónomos                |
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;+--------------------------------------------------+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;niveles&#34;&gt;Niveles&lt;/h2&gt;
+&lt;h3 id=&#34;nivel-1-documentación&#34;&gt;Nivel 1: Documentación&lt;/h3&gt;
+&lt;p&gt;El nivel más básico de automatización es la documentación. ¿Quién no le ha mandado a un amigo unas instrucciones sobre cómo debe hacer algo?&lt;/p&gt;
+&lt;p&gt;Podría decirse que ésta es la razón de que creara este blog: documentar cosas típicas que me voy encontrando para no tener que repetirlas. Creo que desde entonces ha evolucionado un poco :D&lt;/p&gt;
+&lt;p&gt;Es habitual que todo el software de usuario incluya documentación enumerando paso a paso cómo hacer algo. Éste es el espíritu del nivel documental. Manuales de usuario, FAQs, tutoriales, etc.&lt;/p&gt;
+&lt;p&gt;Problemas de la documentación:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Puede &lt;strong&gt;quedarse obsoleta&lt;/strong&gt;. Es lógico, ya que&amp;hellip;&lt;/li&gt;
+&lt;li&gt;&amp;hellip; casi nunca se puede &lt;strong&gt;probar&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Es &lt;strong&gt;propensa a errores&lt;/strong&gt;. Imagine un operario de una central nuclear leyendo el manual ante una alerta de fusión del núcleo; lo más probable es que lea deprisa y puede saltarse pasos importantes.&lt;/li&gt;
+&lt;li&gt;Es &lt;strong&gt;aburrida&lt;/strong&gt;. ¿Quién se ha leído el manual de su reloj?&lt;/li&gt;
+&lt;li&gt;Habitualmente, no tiene &lt;strong&gt;control de versiones&lt;/strong&gt;, ya que se usan formatos como Word, PDF, etc. en lugar de formatos tipo texto.&lt;/li&gt;
+&lt;li&gt;Es &lt;strong&gt;lento&lt;/strong&gt;, y si hay que repetirlo, requerirá casi el mismo tiempo que la primera vez.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Para ayudarnos tenemos distintas herramientas de generación de documentación,
+como &lt;a href=&#34;https://pypi.python.org/pypi/Sphinx&#34;&gt;Sphinx&lt;/a&gt;, &lt;a href=&#34;http://www.oracle.com/technetwork/java/javase/documentation/index-jsp-135444.html&#34;&gt;Javadoc&lt;/a&gt; o más genérica, como &lt;a href=&#34;http://www.stack.nl/~dimitri/doxygen/&#34;&gt;Doxygen&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;nivel-2-script&#34;&gt;Nivel 2: Script&lt;/h3&gt;
+&lt;p&gt;Si tenemos un tutorial que indica paso por paso cómo instalar un programa&amp;hellip; ¿Por qué no &lt;em&gt;scriptarlo&lt;/em&gt;? Basta con transformar cada uno de esos puntos en una función de un &lt;em&gt;script&lt;/em&gt; e invocar a cada una de estas funciones de manera secuencial. Es decir: basta con &lt;strong&gt;formalizar la documentación&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Ejemplos de software en este nivel son todos los programas de instalación, ya que van paso por paso ejecutando acciones. Algunas veces requieren la acción del usuario para tomar decisiones o para introducir algún valor.&lt;/p&gt;
+&lt;p&gt;Este nivel tiene algunas ventajas sobre el de documentación:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Se puede &lt;strong&gt;probar&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;No es propenso a errores&lt;/strong&gt;, al menos para el flujo básico. Si funciona una vez, el ordenador no se saltará pasos ni los hará en distinto orden.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;No requiere acción&lt;/strong&gt; por parte del usuario, más allá de saber si requiere algún parámetro o saber responder alguna pregunta.&lt;/li&gt;
+&lt;li&gt;Puede meterse en un &lt;strong&gt;control de versiones&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Se puede distribuir a otras máquinas, es decir, es &lt;strong&gt;replicable&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Ahorra tiempo&lt;/strong&gt;. Una vez escrito, no es necesario saber qué hace por dentro (¿Alguien sabe qué ocurre al hacer un &lt;code&gt;git init&lt;/code&gt;?)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Sin embargo, también tiene problemas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Requiere la presencia del &lt;strong&gt;usuario&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Su replicación, habitualmente requerirá &lt;strong&gt;documentación&lt;/strong&gt;, devolviéndonos al nivel anterior.&lt;/li&gt;
+&lt;li&gt;Puede quedarse &lt;strong&gt;obsoleto&lt;/strong&gt;. Que se pueda probar no significa que haya pruebas ni que alguien lo pruebe.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Estos tres problemas son, exactamente, los que se tratan de solucionar en el nivel siguiente.&lt;/p&gt;
+&lt;h3 id=&#34;nivel-3-script-automatizado&#34;&gt;Nivel 3: Script automatizado&lt;/h3&gt;
+&lt;p&gt;En este nivel hay 3 partes. No tienen por qué cumplirse las 3 y tampoco tienen que hacerse en un orden determinado. Pero son 3 partes bien diferenciadas que conviene identificar:&lt;/p&gt;
+&lt;h4 id=&#34;nivel-31-temporización&#34;&gt;Nivel 3.1: Temporización&lt;/h4&gt;
+&lt;p&gt;Con el fin de evitar la &lt;strong&gt;presencia del usuario&lt;/strong&gt;, se pueden utilizar archivos de configuración y provocar que nuestro script se ejecute cada cierto intervalo de tiempo.&lt;/p&gt;
+&lt;p&gt;Para esta tarea suele puede utilizar &lt;a href=&#34;http://es.wikipedia.org/wiki/Cron*(Unix)&#34;&gt;cron&lt;/a&gt;, &lt;a href=&#34;https://packages.debian.org/wheezy/admin/at&#34;&gt;at&lt;/a&gt; o &lt;a href=&#34;http://anacron.sourceforge.net/&#34;&gt;anacron&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Este conocimiento hubiera facilitado mucho la vida de Desmond en la isla de
+&lt;a href=&#34;http://es.wikipedia.org/wiki/Lost&#34;&gt;Perdidos (Lost)&lt;/a&gt; :D.&lt;/p&gt;
+&lt;h4 id=&#34;nivel-32-replicabilidad&#34;&gt;Nivel 3.2: Replicabilidad&lt;/h4&gt;
+&lt;p&gt;No sé cómo llamar a este nivel. Hay gente que se refiere a él como &lt;strong&gt;&amp;ldquo;orquestación&amp;rdquo;&lt;/strong&gt;, pero no estoy hablando de la gestión de numerosas máquinas, sino de la realización de pequeñas acciones. Claro, que es la realización de estas pequeñas acciones las que permiten esos sistemas dignos de ser &lt;em&gt;orquestados&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;La distribución de nuestro script en distintas máquinas puede implicar distintas
+cosas: Puede ser una distribución para que el usuario lo instale (como hacen las
+conocidas &lt;a href=&#34;http://en.wikipedia.org/wiki/App*store&#34;&gt;App Stores&lt;/a&gt;) o de manera automática (&lt;a href=&#34;http://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt;, &lt;a href=&#34;http://www.getchef.com/&#34;&gt;Chef&lt;/a&gt;, &lt;a href=&#34;http://www.saltstack.com/community/&#34;&gt;SaltStack&lt;/a&gt;, &amp;hellip;).&lt;/p&gt;
+&lt;p&gt;Estamos hablando de automatización, así que me centraré en esta última: cuando la distribución es automática, también puede serlo su ejecución, en cuyo caso este nivel podría englobar también el de &lt;strong&gt;Temporización&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;La decisión podríamos estar tomándola cuando utilizamos el software de
+orquestación: ¿Debe ser &lt;a href=&#34;http://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt; quien lo ejecute o sólo debe instalarlo en un
+&lt;a href=&#34;http://es.wikipedia.org/wiki/Cron*(Unix)&#34;&gt;cron&lt;/a&gt;?&lt;/p&gt;
+&lt;p&gt;Cuando hablo de &amp;ldquo;replicabilidad&amp;rdquo; no me refiero sólo a la distribución, sino a
+asegurar que no ocurre el efecto &lt;strong&gt;&amp;ldquo;en mi máquina funciona&amp;rdquo;&lt;/strong&gt;. Una forma de
+conseguir replicabilidad es utilizar un sistema de &amp;ldquo;jaulas&amp;rdquo; con todo el sistema,
+de manera que se ejecuten entornos aislados como un todo. Para ello se pueden
+utilizar &lt;strong&gt;Máquinas virtuales&lt;/strong&gt;(&lt;a href=&#34;https://www.virtualbox.org/&#34;&gt;VirtualBox&lt;/a&gt;, &lt;a href=&#34;https://www.vagrantup.com/&#34;&gt;Vagrant&lt;/a&gt;, &amp;hellip;), &lt;strong&gt;containers&lt;/strong&gt;
+(&lt;a href=&#34;https://linuxcontainers.org/&#34;&gt;lxc&lt;/a&gt;, &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt; o, a menor escala, &lt;a href=&#34;https://pypi.python.org/pypi/virtualenv&#34;&gt;VirtualEnv&lt;/a&gt;, &lt;a href=&#34;http://bundler.io/&#34;&gt;Bundle&lt;/a&gt;) o simples listas de
+instalación (&lt;a href=&#34;https://pypi.python.org/pypi/pip&#34;&gt;pip&lt;/a&gt;, &lt;a href=&#34;http://bower.io/&#34;&gt;bower&lt;/a&gt;, &amp;hellip;).&lt;/p&gt;
+&lt;p&gt;La gestión de estos entornos aislados dan para otro post. Pueden ser de distintos tipos:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Gestión de &lt;strong&gt;artefactos específicos&lt;/strong&gt;, como puede ser un repositorio Debian,
+compatible con la aplicación cliente (&lt;a href=&#34;http://es.wikipedia.org/wiki/Advanced_Packaging_Tool&#34;&gt;apt&lt;/a&gt;).&lt;/li&gt;
+&lt;li&gt;Gestión de &lt;strong&gt;artefactos genéricos&lt;/strong&gt;, como &lt;a href=&#34;http://www.sonatype.org/nexus/&#34;&gt;Nexus&lt;/a&gt;, &lt;a href=&#34;http://www.jfrog.com/open-source/&#34;&gt;Artifactory&lt;/a&gt;, &amp;hellip;&lt;/li&gt;
+&lt;li&gt;Gestión y &lt;strong&gt;creación de máquinas virtuales&lt;/strong&gt; y sistemas de red completos:
+&lt;a href=&#34;http://mesos.apache.org/&#34;&gt;Mesos&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;nivel-33-monitorización-y-alertas&#34;&gt;Nivel 3.3: Monitorización y alertas&lt;/h4&gt;
+&lt;p&gt;Puede considerarse la ejecución del script como una prueba del mismo. Por lo tanto, ¿por qué no monitorizarlo?&lt;/p&gt;
+&lt;p&gt;La monitorización con alertas nos avisará en dos circunstancias: cuando el elemento monitorizado no tiene los valores que debe o bien cuando el script que obtiene ese valor da problemas. Es como tener un &lt;em&gt;téster&lt;/em&gt; constante.&lt;/p&gt;
+&lt;p&gt;La monitorización puede tener distintas formas, de más sencilla a más compleja:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Comprobación de que el &lt;strong&gt;proceso&lt;/strong&gt; está corriendo.&lt;/li&gt;
+&lt;li&gt;Comprobación de un puerto o del &lt;strong&gt;efecto&lt;/strong&gt; que debe producir el script.&lt;/li&gt;
+&lt;li&gt;Lectura de los &lt;strong&gt;archivos de log&lt;/strong&gt; para comprobar que van cambiando de la manera esperada.&lt;/li&gt;
+&lt;li&gt;Generación de estadísticas y posterior comprobación de las mismas para ver &lt;strong&gt;tendencias&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Y lo mismo ocurre con las alertas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Una &lt;a href=&#34;https://www.youtube.com/watch?v=1nBg2pk_XFY&#34;&gt;alarma todo va bien de Homer Simpsom&lt;/a&gt;, que nos mande un mail cada vez que acaba de manera exitosa. Esto requiere una comprobación manual que nos devuelve al nivel 1 :D&lt;/li&gt;
+&lt;li&gt;Un sistema cliente/servidor con interfaz web, como pueda ser &lt;a href=&#34;http://www.nagios.org/&#34;&gt;Nagios&lt;/a&gt;,
+&lt;a href=&#34;https://www.icinga.org/&#34;&gt;Icinga&lt;/a&gt;, &lt;a href=&#34;http://pandorafms.com/&#34;&gt;Pandora&lt;/a&gt;, &lt;a href=&#34;http://www.zabbix.com/es/&#34;&gt;Zabbix&lt;/a&gt;, &lt;a href=&#34;http://sensuapp.org/&#34;&gt;Sensu&lt;/a&gt;, &lt;a href=&#34;http://riemann.io/&#34;&gt;Riemann&lt;/a&gt;, &lt;a href=&#34;http://cabotapp.com/&#34;&gt;Cabot&lt;/a&gt;, &amp;hellip;&lt;/li&gt;
+&lt;li&gt;Un sistema distinto para monitorización (&lt;a href=&#34;http://munin-monitoring.org/&#34;&gt;Munin&lt;/a&gt;, &amp;hellip;) y alertas (&lt;a href=&#34;http://flapjack.io/&#34;&gt;FlapJack&lt;/a&gt;, &amp;hellip;)&lt;/li&gt;
+&lt;li&gt;Un sistema de agrupación de datos (&lt;a href=&#34;http://graphite.wikidot.com/&#34;&gt;Graphite&lt;/a&gt;), monitorización sobre el mismo y alertas.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Y también con la &lt;em&gt;forma de las alertas&lt;/em&gt;: mail, alerta en un panel, SMS, llamada pregrabada, servicio de mensajería instantánea, tícket, etc.&lt;/p&gt;
+&lt;p&gt;El tema de la monitorización y alertado es toda una ciencia, ya que puede tener numerosas implicaciones: servicios de 24x7, guardias, releases con alertas a ignorar, &amp;hellip;&lt;/p&gt;
+&lt;p&gt;Un sistema de alertas deficiente puede provocar dos efectos nocivos:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Que se &lt;strong&gt;pierdan alertas&lt;/strong&gt;, de manera que un proceso crítico no esté atendido. Es algo que ocurrirá tarde o temprano, y la solución es añadir una alerta nueva.&lt;/li&gt;
+&lt;li&gt;Que lleguen &lt;strong&gt;demasiadas alertas&lt;/strong&gt;, de manera que las críticas se mezclan con las normales. Es mucho peor que el anterior y la solución no suele ser nada sencilla.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;nivel-34-autorecovery&#34;&gt;Nivel 3.4: Autorecovery&lt;/h4&gt;
+&lt;p&gt;Pero&amp;hellip; ¿Qué ocurre cuando llega una alerta?&lt;/p&gt;
+&lt;p&gt;Pues que entra en marcha un nuevo proceso automatizable: la resolución.&lt;/p&gt;
+&lt;p&gt;Ésta puede ser:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Completamente manual&lt;/strong&gt;: llega la alerta y hay que investigar dónde está el problema.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Documentada&lt;/strong&gt;: junto con la alerta llega la solución (o una URL con la misma).&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Automática&lt;/strong&gt;: al recibir la alerta, se lanza un proceso que intenta recuperarse del problema.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Algunas medidas que pueden tomarse:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Si es un servicio y se ha muerto, puede &lt;strong&gt;volver a lanzarse&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Si es un servicio y no responde en un puerto, quizá pueda &lt;strong&gt;reiniciarse&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Si es una máquina que no responde, quizá dispongamos de &lt;strong&gt;alta disponibilidad&lt;/strong&gt; (High Availability) y otro servidor pueda ocupar su lugar.&lt;/li&gt;
+&lt;li&gt;Si tenemos balanceo de carga y el sistema está sobredimensionado, es posible que no se requiera acción inmediata.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;También hay software que nos ayuda en este caso: &lt;a href=&#34;http://supervisord.org/&#34;&gt;supervisord&lt;/a&gt;, &lt;a href=&#34;http://www.haproxy.org/&#34;&gt;HAProxy&lt;/a&gt;,
+&lt;a href=&#34;http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/overview.html&#34;&gt;KeepAlive&lt;/a&gt;, &lt;a href=&#34;http://mmonit.com/monit/&#34;&gt;Monit&lt;/a&gt;, &amp;hellip;&lt;/p&gt;
+&lt;p&gt;Es importante que el &lt;em&gt;autorecovery&lt;/em&gt; quede documentado de alguna manera. De esta forma se pueden indentificar fallos periódicos (por ejemplo, &amp;ldquo;el servidor se cae todos los días a las 00:00&amp;rdquo;). Este registro puede tener la forma de mail, log, etc.&lt;/p&gt;
+&lt;p&gt;Es más: Si se puede mezclar la hora del &lt;em&gt;autorecovery&lt;/em&gt; con el resto de gráficas, mucho mejor, de manera que se quede automáticamente aclarado un problema; por ejemplo, que un pico de la gráfica de memoria se debe a un reinicio de tal servicio.&lt;/p&gt;
+&lt;h3 id=&#34;nivel-4-sistemas-autónomos&#34;&gt;Nivel 4: Sistemas autónomos&lt;/h3&gt;
+&lt;p&gt;Este artículo puede leerse de dos maneras. La primera es leerlo como la automatización de un script, y la segunda, como un sistema considerablemente más grande: una máquina, una red, una organización.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;El todo se compone de cada una de las partes.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;En el caso de un script, una vez es distribuido automáticamente y monitorizado, la automatización ya es completa.&lt;/p&gt;
+&lt;p&gt;Sin embargo, en el caso de una máquina aún falta otro detalle: Si es necesario entrar a la máquina para algo, entonces aún no se ha automatizado completamente. Esto tiene muchas implicaciones:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Debe existir un sistema de logs centralizado y externo al sistema autónomo.
+Una solución típica es usar &lt;a href=&#34;http://logstash.net/&#34;&gt;logstash&lt;/a&gt; + &lt;a href=&#34;http://www.elasticsearch.org/&#34;&gt;elastic search&lt;/a&gt; + &lt;a href=&#34;http://www.elasticsearch.org/overview/kibana/&#34;&gt;kibana&lt;/a&gt; para
+guardar los logs y &lt;a href=&#34;http://www.rsyslog.com/&#34;&gt;rsyslog&lt;/a&gt; para enviar los logs del sistema.&lt;/li&gt;
+&lt;li&gt;El sistema de monitorización y alertas debe ser igualmente centralizado y externo al sistema autónomo.&lt;/li&gt;
+&lt;li&gt;El despliegue de todos los servicios del sistema autónomo debe ser automático.&lt;/li&gt;
+&lt;li&gt;Deben existir políticas de &lt;em&gt;autorecovery&lt;/em&gt; muy fuertes.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;nomenclatura&#34;&gt;Nomenclatura&lt;/h2&gt;
+&lt;p&gt;Propongo medir el nivel de automatización de un sistema mediante la siguiente nomenclatura:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;El literal &amp;ldquo;A&amp;rdquo;, de &amp;ldquo;Automation&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;Un número, indicando el nivel.&lt;/li&gt;
+&lt;li&gt;En el caso del nivel 3, un conjunto de letras, siendo &amp;rsquo;t&#39; para temporización, &amp;lsquo;r&amp;rsquo; para Replicación,  &amp;rsquo;m&#39; para monitorización y &amp;lsquo;a&amp;rsquo; para &lt;em&gt;autorecovery&lt;/em&gt;. De esta manera se pueden combinar en &amp;lsquo;ta&amp;rsquo; para &lt;em&gt;autorecovery&lt;/em&gt; y temporización, etc. En este caso es importante seguir el orden: &amp;rsquo;t&#39;, &amp;lsquo;r&amp;rsquo;, &amp;rsquo;m&#39;, &amp;lsquo;a&amp;rsquo;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Aquí está la tabla completa de nomenclatura&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Código&lt;/th&gt;
+&lt;th&gt;Significado&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;A0&lt;/td&gt;
+&lt;td&gt;No tiene ningún tipo de automatización&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A1&lt;/td&gt;
+&lt;td&gt;Hay documentación&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A2&lt;/td&gt;
+&lt;td&gt;Existe un script para hacer el trabajo&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A3.t&lt;/td&gt;
+&lt;td&gt;El script se ejecuta cada cierto tiempo&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A3.r&lt;/td&gt;
+&lt;td&gt;El script se replica a otras máquinas&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A3.m&lt;/td&gt;
+&lt;td&gt;Existe monitorización&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A3.a&lt;/td&gt;
+&lt;td&gt;Existe &lt;em&gt;autorecovery&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A3.tr&lt;/td&gt;
+&lt;td&gt;El script se replica a otras máquinas y ejecuta cada cierto tiempo&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A3.tm&lt;/td&gt;
+&lt;td&gt;El script se ejecuta cada cierto tiempo y está monitorizado&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A3.ta&lt;/td&gt;
+&lt;td&gt;El script se ejecuta cada cierto tiempo y en caso de fallo se arregla sólo&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A3.rm&lt;/td&gt;
+&lt;td&gt;El script se replica a otras máquinas y está temporizado&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A3.ra&lt;/td&gt;
+&lt;td&gt;El script se replica a otras máquinas y tiene &lt;em&gt;autorecovery&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A3.ma&lt;/td&gt;
+&lt;td&gt;El script tiene monitorización y &lt;em&gt;autorecovery&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A3.trm&lt;/td&gt;
+&lt;td&gt;Temporización, replicación y monitorización&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A3.tra&lt;/td&gt;
+&lt;td&gt;Temporización, replicación y &lt;em&gt;autorecovery&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A3.tma&lt;/td&gt;
+&lt;td&gt;Temporización, monitorización y &lt;em&gt;autorecovery&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A3.rma&lt;/td&gt;
+&lt;td&gt;Replicación, monitorización y &lt;em&gt;autorecovery&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A3.trma&lt;/td&gt;
+&lt;td&gt;Temporización, Replicación, monitorización y &lt;em&gt;autorecovery&lt;/em&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A4&lt;/td&gt;
+&lt;td&gt;Sistema autónomo&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;De esta manera se pueden especificar los &lt;strong&gt;KPI&lt;/strong&gt; (&lt;em&gt;Key Performance Indicator&lt;/em&gt;) de la siguiente forma: &amp;ldquo;Conseguir A2 en el build y A3.rm en el despliegue&amp;rdquo;.&lt;/p&gt;
+&lt;h2 id=&#34;conclusiones&#34;&gt;Conclusiones&lt;/h2&gt;
+&lt;p&gt;Montar un sistema autónomo es difícil, pero las ventajas son enormes. A mayor automatización, mayor velocidad en el resto de procesos. Si un &lt;em&gt;push&lt;/em&gt; en un repositorio desencadena todo un flujo de tareas que termina en el despliegue en producción o en una alerta en mi buzón si hay algún error, provocará que cada trabajador pueda publicar decenas de versiones en un solo día, y que las implicaciones de los errores sean mucho menores.&lt;/p&gt;
+&lt;p&gt;El otro día hablaba con David y me decía que &lt;strong&gt;&amp;ldquo;el software está vivo&amp;rdquo;&lt;/strong&gt;. Es una gran verdad que hay que tener en cuenta a la hora de diseñar nuestro sistema automático: debe ser propenso al cambio.&lt;/p&gt;
+&lt;p&gt;Ésta es una diferencia entre los administradores de sistemas actuales y los de
+antaño: hoy día deben abrazar los &lt;a href=&#34;http://agilemanifesto.org/&#34;&gt;principios del manifiesto ágil&lt;/a&gt; y abrazar el cambio. Se acabó lo de &amp;ldquo;si funciona no lo toques&amp;rdquo;.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Cómo funcionan las cosas</title>
+      <link>http://example.org/blog/como-funcionan-las-cosas/</link>
+      <pubDate>Wed, 23 May 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/como-funcionan-las-cosas/</guid>
+      <description>
+        
+          &lt;p&gt;Saber cómo funciona las cosas es más importante de lo que parece. Al menos, tener una idea general.&lt;/p&gt;
+&lt;p&gt;Nosotros, los informáticos, necesitamos saber cómo funcionan las herramientas que utilizamos. En ocasiones, ésta es una tarea dura. En otras, muy gratificante.&lt;/p&gt;
+&lt;p&gt;La semana pasada traduje un artículo, &lt;a href=&#34;http://example.org/blog/python-compiler-internals/&#34;&gt;El compilador de Python desde dentro&lt;/a&gt;, donde se analizaba a fondo este compilador.&lt;/p&gt;
+&lt;p&gt;Hay muchas otras cosas que saber. Algunas son genéricas; otras más específicas. Pero sin duda alguna, todas importantes.&lt;/p&gt;
+&lt;p&gt;Este artículo es una mezcla de algunas de ellas.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/engineering.jpg&#34;
+         alt=&#34;Ingeniería&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;te-has-planteado-alguna-vez&#34;&gt;¿Te has planteado alguna vez&amp;hellip;?&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;¿Por qué siempre recorremos las tablas por filas y no por columnas? ¿Habría alguna diferencia?&lt;/li&gt;
+&lt;li&gt;¿Debería tratar de optimizar mi código? En caso afirmativo, ¿cómo lo hago?&lt;/li&gt;
+&lt;li&gt;¿Debería implementarme mi propio algoritmo &lt;em&gt;quicksort&lt;/em&gt; para ordenar vectores más rápido?&lt;/li&gt;
+&lt;li&gt;Me han dicho que .Net es la caña, ¿programaré más rápido?&lt;/li&gt;
+&lt;li&gt;Necesito un canal de comunicaciones, ¿qué puedo usar?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Éstas y muchas otras son preguntas habituales en nuestra profesión. Y son mucho más importantes de lo que parecen. La diferencia entre conocer las respuestas y no saber qué responder puede ser la diferencia entre ganar unas décimas de segundos o el éxito y el fracaso.&lt;/p&gt;
+&lt;p&gt;Vamos a jugar. A continuación iré poniendo las respuestas a esas preguntas, pero me gustaría que las respondierais vosotros mismos. Apuntadlas.&lt;/p&gt;
+&lt;p&gt;En las secciones siguientes os daré mi contestación. Veréis la respuesta rápida y la larga. Quizá no estéis de acuerdo&amp;hellip; ¡Estupendo! Así podremos discutirlo. Si se os ocurre vuestra propia pregunta, también podemos discutirla :D&lt;/p&gt;
+&lt;h3 id=&#34;recorriendo-tablas-filas-o-columnas&#34;&gt;Recorriendo tablas: ¿filas o columnas?&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Respuesta rápida:&lt;/em&gt; por filas es mucho más rápido.&lt;/p&gt;
+&lt;p&gt;Aunque la pregunta parece fácil, realmente es una de las más complejas de las que he planteado. Para saber la respuesta, será necesario saber un poquitín de arquitectura de computadores.&lt;/p&gt;
+&lt;p&gt;La lectura de disco es lenta. Así que los sistemas operativos tratan de optimizar esta lectura mediante &lt;em&gt;cachés&lt;/em&gt; de bloques con tamaño fijo. Por esa razón, aunque quieras leer un byte, el sistema leerá un bloque completo (el tamaño dependerá de muchas cosas). Así, si lees el siguiente, ya se encuentra en la &lt;em&gt;caché&lt;/em&gt; y no tiene que ir a disco, resultando mucho más rápido. Cuando un bloque lleva bastante tiempo sin usarse, se elimina de esa &lt;em&gt;caché&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Si leemos un vector por filas, muy probablemente el siguiente elemento ya se encuentre en la &lt;em&gt;caché&lt;/em&gt;. Si lo leemos por columnas, es mucho menos probable. En este segundo caso, además, si la tabla es muy grande, es posible que cuando cambiemos a la siguiente columna la primera fila ya no se encuentre &lt;em&gt;cacheada&lt;/em&gt; y volvamos a tener un fallo de página, resultando desastroso para el rendimiento de nuestro algoritmo.&lt;/p&gt;
+&lt;p&gt;¿Es así siempre? No.&lt;/p&gt;
+&lt;p&gt;Puede ocurrir que nuestros objetos sean tan grandes que ocupen justamente un bloque. En este caso nos daría igual usar filas o columnas. Pero mejor no contéis con ello :D&lt;/p&gt;
+&lt;p&gt;También puede ocurrir que nuestro objetos sean punteros a otros objetos. En este caso también sería más rápido por filas, ya que los punteros serán accesibles más rápido y, con bastante probabilidad, apunten a lugares cercanos (que también quedarían &lt;em&gt;cacheados&lt;/em&gt;).&lt;/p&gt;
+&lt;h3 id=&#34;optimizo-el-código&#34;&gt;¿Optimizo el código?&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Respuesta rápida:&lt;/em&gt; ¿Qué es optimizar?&lt;/p&gt;
+&lt;p&gt;No soy gallego, aunque responda con una pregunta; realmente depende de qué queramos optimizar. Para empezar, se me ocurren 3 opciones:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Optimización en velocidad, haciendo que nuestro programa sea más rápido.&lt;/li&gt;
+&lt;li&gt;Optimización en espacio, para que ocupe menos.&lt;/li&gt;
+&lt;li&gt;Optimización en legibilidad, de manera que sea más mantenible.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Mejorar la velocidad es complejo, salvo que se sepa cómo funciona el compilador. Se pueden echar manos: en algunos lenguajes interpretados como PHP, es mucho más rápido una hash de propiedad-valor que crear un objeto para tal evento. En el caso de la hash, la búsqueda se realizará en C. Si usamos un objeto, las propiedades y funciones se organizan como una hash&amp;hellip;&lt;/p&gt;
+&lt;p&gt;Mejorar el espacio es aún más complejo. En general, el código es lo que menos ocupará de toda la aplicación, así que&amp;hellip; ¿Es realmente necesario?&lt;/p&gt;
+&lt;p&gt;Por último, la legibilidad. Es lo que se suele conocer también como
+&lt;em&gt;refactorización&lt;/em&gt;. Es arriesgada: ¿por qué modificar algo que ya funciona?
+Pueden introducirse nuevos errores. Por eso se recomienda utilizar &lt;a href=&#34;http://en.wikipedia.org/wiki/Test-driven_development&#34;&gt;TDD&lt;/a&gt;  :D&lt;/p&gt;
+&lt;p&gt;Cuando mejoramos la legibilidad hacemos que el programa sea más fácil de gestionar y que realizar un cambio resulte más sencillo. Hay muchos detractores de este tipo de acciones, pero no he conocido a nadie que no haya tenido que hacer una refactorización en algún momento.&lt;/p&gt;
+&lt;p&gt;Hay ocasiones en las que una de estas optimizaciones entra en conflicto con otra. Por ejemplo, en los lenguajes interpretados (PHP, Ruby, Python, Java, &amp;hellip;), un objeto ocupa bastante memoria (en PHP unos 30 bytes como poco; en Python unos 50), y es posible que no ofrezcan más de lo que hace una simple Hash. ¿Por qué no utilizar una hash entonces? Porque dificulta la legibilidad, aunque es posible que sea más rápido.&lt;/p&gt;
+&lt;p&gt;Hay otra cosa a tener en cuenta: las optimizaciones del compilador. Si el compilador va a hacerlo por nosotros, ¿por qué molestarse? Por eso en C y C++ no resulta interesante realizar optimizaciones de espacio o velocidad: el compilador, seguramente, lo hará mejor que nosotros. En lenguajes interpretados (Java, Python, Ruby, PHP,&amp;hellip;) esta optimización &lt;em&gt;no existe&lt;/em&gt;, así que más vale que dediquemos un poco de tiempo a pensar en ella :D&lt;/p&gt;
+&lt;h3 id=&#34;reimplementar-quicksort&#34;&gt;¿Reimplementar QuickSort?&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Respuesta rápida:&lt;/em&gt; No.&lt;/p&gt;
+&lt;p&gt;Por muy listo que seas, probablemente el algoritmo de tu lenguaje sea más rápido, esté más optimizado, más revisado o, simplemente, no puedes hacer algo más rápido.&lt;/p&gt;
+&lt;p&gt;Si estás en C o C++, los algoritmos de ordenación llevan probándose más de 20 años. Con optimizaciones constantes.&lt;/p&gt;
+&lt;p&gt;Por el contrario, si estás en un lenguaje interpretado, simplemente &lt;em&gt;no puedes&lt;/em&gt; hacer algo mejor. Tu implementación será interpretada y, por mucho que lo intentes, más lenta que la existente en el lenguaje nativo, ya que es probable que esté escrita en C.&lt;/p&gt;
+&lt;h3 id=&#34;cambiar-de-lenguaje-me-hará-más-rápido&#34;&gt;¿Cambiar de lenguaje me hará más rápido?&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Respuesta rápida:&lt;/em&gt; No.&lt;/p&gt;
+&lt;p&gt;Si ya sabes manejar un lenguaje, ¿te hará más rápido otro? No, ya que necesitas mucho tiempo para aprender a usarlo. No me refiero a las estructuras básicas; éstas son fáciles. Me refiero a conocer el compilador, saber qué optimizaciones son fáciles y debes usar, saber elegir una función sobre otra parecida porque es más rápida, &amp;hellip; Este tipo de aprendizaje.&lt;/p&gt;
+&lt;p&gt;Sin embargo, cambiar de lenguaje puede darte &lt;em&gt;perspectiva&lt;/em&gt;, conocer nuevos paradigmas puede ser interesante cuando vas a tratar de atacar un nuevo problema.&lt;/p&gt;
+&lt;p&gt;Además, cada lenguaje tiene distintas construcciones y distintas maneras de implementar sus patrones. Algunos tienen sus propios patrones. Este tipo de actividad siempre es positiva.&lt;/p&gt;
+&lt;p&gt;Pero tu velocidad no aumentará de la noche a la mañana. Quizá sí que lo haga a la larga, pero no sólo por el hecho de cambiar.&lt;/p&gt;
+&lt;h3 id=&#34;qué-middleware-usar&#34;&gt;¿Qué middleware usar?&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Respuesta rápida:&lt;/em&gt; Usa Rest con HTTP.&lt;/p&gt;
+&lt;p&gt;Vale, sí: no suele ser la mejor opción, pero siempre digo que es una opción que debe plantearse.&lt;/p&gt;
+&lt;p&gt;La verdad es que depende. Depende de qué estés haciendo, del tamaño de tus mensajes, de para qué lo quieres.&lt;/p&gt;
+&lt;p&gt;Si necesitas velocidad de comunicaciones, con mensajes cortos, con respuesta
+inmediata, entonces deberías usar un middleware binario, como &lt;a href=&#34;http://es.wikipedia.org/wiki/CORBA&#34;&gt;CORBA&lt;/a&gt; , &lt;a href=&#34;http://www.zeroc.com/&#34;&gt;ICE&lt;/a&gt;  o
+&lt;a href=&#34;http://thrift.apache.org/&#34;&gt;Apache Thrift&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;En caso de que busques algo para procesar mensajes grandes, en la que el tiempo
+de respuesta no es importante o bien no tienes suficientes recursos para
+responder en el momento, entonces estás buscando una cola de mensajes como
+&lt;a href=&#34;http://www.rabbitmq.com/&#34;&gt;RabbitMQ&lt;/a&gt; , &lt;a href=&#34;http://activemq.apache.org/&#34;&gt;Apache Active MQ&lt;/a&gt;  o &lt;a href=&#34;http://www.zeromq.org/&#34;&gt;ZeroMQ&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Si quieres algo genérico, que te permita gran flexibilidad y modificar el protocolo de comunicaciones en el futuro, o necesitas que funcione en cualquier parte con pocos recursos&amp;hellip; Entonces usa HTTP y cúrrate un protocolo Rest.&lt;/p&gt;
+&lt;h2 id=&#34;despedida&#34;&gt;Despedida&lt;/h2&gt;
+&lt;p&gt;Bueno, estas son algunas preguntas que creo que todos nos hemos hecho alguna vez. Espero que os hayan gustado y que, si se os ocurre alguna otra, ¡no dejéis de hacerla! (aquí o a vosotros mismos)&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Programar sin condicionales</title>
+      <link>http://example.org/blog/programarsinifs/</link>
+      <pubDate>Sat, 05 May 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/programarsinifs/</guid>
+      <description>
+        
+          &lt;p&gt;Desde el momento en el que comenzamos a programar, nos enseñan a utilizar el &lt;em&gt;IF&lt;/em&gt;. Eso es porque utilizar condiciones es fácil.&lt;/p&gt;
+&lt;p&gt;Lo difícil es &lt;em&gt;no usarlas&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Y eso es lo que quiero ver aquí.&lt;/p&gt;
+&lt;p&gt;NOTA: Voy a utilizar Python, pero podría utilizarse cualquier lenguaje. No es necesario tener conocimientos previos de Python.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Actualización 2012-05-12&lt;/em&gt;: Transformo referencias en links y añado el apartado de &amp;ldquo;reflexiones&amp;rdquo;.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/programming.jpg&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;por-qué&#34;&gt;¿Por qué?&lt;/h2&gt;
+&lt;p&gt;Pero&amp;hellip; ¿Por qué molestarnos? Ya somos felices utilizando condicionales. Y nos va bien. ¿Merece la pena un sobreesfuerzo?&lt;/p&gt;
+&lt;p&gt;A medida que vayamos descubriéndolo, mencionaré las razones.&lt;/p&gt;
+&lt;h3 id=&#34;estética&#34;&gt;Estética&lt;/h3&gt;
+&lt;p&gt;Aunque cuando lo estamos programando parece obvio, cuando de verdad queremos utilizarlo, los condicionales ensucian nuestro código. Veamos un ejemplo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; condicion1:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; condicion2:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    accion1
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; condicion3:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;    accion3
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8&lt;/span&gt;    accion4
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;expresividad&#34;&gt;Expresividad&lt;/h3&gt;
+&lt;p&gt;Resulta confuso, ¿no? Y, además resulta que he olvidado, a propósito un &lt;em&gt;else&lt;/em&gt;. Así que si se cumple la &lt;em&gt;condicion1&lt;/em&gt; pero no la &lt;em&gt;condicion2&lt;/em&gt;&amp;hellip; ¿qué? ¿Es un error? ¿Es como debe funcionar?&lt;/p&gt;
+&lt;p&gt;Una posible solución es añadir un comentario. Puede parecer una buena solución, pero&amp;hellip;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Los comentarios no se prueban.&lt;/li&gt;
+&lt;li&gt;Los comentarios no son formales y pueden resultar más difíciles de comprender que el propio código.&lt;/li&gt;
+&lt;li&gt;Si alguien realiza un cambio, hay que confiar en que modificará el comentario.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Esto nos lleva a pensar que no debemos tener dos niveles de condicionales. Y eso es bueno.&lt;/p&gt;
+&lt;h3 id=&#34;dificultad-para-pruebas&#34;&gt;Dificultad para pruebas&lt;/h3&gt;
+&lt;p&gt;No somos conscientes de ello, pero cada condicional duplica el número de pruebas necesarias en nuestro código para mantener el mismo porcentaje de cobertura. Cada condicional anidado, los eleva al cuadrado.&lt;/p&gt;
+&lt;p&gt;Tener un código largo con numerosas condiciones anidadas hace que el código sea &lt;em&gt;imposible&lt;/em&gt; de probar e &lt;em&gt;imposible&lt;/em&gt; de seguir. Siempre se nos escapará algún caso de uso.&lt;/p&gt;
+&lt;p&gt;Para probar el código de arriba, necesitaré las siguientes pruebas:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Condicion1&lt;/th&gt;
+&lt;th&gt;Condicion2&lt;/th&gt;
+&lt;th&gt;Condicion3&lt;/th&gt;
+&lt;th&gt;Esperado&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;True&lt;/td&gt;
+&lt;td&gt;True&lt;/td&gt;
+&lt;td&gt;True&lt;/td&gt;
+&lt;td&gt;accion1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;True&lt;/td&gt;
+&lt;td&gt;True&lt;/td&gt;
+&lt;td&gt;False&lt;/td&gt;
+&lt;td&gt;accion1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;True&lt;/td&gt;
+&lt;td&gt;False&lt;/td&gt;
+&lt;td&gt;True&lt;/td&gt;
+&lt;td&gt;&amp;ndash;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;True&lt;/td&gt;
+&lt;td&gt;False&lt;/td&gt;
+&lt;td&gt;False&lt;/td&gt;
+&lt;td&gt;&amp;ndash;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;False&lt;/td&gt;
+&lt;td&gt;True&lt;/td&gt;
+&lt;td&gt;True&lt;/td&gt;
+&lt;td&gt;accion3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;False&lt;/td&gt;
+&lt;td&gt;True&lt;/td&gt;
+&lt;td&gt;False&lt;/td&gt;
+&lt;td&gt;accion4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;False&lt;/td&gt;
+&lt;td&gt;False&lt;/td&gt;
+&lt;td&gt;True&lt;/td&gt;
+&lt;td&gt;accion3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;False&lt;/td&gt;
+&lt;td&gt;False&lt;/td&gt;
+&lt;td&gt;False&lt;/td&gt;
+&lt;td&gt;accion4&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Y alguien puede decir: Bueno, puedes ahorrarte el caso &amp;ldquo;True True False&amp;rdquo;, ya que es igual que el &amp;ldquo;True True True&amp;rdquo;&amp;hellip; Sí, puedo. Pero estoy saltándome pruebas. Al fin y al cabo, el condicional está en el código.&lt;/p&gt;
+&lt;p&gt;Mi opinión es que 8 casos de uso sólo para 2 condiciones&amp;hellip; es demasiado.&lt;/p&gt;
+&lt;h2 id=&#34;condicionales-encubiertos&#34;&gt;Condicionales encubiertos&lt;/h2&gt;
+&lt;p&gt;Hay que tener cuidado: no sólo los &lt;em&gt;IFs&lt;/em&gt; son condicionales; también lo son los &amp;ldquo;&lt;em&gt;FOR&lt;/em&gt;&amp;rdquo; y &amp;ldquo;&lt;em&gt;WHILE&lt;/em&gt;&amp;rdquo;, que incluyen una condición para el bucle. Todos ellos entran dentro de la misma categoría: condicionales.&lt;/p&gt;
+&lt;h2 id=&#34;soluciones&#34;&gt;Soluciones&lt;/h2&gt;
+&lt;p&gt;Así que puede que no esté tan mal evitar los condicionales, después de todo. Pero&amp;hellip; ¿cómo lo hacemos?&lt;/p&gt;
+&lt;p&gt;Siguiendo una técnica de &lt;em&gt;divide y vencerás&lt;/em&gt;. Resulta más sencillo de lo que parece, y el código resultará mucho más expresivo.&lt;/p&gt;
+&lt;h3 id=&#34;aislando&#34;&gt;Aislando&lt;/h3&gt;
+&lt;p&gt;La primera acción será mandar nuestro código a una función propia. Así que, a partir de ahora, puedo asumir que no hay código ni antes ni después de nuestro bloque.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;funcion&lt;/span&gt;():
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; condicion1:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; condicion2:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;      accion1
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; condicion3:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt;      accion3
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;9&lt;/span&gt;      accion4
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;evitando-elses&#34;&gt;Evitando &amp;ldquo;ELSEs&amp;rdquo;&lt;/h3&gt;
+&lt;p&gt;Una vez aislado, evitaremos los &lt;em&gt;ELSE&lt;/em&gt;. La mejor manera es abandonar la función cuando ya no nos interesa nada más:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;funcion1&lt;/span&gt;():
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; condicion1:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; condicion2:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;      accion1
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; condicion3:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    accion3
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;  accion4
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Solo con esta acción habremos mejorado la legibilidad de nuestro código.&lt;/p&gt;
+&lt;h3 id=&#34;buscando-contratos&#34;&gt;Buscando contratos&lt;/h3&gt;
+&lt;p&gt;En muchas ocasiones hay condiciones que hacen que nuestra función no haga nada. En esos casos, decimos que &amp;ldquo;no se cumple el contrato&amp;rdquo;. Lo mejor es dejar claros esos casos al comienzo de las funciones:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;funcion1&lt;/span&gt;():
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; condicion1 &lt;span style=&#34;color:#f92672&#34;&gt;and&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;not&lt;/span&gt; condicion2:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; condicion1 &lt;span style=&#34;color:#f92672&#34;&gt;and&lt;/span&gt; condicion2:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;    accion1
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; condicion3:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    accion3
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;  accion4
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Vemos en este caso que, además, hemos podido reducir una de las condiciones, ya que el otro caso no puede darse.&lt;/p&gt;
+&lt;h3 id=&#34;simplificar-condiciones&#34;&gt;Simplificar condiciones&lt;/h3&gt;
+&lt;p&gt;Pero eso ha implicado crear condiciones más complejas. Podemos evitarlas creando funciones:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;funcion1&lt;/span&gt;():
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; shouldExit():
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; shouldApplyAction1():
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;    accion1
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; condicion3:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    accion3
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;  accion4
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;shouldExit&lt;/span&gt;():
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; condicion1 &lt;span style=&#34;color:#f92672&#34;&gt;and&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;not&lt;/span&gt; condicion2
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;shouldApplyAction1&lt;/span&gt;():
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; condicion1 &lt;span style=&#34;color:#f92672&#34;&gt;and&lt;/span&gt; condicion2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Si los nombres de las funciones están bien elegidos, habremos eliminado también algunos comentarios. Resulta interesante evitar que las funciones que sólo comprueban la condición contentan el nombre de la condición en su propio nombre. Ah, y es indispensable &lt;strong&gt;evitar&lt;/strong&gt; por todos los medios, los &amp;ldquo;AND&amp;rdquo; en los nombres de las funciones. Parece una tontería, pero a veces éste es el paso más difícil.&lt;/p&gt;
+&lt;h2 id=&#34;ejemplo&#34;&gt;Ejemplo&lt;/h2&gt;
+&lt;p&gt;Veamos un ejemplo: FizzBuzz. Es un ejemplo tremendamente sencillo que se puede implementar en menos de 100 caracteres, pero vamos a intentar que quede algo legible. Consiste en imprimir números, pero sustituiremos los múltiplos de 3 por &amp;ldquo;FIZZ&amp;rdquo;, los de 5 por &amp;ldquo;BUZZ&amp;rdquo; y los de ambos por &amp;ldquo;FIZZBUZZ&amp;rdquo;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;fizzbuzz&lt;/span&gt;(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; i &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; xrange(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (i&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;      &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (i&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FIZZBUZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;      &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FIZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;elif&lt;/span&gt; (i&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;      &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;BUZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;      &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; i&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;No se ven, pero tenemos 3 condiciones anidadas, así que dividimos funciones:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;fizzbuzz&lt;/span&gt;(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; i &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; xrange(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    printNumber(i&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;printNumber&lt;/span&gt;(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;      &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FIZZBUZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;      &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FIZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;elif&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;      &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;BUZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;      &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; n
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Como veis, esta simple acción me ha permitido reducir todos los &amp;ldquo;i+1&amp;rdquo; que tenía. Eliminemos los ELSEs:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;fizzbuzz&lt;/span&gt;(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; i &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; xrange(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    printNumber(i&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;printNumber&lt;/span&gt;(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;      &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FIZZBUZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;      &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FIZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;BUZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; n
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Esto ya va pareciendo otra cosa&amp;hellip; Pero tengo demasiados &amp;ldquo;&lt;em&gt;prints&lt;/em&gt;&amp;rdquo;. Como véis, el proceso no es automático o no lo contaría: haría un script. Así que voy a redicir un poco todo ese mejunje:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;fizzbuzz&lt;/span&gt;(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; i &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; xrange(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; solveNumber(i&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;solveNumber&lt;/span&gt;(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;      &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FIZZBUZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FIZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;BUZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; n
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Busco contratos:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;fizzbuzz&lt;/span&gt;(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; i &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; xrange(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; solveNumber(i&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;solveNumber&lt;/span&gt;(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;and&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;      &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FIZZBUZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FIZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;BUZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; n
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y ahora voy a quitarme las condiciones del medio. Acordaos de que no puedo utilizar &lt;em&gt;AND&lt;/em&gt; y que no puedo usar cosas como &amp;ldquo;isMultiploOf5&amp;rdquo;, ya que incluiría la condición en el nombre de mi función. Es mucho mejor &lt;em&gt;usar la acción que voy a aplicar&lt;/em&gt; para describir la función:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;fizzbuzz&lt;/span&gt;(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; i &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; xrange(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; solveNumber(i&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;solveNumber&lt;/span&gt;(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; isFizzBuzz(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FIZZBUZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; isFizz(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FIZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; isBuzz(n) &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;BUZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; n
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;isFizzBuzz&lt;/span&gt;(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;and&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;isFizz&lt;/span&gt;(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;isBuzz&lt;/span&gt;(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; n &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y, como véis, el código resultante es mucho más sencillo y no necesito comentar nada, porque queda perfectamente explicado.&lt;/p&gt;
+&lt;p&gt;Comparadlo con el código inicial:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;fizzbuzz&lt;/span&gt;(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;      &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; i &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; xrange(n):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (i&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;          &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; (i&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;            &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FIZZBUZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;          &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;            &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;FIZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;elif&lt;/span&gt; (i&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;%&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;          &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;BUZZ&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;else&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;          &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; i&lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;ventajas&#34;&gt;Ventajas&lt;/h2&gt;
+&lt;p&gt;A parte de la más obvia, que es la estética, podemos ver otra serie de ventajas.&lt;/p&gt;
+&lt;p&gt;Como he podido reducirlo tanto, al realizar las pruebas puedo probar cada función por separado y, después probar la función principal. Resultará mucho más fiable, y me será más sencillo identificar los posibles caminos.&lt;/p&gt;
+&lt;p&gt;Además, con un poco de suerte encuentro código que puedo reutilizar. En el mejunje inicial, hacer esto no era difícil: &lt;em&gt;era imposible&lt;/em&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;reflexiones&#34;&gt;Reflexiones&lt;/h2&gt;
+&lt;p&gt;Hay quien puede criticarme diciendo que no merece la pena dedicar tanto tiempo a un programa que ya funcionaba. Y tienen razón. A medias.&lt;/p&gt;
+&lt;p&gt;Claro, hay quien dirá que soy un fanático del &lt;em&gt;agilismo&lt;/em&gt; y que presto demasiada atención al código. &amp;ldquo;El código no es lo importante, sino la arquitectura&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;Tan solo veamos lo que ocurriría en un entorno real, en el que el cliente se replantea las cosas a medida que el desarrollador va programando. Suponeros que, en este punto, el cliente dice que quiere que los múltiplos de 7 se reemplacen por &amp;ldquo;TOZZ&amp;rdquo;, los de 3 y 7 por &amp;ldquo;FIZZTOZZ&amp;rdquo;, los de 5 y 7 por &amp;ldquo;BUZZTOZZ&amp;rdquo; y los de 3, 5 y 7 por &amp;ldquo;FIZZBUZZTOZZ&amp;rdquo;. ¿Cómo os sentiríais si tenéis que modificar cada uno de los códigos?&lt;/p&gt;
+&lt;p&gt;Este supuesto no me lo he sacado de la manga. Es la razón de fracaso de la mayor parte de los proyectos software.&lt;/p&gt;
+&lt;p&gt;El ejemplo sirve también para demostrar por qué &lt;em&gt;hay que hacer pruebas&lt;/em&gt;. Todo lo expuesto en este artículo es &lt;em&gt;irrealizable&lt;/em&gt; sin una batería de pruebas. Si no, ¿quién me asegura que, ante una modificación sencilla, el código sigue comportándose de la misma manera? Fijáos en el nuevo entorno, en el que el cliente ha solicitado el &amp;ldquo;TOZZ&amp;rdquo;. ¿Quién me asegura que el algoritmo inicial sigue funcionando? Pues &lt;em&gt;únicamente mis tests&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Y hay quien puede criticarme diciendo que hay soluciones mejores. Y tienen razón. No sé quién dijo que &amp;ldquo;todo es posible con tiempo infinito y recursos ilimitados&amp;rdquo;. En el punto en el que lo he dejado considero que es suficientemente aceptable como para poder parar.&lt;/p&gt;
+&lt;p&gt;Y también hay quien puede decirme que, después de todo, sigo usando condicionales. Sí, elegí mal el título del artículo :D pero la intención de deshacerme de estos condicionales es la que me ha llevado a dejar el código más limpio.&lt;/p&gt;
+&lt;h2 id=&#34;quiero-más&#34;&gt;¡Quiero más!&lt;/h2&gt;
+&lt;p&gt;Llegar hasta aquí ya es un éxito. Ahí arriba había mucho código y entiendo que puede resultar difícil de seguir. Si lo has conseguido, ¡enhorabuena!&lt;/p&gt;
+&lt;p&gt;Si te has quedado diciendo: &amp;ldquo;Joder, cómo mola. ¡Quiero más!&amp;rdquo;, debo decir que no tengo ningún mérito. Todo está en el &lt;a href=&#34;http://www.amazon.es/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882&#34;&gt;Clean Code&lt;/a&gt; , de &lt;a href=&#34;http://cleancoder.posterous.com/&#34;&gt;Robert C. Martin&lt;/a&gt;  (AKA &lt;a href=&#34;https://twitter.com/#!/unclebobmartin&#34;&gt;@unclebobmartin&lt;/a&gt;  o en el &lt;a href=&#34;http://www.dirigidoportests.com/el-libro&#34;&gt;&amp;lsquo;Diseño Ágil con TDD&amp;rsquo;&lt;/a&gt; , de &lt;a href=&#34;http://www.carlosble.com/&#34;&gt;Carlos Blé&lt;/a&gt;  (AKA &lt;a href=&#34;https://twitter.com/#!/carlosble&#34;&gt;@carlosble&lt;/a&gt; ). Te recomiendo que comiences por ahí y continúes por sus propias bibliografías.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>No lo llames &#39;util&#39;, llámalo &#39;helper</title>
+      <link>http://example.org/blog/no-lo-llames-helper/</link>
+      <pubDate>Mon, 23 Apr 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/no-lo-llames-helper/</guid>
+      <description>
+        
+          &lt;p&gt;Cuando estamos programando, es muy fácil encontrar situaciones en las que necesitamos una pequeña función que vamos a utilizar en muchas partes. Esta función no encaja en nungún sitio y encaja en todos, así que no sabemos muy bien dónde dejarla.&lt;/p&gt;
+&lt;p&gt;Este tipo de situaciones suele terminar con un método estático en algún fichero con otras funciones similares, aunque no tengan mucho que ver entre ellas.&lt;/p&gt;
+&lt;p&gt;Me gustaría analizar este tipo de situaciones.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/engineering.jpg&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;cuestión-de-nomenclatura&#34;&gt;Cuestión de nomenclatura&lt;/h2&gt;
+&lt;p&gt;A menudo, encontrar nombres adecuados cuando estamos programando es una tarea más compleja de lo que parece. Dar un buen nombre es difícil. Un buen ejemplo de esto es ver a los padres tratando de encontrar un buen nombre para sus hijos; da igual que otros padres ya lo hayan hecho, ya que cada nombre &lt;em&gt;define&lt;/em&gt; a la persona. Y para complicarlo más, algunos nombres tienen &lt;em&gt;significados subjetivos&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;De la misma manera, cada función, cada método, cada variable, cada clase, necesita un nombre. Y estos nombres van a definir su esencia, su razón de existir, su motivo para cambiar, su todo.&lt;/p&gt;
+&lt;p&gt;¿Cuál es el motivo para cambiar una función que se llama &amp;ldquo;helper&amp;rdquo;? ¿Hay que cambiarla cada vez que se necesite ayuda?&lt;/p&gt;
+&lt;p&gt;Muchos programadores creen que no merece la pena dedicar tanto tiempo a encontrar un nombre a una variable. A menudo, utilizan excusas como que no van a dedicar 15 minutos para nombrar un iterador. Claro que no. La importancia de un nombre es directamente proporcionar a su tiempo de vida. Llamar a un iterador &amp;ldquo;&lt;em&gt;i&lt;/em&gt;&amp;rdquo; o &amp;ldquo;&lt;em&gt;j&lt;/em&gt;&amp;rdquo; es un estándar &lt;em&gt;de facto&lt;/em&gt;, y si no se va a usar más que como contador, es más que suficiente. Sin embargo, encontrarte un &amp;ldquo;@return i@&amp;rdquo; en un método es algo horrible que no aporta ningún tipo de información.&lt;/p&gt;
+&lt;p&gt;De la misma manera no es lo mismo encontrar un nombre para un método privado que para uno público. Aun así, es importante que el nombre del método defina lo que hace éste, de la manera más eficiente posible.&lt;/p&gt;
+&lt;h3 id=&#34;pura-perrería&#34;&gt;Pura perrería&lt;/h3&gt;
+&lt;p&gt;En otras ocasiones, nos vence el desánimo y queremos quitarnos la cuestión del nombrado lo antes posible. En estos casos, decidimos meter la función en un &amp;ldquo;helper&amp;rdquo; o &amp;ldquo;util&amp;rdquo; y quitarnos el problema.&lt;/p&gt;
+&lt;p&gt;Este tipo de actitudes están incurriendo en una &lt;em&gt;deuda técnica&lt;/em&gt; menor. Como todas las deudas, una pequeña puede hacerse muy grande poco a poco.&lt;/p&gt;
+&lt;p&gt;Otras ocasiones no nos damos cuenta de lo importante que es el nombre para una variable, método o clase. O, como vamos apurados de tiempo, &lt;em&gt;decidimos&lt;/em&gt; que no tenemos tiempo para mejorar el nombre de la variable.&lt;/p&gt;
+&lt;h2 id=&#34;nombres-prohibidos&#34;&gt;Nombres prohibidos&lt;/h2&gt;
+&lt;p&gt;La mejor manera de evitar este tipo de situaciones es &lt;em&gt;prohibir&lt;/em&gt; ciertas palabras en los nombres de las funciones. La verdad es que se trata de un método personal y difícilmente automatizable, ya que los programadores buscar la &amp;ldquo;&lt;em&gt;programación clever&lt;/em&gt;&amp;rdquo;, encontrando huecos en todas las defensas. De esta manera, si prohibimos &lt;code&gt;manager&lt;/code&gt;, no tardarán en llamarlo &lt;code&gt;mgr&lt;/code&gt;, &lt;code&gt;Mgr&lt;/code&gt; o &lt;code&gt;controller&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Sin embargo, hay ciertos nombres que deberían estar prohibidos por redundantes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Manager&lt;/em&gt;, &lt;em&gt;Controller&lt;/em&gt;,&amp;hellip; Un método siempre controla o maneja algo. No tiene sentido usarlo en un nombre.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Util&lt;/em&gt;, &lt;em&gt;Helper&lt;/em&gt;,&amp;hellip; ¿Qué sentido tiene una función que no ayuda o no es útil?&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Tool&lt;/em&gt;,&amp;hellip; Una función es una herramienta, así que no es necesario enfatizarlo más.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Hay otros nombres cuyo uso debería estar restringidos, como son:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Factory&lt;/em&gt;: debería utilizarse sólo en métodos que fabrican objetos.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Toolbox&lt;/em&gt;: sólo en clases que mantienen grupos de singletons.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Controller&lt;/em&gt;: sólo en &lt;em&gt;paquetes&lt;/em&gt; (no métodos o clases) que contienen el Controlador de un MVC.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Wrapper&lt;/em&gt;: puede llevar a confusión si se usa en toda la herencia.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Y también hay nombres que advierten de problemas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;And&lt;/em&gt;, &lt;em&gt;Or&lt;/em&gt;: El método ya hace dos cosas. Seguramente se pueda dividir.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;muchos-más&#34;&gt;Muchos más&lt;/h2&gt;
+&lt;p&gt;Hay muchos otros nombres que no deberían utilizarse cuando se crean funciones. Hoy estoy particularmente poco inspirado. Sin embargo, espero que esto genere en una discusión sobre nombres buenos y malos. ¡Para eso están los comentarios!&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Agile ha muerto. ¡Viva post-agile!</title>
+      <link>http://example.org/blog/post-agile/</link>
+      <pubDate>Mon, 16 Apr 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/post-agile/</guid>
+      <description>
+        
+          &lt;p&gt;El tema del agilismo en España está de moda ahora. En el resto del mundo ya lo llevan usando 10 años, pero aquí comenzamos ahora.&lt;/p&gt;
+&lt;p&gt;Comienza a aparecer un nuevo término: &amp;ldquo;post-agile&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;Y mi visión personal, claro.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/agile.png&#34;
+         alt=&#34;Ciclo Agile&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;qué-es-post-agile&#34;&gt;¿Qué es post-agile?&lt;/h2&gt;
+&lt;p&gt;Según &lt;a href=&#34;http://www.kohl.ca/2007/post-agilism-frequently-asked-questions/&#34;&gt;Jonathan Kohl&lt;/a&gt; , el post-agilismo es:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Un movimiento creciente de agilistas convencidos que ha superado los métodos Ágiles, usando gran variedad de herramientas de desarrollo y metodologías en su trabajo.
+Una Era emergente. Ahora que el movimiento Ágil se ha establecido, ¿qué nos espera?&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;El post-agilismo no tiene un manifiesto detrás. No hay un grupo organizado.&lt;/p&gt;
+&lt;h2 id=&#34;qué-no-es-post-agile&#34;&gt;¿Qué NO es post-agile?&lt;/h2&gt;
+&lt;p&gt;El post-agilismo no es un intento de destruir al agilismo, sino de darle una nueva vitalidad. No se trata de encontrar nuevas técnicas, metodologías, herramientas, etc., sino de &lt;em&gt;hacer lo que te funciona&lt;/em&gt;, es decir: si tienes una forma de trabajar que funciona, no la cambies por otra que promete ser mejor.&lt;/p&gt;
+&lt;p&gt;El post-agilismo no ataca a TDD, no va a acabar con hacer pruebas, sistemas de integración contínua ni nada por el estilo. El post-agilismo no va contra Scrum, Kanban, Cascade,&amp;hellip; Si usas alguna de estas metodologías, te va bien, y quieres seguir con ella, entonces eres &amp;ldquo;post-ágil&amp;rdquo;.&lt;/p&gt;
+&lt;h2 id=&#34;cuidado&#34;&gt;Cuidado&amp;hellip;&lt;/h2&gt;
+&lt;p&gt;Hay blogs por ahí en los que han leído el titular &amp;ldquo;post-agile&amp;rdquo; y se han puesto como locos a escribir cosas como que &amp;ldquo;post-agile&amp;rdquo; va contra &amp;ldquo;agile&amp;rdquo; y esas cosas&amp;hellip; Sed críticos con los blogs en este sentido.&lt;/p&gt;
+&lt;h2 id=&#34;mi-opinión-personal&#34;&gt;Mi opinión personal&lt;/h2&gt;
+&lt;h3 id=&#34;aclaraciones&#34;&gt;Aclaraciones&lt;/h3&gt;
+&lt;p&gt;Llegado a este punto, me gustaría indicar dónde está el problema.&lt;/p&gt;
+&lt;p&gt;El problema es que se ha asociado &amp;ldquo;Agile&amp;rdquo; con frameworks como Scrum y Kanban. Se han confundido estos frameworks como metodologías de trabajo. Se ha fanatizado el término de TDD y se ha asociado a Agile. Se ha monetizado el término scrum-máster.&lt;/p&gt;
+&lt;p&gt;Se ha asociado a &amp;ldquo;Agile&amp;rdquo; la pasión por el código, olvidando al cliente y el producto. &lt;em&gt;Agile se entiende hoy como todo lo que no es Agile&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Así que el problema no es Agile, Post-Agile o cómo quieras llamarlo. El problema somos nosotros.&lt;/p&gt;
+&lt;h3 id=&#34;qué-es-agile&#34;&gt;¿Qué es Agile?&lt;/h3&gt;
+&lt;p&gt;No entiendo las confusiones, cuando las cosas están muy claras:&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Agile es dar prioridad a las personas y sus relaciones frente a procesos y herramientas&lt;/em&gt;. Es comprobar que los miembros del equipo se encuentran cómodos trabajando, y no que siguen el proceso al dedillo y que usan Jira como campeones.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Agile es mostrar una demo, y no enseñarte un PPT&lt;/em&gt;. Es hacer cosas funcionales, lo antes posible.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Agile es diálogo, no engaño&lt;/em&gt;. Si tienes una duda, preguntas a tu cliente, no vas a comprobar lo que se firmó.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Agile es aceptar que los planes salen mal&lt;/em&gt;, y que es necesario saber reaccionar.&lt;/p&gt;
+&lt;p&gt;Y no me estoy inventando nada: todo eso es la base del agilismo. Todo eso es el &lt;a href=&#34;http://agilemanifesto.org/iso/es/&#34;&gt;manifiesto ágil&lt;/a&gt; .&lt;/p&gt;
+&lt;p&gt;Para describir Agile, no necesito hablar de TDD, Scrum, Kanban, CI, Hudson, Jenkins, Git, Mercurial, ramas, Jira, Confluence, revisiones de código, patrones, control de incidencias, seguimiento, flexibilidad horaria, jerarquías,&amp;hellip; Porque nada de todo eso es Agile.&lt;/p&gt;
+&lt;p&gt;Para mí, Agile es un intento por mejorar. &lt;em&gt;Agile es ofrecer un trabajo de calidad, que satisfaga al cliente, sin exigirme sobreesfuerzos constantes&lt;/em&gt;. Nada más. Y nada menos.&lt;/p&gt;
+&lt;p&gt;No importa la técnica que uses: he visto a gente usar mejor un Excel que a otros sus maravillosas herramientas ágiles. Pero es que &amp;ldquo;Agile&amp;rdquo; no es una herramienta: es una forma de pensar.&lt;/p&gt;
+&lt;p&gt;Cuando tratas de atar una filosofía a un estándar ISO, lo deformas, lo maltratas, lo perviertes. Cuando lo atas, ya sea herramientas o metodologías, lo matas.&lt;/p&gt;
+&lt;h3 id=&#34;cambiando-términos&#34;&gt;Cambiando términos&lt;/h3&gt;
+&lt;p&gt;Eso es lo que creo. Claro, que puedo estar equivocado. Si tú me dices que eso no es Agile, sino que es &amp;ldquo;Post-Agile&amp;rdquo;, pues vale. Entonces quiero ser &amp;ldquo;Post-agilista&amp;rdquo;. Si dices que se llama &amp;ldquo;Falifancito Verde&amp;rdquo;, pues estupendo también. Y es que me da igual el término: me quedo con lo que significa.&lt;/p&gt;
+&lt;p&gt;Todo el tema del &amp;ldquo;post-agilismo&amp;rdquo; me suena a un &amp;ldquo;ya hemos deformado el término agile, así que pongo otro término para defender lo que era Agile&amp;rdquo;. Es más fácil que luchar por devolverle su verdadero significado.&lt;/p&gt;
+&lt;p&gt;Ya existía otra rama: &lt;a href=&#34;http://manifesto.softwarecraftsmanship.org/&#34;&gt;la artesanía de software&lt;/a&gt; , que pretende llegar más lejos del agilismo. Yo nunca me he definido como artesano de software, ya que creo que no es necesario nada más; con el &lt;a href=&#34;http://agilemanifesto.org/&#34;&gt;agile-manifesto&lt;/a&gt;  es más que suficiente.&lt;/p&gt;
+&lt;p&gt;Así que, por favor, llamadlo como queráis. A mí dejadme llamarlo &amp;ldquo;agile&amp;rdquo;. Pero no me importa el nombre: &lt;em&gt;yo lo llamo tratar de hacer mi trabajo mejor cada día&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Y dejad de pelearos por los términos y poneos a trabajar por hacer las cosas bien hechas.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Estadística</title>
+      <link>http://example.org/blog/estadistica/</link>
+      <pubDate>Sat, 31 Mar 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/estadistica/</guid>
+      <description>
+        
+          &lt;p&gt;Nunca me ha gustado la estadística. Bueno, vale: esas gráficas llenas de líneas que no sabes qué significan siempre me han resultado hipnóticas.&lt;/p&gt;
+&lt;p&gt;Sin embargo, últimamente me han enseñado la importancia de la estadística en la informática, y me gustaría compartirlo con vosotros.&lt;/p&gt;
+&lt;p&gt;Resumiéndolo mucho: la estadística puede ser la diferencia entre el éxito y el fracaso.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/maths.jpg&#34;
+         alt=&#34;Las matemáticas están en todas partes&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;para-qué&#34;&gt;Para qué&lt;/h2&gt;
+&lt;p&gt;La primera pregunta que surge en la mente de cualquiera es: &lt;em&gt;¿y para qué quiero yo usar la estadística?&lt;/em&gt; Y se me ocurren distintas respuestas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Para comprobar el &lt;em&gt;progreso&lt;/em&gt; del proyecto.&lt;/li&gt;
+&lt;li&gt;Para &lt;em&gt;evaluar&lt;/em&gt; las implicaciones de los últimos cambios&lt;/li&gt;
+&lt;li&gt;Para &lt;em&gt;planificar&lt;/em&gt; los pasos siguientes&lt;/li&gt;
+&lt;li&gt;Para &lt;em&gt;identificar&lt;/em&gt; posibles problemas con antelación.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;cómo&#34;&gt;Cómo&lt;/h2&gt;
+&lt;p&gt;Pues de la manera más sencilla: primero se recogen los datos y luego se analizan. En la recogida de datos suele ser importante guardar la fecha (algo que siempre olvido :D). En el análisis&amp;hellip; pues depende de lo que estéis analizando.&lt;/p&gt;
+&lt;h2 id=&#34;qué&#34;&gt;Qué&lt;/h2&gt;
+&lt;p&gt;Pues todo.&lt;/p&gt;
+&lt;p&gt;O eso es lo ideal. Claro, que no es posible :D Pero sí es posible llegar a cosas como tiempos de ejecución, tiempos de pruebas, tiempos de inicialización,&amp;hellip; Este tipo de cosas son importantes, ya que pueden mostrarnos que lo que que hoy es asumible, en un año es inviable.&lt;/p&gt;
+&lt;h2 id=&#34;entre-el-éxito-y-el-fracaso&#34;&gt;Entre el éxito y el fracaso&lt;/h2&gt;
+&lt;p&gt;Veámoslo con un ejemplo. Por un lado tendremos la empresa &lt;em&gt;&amp;ldquo;Perdedores S.A.&amp;quot;&lt;/em&gt;, que no realiza ningún tipo de estadística. Y por otro, la empresa &lt;em&gt;&amp;ldquo;Ganadores S.A.&amp;quot;&lt;/em&gt;, que trata de hacerlo lo mejor que saben.&lt;/p&gt;
+&lt;p&gt;Ambas empresas comienzan a la vez, se conocen y se dedican a lo mismo.&lt;/p&gt;
+&lt;p&gt;Pasado un mes, los &lt;em&gt;Ganadores&lt;/em&gt; deciden comenzar a guardar los tiempos de ejecución y pruebas.&lt;/p&gt;
+&lt;p&gt;A los dos meses, los &lt;em&gt;Ganadores&lt;/em&gt; se dan cuenta de que su aplicación es cada día más lenta. Deciden prestar atención a ese punto y mejorar la velocidad.&lt;/p&gt;
+&lt;p&gt;A los tres meses, los &lt;em&gt;Ganadores&lt;/em&gt; se dan cuenta de que las pruebas llevan demasiado tiempo. Dedican parte de su tiempo a optimizar este paso de su proceso.&lt;/p&gt;
+&lt;p&gt;A los cuatro meses, los &lt;em&gt;Ganadores&lt;/em&gt; descubren que la aplicación está teniendo más errores cada día. Deciden pararse, arreglar los más importantes, y continuar después. La mayor parte de estos problemas eran de diseño o de arquitectura (lo que ya daban por terminado).&lt;/p&gt;
+&lt;p&gt;Como los &lt;em&gt;Ganadores&lt;/em&gt; están perdiendo el tiempo revisando sus estadísticas, los &lt;em&gt;Perdedores&lt;/em&gt; avanzan más deprisa.&lt;/p&gt;
+&lt;p&gt;A los cinco meses, los &lt;em&gt;Ganadores&lt;/em&gt; llevan el mismo ritmo que los &lt;em&gt;Perdedores&lt;/em&gt;. Estos últimos no se lo pueden explicar, ya que los &lt;em&gt;Ganadores&lt;/em&gt; se pasan el día mirando gráficas en lugar de programar.&lt;/p&gt;
+&lt;p&gt;Llega el momento de la entrega: Los &lt;em&gt;Perdedores&lt;/em&gt; tienen un proyecto estupendo. Sus programadores dejaron de hacer pruebas hace meses, ya que la ejecución de éstas requería demasiado tiempo y no podían permitírselo. Saben que tienen muchos errores, pero ya los irán arreglando cuando el cliente los descubra. Los &lt;em&gt;Ganadores&lt;/em&gt;, por su parte, no han sufrido problemas con sus pruebas, ya que los corrigieron a tiempo, y están seguros de que disponen de efectivos suficientes para abordar los problemas que puedan surgir.&lt;/p&gt;
+&lt;p&gt;El cliente ejecuta ambos y&amp;hellip; Los &lt;em&gt;Ganadores&lt;/em&gt; tienen una aplicación mucho más rápida. Gracias a sus estadísticas, descubrieron los problemas de rendimiento y los corrigieron en cuanto aparecieron. Además, es una aplicación más fiable, ya que corrigieron a tiempo su cantida de errores.&lt;/p&gt;
+&lt;h3 id=&#34;y-hay-más&#34;&gt;Y hay más&lt;/h3&gt;
+&lt;p&gt;Gracias a estas gráficas, los &lt;em&gt;Ganadores&lt;/em&gt; deciden establecer los valores que quieren dentro de un año. Y cada mes revisan si se van a a cercar a estos valores. Es decir: las gráficas les siven como &lt;em&gt;objetivos de proyecto&lt;/em&gt;. Es un valor mesurable, claro y evidente de la &lt;em&gt;evolución&lt;/em&gt; del proyecto.&lt;/p&gt;
+&lt;h2 id=&#34;difícil&#34;&gt;Difícil&lt;/h2&gt;
+&lt;p&gt;Aunque aquí lo he contado todo muy bonito, debo admitir que estos temas de estadísticas son muy difíciles. Es difícil decidir qué datos hay que guardar, es difícil implementarlo y es aún más difícil saber interpretarlos correctamente.&lt;/p&gt;
+&lt;p&gt;Sin embargo, ésta es una herramienta de la que no debemos olvidarnos cuando abordamos proyectos de gran embergadura.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Sistemas de Control de Versiones (Subversion y Mercurial)</title>
+      <link>http://example.org/blog/mercurial-subversion/</link>
+      <pubDate>Mon, 30 Jan 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/mercurial-subversion/</guid>
+      <description>
+        
+          &lt;p&gt;En esta ocasión vamos a ver qué es un Sistema de Control de Versiones y cómo se utiliza.&lt;/p&gt;
+&lt;p&gt;Voy a dividir la entrada en 4 partes bien diferenciadas. Primero una breve introducción, explicando qué son y qué tipos hay. A continuación, una descripción del uso de VCS, seguida por una descripción de DVCS. Finalmente, una entrada avanzada de cómo utilizar DVCS. Si ya eres un usuario de DVCS, a lo mejor te interesa saltarte las dos primeras partes.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/hgvssvn.jpg&#34;
+         alt=&#34;Mercurial y Subversion&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;introducción&#34;&gt;Introducción&lt;/h2&gt;
+&lt;p&gt;Un &lt;em&gt;Sistema de Control de Versiones&lt;/em&gt; (SCV o, en inglés, VCS o &amp;ldquo;Version Control System&amp;rdquo;) tiene una estructura similar a un sistema de archivos. La diferencia está en que se puede acceder a distintas versiones de los archivos y operar con estas versiones. Es decir: &lt;em&gt;Es un sistema de ficheros con versionado&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Hay distintos tipos. Los más sencillos son los sistemas locales, útiles para un único usuario. En la era de la nube, no tiene sentido en pensar en sistemas de este tipo y ya no se mantiene ninguno de éstos. Hace tiempo trabajé con PVCS y era un verdadero infierno (una persona estaba encargada del PVCS y era la única que accedía al mismo). Los ignoraremos.&lt;/p&gt;
+&lt;p&gt;Un poco más complejos son los denominados VCS (&amp;ldquo;Version Control System&amp;rdquo;). Éstos diferencian entre el sistema central y la copia local (&lt;em&gt;working copy&lt;/em&gt;).&lt;/p&gt;
+&lt;p&gt;Los más utilizados actualmente son los DVCS (&amp;quot;&lt;em&gt;Distributed Version Control System&lt;/em&gt;&amp;quot;), en los que puede haber más de una copia remota y éstas se pueden sincronizar entre ellas.&lt;/p&gt;
+&lt;p&gt;Echémosle un vistazo rápido a todos ellos.&lt;/p&gt;
+&lt;h2 id=&#34;vcs&#34;&gt;VCS&lt;/h2&gt;
+&lt;p&gt;Aunque las empresas están abandonándolos, aún siguen siendo muy utilizados.&lt;/p&gt;
+&lt;p&gt;El sistema consiste, básicamente, en una copia local y un servidor remoto. Las modificaciones se realizan sobre la copia local y luego se envían al servidor. Cada máquina que tiene una copia local se sincroniza bajo demanda con el servidor remoto.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://subversion.tigris.org/&#34;&gt;Subversion&lt;/a&gt; , &lt;a href=&#34;http://cvs.nongnu.org/&#34;&gt;CVS&lt;/a&gt; , &amp;hellip; Han sido los más utilizados. Vamos a ver un poquito de &lt;em&gt;Subversion&lt;/em&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;init&lt;/em&gt;: permite inicializar un repositorio.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;checkout&lt;/em&gt;: descarga un repositorio remoto en una carpeta local (&lt;em&gt;working copy&lt;/em&gt;), desde la que podemos manipular los archivos.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;update&lt;/em&gt;: comprueba si hay actualizaciones en el servidor y se las descarga a la copia local. Si hay conflictos (hemos tocado un archivo que alguien ya ha modificado en el servidor), tratará de resolverlos. Si no puede, dejará los archivos marcados como &amp;ldquo;conflicto&amp;rdquo;.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;add&lt;/em&gt;: mientras que no hagamos &lt;em&gt;add&lt;/em&gt; a un archivo, éste será ignorado.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;commit&lt;/em&gt;: crea una nueva versión, enviando al servidor las modificaciones desde la última vez que se utilizó esta orden.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;remove&lt;/em&gt;: el archivo deja de estar gestionado. Hay que tener en cuenta que las versiones que subimos con el archivo seguirán estando ahí, pero a partir de ese momento, las nuevas versiones no lo mostrarán.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;diff&lt;/em&gt;: permite ver las diferencias existentes entre las distintas versiones de un mismo fichero.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;log&lt;/em&gt;: muestra los cambios ocurridos en el repositorio.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;El uso típico de este tipo de repositorios es:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;El administrador crea el repositorio (&lt;em&gt;init&lt;/em&gt;) y publica la dirección en la que se encuentra (https, ssh, &amp;hellip;).&lt;/li&gt;
+&lt;li&gt;El usuario se descarga el repositorio a su copia local (&lt;em&gt;checkout&lt;/em&gt;).&lt;/li&gt;
+&lt;li&gt;El usuario comienza un ciclo de iteraciones sucesivas de las órdenes siguientes, aunque usará el resto de forma ocasional:
+&lt;ol&gt;
+&lt;li&gt;Modificar el código&lt;/li&gt;
+&lt;li&gt;Subir cambios (&lt;em&gt;commit&lt;/em&gt;). En este punto se realiza un &lt;em&gt;update&lt;/em&gt; automático y, si hay conflictos, se exige su resolución antes de permitir el &lt;em&gt;commit&lt;/em&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Los sistemas de este tipo tienen un problema: si no hay conexión, no se puede hacer nada con el repositorio, ya que la mayor parte de la lógica está en el servidor.&lt;/p&gt;
+&lt;h2 id=&#34;dvcs&#34;&gt;DVCS&lt;/h2&gt;
+&lt;p&gt;En este caso entra en juego un componente más: un servidor local. Este servidor local puede ser una copia local del servidor remoto. Esta característica permite trabajar con el servidor aunque no exista conexión a la red. Cuando se desee, se puede sincronizar el servidor local con el servidor remoto.&lt;/p&gt;
+&lt;p&gt;La manera de trabajar con el servidor local es muy similar a la utilizada por los &lt;em&gt;VCS&lt;/em&gt;, aunque pueden cambiar los nombres de las órdenes. Por ejemplo, la orden &amp;ldquo;&lt;em&gt;clone&lt;/em&gt;&amp;rdquo; de &lt;em&gt;Mercurial&lt;/em&gt; equivaldría al &amp;ldquo;&lt;em&gt;checkout&lt;/em&gt;&amp;rdquo; de subversion.&lt;/p&gt;
+&lt;p&gt;Evidentemente, hay una serie de instrucciones adicionales que nos permiten trabajar con el servidor remoto. Dado que esto no es un tutorial de &lt;em&gt;mercurial&lt;/em&gt;, obviaré estas órdenes comunes y me centraré en las nuevas operaciones:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;pull&lt;/em&gt;: permite traerse los cambios del repositorio remoto al repositorio local.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;push&lt;/em&gt;: Envía los cambios del repositorio local (ojo, no la copia de trabajo) al repositorio remoto.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;branch&lt;/em&gt;: Permite crear ramas nuevas. De esto hablaremos en el siguiente punto.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;branches&lt;/em&gt;: Muestra la lista de ramas existentes.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;merge&lt;/em&gt;: Mezcla dos colas.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;out&lt;/em&gt;: Muestra la lista de &lt;em&gt;changesets&lt;/em&gt; (commits) que están en el servidor local pero no en el servidor remoto.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;No hay un ciclo habitual con los DVCS. Sin embargo, podríamos poner como &amp;ldquo;ciclo sencillo&amp;rdquo; la intercalación entre:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;pull&lt;/li&gt;
+&lt;li&gt;Ciclos de tipo VCS&lt;/li&gt;
+&lt;li&gt;push&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Algunos ejemplos de DVCS son &lt;a href=&#34;http://mercurial.selenic.com/&#34;&gt;Mercurial&lt;/a&gt; , &lt;a href=&#34;http://git-scm.com/&#34;&gt;Git&lt;/a&gt; , &lt;a href=&#34;http://bazaar.canonical.com/en/&#34;&gt;Bazaar&lt;/a&gt; , &lt;a href=&#34;http://veracity-scm.com/&#34;&gt;Veracity&lt;/a&gt;  o
+&lt;a href=&#34;http://www.plasticscm.com/&#34;&gt;Plastic SCM&lt;/a&gt; .&lt;/p&gt;
+&lt;h2 id=&#34;dvcs-avanzado&#34;&gt;DVCS Avanzado&lt;/h2&gt;
+&lt;p&gt;Vamos a ver aquí tres niveles. El primero se tratará del manejo de ramas (&amp;ldquo;branches&amp;rdquo;); el segundo, de &lt;em&gt;hooks&lt;/em&gt; y el tercer, del manejo de repositorios remotos.&lt;/p&gt;
+&lt;h3 id=&#34;branches&#34;&gt;Branches&lt;/h3&gt;
+&lt;p&gt;El manejo de ramas permite realizar un trabajo paralelo sin afectar a la rama principal. Las ramas principales suelen llamarse algo como &amp;ldquo;&lt;em&gt;trunk&lt;/em&gt;&amp;rdquo;, &amp;ldquo;&lt;em&gt;default&lt;/em&gt;&amp;rdquo;, &amp;hellip; y suelen ser las más importantes.&lt;/p&gt;
+&lt;p&gt;Existe una corriente que defiende el &amp;ldquo;&lt;em&gt;Un cambio, una rama&lt;/em&gt;&amp;rdquo;, de manera que antes de comenzar a hacer cambios, debes crearte una rama y, posteriormente, mezclar con la rama principal. Este planteamiento permite pasar varios días trabajando en la rama sin afectar al trabajo de los demás. No es necesario esperar al último momento para aplicar todos los cambios, ya que se puede mezclar una rama con la rama principal en cualquier momento, facilitando así el poder actualizarse o reduciendo los posibles conflictos.&lt;/p&gt;
+&lt;p&gt;Existe también la posibilidad de crear ramas de ramas o de mezclarlas entre ellas, complicando así el grafo generado.&lt;/p&gt;
+&lt;p&gt;Hay que tener en cuenta que, durante la mezcla de código, es posible que el algoritmo de mezclado falle, así que es buena idea combinar estas técnicas con robustas baterías de pruebas.&lt;/p&gt;
+&lt;h3 id=&#34;hooks&#34;&gt;Hooks&lt;/h3&gt;
+&lt;p&gt;Los repositorios pueden lanzar acciones automáticas cuando se producen ciertos eventos. Por ejemplo, podrían enviarnos un e-mail cuando una rama se mezcla con la rama principal, o comprobar que el código cumple ciertos criterios de calidad.&lt;/p&gt;
+&lt;p&gt;Este tipo de técnicas pueden ser muy provechosas, aunque puede requerir tanto mantenimiento como para dedicar parte del personal a manejarlas.&lt;/p&gt;
+&lt;h3 id=&#34;múltiples-repositorios&#34;&gt;Múltiples repositorios&lt;/h3&gt;
+&lt;p&gt;Finalmente, llegamos a los múltiples repositorios. Existe la opción de tener repositorios remotos réplica. Esto significa que podemos sincronizar nuestros cambios contra una de estas réplicas y ésta se sincronizará tarde o temprano con otra de las réplicas.&lt;/p&gt;
+&lt;p&gt;La sincronización entre repositorios puede ser manual o automática, y puede dar lugar a un &lt;em&gt;flujo de trabajo&lt;/em&gt; distinto según se necesite. Por ejemplo, puede utilizarse esta técnica para mantener repositorios remotos, de manera que se incremente la velocidad entre los &lt;em&gt;working copies&lt;/em&gt; y el servidor central o, lo que puede resultar más provechoso, definir unas calidades para cada uno de los repositorios.&lt;/p&gt;
+&lt;p&gt;Veamos un ejemplo&amp;hellip; Podemos tener el repositorio de uso habitual, donde &amp;ldquo;cabe todo&amp;rdquo;, llamándole &amp;ldquo;&lt;em&gt;Development&lt;/em&gt;&amp;quot;; otro repositorio del que se realizan pruebas unitarias automáticas, llamado &amp;ldquo;&lt;em&gt;testing&lt;/em&gt;&amp;quot;; si las pruebas automáticas pasan, podríamos tener otro con las pruebas de integración &amp;ldquo;&lt;em&gt;integration&lt;/em&gt;&amp;quot;; si estas pasan, otro con las pruebas de calidad &amp;ldquo;&lt;em&gt;QA&lt;/em&gt;&amp;rdquo; y, si estas pasan, otro con el código definitivo &amp;ldquo;&lt;em&gt;Release&lt;/em&gt;&amp;rdquo;. Cuando hay una nueva rama en este repositorio, podríamos sincronizarlo con &amp;ldquo;&lt;em&gt;Development&lt;/em&gt;&amp;rdquo; y, así, cerramos el círculo.&lt;/p&gt;
+&lt;p&gt;No he leído nada aún al respecto, pero supongo que a esto es a lo que hace referencia la &amp;ldquo;&lt;em&gt;Integración contínua&lt;/em&gt;&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;Con el fin de no hacer crecer disparatadamente todos los repositorios, se pueden mezclar sólo ciertas ramas de un repositorio a otro, simplificando las mezclas y reduciendo la historia.&lt;/p&gt;
+&lt;h2 id=&#34;conclusión&#34;&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;El uso de todas las técnicas avanzadas puede provocar flujos de trabajo muy diferentes, pero todos ellos útiles para el desarrollo de software. Cualquier empresa de más de 5 desarrolladores que trate de hacer software sin utilizar un VCS o un DVCS está destinada al fracaso; no podrá obtener una calidad competitiva ni unos plazos aceptables.&lt;/p&gt;
+&lt;h2 id=&#34;más-información&#34;&gt;Más información&lt;/h2&gt;
+&lt;p&gt;Hoy día es raro no haber oído hablar de los sistemas de control de versiones. De
+todas maneras, os recomiendo apuntaros al blog de mis amigos de `Codice
+Software]  donde, entre muchas cosas interesantes, explican más a fondo &lt;a href=&#34;http://www.plasticscm.com/infocenter/quick-start/task-cycle-in-plastic-scm.aspx&#34;&gt;un
+flujo de trabajo&lt;/a&gt;  con su propia herramienta.&lt;/p&gt;
+&lt;p&gt;En breve voy a comenzar la lectura de un libro que promete ser interesante,
+&lt;a href=&#34;http://www.ericsink.com/&#34;&gt;Version Control by Example&lt;/a&gt;, propuesto por Eric Sink, que os podéis descargar
+gratuítamente o, si tenéis suerte como yo, &lt;a href=&#34;http://www.ericsink.com/entries/vcbe_print_edition_free.html&#34;&gt;conseguirlo de forma gratuita en
+papel&lt;/a&gt; .&lt;/p&gt;
+&lt;p&gt;También os propongo echar un ojo a la &lt;a href=&#34;http://en.wikipedia.org/wiki/Revision_control&#34;&gt;Wikipedia&lt;/a&gt; .&lt;/p&gt;
+&lt;p&gt;Y, por si fuera poco, existe la posibilidad de utilizar algunos de ellos de
+forma remota, utilizando &lt;a href=&#34;https://github.com/&#34;&gt;Github&lt;/a&gt; , &lt;a href=&#34;https://bitbucket.org/&#34;&gt;Bitbucket&lt;/a&gt; , &lt;a href=&#34;https://launchpad.net/&#34;&gt;Launchpad&lt;/a&gt; , &lt;a href=&#34;http://savannah.gnu.org/&#34;&gt;Savannah&lt;/a&gt; ,
+&lt;a href=&#34;http://gna.org/&#34;&gt;Gna!&lt;/a&gt; , &amp;hellip; Para gustos, los -colores- sistemas de control de versiones :D&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Constructores simples</title>
+      <link>http://example.org/blog/constructores-simples/</link>
+      <pubDate>Mon, 23 Jan 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/constructores-simples/</guid>
+      <description>
+        
+          &lt;p&gt;Esta semana me he dado cuenta de la diferencia existente entre un constructor feo y uno bonito. Es curioso lo fácil que es hacerlo bien y lo poquito que cuesta, así que voy a compartir mis apreciaciones con vosotros, a ver qué opináis.&lt;/p&gt;
+&lt;p&gt;Durante mi carrera profesional he hecho muchas cosas feas, así que no me echéis en cara si encontráis que he hecho algo diferente de lo que diga :D ¡Esto consiste en ir mejorando día a día!&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Actualización 2012/01/24&lt;/em&gt;: Por petición de &lt;em&gt;YeBeNeS&lt;/em&gt;, añado ejemplos en java.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/patterns.png&#34;
+         alt=&#34;Patterns&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h3 id=&#34;lanzando-excepciones&#34;&gt;Lanzando excepciones&lt;/h3&gt;
+&lt;p&gt;Tener un constructor que lanza excepciones es algo que ya resulta algo feo. Un constructor debería preparar el objeto para ser utilizado, no realizar una tarea. Dado que no realiza tareas, no debería lanzar ninguna excepción.&lt;/p&gt;
+&lt;p&gt;Cuando digo que no lanza excepciones no significa que las capture: digo que no las lanza porque no lo necesita. Las actividades que haga serán tan simples que no pueden fallar: inicializaciones y punto. Nada de operaciones. Las cosas complejas las dejamos para los métodos.&lt;/p&gt;
+&lt;p&gt;No hay nada más feo que un constructor que lanza excepciones. Es lo último que te esperas y es lo último que deseas que otros se encuentren.&lt;/p&gt;
+&lt;p&gt;Cuando el constructor tiene excepciones, éste sería el código mínimo para instanciarlo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;   &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;throws&lt;/span&gt; exception &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;   &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// [...]
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;try&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    Example example &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Example&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;catch&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;Exception e&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;null-pointer-exception&#34;&gt;Null pointer exception&lt;/h3&gt;
+&lt;p&gt;Si un constructor no realiza operaciones, no puede darse el caso de acceder a un puntero inválido. El constructor sólo debería hacer asignaciones, nada más.&lt;/p&gt;
+&lt;h3 id=&#34;constructores-con-parámetros&#34;&gt;Constructores con parámetros&lt;/h3&gt;
+&lt;p&gt;Hay ocasiones en las que un objeto requiere de un parámetro para poder funcionar. En estos casos, está bien requerirlo en el constructor.&lt;/p&gt;
+&lt;p&gt;Cuando el número de parámetros es muy alto (es decir, DOS), entonces deberíamos
+plantearnos hacerlo de otra manera. Si el constructor requiere tantos
+parámetros, es posible que esté violando el &lt;a href=&#34;http://en.wikipedia.org/wiki/Single_responsibility_principle&#34;&gt;principio de única responsabilidad&lt;/a&gt; .&lt;/p&gt;
+&lt;p&gt;Otra costumbre que tomé y que he visto es la de crear un constructor con N parámetros, de manera que permita inicializar cada uno de sus atributos privados. La experiencia me ha demostrado que es una costumbre bastante mala&amp;hellip; en casi todos los casos.&lt;/p&gt;
+&lt;p&gt;En el caso de Java, es una mala costumbre lo mires como lo mires. ¿Cuál es el orden de los parámetros? Si tengo 3 parámetros&amp;hellip; ¿Tengo que hacer las 3 combinaciones de parámetros únicos, al menos 2 de 2 argumentos y otro de 3? ¿Y si, de pronto, necesito un cuarto atributo privado? ¿Cuántas combinaciones tengo que hacer?&lt;/p&gt;
+&lt;p&gt;En otros lenguajes, como Python, en el que los argumentos son nombrados, todo lo dicho no le afecta. Sin embargo, en este caso tendremos otro problema: ¿Y si ya no necesito uno de los argumentos o si necesito cambiarle el nombre?&lt;/p&gt;
+&lt;p&gt;A ver&amp;hellip; ante el código siguiente:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; value1&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; value2&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;private&lt;/span&gt; String juntaLaTrocola&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;private&lt;/span&gt; String gamusino&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; value1&lt;span style=&#34;color:#f92672&#34;&gt;){}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; a&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; b&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;String juntaLaTrocola&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;String gamusino&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; String &lt;span style=&#34;color:#a6e22e&#34;&gt;juntaLaTrocola&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Se me ocurren muchas preguntas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;En el tercer constructor, ¿va primero el value1 o el value2?&lt;/li&gt;
+&lt;li&gt;¿Por qué no puedo construir un objeto sólo con &amp;ldquo;&lt;em&gt;gamusino&lt;/em&gt;&amp;rdquo;?&lt;/li&gt;
+&lt;li&gt;¿Por qué no puedo combinar valores numéricos y cadenas? ¿Es porque el programador se cansó (como en este caso)? ¿Es porque no debo? ¿Es porque se añadieron después?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Además, si heredas de la clase, ¡¡¡estás obligado a sobreescribir todos estos métodos!!!&lt;/p&gt;
+&lt;p&gt;¿Ejemplos? &lt;a href=&#34;http://docs.oracle.com/javase/6/docs/api/index.html&#34;&gt;JDialog&lt;/a&gt;  tiene 16 constructores distintos.&lt;/p&gt;
+&lt;h3 id=&#34;constructores-fatigados&#34;&gt;Constructores fatigados&lt;/h3&gt;
+&lt;p&gt;No hace mucho que yo mismo implementé un constructor que parseaba un archivo XML. Me pareció algo horrible, pero no encontraba otra manera mejor de hacerlo. ¿Alguien le ve lógica a esto? Yo, ahora, no.&lt;/p&gt;
+&lt;p&gt;Si tenemos un constructor que hace tanto trabajo, ¿cómo podemos mejorar nuestro código? No podemos usar el patrón &lt;em&gt;un método a una clase&lt;/em&gt;, porque tendremos que el constructor de la nueva clase hará, de nuevo, todo el trabajo. En caso contrario, ¿por qué tenemos dos clases? bastaría con sustituir la primera por la segunda.&lt;/p&gt;
+&lt;p&gt;No es algo tan raro de encontrar: la propia API de Java tiene métodos que lanzan excepciones o realizan mucho trabajo (&lt;em&gt;NOTA:&lt;/em&gt; buscando ejemplos no he encontrado ninguno que lance excepciones, pero sé que los he visto; ¿habrá sido en clases de terceros?):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;RMIConnectorServer&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;JMXServiceURL url&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; Map&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;String&lt;span style=&#34;color:#f92672&#34;&gt;,?&amp;gt;&lt;/span&gt; environment&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; RMIServerImpl rmiServerImpl&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; MBeanServer mbeanServer&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;JDialog&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;Window owner&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; String title&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; Dialog&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;ModalityType&lt;/span&gt; modalityType&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; GraphicsConfiguration gc&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;la-solución-fábricas&#34;&gt;La solución: Fábricas&lt;/h2&gt;
+&lt;p&gt;En ocasiones necesito dos constructores porque hay distintas maneras de usar el objeto. Veamos un ejemplo: Tengo una clase que se conecta a base de datos y que se puede utilizar de dos maneras diferentes: Con una base de datos real o con una base de datos en memoria.&lt;/p&gt;
+&lt;p&gt;Aquí tengo un problema. Uno de los constructores necesitará un argumento y el otro ninguno. No es lógico utilizar otro sistema para construir el objeto&amp;hellip; ¿O sí?&lt;/p&gt;
+&lt;p&gt;Tras haberlo hecho así numerosas veces, he descubierto que hay otra manera mucho más chula: Utilizando un método que me fabrique el objeto. De esta manera puedo diferenciar entre la forma de construirlo de una manera y la otra. Es decir: tendré el método &lt;em&gt;createInMemory&lt;/em&gt; y &lt;em&gt;createInFile&lt;/em&gt;. Opcionalmente podré transformar el constructor en privado para evitar su uso de forma indebida (aunque no soy muy partidario de esto).&lt;/p&gt;
+&lt;p&gt;Con esta simple transformación consigo que el constructor no lance excepciones y, además, tengo una manera elegante de ir construyendo el objeto con más de una instrucción, mucho más verboso cuando tenga que cambiarlo.&lt;/p&gt;
+&lt;p&gt;Otra ventaja: Si necesito añadir nuevos &amp;ldquo;constructores&amp;rdquo;, como por ejemplo una base de datos remota, bastará con ofrecer más fábricas: &lt;em&gt;createRemote&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Un ejemplo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;DataAccess&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;DataAccess&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; DataAccess &lt;span style=&#34;color:#a6e22e&#34;&gt;createInMemory&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;throws&lt;/span&gt; SQLException&lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;    DataAccess result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; DataAccess&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    result&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;setConnectionString&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;in memory&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;    result&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;buildDatabase&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; result&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; DataAccess &lt;span style=&#34;color:#a6e22e&#34;&gt;createMySql&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;throws&lt;/span&gt; SQLException&lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    DataAccess result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; DataAccess&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    result&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;setConnectionString&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;mysql&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(!&lt;/span&gt;result&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;hasDatabase&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;())&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;        result&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;buildDatabase&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; result&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;fábricas-abstractas&#34;&gt;Fábricas abstractas&lt;/h3&gt;
+&lt;p&gt;Considero de suma importancia hacer nuestro código de manera que pueda crecer,
+sin limitarlo desde su creación. El uso de estas fábricas permite que en el
+futuro puedan transformarse fácilmente en &lt;a href=&#34;http://es.wikipedia.org/wiki/Abstract_Factory_(patr%C3%B3n_de_dise%C3%B1o)&#34;&gt;Fábricas Abstractas&lt;/a&gt;, dando mayor
+funcionalidad con unos cambios muy pequeños.&lt;/p&gt;
+&lt;h3 id=&#34;pruebas&#34;&gt;Pruebas&lt;/h3&gt;
+&lt;p&gt;Cuando se utiliza un constructor complejo, la realización de pruebas se ve
+obstaculizada. En cambio, cuando el constructor es simple y lo que se complican
+son las operaciones, resulta más sencillo de probar, ya que puedes construir el
+objeto en el &lt;em&gt;setUp&lt;/em&gt; con la completa seguridad de que no va a fallar. Sin
+embargo, cuando se utilizan constructores complejos, no hay manera de probarlo.&lt;/p&gt;
+&lt;p&gt;Si una operación (un método) lanza una excepción, la operación te está avisando
+de algo. Si es el constructor el que la lanza, no puedes estar seguro de qué
+operación se estaba realizando en ese momento. Esto dificulta terriblemente las
+pruebas y complica cualquier intento de &lt;em&gt;mockear&lt;/em&gt; el objeto.&lt;/p&gt;
+&lt;h2 id=&#34;conclusión&#34;&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;Ya que nuestras clases tienden a ser complejas, no ensuciemos el código desde el
+principio y tratemos de usar constructores sencillos. Cuando es el constructor
+el que hace el trabajo, ¿qué les queda a los métodos? Deleguemos este trabajo.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Repasando: Árboles y Grafos</title>
+      <link>http://example.org/blog/arboles-grafos/</link>
+      <pubDate>Tue, 17 Jan 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/arboles-grafos/</guid>
+      <description>
+        
+          &lt;p&gt;Pues resulta que mi Sobrino me ha pedido ayuda con Árboles y Grafos,
+pero ha esperado al último momento y no me va a ser posible dedicarle un rato.
+Así que aprovecho para publicar esta entrada y, con suerte, puede ayudarle.&lt;/p&gt;
+&lt;p&gt;Temo que esta entrada será un glosario de conceptos, aunque pueden venirnos bien para repasar&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/graph.png&#34;
+         alt=&#34;Grafos&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;conceptos-generales&#34;&gt;Conceptos generales&lt;/h2&gt;
+&lt;p&gt;Un &lt;em&gt;nodo&lt;/em&gt; es un elemento de un Árbol o un Grafo.&lt;/p&gt;
+&lt;p&gt;Un &lt;em&gt;arco&lt;/em&gt; o &lt;em&gt;arista&lt;/em&gt; es algo puramente conceptual: consiste en un &amp;ldquo;enlace&amp;rdquo; entre dos &lt;em&gt;nodos&lt;/em&gt;. Es decir: es una &lt;em&gt;relación&lt;/em&gt; entre los dos nodos.&lt;/p&gt;
+&lt;p&gt;Si esta relación se aplica en un único sentido, como por ejemplo, si establecemos la relación &amp;ldquo;es padre de&amp;rdquo;, entonces tendremos un &lt;em&gt;arco dirigido&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Y ahora que sabemos tantas cosas, vamos por la chicha :D&lt;/p&gt;
+&lt;h2 id=&#34;árboles&#34;&gt;Árboles&lt;/h2&gt;
+&lt;p&gt;Es una estructura &lt;em&gt;jerárquica&lt;/em&gt;, en la que sólo hay un nodo que no tiene padre, llamado &lt;em&gt;raíz&lt;/em&gt; y el resto tiene, exactamente, un único padre.&lt;/p&gt;
+&lt;p&gt;Se pueden distinguir los &lt;em&gt;nodos hoja&lt;/em&gt;, que no son más que nodos que no tienen hijos, es decir, son terminales.&lt;/p&gt;
+&lt;p&gt;En un árbol, todos los arcos son dirigidos, ya que siempre implican una relación &amp;ldquo;es padre de&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;Imagináos un árbol de directorios: los directorios y ficheros como tales son &lt;em&gt;nodos&lt;/em&gt;; los ficheros son &lt;em&gt;nodos hoja&lt;/em&gt;. El directorio &amp;ldquo;/&amp;rdquo; en GNU/Linux y &amp;ldquo;c:\&amp;rdquo; en Windows serían los &lt;em&gt;nodos raíz&lt;/em&gt; en cada uno de estos sistemas.&lt;/p&gt;
+&lt;p&gt;Y con esto sólo nos queda decir que el &lt;em&gt;alto de un árbol&lt;/em&gt; consiste en contar el número de hijos de la rama más larga.&lt;/p&gt;
+&lt;p&gt;Como la gente se aburre mucho, hay mogollón de categorías de árboles.&lt;/p&gt;
+&lt;h3 id=&#34;árboles-binarios&#34;&gt;Árboles binarios&lt;/h3&gt;
+&lt;p&gt;Es un árbol en el que &lt;em&gt;cada uno de sus nodos puede tener entre 0 y 2 hijos&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Ahora mismo no se me ocurre una utilidad, pero es el resultado de aplicar el típico sistema de adivinación, en el que te van haciendo preguntas de tipo &amp;ldquo;sí/no&amp;rdquo; hasta que llegan a un nodo que no tiene hijos, momento en el que te adivinan lo que estabas pensando.&lt;/p&gt;
+&lt;h4 id=&#34;árboles-balanceados&#34;&gt;Árboles balanceados&lt;/h4&gt;
+&lt;p&gt;Son árboles &lt;em&gt;binarios&lt;/em&gt;, donde cualquier rama que elijamos tendrá una longitud igual a la &lt;em&gt;altura del árbol&lt;/em&gt; o la &lt;em&gt;altura del árbol&lt;/em&gt; menos 1. Vamos, que si te imaginas los nodos como una balanza, &lt;em&gt;cojas el nodo que cojas&lt;/em&gt;, cada lado pesará más o menos lo mismo (ojo al &amp;ldquo;cojas el nodo que cojas&amp;rdquo;, ya que se puede ver cada nodo como la raíz de un &lt;em&gt;sub-árbol&lt;/em&gt;, y todos deben estar balanceados).&lt;/p&gt;
+&lt;h3 id=&#34;árboles-n-arios&#34;&gt;Árboles n-arios&lt;/h3&gt;
+&lt;p&gt;Como la propia palabra indica, es un árbol con un número variable de hijos.&lt;/p&gt;
+&lt;p&gt;Si tenemos un único nodo con 3 hijos, todo el árbol será n-ario. Dicho de otra manera: si no es binario, es n-ario.&lt;/p&gt;
+&lt;h2 id=&#34;recorriendo-el-árbol&#34;&gt;Recorriendo el árbol&lt;/h2&gt;
+&lt;p&gt;Si construimos un árbol es porque, tarde o temprano, lo recorreremos. Así que podemos hacerlo de dos maneras:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;En &lt;em&gt;anchura&lt;/em&gt;, si miramos primero el contenido de los hermanos.&lt;/li&gt;
+&lt;li&gt;En &lt;em&gt;altura&lt;/em&gt;, si miramos primero el contenido de los hijos.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Programáticamente, la diferencia es el orden de dos llamadas a función (poco más o menos). En cuanto a la eficiencia&amp;hellip; depende de lo que estemos haciendo.&lt;/p&gt;
+&lt;p&gt;Imagináos que metemos todas las palabras del diccionario en un árbol. En el primer nivel tendremos un nodo raíz vacío, que tendrá como hijos a todas las letras. Después, cada letra se relacionará con otras letras de manera que si lo recorremos en altura tendremos una palabra. ¿Ya os lo imagináis? Pues ahora queremos saber cuántas palabras tienen un mismo prefijo (al prefijo se le suele llamar raíz, pero para no confundir con los árboles, le llamaremos prefijo). Para ello, tendremos que recorrer el árbol &lt;em&gt;en altura&lt;/em&gt;, seleccionando los hijos de acuerdo a las letras que encontremos, y devolver el número de hijos del último nodo.&lt;/p&gt;
+&lt;h2 id=&#34;usos&#34;&gt;Usos&lt;/h2&gt;
+&lt;p&gt;En informática, el uso de los árboles es muy importante:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Los sistemas de ficheros son árboles.&lt;/li&gt;
+&lt;li&gt;Los archivos XML son árboles. Un archivo HTML también es un árbol.&lt;/li&gt;
+&lt;li&gt;Un sistema de tablas Hash genera un árbol si tiene varios niveles.&lt;/li&gt;
+&lt;li&gt;En general, cualquier sistema jerárquico suele ser un árbol.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;grafos&#34;&gt;Grafos&lt;/h2&gt;
+&lt;p&gt;Un grafo consiste en &lt;em&gt;un conjunto de nodos unidos por arcos&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;No hay más reglas. Eso significa que se nos pueden dar ciertas situaciones, como
+encontrarnos &lt;em&gt;islas&lt;/em&gt;, si tenemos dos grafos en los que ninguno de sus nodos se
+relacionan con los nodos del otro grafo. También podemos tener &lt;em&gt;ciclos&lt;/em&gt; si,
+siguiendo las relaciones de un nodo a otro podemos volver al nodo inicial.&lt;/p&gt;
+&lt;p&gt;Diremos que es un &lt;em&gt;grafo dirigido&lt;/em&gt; si todos sus arcos son &lt;em&gt;arcos dirigidos&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Un término divertido es el de &lt;em&gt;camino Euleriano&lt;/em&gt;, que es un camino que permite
+recorrer todos los arcos del grafo sin pasar dos veces por el mismo y volviendo
+de nuevo al nodo original. El nombre raro viene de la desgracia de que &lt;em&gt;Euler&lt;/em&gt;
+les pusiera el nombrecito :D&lt;/p&gt;
+&lt;p&gt;Existen ocasiones en la que interesa que los &lt;em&gt;arcos&lt;/em&gt; dejen de ser conceptuales y
+tengan un valor. Este valor, a menudo, se denomina &lt;em&gt;peso&lt;/em&gt; o &lt;em&gt;coste&lt;/em&gt;, y es de
+suma importancia.&lt;/p&gt;
+&lt;p&gt;Y ahora que ya he soltado toda esta basura&amp;hellip; ¿Qué es un grafo &lt;em&gt;de verdad&lt;/em&gt;?&lt;/p&gt;
+&lt;p&gt;Fijaos en un plano de vuestra ciudad. Eso es un grafo. Cada calle es un &lt;em&gt;arco&lt;/em&gt; o
+&lt;em&gt;arista&lt;/em&gt; y cada cruce, un &lt;em&gt;nodo&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;¿Y un grafo dirigido? Ahora nos fijamos en el plano de vuestra ciudad, pero como
+si fuéramos un coche. Hay calles que sólo se pueden recorrer en un sentido.&lt;/p&gt;
+&lt;p&gt;¿Y el peso o coste? Cuando vais a casa de vuestros amigos no elegís un camino al
+azar: tratáis de buscar el camino más corto. ¿Cómo lo elegís? Porque cada calle
+(arco) os lleva un tiempo que, en este caso, es su coste.&lt;/p&gt;
+&lt;p&gt;Habrá ocasiones, como en el plano, en las que nos interese minimizar el coste,
+mientras que en otras lo llamaremos beneficio y nos interesará maximizarlo. Por
+ejemplo, una empresa de transportes verá como beneficio el número de paquetes
+que puede entregar siguiendo un camino determinado. O el comecocos verá como
+beneficio cuántas bolitas puede comerse sin que le pille un fantasma :D&lt;/p&gt;
+&lt;p&gt;Tan solo me queda deciros que las &lt;em&gt;islas&lt;/em&gt; o sub-grafos aislados no suelen ser
+deseables en la informática habitual, ya que te pueden colgar el sistema.&lt;/p&gt;
+&lt;h1 id=&#34;referencias&#34;&gt;Referencias&lt;/h1&gt;
+&lt;p&gt;Pues, en esta ocasión, he tirado de memoria. Probablemente se me hayan olvidado
+cosas, así que estoy abierto a lo que queráis preguntar.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Estático vs Dinámico</title>
+      <link>http://example.org/blog/estatico-vs-dinamico/</link>
+      <pubDate>Mon, 02 Jan 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/estatico-vs-dinamico/</guid>
+      <description>
+        
+          &lt;p&gt;A menudo escribo tutoriales. Realmente, estos tutoriales son artículos de opinión: Alguien puede estar en desacuerdo conmigo. Siempre hay otra manera de hacer las cosas y es más que probable que yo no la conozca. En este caso va a ser más patente.&lt;/p&gt;
+&lt;p&gt;En este caso vamos a ver las diferencias que hay entre hacer las cosas de manera estática y hacerlas dinámica. Y veremos también cómo hay más cosas estáticas de las que creemos.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/programming.jpg&#34;
+         alt=&#34;En este caso, no importa el lenguaje&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;p&gt;Primero vamos a definir las cosas: algo es &lt;em&gt;estático&lt;/em&gt; cuando se impide su crecimiento. Algo es &lt;em&gt;dinámico&lt;/em&gt; si es permite el crecimiento sin grandes consecuencias para sus colaboradores.&lt;/p&gt;
+&lt;p&gt;Es obvio pensar que un &lt;em&gt;tipo básico&lt;/em&gt; (números y cadenas) es &lt;em&gt;estático&lt;/em&gt;. Tenemos el valor de la variable y nada más. No existe la posibilidad de agregar nada a un tipo básico.&lt;/p&gt;
+&lt;p&gt;Alguien puede decirme que en &lt;em&gt;Ruby&lt;/em&gt; sí se pueden añadir métodos a los &amp;ldquo;tipos básicos&amp;rdquo;. Por definición, si se pueden añadir métodos, no es un tipo básico. Es&amp;hellip; otra cosa.&lt;/p&gt;
+&lt;p&gt;También es obvio que un &lt;em&gt;array&lt;/em&gt; es &lt;em&gt;estático&lt;/em&gt;, ya que su tamaño es constante y cambiarlo implica una gestión algo ineficiente de la memoria.&lt;/p&gt;
+&lt;p&gt;Pero&amp;hellip; ¿Qué ocurre con los &lt;em&gt;vectores&lt;/em&gt;, &lt;em&gt;tablas hash&lt;/em&gt;, &lt;em&gt;sets&lt;/em&gt;, &amp;hellip;?&lt;/p&gt;
+&lt;p&gt;Pues a primera vista son dinámicos, ya que permiten modificar su tamaño. Sin embargo, desde otro punto de vista, &lt;em&gt;son completamente estáticos&lt;/em&gt;, ya que es una solución genérica a un problema y no admite su especialización.&lt;/p&gt;
+&lt;h2 id=&#34;consecuencias&#34;&gt;Consecuencias&lt;/h2&gt;
+&lt;p&gt;Darse cuenta de esto tiene consecuencias. La primera y más obvia es descubrir que no deberíamos usar estos tipos de forma automática. Es mejor &lt;em&gt;encapsularlos&lt;/em&gt; en clases específicas que los utilicen. De esta manera sí podremos especializarlos, adaptándolos a cada problema.&lt;/p&gt;
+&lt;p&gt;Pondremos un ejemplo: en uno de nuestros objetos necesitamos varias &lt;em&gt;tablas
+hash&lt;/em&gt;. A primera vista, estas tablas son todas iguales. Pero si fueran iguales,
+sería una sola tabla. Es decir: ya existe un elemento diferenciador. Sin
+embargo, desde nuestra clase estamos manejando las tres. Esto es, claramente,
+una violación del &lt;a href=&#34;http://en.wikipedia.org/wiki/Single_responsibility_principle*&#34;&gt;principio de única responsabilidad&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;¿Significa esto que tengo que pasar cada tabla a un objeto que la maneja? Sí, claramente.&lt;/p&gt;
+&lt;p&gt;Esto tiene su utilidad. Supongamos que esas tres tablas evolucionan de forma diferente. Por ejemplo, su tamaño es diferente. De pronto, descubrimos que una de las tablas se ha vuelto terriblemente grande. En el caso de tener un único objeto con todas las hashes, tenemos un problema. Si hemos aislado su manejo, podemos cambiar la implementación de una tabla hash por el de una &lt;em&gt;caché&lt;/em&gt;, guardando a disco los elementos menos utilizados, o incluso cambiarlo por una base de datos.&lt;/p&gt;
+&lt;p&gt;De esta manera, se demuestra que una lista o una tabla hash es &lt;em&gt;estática&lt;/em&gt;, ya que no admite cambios de implementación. No son objetos en sí mismos, sino que debemos considerarlos útiles cuando se encapsulan dentro de objetos que les aportan significado. Son herramientas, no objetos finales.&lt;/p&gt;
+&lt;h3 id=&#34;sacrificios&#34;&gt;Sacrificios&lt;/h3&gt;
+&lt;p&gt;A menudo sacrificamos la buena programación por terminar antes. Es lógico: programar bien lleva mucho tiempo. Sin embargo, hay que tratar de llegar a un compromiso entre el tiempo dedicado y la calidad del código. Eso es lo que diferencia a un programador de un profesional.&lt;/p&gt;
+&lt;p&gt;Un programador resuelve el problema. Un profesional aporta la mejor solución que conoce en cada momento.&lt;/p&gt;
+&lt;p&gt;Estos sacrificios pueden realizarse esporádicamente cuando los colaboradores de nuestra clase son otras clases privadas. Sin embargo, &lt;em&gt;compartir tipos básicos, una lista o una tabla hash por medio de una API puede ser el mayor de los errores&lt;/em&gt;, ya que estamos limitando su utilización. Probablemente sea siempre una mejor solución utilizar un objeto hecho a propósito.&lt;/p&gt;
+&lt;p&gt;Un ejemplo de esto puede verse en la autenticación. Tenemos nuestra preciosa función &amp;ldquo;autenticate(String user, String password)&amp;rdquo;. Sin embargo, ahora resulta que queremos autenticar un &lt;em&gt;OpenId&lt;/em&gt;. Nuestra función no ofrece suficiente versatilidad. Sin embargo, si hubiéramos encapsulado los datos en un objeto, tendríamos: &amp;ldquo;autenticate(Credentials credentials)&amp;rdquo;, lo que sí es suficientemente versátil.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Ingeniería de software: el nuevo concepto</title>
+      <link>http://example.org/blog/ingenieria/</link>
+      <pubDate>Tue, 20 Sep 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/ingenieria/</guid>
+      <description>
+        
+          &lt;p&gt;Habitualmente se piensa en la &amp;ldquo;Ingeniería de Software&amp;rdquo; como &amp;ldquo;Ese conjunto de cosas que no sirve para nada, pero que hay que hacer&amp;rdquo;. Yo soy el primero.&lt;/p&gt;
+&lt;p&gt;Eso se debe a una única razón: Está mal planteada.&lt;/p&gt;
+&lt;p&gt;Si se exige a los empleados/compañeros que hagan algo y eso se les olvida, les causa dificultades o les hace perder el tiempo, es que no es correcto. Hay que buscar maneras de que los empleados/compañeros noten que hay un beneficio por realizar ciertas tareas.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/engineering.jpg&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;fases&#34;&gt;Fases&lt;/h2&gt;
+&lt;p&gt;En los modelos típicos de Ingeniería, hay ciertas &amp;ldquo;fases&amp;rdquo;. Éstas se irán repitiendo en ciclos de varios días, semanas o, incluso, meses:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Especificación de requisitos&lt;/li&gt;
+&lt;li&gt;Diseño&lt;/li&gt;
+&lt;li&gt;Desarrollo&lt;/li&gt;
+&lt;li&gt;Pruebas&lt;/li&gt;
+&lt;li&gt;Documentación&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Hay muchos modelos que son variantes de este pequeño esquema. Y es erróneo.&lt;/p&gt;
+&lt;h3 id=&#34;especificación-de-requisitos&#34;&gt;Especificación de requisitos&lt;/h3&gt;
+&lt;p&gt;Esta fase está muy bien, pero a menudo se hace a muy bajo nivel. Se trata de explicar a los desarrolladores lo que quiere el cliente.&lt;/p&gt;
+&lt;p&gt;¿Y por qué no al revés?&lt;/p&gt;
+&lt;p&gt;Lo que propongo es que se le explique a ambos al mismo tiempo. ¿Cómo puede resultar esto posible? Pues de una manera muy sencilla: comenzando por el manual de usuario.&lt;/p&gt;
+&lt;p&gt;Si al cliente se le entrega el manual de usuario, puede detectar cosas que faltan al mismo tiempo que va aprendiendo a utilizar la herramienta.&lt;/p&gt;
+&lt;p&gt;Si al desarrollador se le entrega el manual de usuario, ya sabe cómo tienen que funcionar las cosas (seguramente le haga falta muy poca información adicional).&lt;/p&gt;
+&lt;h4 id=&#34;todo-está-en-el-manual-de-usuario&#34;&gt;¿Todo está en el manual de usuario?&lt;/h4&gt;
+&lt;p&gt;Si todo lo que el desarrollador necesita está en el manual del usuario, significa que el manual del usuario está mal. Hay un conjunto de cosas que no pueden incluirse en éste. El manual de usuario debe decir qué operaciones se pueden realizar o cómo llegar hasta estas operaciones. Lo que el manual de usuario no dirá serán cosas como ():&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Seguridad&lt;/em&gt;, ya que gran parte de ésta se dará por sobreentendida -lo que puede llevar a error-.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Rendimiento&lt;/em&gt; o tiempos de respuesta, ya que el manual se centrará en lo que hace, no en cuánto tiene que tardar.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Escalabilidad&lt;/em&gt;; el manual de usuario es para &lt;em&gt;un&lt;/em&gt; usuario, pero nuestra aplicación puede ser para muchos.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Tolerancia a fallos&lt;/em&gt;, o de qué fallos puede recuperarse el sistema.&lt;/li&gt;
+&lt;li&gt;&amp;hellip;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;En general, este manual de usuario permite definir la interfaz y funcionalidad que el cliente necesita. El resto de requisitos tendrán que especificarse de otra manera (¿BDD?).&lt;/p&gt;
+&lt;p&gt;Una lista completa de lo que debería incorporar este apartado de especificación la proporciona Steve McConnell en su libro &amp;ldquo;Code Complete&amp;rdquo;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Organización del programa&lt;/em&gt;: Bloques principales del producto y sus responsabilidades (&lt;em&gt;no estoy de acuerdo con ésta&lt;/em&gt;).&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Clases principales&lt;/em&gt; (tampoco, ya que deben surgir de una necesidad del programa)&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Diseño de datos&lt;/em&gt; (tampoco, ya que también deben surgir de una necesidad, aunque es posible que sí necesitemos dotar de cierta inteligencia a ese diseño)&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Reglas de negocio&lt;/em&gt;, que puede estar en el manual de usuario.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Diseño de la interfaz de usuario&lt;/em&gt;, que sí puede estar en el manual de usuario.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Manejo de recursos&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Seguridad&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Rendimiento&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Escalabilidad&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Interoperabilidad&lt;/em&gt;, que también puede estar en el manual de usuario&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Internacionalización/Localización&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Entrada/Salida&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Procesamiento de errores&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Tolerancia a fallos&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Como bien apunta Rubén en el comentario, estos puntos deben hablarse con el cliente, y deben validarse con él. Así mismo, es posible que varíen con el tiempo; quizá no de una manera radical, pero sí en pequeños aspectos que no se han tenido en cuenta. Por eso debe obtenerse realimentación del cliente de una forma periódica.&lt;/p&gt;
+&lt;h3 id=&#34;diseño&#34;&gt;Diseño&lt;/h3&gt;
+&lt;p&gt;En ocasiones es bueno tener una base sobre la que comenzar a construir, aunque no siempre es lo correcto. Aún así, soy de la opinión de tener una pequeña arquitectura base, aunque sea del middleware a utilizar.&lt;/p&gt;
+&lt;p&gt;Como bien indica Rubén, cuando el proyecto es grande e implica a numerosas personas, sí será necesario identificar los distintos componentes y diseñar la interacción entre ellos. Sin embargo, el comportamiento interno de éstos debe emerger de las necesidades de entrada/salida.&lt;/p&gt;
+&lt;h3 id=&#34;desarrollo&#34;&gt;Desarrollo&lt;/h3&gt;
+&lt;p&gt;En mi opinión, todo desarrollo debería seguir estos pasos (recién reconstruidos
+gracias a la lectura de &lt;a href=&#34;http://www.plasticscm.com/infocenter/quick-start/intro-task-driven-development.aspx#&#34;&gt;&amp;ldquo;Introduction to Task Driven Development&amp;rdquo;&lt;/a&gt; ):&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Seleccionar una única tarea&lt;/li&gt;
+&lt;li&gt;Crear rama de trabajo&lt;/li&gt;
+&lt;li&gt;Escribir un test&lt;/li&gt;
+&lt;li&gt;Solucionar el test&lt;/li&gt;
+&lt;li&gt;Commit&lt;/li&gt;
+&lt;li&gt;Refactorizar&lt;/li&gt;
+&lt;li&gt;Commit&lt;/li&gt;
+&lt;li&gt;repetir desde el punto 3 hasta terminar los requisitos de la tarea&lt;/li&gt;
+&lt;li&gt;Merge&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;pruebas&#34;&gt;Pruebas&lt;/h3&gt;
+&lt;p&gt;Las pruebas unitarias se han ido realizando a medida que se va construyendo el software. Además, al tener la documentación final, es posible ir construyendo las pruebas de integración simultáneamente con el resto del sistema. No es necesario tener una fase específica para ello, tan solo sería un &amp;ldquo;check&amp;rdquo; en la lista de tareas a realizar: &amp;ldquo;Sí, se han lanzado las pruebas de sistema&amp;rdquo;.&lt;/p&gt;
+&lt;h3 id=&#34;documentación&#34;&gt;Documentación&lt;/h3&gt;
+&lt;p&gt;Tampoco es necesaria. Ya se ha realizado durante la fase de toma de requisitos. Incluso se ha podido ir traduciendo a diferentes idiomas si era necesario.&lt;/p&gt;
+&lt;p&gt;Si hacían falta imágenes, éstas deberían haberse incluido mediante prototipos. Cambiar las imágenes de un documento debería ser un proceso rápido y limpio. Por eso estoy en contra de los sistemas de maquetación complejos tipo Word o Libre Office: Lo mejor es un formato basado en texto:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Si está basado en texto, se puede subir fácilmente al DVCS, con todas las ventajas de éste: ahorro de espacio, control de versiones, control de cambios, integración con el Tracking System, &amp;hellip;.&lt;/li&gt;
+&lt;li&gt;Se puede tratar como el propio código: con sus bugs y sus mejoras.&lt;/li&gt;
+&lt;li&gt;Es más sencillo proporcionarlo en otro formato&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Así que yo voto por lenguajes tipo Wiki, TXT, HTML o LaTeX (personalmente, me quedo con Wiki o LaTeX, más bien con este último).&lt;/p&gt;
+&lt;h2 id=&#34;conclusión&#34;&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;Creo que resultaría mucho más gratificante para todos tener un proceso de producción de software más a la medida del desarrollador, tratando de orientar el proceso a sus necesidades y no imponerlo.&lt;/p&gt;
+&lt;p&gt;A menudo, el desarrollador es el último mono a la hora de la toma de este tipo de decisiones. Creo que debería dársele un papel más importante, ya que es el primer afectado.&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Artesanía de Software: De qué va todo esto</title>
+      <link>http://example.org/blog/artesania-software/</link>
+      <pubDate>Sat, 13 Aug 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/blog/artesania-software/</guid>
+      <description>
+        
+          &lt;p&gt;Hace poco leí una entrada en el blog de &lt;a href=&#34;http://cleancoder.posterous.com/&#34;&gt;UncleBob Martin&lt;/a&gt;  que me pareció que definía estupendamente la situación actual del software.&lt;/p&gt;
+&lt;p&gt;En la lista &lt;a href=&#34;http://groups.google.com/group/agile-spain&#34;&gt;Agile-Spain&lt;/a&gt; , &lt;a href=&#34;http://twitter.com/jmbeas&#34;&gt;@jmbeas&lt;/a&gt;  propuso una traducción.&lt;/p&gt;
+&lt;p&gt;Como era corta, decidí practicar un poco y traducirla por mi cuenta. Se agradecerán comentarios sobre la traducción.&lt;/p&gt;
+&lt;p&gt;Podéis visitar el original, titulado &lt;a href=&#34;http://cleancoder.posterous.com/software-craftsmanship-things-wars-commandmen&#34;&gt;Software Craftsmanship: What it&amp;rsquo;s all
+about&lt;/a&gt; . Por &lt;a href=&#34;http://cleancoder.posterous.com/&#34;&gt;UncleBob Martin&lt;/a&gt; , por supuesto.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;http://example.org/images/poetry.jpg&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;hr&gt;
+&lt;p&gt;He visitado los posts de &lt;a href=&#34;http://dannorth.net/2011/01/11/programming-is-not-a-craft/&#34;&gt;Dan North&lt;/a&gt; , los de &lt;a href=&#34;http://www.gilzilberfeld.com/2011/01/path-already-taken.html&#34;&gt;Gil Zilberfeld&lt;/a&gt; , los de &lt;a href=&#34;http://michaelfeathers.typepad.com/michael_feathers_blog/2011/01/the-thing-of-software-development.html&#34;&gt;Michael
+Feather&lt;/a&gt; , los de &lt;a href=&#34;http://parlezuml.com/blog/?postid=992&#34;&gt;Jason Gorman&lt;/a&gt; . Daría la impresión de que nosotros, los del
+movimiento del artesano de software, no hemos sido claros. Espero que este blog
+aclare un par de cosas.&lt;/p&gt;
+&lt;p&gt;¿Por qué existe el movimiento del artesano de software? ¿Qué lo ha motivado?
+¿Qué lo impulsa ahora? &lt;em&gt;Una&lt;/em&gt; cosa; y &lt;em&gt;una única&lt;/em&gt; cosa.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Estamos hartos de escribir mierda.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Eso es. Cantó la gorda. Buenas noches, Gracy. Corto y cierro.&lt;/p&gt;
+&lt;p&gt;Estamos hartos de escribir mierda. Estamos hartos de avergonzarnos a nosotros
+mismos y a nuestros empleadores distribuyendo software de mala calidad. Ya hemos
+pedido a nuestros clientes que reinicien los servidores a media noche demasiadas
+veces. No queremos listas de errores de miles de páginas. No queremos código que
+se hace más ininteligible y corrupto con el paso del tiempo. Estamos hartos de
+hacer un trabajo malo. Queremos comenzar a hacer un trabajo bueno.&lt;/p&gt;
+&lt;p&gt;Eso&amp;hellip; es&amp;hellip; de&amp;hellip; lo&amp;hellip; que&amp;hellip; va&amp;hellip; esto. Nada más.&lt;/p&gt;
+&lt;p&gt;Lo que &lt;em&gt;no&lt;/em&gt; hacemos:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;No&lt;/em&gt; ponemos el código por encima de todo.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;No&lt;/em&gt; nos centramos en nosotros ignorando el negocio y al cliente.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;No&lt;/em&gt; nos miramos el ombligo.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;No&lt;/em&gt; ofrecemos certificaciones baratas.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;No&lt;/em&gt; olvidamos que nuestro trabajo consiste en deleitar al cliente.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Lo que &lt;em&gt;no volveremos a hacer&lt;/em&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;No&lt;/em&gt; haremos chapuzas para cumplir una planificación.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;No&lt;/em&gt; aceptaremos la vieja y estúpida mentira de limpiar las cosas después.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;No&lt;/em&gt; creeremos el rezo de que rápido significa sucio.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;No&lt;/em&gt; aceptaremos la opción de hacerlo mal.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;No&lt;/em&gt; permitiremos a nadie que nos fuerce a comportarnos de forma no profesional.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Lo que &lt;em&gt;haremos&lt;/em&gt; de ahora en adelante:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Cumpliremos&lt;/em&gt; las planificaciones teniendo en cuenta que la única manera de ir rápido es hacerlo bien.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Deleitaremos&lt;/em&gt; a nuestros clientes escribiendo el mejor código que podamos.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Honraremos&lt;/em&gt; a nuestros empleadores creando el mejor diseño que podamos.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Seremos&lt;/em&gt; suficientemente humildes como para escribir primero esos tests.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Practicaremos&lt;/em&gt; de manera que mejoremos en nuestra artesanía.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Recordaremos lo que nuestros abuelos y abuelas nos dijeron:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Lo bien hecho bien parece.&lt;/li&gt;
+&lt;li&gt;Paso a paso se llega lejos.&lt;/li&gt;
+&lt;li&gt;Quien mide dos veces corta sólo una.&lt;/li&gt;
+&lt;li&gt;Practica, Practica, Practica.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Supongo que algunos podrían desaprobar nuestros katas y retos de código, así como nuestras sesiones de práctica. Pueden pensarse que estamos centrándonos en nosotros e ignorando a nuestros clientes. Pueden pensar que hemos abandonado el mundo real y caído en la tentación de entretenernos. Puedo ver cómo alguien podría llegar a esta conclusión.&lt;/p&gt;
+&lt;p&gt;Pero están tan equivocados como largo es el día. Hacemos esto porque nos preocupamos por el cliente. Estamos dedicando tiempo y esfuerzo a ser &lt;em&gt;tan buenos como podamos&lt;/em&gt; para que nuestros empleadores obtengan el máximo valor de nosotros.&lt;/p&gt;
+&lt;p&gt;¿Creéis que el único momento en el que los músicos tocan sus instrumentos es cuando están en el escenario? ¿Creéis que el único momento en el que los bateadores golpean bolas es en el partido? ¿Creéis que el único momento en el que los abogados dan su conclusión es en un juicio? Claro que no. Esta gente son profesionales; y los &lt;em&gt;profesionales practican&lt;/em&gt;! Los profesionales estudian el más mínimo detalle de sus disciplinas. Los profesionales lo saben todo sobre los pequeños trucos y rarezas. Conocen las historias, las teorías, las anécdotas. Conocen técnicas y métodos. Conocen buenas y malas opciones y cómo distinguirlas. Y saben todo esto porque &lt;em&gt;practican&lt;/em&gt;, &lt;em&gt;practican&lt;/em&gt;, &lt;em&gt;practican&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Así que cuando veáis que alguien lleva una pulsera verde que dice &amp;ldquo;Código limpio&amp;rdquo; (&amp;ldquo;Clean Code&amp;rdquo;) o &amp;ldquo;La Prueba Primero&amp;rdquo; o &amp;ldquo;Prueba Adicto&amp;rdquo;, no es porque se hayan unido a un movimiento, o firmado un manifiesto, o que de alguna manera se sientan superiores a otros. No son los participantes de ninguna guerra santa. No intentan unirse a una tribu y juntarse alrededor de las hogueras. La pulsera verde es una cosa &lt;em&gt;personal&lt;/em&gt;. Es una promesa hecha para sí mismos: &amp;ldquo;Haré un buen trabajo. No correré. Escribiré pruebas. Lo haré rápido haciéndolo bien. &lt;em&gt;No escribiré mierda. Y practicaré, practicaré, practicaré&lt;/em&gt; de forma que pueda ser un profesional.&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;Original: &lt;a href=&#34;http://cleancoder.posterous.com/software-craftsmanship-things-wars-commandmen&#34;&gt;Software Craftsmanship: What it&#39;&amp;rsquo;s all about&lt;/a&gt; . By &lt;a href=&#34;http://cleancoder.posterous.com/&#34;&gt;Robert C. Martin&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Traducción: &lt;a href=&#34;http://example.org/blog/artesania-software/&#34;&gt;Artesanía de Software: De qué va todo esto&lt;/a&gt;, by &lt;a href=&#34;http://twitter.com/magmax_en&#34;&gt;@magmax_en&lt;/a&gt;&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>
