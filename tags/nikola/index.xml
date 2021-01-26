@@ -13,104 +13,10 @@
       <pubDate>Mon, 02 Feb 2015 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/migrando-a-nikola/</guid>
-      <description>
-        
-          &lt;p&gt;Llevo un tiempo preparando la migración a &lt;a href=&#34;https://getnikola.com/&#34;&gt;Nikola&lt;/a&gt;. Me gustaría contaros mi experiencia, las razones para realizar la migración y cómo hacer ésta de una manera fácil y sencilla.&lt;/p&gt;
-&lt;p&gt;En estos momentos, migrar es más fácil que nunca&amp;hellip;&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;figure&gt;
-    &lt;img src=&#34;https://magmax.org/images/poetry.jpg&#34;/&gt; 
-&lt;/figure&gt;
-
-&lt;h2 id=&#34;razones-para-migrar&#34;&gt;Razones para migrar&lt;/h2&gt;
-&lt;p&gt;Los que seguís el blog sabéis que he pasado ya por distintos sistemas:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.drupal.org/&#34;&gt;Drupal&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.blogger.com&#34;&gt;Blogger&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://jekyllrb.com/&#34;&gt;Jekyll&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://octopress.org/&#34;&gt;Octopress&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Así que tenía que tener razones de peso para realizar una nueva migración. Pues
-bien, éstas son las razones para usar &lt;a href=&#34;https://getnikola.com/&#34;&gt;Nikola&lt;/a&gt;:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Es &lt;a href=&#34;https://www.python.org/&#34;&gt;Python&lt;/a&gt;, lenguaje que conozco y domino, por lo que me resulta sencillo escribir parches o ayudar a la comunidad.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Velocidad&lt;/strong&gt;: Es mucho más rápido que &lt;a href=&#34;https://jekyllrb.com/&#34;&gt;Jekyll&lt;/a&gt;. A continuación os mostraré un vídeo de demostración.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Multilenguaje&lt;/strong&gt;: Permite traducciones sin tener que hacer parches.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Extensiones&lt;/strong&gt;: Tiene &lt;em&gt;plugins&lt;/em&gt; muy interesantes, como &lt;a href=&#34;https://getnikola.com/handbook.html#youtube&#34;&gt;mostrar vídeos de
-youtube&lt;/a&gt;, &lt;a href=&#34;https://ralsina.me/weblog/posts/lunchtime-nikola-feature-graphviz.html&#34;&gt;crear esquemas&lt;/a&gt;, &lt;a href=&#34;https://www.damian.oquanta.info/posts/48-themes-for-your-ipython-notebook.html&#34;&gt;renderizar ipython notebook&lt;/a&gt; o &lt;a href=&#34;https://getnikola.com/handbook.html#chart&#34;&gt;crear gráficas&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Construcción incremental&lt;/strong&gt;: No vuelve a construir todo el &lt;em&gt;site&lt;/em&gt; ante una modificación. De hecho, no hace nada si no hay cambios.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Salida mucho más verbosa&lt;/strong&gt;: No imagináis los dolores de cabeza para encontrar un error.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Si bien es cierto que &lt;a href=&#34;https://jekyllrb.com/&#34;&gt;Jekyll&lt;/a&gt;/&lt;a href=&#34;https://octopress.org/&#34;&gt;Octopress&lt;/a&gt; también tenían sus ventajas:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Directamente renderizable desde &lt;a href=&#34;https://github.com/&#34;&gt;GitHub&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;Editable desde &lt;a href=&#34;https://github.com/&#34;&gt;GitHub&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;Probablemente sean los más utilizados.&lt;/li&gt;
-&lt;li&gt;Muchos temas y más chulos.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;En mi caso, el tema de la velocidad, de renderizar &lt;a href=&#34;https://ipython.org/notebook.html&#34;&gt;iPython Notebook&lt;/a&gt; y poder crear fácilmente gráficas y esquemas han sido cruciales. Os dejo un vídeo un poco aburrido con una comparativa de velocidades. Basta ver los primeros 15 segundos y luego podéis esperar hasta que os aburráis. Es lo que tarda en construir mi site, con el mismo número de posts:&lt;/p&gt;
-
-&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
-  &lt;iframe src=&#34;https://www.youtube.com/embed/s0eIF3_B5Lw&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Creo que habla por sí solo.&lt;/p&gt;
-&lt;h2 id=&#34;la-migración&#34;&gt;La migración&lt;/h2&gt;
-&lt;p&gt;La migración ha resultado muy dura, pero he allanado el camino para el que venga detrás.&lt;/p&gt;
-&lt;p&gt;No existía ningún sistema oficial de migración, aunque sí varios scripts que no
-terminaban de funcionar. Así que tuve que escribir &lt;a href=&#34;https://github.com/magmax/jekyll2nikola&#34;&gt;mi propio script de
-migración&lt;/a&gt;, que ha terminado convirtiéndose en el &lt;a href=&#34;https://plugins.getnikola.com/#import_jekyll&#34;&gt;script oficial de migración&lt;/a&gt;, tras no pocos cambios.&lt;/p&gt;
-&lt;p&gt;Además, no me gustaban los temas para &lt;a href=&#34;https://getnikola.com/&#34;&gt;Nikola&lt;/a&gt;. Por eso decidí &lt;a href=&#34;https://github.com/magmax/nikola-theme-octopress&#34;&gt;portar el tema
-clásico de Octopress&lt;/a&gt;, que también he liberado.&lt;/p&gt;
-&lt;p&gt;En total, ha sido casi un mes de trabajo que espero merezca la pena.&lt;/p&gt;
-&lt;h2 id=&#34;cómo-migrar&#34;&gt;Cómo migrar&lt;/h2&gt;
-&lt;p&gt;El resultado es que hoy día es muy sencillo realizar la migración de &lt;a href=&#34;https://jekyllrb.com/&#34;&gt;Jekyll&lt;/a&gt; u
-&lt;a href=&#34;https://octopress.org/&#34;&gt;Octopress&lt;/a&gt; a &lt;a href=&#34;https://getnikola.com/&#34;&gt;Nikola&lt;/a&gt;:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Instalar Nikola. Yo prefiero hacerlo dentro de un &lt;a href=&#34;https://virtualenv.pypa.io/en/latest/&#34;&gt;VirtualEnv&lt;/a&gt;:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ virtualenv venv
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;$ . venv/bin/activate
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;venv&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;$ pip install nikola&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;extras&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
-&lt;li&gt;Instalar el plugin de importación:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;venv&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;$ nikola plugins --install&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;import_jekyll
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
-&lt;li&gt;Importar el site:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;venv&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;$ nikola import_jekyll &amp;lt;DIRECTORIO&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;usar-el-tema-octopress&#34;&gt;Usar el tema Octopress&lt;/h3&gt;
-&lt;p&gt;Si, además, queréis utilizar el estilo de &lt;a href=&#34;https://octopress.org/&#34;&gt;Octopress&lt;/a&gt;, basta con:&lt;/p&gt;
-&lt;ol start=&#34;4&#34;&gt;
-&lt;li&gt;Crear el directorio &lt;code&gt;themes&lt;/code&gt;:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;venv&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;$ cd new_site
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;venv&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;$ mkdir themes
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;5&#34;&gt;
-&lt;li&gt;Clonar el repositorio &lt;code&gt;nikola-theme-octopress&lt;/code&gt;:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;venv&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;$ cd themes
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;venv&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; themes$ git clone nikola-theme-octopress octopress
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;6&#34;&gt;
-&lt;li&gt;Editar el archivo &lt;code&gt;conf.py&lt;/code&gt; y añadir la línea:&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;THEME &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;octopress&amp;#39;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Hay algunas opciones de configuración adicionales para la &lt;em&gt;sidebar&lt;/em&gt; que podéis consultar en la &lt;code&gt;documentación del tema Octopress para Nikola&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;No os negaré que el tema aún no está completo, pero de momento es bastante parecido.&lt;/p&gt;
-&lt;h2 id=&#34;final&#34;&gt;Final&lt;/h2&gt;
-&lt;p&gt;Para terminar, os dejo con algunos posts que cuentan más sobre la migración a
-&lt;a href=&#34;https://getnikola.com/&#34;&gt;Nikola&lt;/a&gt; o cómo usarlo:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://areskibelaid.com/nikola-one-kickass-site-generator/&#34;&gt;Nikola, one kickass Site and Blog generator&lt;/a&gt;, por Areski Belaid&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://serialized.net/2013/03/moving-from-octopress-to-nikola/&#34;&gt;Moving from Octopress to Nikola&lt;/a&gt;, por Joshua Barratt&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.stephaniehiga.com/posts/goodbye-wordpress-hello-nikola.html&#34;&gt;Goodbye, WordPress! Hello, Nikola!&lt;/a&gt;, por Stephanie A. Higa&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://kevin.saliou.name/posts/2013-10-08-looking-for-the-static-site-generator.html&#34;&gt;Looking for The static site generator&lt;/a&gt;, por Kevin Saliou&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Resulta curioso que, soportando multi idioma (cosa que &lt;a href=&#34;https://jekyllrb.com/&#34;&gt;Jekyll&lt;/a&gt; no hace), no haya encontrado posts en castellano sobre la migración, aunque sí numerosos blogs.&lt;/p&gt;
-
-        
-      </description>
+      <description>Llevo un tiempo preparando la migración a Nikola. Me gustaría contaros mi experiencia, las razones para realizar la migración y cómo hacer ésta de una manera fácil y sencilla.
+En estos momentos, migrar es más fácil que nunca&amp;hellip;
+  Razones para migrar Los que seguís el blog sabéis que he pasado ya por distintos sistemas:
+ Drupal Blogger Jekyll Octopress  Así que tenía que tener razones de peso para realizar una nueva migración.</description>
     </item>
     
   </channel>

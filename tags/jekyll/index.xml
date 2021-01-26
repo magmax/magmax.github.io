@@ -13,52 +13,10 @@
       <pubDate>Mon, 21 Apr 2014 21:10:04 +0200</pubDate>
       
       <guid>https://magmax.org/blog/de-jekyll-a-octopress/</guid>
-      <description>
-        
-          &lt;p&gt;Los que me seguís sabéis que este blog estaba construido con &lt;a href=&#34;https://jekyllrb.com/&#34;&gt;Jekyll&lt;/a&gt;. Sin embargo, he descubierto que &lt;a href=&#34;https://octopress.org&#34;&gt;Octopress&lt;/a&gt; tiene un pequeño ecosistema bastante interesante, y quería comentar mis impresiones.&lt;/p&gt;
-&lt;p&gt;Contaré también algunos trucos a los que he recurrido, así como los mayores problemas.&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;figure&gt;
-    &lt;img src=&#34;https://magmax.org/images/octopress.png&#34;
-         alt=&#34;Octopress&#34;/&gt; 
-&lt;/figure&gt;
-
-&lt;h1 id=&#34;por-qué-octopress&#34;&gt;¿Por qué Octopress?&lt;/h1&gt;
-&lt;p&gt;&lt;a href=&#34;https://octopress.org&#34;&gt;Octopress&lt;/a&gt; tiene una serie de cosas que me han gustado mucho:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Organización&lt;/strong&gt;: Algo a lo que yo tendía, pero mis desconocimientos de Ruby me dificultaban bastante. Para todo lo que yo especifiqué estáticamente, &lt;a href=&#34;https://octopress.org&#34;&gt;Octopress&lt;/a&gt; ofrece variables en el archivo de configuración (Analytics, Disqus, &amp;hellip;).&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Temas&lt;/strong&gt;: Soy desarrollador y, admitámoslo: el estilo no es lo mío. Así que he descubierto que hay numerosos temas para &lt;a href=&#34;https://octopress.org&#34;&gt;Octopress&lt;/a&gt; (que seguro que podría haber usado desde &lt;a href=&#34;https://jekyllrb.com/&#34;&gt;Jekyll&lt;/a&gt;), así que era una buena opción.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Código&lt;/strong&gt;: &lt;a href=&#34;https://octopress.org&#34;&gt;Octopress&lt;/a&gt; permite separar el código de los posts, lo que me permitiría añadir tests para las cosas que os cuento. Seguramente también hubiera podido incorporarlo a mi blog anterior, &amp;hellip;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Plantillas&lt;/strong&gt;: Bueno, yo ya tenía mi propia plantilla, pero así puedo utilizar cierto estándar.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;En fin&amp;hellip; No hay nada que realmente justifique el cambio. Pero creo que es bueno conocer cosas nuevas.&lt;/p&gt;
-&lt;h1 id=&#34;problemas&#34;&gt;Problemas&lt;/h1&gt;
-&lt;p&gt;El mayor problema ha sido, sin lugar a dudas, los comentarios. Aún no he sido capaz de que sigan mostrándose donde deben (pero lo lograré). Esto se ha debido al cambio del formato de las URLs.&lt;/p&gt;
-&lt;p&gt;Como os podéis suponer, esto no era un requisito, pero hacer que comenzaran por &amp;ldquo;blog/&amp;rdquo; me parecía una buena idea. De hecho era algo que yo quería hacer hace ya tiempo. Sin embargo, este cambio de URLs ha generado otro problema adicional: que los buscadores no me encuentren. Pero eso ha sido muy sencillo de parchear.&lt;/p&gt;
-&lt;p&gt;Por un lado, en el archivo &lt;strong&gt;.htaccess&lt;/strong&gt; del servidor he añadido esta línea (utiliza &lt;a href=&#34;https://nginx.org/&#34;&gt;nginx&lt;/a&gt;):&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-txt&#34; data-lang=&#34;txt&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;ErrorDocument 404 /404page.php
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;De esta manera, redireccionará todos los errores 404 (página no encontrada) a un archivo PHP. Éste es el código de dicho archivo:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-php&#34; data-lang=&#34;php&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;?&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;php&lt;/span&gt;
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;   &lt;span style=&#34;color:#66d9ef&#34;&gt;function&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;redirect&lt;/span&gt;($url, $permanent &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;false&lt;/span&gt;)
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;   {
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;       &lt;span style=&#34;color:#a6e22e&#34;&gt;header&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Location: &amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt; $url, &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;, $permanent &lt;span style=&#34;color:#f92672&#34;&gt;?&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;301&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;:&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;302&lt;/span&gt;);
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;       &lt;span style=&#34;color:#66d9ef&#34;&gt;die&lt;/span&gt;();
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;   }
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;   &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; ( &lt;span style=&#34;color:#a6e22e&#34;&gt;preg_match&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;@^(/20.+)\.html$@&amp;#34;&lt;/span&gt;, $_SERVER[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;REQUEST_URI&amp;#34;&lt;/span&gt;], $matches) ) {
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;       &lt;span style=&#34;color:#a6e22e&#34;&gt;redirect&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;/blog&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt; $matches[&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;], &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;);
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;   }
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;   &lt;span style=&#34;color:#a6e22e&#34;&gt;redirect&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;/404page.html&amp;#39;&lt;/span&gt;);
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;?&amp;gt;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Lo que hace es muy sencillo: Si la URL es de las antiguas, le añade el &amp;ldquo;/blog&amp;rdquo; y le quita el &amp;ldquo;.html&amp;rdquo;, redirigiéndolo de forma permanente. Si no es así, redirijo a la página de error real (de forma temporal, por si mañana existiese ésa página).&lt;/p&gt;
-&lt;h1 id=&#34;consecuencias&#34;&gt;Consecuencias&lt;/h1&gt;
-&lt;p&gt;Bueno&amp;hellip; como he tardado un poquito en hacer este cambio, la consecuencia ha sido la pérdida de tráfico a aproximadamente la mitad. Si lo hubiera hecho antes, asumo que no habría perdido nada.&lt;/p&gt;
-&lt;p&gt;Sin embargo, no me importa. Otra de las decisiones tomadas ha sido eliminar toda la publicidad. Ahora disponéis de todo el #MagMaxBlog limpito.&lt;/p&gt;
-&lt;h1 id=&#34;disfrutad&#34;&gt;Disfrutad&amp;hellip;&lt;/h1&gt;
-&lt;p&gt;En fin&amp;hellip; Esto es lo que quería contar al respecto. Espero arreglar pronto el problema con los comentarios perdidos, y mientras lo hago, aceptaré sugerencias XD&lt;/p&gt;
-
-        
-      </description>
+      <description>Los que me seguís sabéis que este blog estaba construido con Jekyll. Sin embargo, he descubierto que Octopress tiene un pequeño ecosistema bastante interesante, y quería comentar mis impresiones.
+Contaré también algunos trucos a los que he recurrido, así como los mayores problemas.
+  ¿Por qué Octopress? Octopress tiene una serie de cosas que me han gustado mucho:
+ Organización: Algo a lo que yo tendía, pero mis desconocimientos de Ruby me dificultaban bastante.</description>
     </item>
     
     <item>
@@ -67,116 +25,10 @@
       <pubDate>Mon, 09 Apr 2012 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/jekyll/</guid>
-      <description>
-        
-          &lt;p&gt;Una vez más he perdido el control de mi blog.&lt;/p&gt;
-&lt;p&gt;Este blog comenzó siendo XML que se compilaba a HTML. El resultado era inmantenible y tenía que hacer mil maravillas para seguir escribiendo.&lt;/p&gt;
-&lt;p&gt;Más tarde lo pasé a &lt;a href=&#34;https://www.drupal.org&#34;&gt;Drupal&lt;/a&gt; , aunque no terminé muy contento con él, ya que el spam me comía todo el tiempo.&lt;/p&gt;
-&lt;p&gt;Para solucionar el problema del spam, migré a &lt;a href=&#34;https://www.blogger.com/home&#34;&gt;Blogger&lt;/a&gt; , donde no sólo perdí el control de los posts, sino también de mis artículos.&lt;/p&gt;
-&lt;p&gt;Hace poco pregunté en &lt;a href=&#34;https://crysol.org/&#34;&gt;Crysol&lt;/a&gt;  por algún sistema para llevar el blog&amp;hellip; Y el resultado ha sido mucho más.&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;figure&gt;
-    &lt;img src=&#34;https://magmax.org/images/jekyll.png&#34;
-         alt=&#34;Jekyll es un generador estático de páginas web&#34;/&gt; 
-&lt;/figure&gt;
-
-&lt;p&gt;En Crysol me recomendaron &lt;a href=&#34;https://github.com/mojombo/jekyll&#34;&gt;Jekyll&lt;/a&gt; . Es el motor de generación de las páginas de
-&lt;a href=&#34;https://github.com/&#34;&gt;GitHub&lt;/a&gt; , y hay montones de webs que lo usan.&lt;/p&gt;
-&lt;p&gt;Pero lo que yo quería era un &lt;em&gt;site&lt;/em&gt; dinámico, con comentarios, publicidad dinámica,&amp;hellip; Pues todo esto no es problema. Basta con identificar qué cosas son estáticas y qué dinámico. El resultado es un &lt;em&gt;site&lt;/em&gt; en el que el contenido de los posts es estático, pero se pueden utilizar herramientas externas para gestionar el resto de elementos.&lt;/p&gt;
-&lt;h2 id=&#34;formatos&#34;&gt;Formatos&lt;/h2&gt;
-&lt;h3 id=&#34;textile&#34;&gt;Textile&lt;/h3&gt;
-&lt;p&gt;Escribir HTML es duro. Sobre todo si hay código y quieres que éste esté
-coloreado. Por esa razón apareció &lt;a href=&#34;https://en.wikipedia.org/wiki/Textile_&#34;&gt;Textile&lt;/a&gt; (markup_language).&lt;/p&gt;
-&lt;p&gt;La idea inicial era utilizarlo en &lt;em&gt;wikis&lt;/em&gt;, aunque la idea cuajó y se ha extendido a&amp;hellip; casi cualquier cosa. Hoy día hay bastantes formatos que permiten generar HTML, pero Textile ha tenido una acogida privilegiada.&lt;/p&gt;
-&lt;p&gt;Trabajando con &lt;em&gt;Jekyll&lt;/em&gt; puedes utilizar &lt;em&gt;Textile&lt;/em&gt; para escribir tu código. El resultado es mucho más claro que usar HTML en bruto. Más tarde, Jekyll hará todo el trabajo de generación del HTML.&lt;/p&gt;
-&lt;p&gt;Además, Jekyll trabaja bien con &lt;a href=&#34;https://pygments.org/&#34;&gt;Pygments&lt;/a&gt; , una librería python que permitirá el resaltado de sintaxis de casi cualquier lenguaje de programación.&lt;/p&gt;
-&lt;h3 id=&#34;plantillas&#34;&gt;Plantillas&lt;/h3&gt;
-&lt;p&gt;Otro problema típico de HTML es que no permite importar archivos externos. Siempre puedes hacerlo con Ajax, pero el resultado será aún más complejo de manejar.&lt;/p&gt;
-&lt;p&gt;Jekyll lo soluciona magistralmente, mediante el uso de &lt;em&gt;layouts&lt;/em&gt;, que podemos combinar con &lt;em&gt;plantillas&lt;/em&gt;. No entiendo muy bien por qué los han separado, pero parece que las &lt;em&gt;plantillas&lt;/em&gt; son más estáticas y específicas, mientras que los &lt;em&gt;layouts&lt;/em&gt; están más orientados a la maquetación genérica de la página.&lt;/p&gt;
-&lt;p&gt;Estas plantillas están escritas en HTML con algunas marcas que permiten
-introducir código &lt;a href=&#34;https://www.ruby-lang.org/es/&#34;&gt;Ruby&lt;/a&gt; . No hay que descuidar que Jekyll está escrito en Ruby.&lt;/p&gt;
-&lt;p&gt;Existen &lt;em&gt;plugins&lt;/em&gt; que permiten utilizar &lt;a href=&#34;https://haml-lang.com/&#34;&gt;HAML&lt;/a&gt;  en lugar de HTML, lo que resulta de gran utilidad&amp;hellip; o un infierno, según se use.&lt;/p&gt;
-&lt;p&gt;Este lenguaje infernal resulta altamente adictivo: eliminamos la duplicación de
-HTML (abriendo y cerrando tags) en pro de un lenguaje indentado. Resulta muy
-curioso que la gente de Ruby, que critica la indentación de Python, sacara este
-lenguaje basado en &lt;a href=&#34;https://yaml.org/&#34;&gt;YAML&lt;/a&gt;.&lt;/p&gt;
-&lt;h3 id=&#34;hojas-de-estilo&#34;&gt;Hojas de estilo&lt;/h3&gt;
-&lt;p&gt;Otro problema habitual de las páginas web es la creación de hojas de estilo o
-&lt;a href=&#34;https://es.wikipedia.org/wiki/Hojas_de_estilo_en_cascada&#34;&gt;CSS&lt;/a&gt; . Por eso se puede hacer un apaño mediante Rake o Make y utilizar &lt;a href=&#34;https://sass-lang.com/&#34;&gt;SASS&lt;/a&gt;  en su lugar. Hay gente que ha acoplado SASS al motor de Jekyll mediante &lt;em&gt;plugins&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;Al utilizar &lt;em&gt;SASS&lt;/em&gt; dispondremos de nuevas herramientas, como herencia, pseudo-funciones, variables,&amp;hellip; que nos facilitarán la vida a la hora de construir las hojas de estilo. Este formato, parecido a CSS, permitirá la generación final de CSS bastante buenas, aunque podrían mejorarse.&lt;/p&gt;
-&lt;h2 id=&#34;jerarquía&#34;&gt;Jerarquía&lt;/h2&gt;
-&lt;p&gt;La jerarquía utilizada por Jekyll es la siguiente:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;.
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;|-- _config.yml
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;|-- _includes
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;|-- _layouts
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;|   |-- default.html
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;|   `-- post.html
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;|-- _posts
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;|   |-- 2012-04-09-post1.textile
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;|   `-- 2012-04-09-post2.html
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;|-- _site
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;`-- index.html
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Explico cada uno de los archivos/directorios:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;_config_yml&lt;/code&gt; es un archivo YAML de configuración del site.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;_includes&lt;/code&gt; es un directorio donde se guardarán las plantillas.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;_layouts&lt;/code&gt; es otro directorio donde se guardarán también plantillas. Éstas gozan de ciertos privilegios, como que pueden usarse directamente desde los posts.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;_posts&lt;/code&gt; es un directorio donde guardar los posts. Al principio, tendrán cierta información que permite insertar variables de entorno previas al procesado del fichero.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;_site&lt;/code&gt; es el lugar donde se dejará el &lt;em&gt;site&lt;/em&gt; generado.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;index.html&lt;/code&gt; es un HTML que puede usar &lt;em&gt;layouts&lt;/em&gt; o &lt;em&gt;includes&lt;/em&gt; y que generará el &lt;em&gt;index.html&lt;/em&gt; definitivo.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;me-gusta&#34;&gt;¡Me gusta!&lt;/h2&gt;
-&lt;p&gt;Pues si quieres saber más, basta con visitar &lt;a href=&#34;https://github.com/mojombo/jekyll/&#34;&gt;la web de Jekyll&lt;/a&gt; . Los primeros pasos para trabajar con Jekyll están muy bien explicados.&lt;/p&gt;
-&lt;h3 id=&#34;pero-por-qué-tu-web-no-está-escrita-en-jekyll&#34;&gt;Pero&amp;hellip; ¿por qué tu web no está escrita en Jekyll?&lt;/h3&gt;
-&lt;p&gt;Lo estará. He comenzado. Este artículo ya lo he escrito directamente en Jekyll y después lo he portado aquí.&lt;/p&gt;
-&lt;p&gt;Tenéis que entender que tengo que currarme el estilo (ya está casi listo), &lt;em&gt;plugins&lt;/em&gt; para que Jekyll haga lo que yo quiero, maquetación,&amp;hellip; y todas esas cosas que no me han hecho falta con Blogger. Además, lo más pesado: Blogger no permite una gestión automática de sus posts (ya que tiene límites y te reformatea lo que le viene en gana), así que los tengo que pasar &lt;em&gt;a mano&lt;/em&gt;. Hay más de 100 artículos, así que tardaré un poco. Aunque pudiera automatizarlo, hay enlaces por cambiar.&lt;/p&gt;
-&lt;h3 id=&#34;tantas-ventajas-tiene&#34;&gt;¿Tantas ventajas tiene?&lt;/h3&gt;
-&lt;p&gt;La mayor de las ventajas es muy simple: permite gestionar los posts mediante un repositorio tipo GIT. Eso es exactamente lo que yo estaba buscando.&lt;/p&gt;
-&lt;p&gt;A parte de eso, le he visto otras muchas:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Es fácilmente ampliable mediante plugins.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Muy versátil y adaptado a blogs.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Aunque está orientado a blogs, permite la generación de cualquier site.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Todo queda bastante bien estructurado.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Tiene un gestor de artículos relacionados.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;El contenido dinámico se puede insertar mediante servicios externos o JavaScript/Ajax.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;El proyecto puede almacenarse en un sistema de control de versiones tipo GIT. Esto permite muchas ventajas:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Puedo automatizar el despliegue de la aplicación cuando haya contenido nuevo.&lt;/li&gt;
-&lt;li&gt;Puedo editar el contenido en el tren.&lt;/li&gt;
-&lt;li&gt;Puedo comparar versiones.&lt;/li&gt;
-&lt;li&gt;Puedo copiar y pegar.&lt;/li&gt;
-&lt;li&gt;Puedo desplegar en local.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Jekyll tiene su propio servidor web para poder probar el site.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;pero-algún-inconveniente-tendrá&#34;&gt;Pero&amp;hellip; ¡algún inconveniente tendrá!&lt;/h3&gt;
-&lt;p&gt;Efectivamente. Utiliza formatos totalmente acoplados con Ruby. Si quieres hacer algo avanzado, tienes que hacerlo con Ruby. No hay manera de usar otro lenguaje.&lt;/p&gt;
-&lt;p&gt;El uso de &amp;ldquo;su&amp;rdquo; Textile utiliza órdenes que sólo pueden ser órdenes Ruby, ya sean internas de Jekyll o &lt;em&gt;plugins&lt;/em&gt; propios. Si utilizas HAML, te has acoplado aún más al lenguaje. SASS, por el contrario, puede utilizarse sin estos miedos.&lt;/p&gt;
-&lt;p&gt;La utilización de plugins está acoplada por defecto con el proyecto, aunque existe una manera sencilla de desacoplarlo mediante configuración.&lt;/p&gt;
-&lt;p&gt;No es paquete Debian, aunque resulta sencillísimo instalarlo mediante gemas.&lt;/p&gt;
-&lt;p&gt;Además, aunque la documentación básica es bastante buena, la documentación avanzada es, simplemente, inexistente. A menudo pasa por buscar mucho y leer código.&lt;/p&gt;
-&lt;p&gt;Y lo peor: cuando se genera el &lt;em&gt;site&lt;/em&gt;, se genera entero. No admite generar sólo un archivo. En cierto modo, es lógico, ya que la inclusión de un nuevo artículo puede repercutir en el resto (tablas de contenidos, artículos relacionados), pero cuando tienes bastantes artículos y sólo quieres ver un borrador, puede resultar muy tedioso.&lt;/p&gt;
-
-        
-      </description>
+      <description>Una vez más he perdido el control de mi blog.
+Este blog comenzó siendo XML que se compilaba a HTML. El resultado era inmantenible y tenía que hacer mil maravillas para seguir escribiendo.
+Más tarde lo pasé a Drupal , aunque no terminé muy contento con él, ya que el spam me comía todo el tiempo.
+Para solucionar el problema del spam, migré a Blogger , donde no sólo perdí el control de los posts, sino también de mis artículos.</description>
     </item>
     
   </channel>

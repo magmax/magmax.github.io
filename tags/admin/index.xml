@@ -13,79 +13,9 @@
       <pubDate>Mon, 07 Dec 2015 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/django-no-encuentra-las-css-del-modulo-admin/</guid>
-      <description>
-        
-          &lt;p&gt;No es la primera vez que pierdo un montón de tiempo para conseguir que &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt;
-me sirva los estáticos en producción, aunque sólo sea los del &lt;a href=&#34;https://docs.djangoproject.com/en/stable/ref/contrib/admin/&#34;&gt;módulo Admin&lt;/a&gt;,
-así que he decidido escribir un post para no olvidarme.&lt;/p&gt;
-&lt;p&gt;Aunque servir estáticos con &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt; está desaconsejado por la propia
-documentación, ya que puede ser inseguro e ineficiente, yo lo encuentro muy útil
-para servir los estáticos del &lt;a href=&#34;https://docs.djangoproject.com/en/stable/ref/contrib/admin/&#34;&gt;módulo Admin&lt;/a&gt;.&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;figure&gt;
-    &lt;img src=&#34;https://magmax.org/images/django.jpg&#34;
-         alt=&#34;Django&#34;/&gt; 
-&lt;/figure&gt;
-
-&lt;h2 id=&#34;el-problema&#34;&gt;El problema&lt;/h2&gt;
-&lt;p&gt;El principal problema es que &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt; no sirve los estáticos cuando se tiene &lt;code&gt;DEBUG = False&lt;/code&gt;. Claro está, no nos interesa que cualquier problema con la web muestre todas las variables de entorno (incluyendo contraseñas en algunos servidores).&lt;/p&gt;
-&lt;p&gt;Así que se trata de conseguir servir estáticos cuando &lt;code&gt;DEBUG = True&lt;/code&gt;.&lt;/p&gt;
-&lt;h2 id=&#34;cambios-en-archivos&#34;&gt;Cambios en archivos&lt;/h2&gt;
-&lt;p&gt;Si no indico lo contrario, habrá que modificar el archivo &lt;code&gt;settings.py&lt;/code&gt;.&lt;/p&gt;
-&lt;h3 id=&#34;indicar-dónde-están-los-estáticos&#34;&gt;Indicar dónde están los estáticos&lt;/h3&gt;
-&lt;p&gt;Lo primero es indicar dónde están los estáticos. Para ello tendremos que incluir la applicación &lt;code&gt;django.contrib.staticfiles&lt;/code&gt;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;INSTALLED_APPS &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; (
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;django.contrib.staticfiles&amp;#39;&lt;/span&gt;,
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Si hemos sobreescrito la variable &lt;code&gt;STATICFILES_FINDERS&lt;/code&gt;, será importante añadir el &lt;strong&gt;finder&lt;/strong&gt; &lt;code&gt;AppDirectoriesFinder&lt;/code&gt;, con el fin de que se sirvan los estáticos de las aplicaciones:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;STATICFILES_FINDERS &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;django.contrib.staticfiles.finders.AppDirectoriesFinder&amp;#34;&lt;/span&gt;,
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# ...&lt;/span&gt;
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;permisos&#34;&gt;Permisos&lt;/h3&gt;
-&lt;p&gt;Ahora debemos dar permiso de acceso a los estáticos. Bueno&amp;hellip; Estáticos y no estáticos, ya que cuando &lt;code&gt;DEBUG&lt;/code&gt; vale &lt;code&gt;True&lt;/code&gt; podemos acceder a todo, pero cuando vale &lt;code&gt;False&lt;/code&gt; no nos dejará acceder a nada:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; os
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; socket &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; gethostname
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;ALLOWED_HOSTS &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;    gethostname(),
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;    os&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;environ&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;OPENSHIFT_APP_DNS&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;localhost&amp;#39;&lt;/span&gt;),
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt;]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Como veis, aquí permito acceder mediante el nombre de la máquina, o desde el DNS
-de [OpenShift], si lo estamos usando. Si no estamos en [OpenShift], entonces usa &lt;code&gt;localhost&lt;/code&gt;.&lt;/p&gt;
-&lt;h3 id=&#34;rutas&#34;&gt;Rutas&lt;/h3&gt;
-&lt;p&gt;Por último, hay que modificar las rutas de acceso. Eso está en el archivo &lt;code&gt;urls.py&lt;/code&gt;, donde tendremos que incluir a mano los estáticos:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; django.conf &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; settings
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; django.conf.urls &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; url
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;urlpatterns &lt;span style=&#34;color:#f92672&#34;&gt;+=&lt;/span&gt; [
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    url(
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;r&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;^static/(?P&amp;lt;path&amp;gt;.*)$&amp;#39;&lt;/span&gt;,
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;django.views.static.serve&amp;#39;&lt;/span&gt;,
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;        {
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;document_root&amp;#39;&lt;/span&gt;: settings&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;STATIC_ROOT,
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;show_indexes&amp;#39;&lt;/span&gt;: settings&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;DEBUG,
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;        }
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;    ),
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;conclusión&#34;&gt;Conclusión&lt;/h2&gt;
-&lt;p&gt;Y eso es todo. No sé ni cuántas horas he perdido con esta tontería, sobre todo hasta descubrir el párrafo:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;During development, if you use &lt;code&gt;django.contrib.staticfiles&lt;/code&gt;, this will be
-done automatically by &lt;code&gt;runserver&lt;/code&gt; when &lt;code&gt;DEBUG&lt;/code&gt; is set to &lt;code&gt;True&lt;/code&gt; (see
-&lt;a href=&#34;https://docs.djangoproject.com/en/1.9/ref/contrib/staticfiles/#django.contrib.staticfiles.views.serve&#34;&gt;django.contrib.staticfiles.views.serve()&lt;/a&gt;).&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;Es horrible que se comporte de forma distinta en modo &lt;code&gt;DEBUG&lt;/code&gt; del modo
-producción, y que sea tan complejo imitar el comportamiento. A pesar de lo mucho
-que me gusta &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt;&amp;hellip; :)&lt;/p&gt;
-&lt;p&gt;Tenéis más información en &lt;a href=&#34;https://docs.djangoproject.com/en/stable/howto/static-files/&#34;&gt;Managing static files (e.g. images, JavaScript, CSS)&lt;/a&gt; y
-&lt;a href=&#34;https://docs.djangoproject.com/en/stable/howto/static-files/deployment/&#34;&gt;Deploying static files&lt;/a&gt;.&lt;/p&gt;
-
-        
-      </description>
+      <description>No es la primera vez que pierdo un montón de tiempo para conseguir que Django me sirva los estáticos en producción, aunque sólo sea los del módulo Admin, así que he decidido escribir un post para no olvidarme.
+Aunque servir estáticos con Django está desaconsejado por la propia documentación, ya que puede ser inseguro e ineficiente, yo lo encuentro muy útil para servir los estáticos del módulo Admin.
+  El problema El principal problema es que Django no sirve los estáticos cuando se tiene DEBUG = False.</description>
     </item>
     
   </channel>

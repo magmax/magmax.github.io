@@ -13,54 +13,11 @@
       <pubDate>Fri, 10 Jun 2016 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/ipython-autoreload/</guid>
-      <description>
-        
-          &lt;p&gt;Cuando alguien está chalao, escribe un intérprete de su lenguaje favorito.&lt;/p&gt;
-&lt;p&gt;Cuando alguien está loco del todo, escribe &lt;a href=&#34;https://ipython.org/&#34;&gt;ipython&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Resulta difícil describir &lt;em&gt;qué es&lt;/em&gt; &lt;a href=&#34;https://ipython.org/&#34;&gt;ipython&lt;/a&gt;&amp;hellip; Ya que resulta difícil saber
-&lt;em&gt;qué no es&lt;/em&gt;. Quedémonos con que es un intérprete de &lt;a href=&#34;https://www.python.org/&#34;&gt;Python&lt;/a&gt; con esteroides.&lt;/p&gt;
-&lt;p&gt;Uno de esos esteroides es que nos permite recargar automáticamente los módulos en cuanto cambia algún fichero. Y aquí os explico cómo hacerlo.&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;figure&gt;
-    &lt;img src=&#34;https://magmax.org/images/python.png&#34;
-         alt=&#34;Python&#34;/&gt; 
-&lt;/figure&gt;
-
-&lt;h2 id=&#34;método-manual&#34;&gt;Método manual&lt;/h2&gt;
-&lt;p&gt;Arrancamos &lt;a href=&#34;https://ipython.org/&#34;&gt;ipython&lt;/a&gt; y cargamos la extensión &amp;ldquo;autoreload&amp;rdquo;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ ipython
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;In &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;1&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;: %load_ext autoreload
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Ya tenemos cargada la extensión, pero no la estamos usando. Vamos a ello:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;In &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;2&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;: %autoreload &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y ya está :)&lt;/p&gt;
-&lt;h3 id=&#34;otros-modos&#34;&gt;Otros modos&lt;/h3&gt;
-&lt;p&gt;Los modos son:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;0: deshabilitado&lt;/li&gt;
-&lt;li&gt;1: recarga los módulos importados con %aimport&lt;/li&gt;
-&lt;li&gt;2: recarga los módulos importados de forma habitual, pero no con %aimport.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;autoreload-automático&#34;&gt;Autoreload automático&lt;/h2&gt;
-&lt;p&gt;Si nos ha gustado el invento, podemos habilitarlo &amp;ldquo;para siempre&amp;rdquo;. Para ello,
-basta con crearnos un perfil de configuración de &lt;a href=&#34;https://ipython.org/&#34;&gt;ipython&lt;/a&gt;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ ipython profile create
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;ProfileCreate&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; Generating default config file: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;/home/whatever/.ipython/profile_default/ipython_config.py&amp;#39;&lt;/span&gt;
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;$
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Ahora editamos el archivo que se nos indica, de manera que tenga las siguientes claves:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;c&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;InteractiveShellApp&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;extensions &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;autoreload&amp;#39;&lt;/span&gt;]
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;c&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;InteractiveShellApp&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;exec_lines &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;%autoreload 2&amp;#39;&lt;/span&gt;,
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;print(&amp;#34;Warning: disable autoreload in ipython_config.py to improve performance.&amp;#34;)&amp;#39;&lt;/span&gt;,
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;advertencias&#34;&gt;Advertencias&lt;/h2&gt;
-&lt;p&gt;Eso de la recarga de módulos automática está muy chulo, pero es difícil de
-narices. Así que no lo uséis con cosas muy importantes porque es fácil que falle
-y tengáis que seguir el antiguo método de cerrar la terminal &lt;a href=&#34;https://ipython.org/&#34;&gt;ipython&lt;/a&gt; y abrir otra.&lt;/p&gt;
-&lt;p&gt;Además, los objetos ya creados no se actualizarán. Éstos ya tienen sus métodos definidos y no se pueden cambiar &amp;ldquo;en caliente&amp;rdquo;, ya que no se puede determinar cuáles de ellos son dinámicos y cuáles estáticos.&lt;/p&gt;
-&lt;p&gt;Tenéis más información y otras advertencias en &lt;a href=&#34;https://ipython.readthedocs.io/en/stable/config/extensions/autoreload.html&#34;&gt;la documentación&lt;/a&gt;.&lt;/p&gt;
-
-        
-      </description>
+      <description>Cuando alguien está chalao, escribe un intérprete de su lenguaje favorito.
+Cuando alguien está loco del todo, escribe ipython.
+Resulta difícil describir qué es ipython&amp;hellip; Ya que resulta difícil saber qué no es. Quedémonos con que es un intérprete de Python con esteroides.
+Uno de esos esteroides es que nos permite recargar automáticamente los módulos en cuanto cambia algún fichero. Y aquí os explico cómo hacerlo.
+  Método manual Arrancamos ipython y cargamos la extensión &amp;ldquo;autoreload&amp;rdquo;:</description>
     </item>
     
   </channel>
