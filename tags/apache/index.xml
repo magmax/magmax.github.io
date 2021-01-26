@@ -13,73 +13,9 @@
       <pubDate>Mon, 13 Feb 2012 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/apache-auth/</guid>
-      <description>
-        
-          &lt;p&gt;Este artículo va a tratar de responder a una pregunta que me hicieron hace poco. Como bien sabéis, estoy dispuesto a responder vuestras preguntas, aunque puedo tardar un poco.&lt;/p&gt;
-&lt;p&gt;Por eso en esta ocasión veremos un tema un poco anticuado pero igualmente útil: cómo evitar el acceso a un directorio mediante una contraseña.&lt;/p&gt;
-&lt;p&gt;Hay dos soluciones básicas: la primera, mediante un archivo &lt;code&gt;.htaccess&lt;/code&gt;. La segunda, modificando la forma de acceso.&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;figure&gt;
-    &lt;img src=&#34;https://magmax.org/images/apache-http-server.jpg&#34;
-         alt=&#34;Apache HTTP Server&#34;/&gt; 
-&lt;/figure&gt;
-
-&lt;h2 id=&#34;autenticación&#34;&gt;Autenticación&lt;/h2&gt;
-&lt;h3 id=&#34;htaccess&#34;&gt;.htaccess&lt;/h3&gt;
-&lt;p&gt;En el directorio que queráis restringir el acceso, creáis un archivo llamado &lt;code&gt;.htaccess&lt;/code&gt;. Este archivo contendrá algo similar a lo siguiente:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cfg&#34; data-lang=&#34;cfg&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;AuthUserFile /home/magmax/.htpasswd&lt;/span&gt;
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;AuthGroupFile /dev/null&lt;/span&gt;
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;AuthName MagMax page&lt;/span&gt;
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;AuthType Basic&lt;/span&gt;
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;require valid-user&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;De esta manera le decimos a &lt;em&gt;apache&lt;/em&gt; que debe pedir una contraseña, mostrando el
-mensaje indicado en &lt;code&gt;AuthName&lt;/code&gt;, y que el usuario debe coincidir con alguno de
-los que se encuentran en el fichero indicado por &lt;code&gt;AuthUserFile&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;Ahora es cuando se crea el archivo indicado por &lt;code&gt;AuthUserFile&lt;/code&gt;, que sería algo así:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ htpasswd -c /home/magmax/.htpasswd magmax
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;New password:
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;Re-type new password:
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;Adding password &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; user magmax
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;$
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Tened cuidado con la opción &lt;code&gt;-c&lt;/code&gt;, ya que crea el archivo, eliminando lo que hubiera anteriormente. Si queréis añadir más usuarios sólo tenéis que quitar esa opción. El resultado será un fichero como el que sigue:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ cat file
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;magmax:$apr1$lqzJHMvm$XPYqylsRK7q2gmThL..gy1
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;htgroups&#34;&gt;htgroups&lt;/h4&gt;
-&lt;p&gt;Es posible que queráis tener un archivo con todas las contraseñas y limitar el
-acceso a un directorio sólo para una parte de estos usuarios. Para ello podéis
-usar la opción &lt;code&gt;AuthGroupFile&lt;/code&gt; que en el ejemplo puse a &lt;code&gt;/dev/null&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;El formato de este archivo sería el que sigue:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cfg&#34; data-lang=&#34;cfg&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;amigos: magmax tiouron pollo&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y ahora hay que realizar dos pequeñas modificaciones al fichero de configuración:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cfg&#34; data-lang=&#34;cfg&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;AuthUserFile /home/magmax/.htpasswd&lt;/span&gt;
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;AuthGroupFile /home/magmax/.htgroups&lt;/span&gt;
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;AuthName MagMax page&lt;/span&gt;
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;AuthType Basic&lt;/span&gt;
-&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;require group amigos&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Creo que no requiere más explicaciones.&lt;/p&gt;
-&lt;h4 id=&#34;seguridad&#34;&gt;Seguridad&lt;/h4&gt;
-&lt;p&gt;Por cuestiones de seguridad es mejor que los archivos &lt;code&gt;.htpasswd&lt;/code&gt; y &lt;code&gt;.htgroups&lt;/code&gt; (al menos el primero) estén en algún lugar no compartido, es decir, fuera de nuestra web. En teoría, al empezar por un punto no son accesibles, pero si están fuera de nuestra web, seguro que no son accesibles XD&lt;/p&gt;
-&lt;h4 id=&#34;mod_rewrite&#34;&gt;mod_rewrite&lt;/h4&gt;
-&lt;p&gt;&lt;code&gt;mod_rewrite&lt;/code&gt; es un &lt;em&gt;plugin&lt;/em&gt; para &lt;em&gt;apache&lt;/em&gt;. En este caso tendréis que hacer uso de expresiones regulares, lo que puede complicar el temilla y&amp;hellip; fallar. Como dijo Jamie Zawinski:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Some people, when confronted with a problem, think &amp;ldquo;I know, I&amp;rsquo;ll use regular expressions.&amp;rdquo; Now they have two problems.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Hay gente que, cuando se enfrenta a un problema, piensa &amp;ldquo;Ya sé, usaré expresiones regulares&amp;rdquo;. Ahora tienen dos problemas.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;De todas maneras, es una opción a evaluar:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cfg&#34; data-lang=&#34;cfg&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;RewriteRule ^[a-z0-9_-]*-f([0-9]+)/?(p([0-9]+)\.html)?$ /viewforum.php?f&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;$1&amp;amp;start=$3 [QSA,L,NC]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Si os sentís cómodos con algo así, os invito a que miréis la documentación de &lt;em&gt;rewrite&lt;/em&gt; para ver qué significa cada cosa.&lt;/p&gt;
-&lt;p&gt;He decidido comentar esto porque si usáis &lt;a href=&#34;https://nginx.com/&#34;&gt;nginx&lt;/a&gt; , un servidor web que está bastante de moda hoy día, no tendréis el módulo &lt;code&gt;mod_rewrite&lt;/code&gt; y no podréis usar la primera opción. Claro, que la segunda tampoco porque las expresiones regulares son diferentes:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cfg&#34; data-lang=&#34;cfg&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;rewrite ^/[a-z0-9_-]*-f([0-9]+)/?(p([0-9]+)\.html)?$ /viewforum.php?f&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;$1&amp;amp;start=$3 last;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y esto es algo que os cuento, pero de lo que no tengo ni idea. Tan sólo lo he copiado para dar una visión más completa del tema. Yo siempre utilizo un archivo &lt;em&gt;.htaccess&lt;/em&gt;&lt;/p&gt;
-&lt;h2 id=&#34;más-información&#34;&gt;Más información&lt;/h2&gt;
-&lt;p&gt;No hay nada que no haya sacado de Google, en concreto de &lt;a href=&#34;https://www.euronet.nl/~arnow/htpasswd/documentation.html&#34;&gt;aquí&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;La parte del rewrite la he sacado de &lt;a href=&#34;https://serverfault.com/questions/24243/nginx-support-for-htaccess-rewrite-rules-differences-from-apache&#34;&gt;serverfault&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Espero que os sea de alguna utilidad.&lt;/p&gt;
-
-        
-      </description>
+      <description>Este artículo va a tratar de responder a una pregunta que me hicieron hace poco. Como bien sabéis, estoy dispuesto a responder vuestras preguntas, aunque puedo tardar un poco.
+Por eso en esta ocasión veremos un tema un poco anticuado pero igualmente útil: cómo evitar el acceso a un directorio mediante una contraseña.
+Hay dos soluciones básicas: la primera, mediante un archivo .htaccess. La segunda, modificando la forma de acceso.</description>
     </item>
     
   </channel>

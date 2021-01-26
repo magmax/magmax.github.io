@@ -13,72 +13,8 @@
       <pubDate>Mon, 28 Dec 2015 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/sistemas-distribuidos-modernos/</guid>
-      <description>
-        
-          &lt;p&gt;Tras hablar hoy con un compañero y amigo sobre cómo montar un sistema distribuido, me he dado cuenta de que siempre que hablo de sistemas distribuidos pienso en cosas como &lt;a href=&#34;https://www.corba.org/&#34;&gt;CORBA&lt;/a&gt;, &lt;a href=&#34;https://zeroc.com/products/ice&#34;&gt;ZeroC ICE&lt;/a&gt; o &lt;a href=&#34;https://zeromq.org/&#34;&gt;ZeroMQ&lt;/a&gt;. Quizá será porque es lo que me enseñaron en la universidad.&lt;/p&gt;
-&lt;p&gt;Cuando me pongo a diseñar una aplicación distribuida, comienzo pensando en sistemas de este estilo. Pero cuanto más pienso en la aplicación, menos me encajan, porque todos ellos me hacen la aplicación más compleja.&lt;/p&gt;
-&lt;p&gt;Me gustaría compartir con vosotros mi hilo de pensamiento habitual.&lt;/p&gt;
-&lt;!-- raw HTML omitted --&gt;
-&lt;figure&gt;
-    &lt;img src=&#34;https://magmax.org/images/distributed_system.jpg&#34;
-         alt=&#34;Sistema Distribuido&#34;/&gt; 
-&lt;/figure&gt;
-
-&lt;h2 id=&#34;diseñando-una-aplicación-distribuida&#34;&gt;Diseñando una aplicación distribuida&lt;/h2&gt;
-&lt;p&gt;Vamos a diseñar algo. Por ejemplo, un sistema de integración continua.&lt;/p&gt;
-&lt;p&gt;Éste tendrá, básicamente:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Un número indeterminado de agentes que realizan el trabajo.&lt;/li&gt;
-&lt;li&gt;Un planificador de trabajos a ejecutar, en función de eventos (tiempo, cambios en un repo, etc).&lt;/li&gt;
-&lt;li&gt;Una cola de trabajos a ejecutar.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Hmmmm&amp;hellip;. Una cola de trabajos a ejecutar. Eso suena a cola de mensajes, así que vamos a ver qué ocurre si usamos una cola de mensajes para implementarla.&lt;/p&gt;
-&lt;h3 id=&#34;colas-de-mensajes&#34;&gt;Colas de mensajes&lt;/h3&gt;
-&lt;p&gt;Tendríamos:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Los agentes se conectan a la cola de mensajes&lt;/li&gt;
-&lt;li&gt;Cuando hay un trabajo, un agente disponible puede procesar el trabajo, balanceando la carga automáticamente.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;¡Es estupendo! Bueno&amp;hellip;. No.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;¿Cómo se cancela un trabajo?&lt;/li&gt;
-&lt;li&gt;¿Cómo devuelve el resultado el trabajo? ¿Y el streaming de la salida estándar?&lt;/li&gt;
-&lt;li&gt;¿Cómo puedo saber qué trabajos están esperando en la cola?&lt;/li&gt;
-&lt;li&gt;¿Cómo puedo reordenar la cola?&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Vaya&amp;hellip; Creo que tendré que implementar yo esa cola de mensajes. Lo que implica buscar otro sistema para poder comunicar los servicios.&lt;/p&gt;
-&lt;h3 id=&#34;sockets&#34;&gt;Sockets&lt;/h3&gt;
-&lt;p&gt;Siempre está la opción de usar &lt;em&gt;sockets&lt;/em&gt; a mano, pero eso es muy propenso a errores y hay que gestionar hilos. Casi mejor buscar alguna librería que encapsule eso.&lt;/p&gt;
-&lt;p&gt;Está &lt;a href=&#34;https://zeromq.org/&#34;&gt;ZeroMQ&lt;/a&gt;, que es una capa fina sobre los &lt;em&gt;sockets&lt;/em&gt;, pero también tiene problemas:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Si tengo varias colas de trabajo (para tener
-&lt;abbr title=&#34;High Availability&#34;&gt;HA&lt;/abbr&gt;
-),
-y se me cae la conexión actual, ¿cómo localizo una nueva a la que conectarme?&lt;/li&gt;
-&lt;li&gt;¿Cómo puedo pasar por un &lt;em&gt;Firewall&lt;/em&gt;? Quizá usando un túnel&amp;hellip;&lt;/li&gt;
-&lt;li&gt;¿Tengo que implementarme yo la seguridad a mano?&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Lo que me lleva a buscar algo de más alto nivel&amp;hellip;&lt;/p&gt;
-&lt;h3 id=&#34;brokers&#34;&gt;Brokers&lt;/h3&gt;
-&lt;p&gt;Quizá teniendo un &lt;em&gt;broker&lt;/em&gt; con servicio de &lt;strong&gt;Location&lt;/strong&gt;, como &lt;a href=&#34;https://www.corba.org/&#34;&gt;CORBA&lt;/a&gt; o &lt;a href=&#34;https://zeroc.com/products/ice&#34;&gt;ZeroC ICE&lt;/a&gt;, tendría todo el problema resuelto.&lt;/p&gt;
-&lt;p&gt;Eso resuelve la seguridad y la &lt;em&gt;location&lt;/em&gt;, pero&amp;hellip; sigo con problemas: el despliegue se complica, tengo que atarme a un &lt;em&gt;framework&lt;/em&gt; y sigo sin poder pasar por un &lt;em&gt;Firewall&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;Si pudiera buscar algo más simple&amp;hellip; Lo más simple de lo más simple&amp;hellip;&lt;/p&gt;
-&lt;h3 id=&#34;rest&#34;&gt;REST&lt;/h3&gt;
-&lt;p&gt;Y siempre vuelvo la mirada a &lt;a href=&#34;https://en.wikipedia.org/wiki/REST&#34;&gt;REST&lt;/a&gt;. &lt;a href=&#34;https://en.wikipedia.org/wiki/REST&#34;&gt;REST&lt;/a&gt; es simple, multiplataforma, escalable, multilenguaje, etc. Utiliza puertos estándar que nadie suele cerrar.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/REST&#34;&gt;REST&lt;/a&gt; se puede implementar sobre casi cualquier protocolo orientado a conexión, aunque es típico de HTTP.&lt;/p&gt;
-&lt;p&gt;Este tipo de sistemas permiten resolver la mayor parte de problemas de forma simple:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Sistema de location: basta con devolver un error 403 con la nueva URL a la que conectar.&lt;/li&gt;
-&lt;li&gt;Autodescubrimiento de servicios: cuando una respuesta devuelve las posibles operaciones como parte de la &lt;em&gt;response&lt;/em&gt;.&lt;/li&gt;
-&lt;li&gt;Seguridad: HTTPS&lt;/li&gt;
-&lt;li&gt;Autenticación: mediante protocolos ampliamente usados como OAUTH&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;conclusión&#34;&gt;Conclusión&lt;/h2&gt;
-&lt;p&gt;Hay muchas formas de implementar sistemas distribuídos, pero parece estar de moda usar servicios REST. Bueno&amp;hellip; más exactamente &lt;em&gt;micro-servicios&lt;/em&gt; REST.&lt;/p&gt;
-&lt;p&gt;Como ejemplo pondré toda la gama de productos de &lt;a href=&#34;https://www.elastic.co/&#34;&gt;Elastic&lt;/a&gt;, ya que todos se comunican mediante &lt;a href=&#34;https://www.elastic.co/products/elasticsearch&#34;&gt;ElasticSearch&lt;/a&gt;, del que escribiré en el próximo post.&lt;/p&gt;
-
-        
-      </description>
+      <description>Tras hablar hoy con un compañero y amigo sobre cómo montar un sistema distribuido, me he dado cuenta de que siempre que hablo de sistemas distribuidos pienso en cosas como CORBA, ZeroC ICE o ZeroMQ. Quizá será porque es lo que me enseñaron en la universidad.
+Cuando me pongo a diseñar una aplicación distribuida, comienzo pensando en sistemas de este estilo. Pero cuanto más pienso en la aplicación, menos me encajan, porque todos ellos me hacen la aplicación más compleja.</description>
     </item>
     
   </channel>
