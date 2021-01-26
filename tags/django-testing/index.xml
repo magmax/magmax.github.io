@@ -13,10 +13,118 @@
       <pubDate>Sun, 21 Aug 2011 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/django-tests/</guid>
-      <description>Una de las herramientas más potentes para la creación de pruebas en Django son las fixtures.
-Las fixtures consisten en datos que se cargan en la base de datos para poder realizar pruebas.
-Para mostrarlo, continuaré con el post de creación de un sitio básico con django, donde construimos un blog básico.
-  Requisitos En principio, con el blog básico ya construido es suficiente. Nos vendrá bien la herramienta de administración, con el fin de automatizar un poco el proceso.</description>
+      <description>
+        
+          &lt;p&gt;Una de las herramientas más potentes para la creación de pruebas en Django son las &lt;em&gt;fixtures&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Las &lt;em&gt;fixtures&lt;/em&gt; consisten en datos que se cargan en la base de datos para poder realizar pruebas.&lt;/p&gt;
+&lt;p&gt;Para mostrarlo, continuaré con el post de &lt;a href=&#34;https://magmax.org/blog/django-sitio-basico/&#34;&gt;creación de un sitio básico con
+django&lt;/a&gt;, donde construimos un blog básico.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/django.jpg&#34;
+         alt=&#34;Django&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;requisitos&#34;&gt;Requisitos&lt;/h2&gt;
+&lt;p&gt;En principio, con el blog básico ya construido es suficiente. Nos vendrá bien la herramienta de administración, con el fin de automatizar un poco el proceso.&lt;/p&gt;
+&lt;p&gt;Si queremos utilizar &lt;a href=&#34;https://yaml.org/&#34;&gt;YAML&lt;/a&gt;  para los datos, es muy probable que necesitemos tener instalado el módulo de YAML para Python (en Debian, &lt;code&gt;python-yaml&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;En principio nos conformaremos con XML y JSON.&lt;/p&gt;
+&lt;h2 id=&#34;metiendo-datos&#34;&gt;Metiendo datos&lt;/h2&gt;
+&lt;p&gt;Voy a suponer que tenemos una base de datos limpia. Si no es así, no os preocupéis: la única diferencia es que vosotros tendréis más datos.&lt;/p&gt;
+&lt;p&gt;Arrancamos el servicio:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ python manage.py runserver
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;Validating models...
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; errors found
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;Django version 1.3, using settings &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;myblog.settings&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;Development server is running at https://127.0.0.1:8000/
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt;Quit the server with CONTROL-C.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Nos vamos a la interfaz de administración:
+&lt;a href=&#34;https://localhost:8000/admin/blog/post/&#34;&gt;https://localhost:8000/admin/blog/post/&lt;/a&gt;  e insertamos dos &lt;em&gt;Posts&lt;/em&gt;. Los míos tienen lo siguiente:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;post1.title = primer post
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;post1.body = Éste es el cuerpo de mi primer post
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;post2.title = Segundo Post
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;post2.body = Éste es el cuerpo de mi segundo post
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;inciso-una-mejora-a-la-interfaz&#34;&gt;Inciso: una mejora a la interfaz&lt;/h2&gt;
+&lt;p&gt;Gracias a esto me acabo de dar cuenta de un error en nuestro modelo. En la ventana de &lt;em&gt;Posts&lt;/em&gt; aparecerá algo como &amp;ldquo;Post object&amp;rdquo;, imposibilitando la identificación de nuestros posts. Esto se debe a que &lt;em&gt;Django&lt;/em&gt; no sabe cómo representar nuestros objetos &amp;ldquo;&lt;em&gt;Post&lt;/em&gt;&amp;rdquo;. Así que vamos a decírselo.&lt;/p&gt;
+&lt;p&gt;Abrimos nuestro &lt;code&gt;blog/models.py&lt;/code&gt; y, en la clase &lt;em&gt;Post&lt;/em&gt;, añadimos los métodos &lt;code&gt;__unicode__&lt;/code&gt; y &lt;code&gt;__str__&lt;/code&gt;. Como es poquito, os lo pongo todo junto:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; django.db &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; models
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Post&lt;/span&gt;(models&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Model):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;    title &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; models&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;CharField(max_length&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;200&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    body &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; models&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;TextField()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;__unicode___&lt;/span&gt;(self):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;title
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __str__(self):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;title
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Una vez hecho esto, si refrescamos, deberían aparecernos los títulos de los posts en lugar de las cadenas genéricas.&lt;/p&gt;
+&lt;h2 id=&#34;tests&#34;&gt;Tests&lt;/h2&gt;
+&lt;p&gt;Podemos ejecutar los tests de nuestra aplicación:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ python manage.py test
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;Creating test database &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; alias &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;default&amp;#39;&lt;/span&gt;...
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;...................................................................................................................................................................................................................................................................................................................................
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;----------------------------------------------------------------------
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;Ran &lt;span style=&#34;color:#ae81ff&#34;&gt;323&lt;/span&gt; tests in 3.125s
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt;OK
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8&lt;/span&gt;Destroying test database &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; alias &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;default&amp;#39;&lt;/span&gt;...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Pero&amp;hellip; ¡¡ si aún no los hemos escrito !!&lt;/p&gt;
+&lt;p&gt;Eso no es del todo cierto. Como dependemos del módulo &lt;code&gt;django-admin&lt;/code&gt;, se han lanzado los tests de este módulo. Además, se ha comprobado que se puede crear la BBDD. Y, por si fuera poco, Django ya nos creó un archivo &lt;code&gt;blog/tests.py&lt;/code&gt; con una prueba (aunque sólo es una plantilla para nuestros tests).&lt;/p&gt;
+&lt;h2 id=&#34;fixtures-por-defecto&#34;&gt;Fixtures por defecto&lt;/h2&gt;
+&lt;p&gt;Cuando sincronizamos la base de datos de la aplicación, siempre se tratan de cargar los &lt;em&gt;fixtures&lt;/em&gt; iniciales. Por eso nos aparece la frase: &lt;code&gt;No fixtures found.&lt;/code&gt;. Si queremos que se cargen cosas, basta con crear la carpeta &lt;code&gt;blog/fixtures&lt;/code&gt; y, dentro de ésta, el archivo &lt;code&gt;blog/fixtures/initial_data.json&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Este archivo es peligroso, ya que se tratará de cargar SIEMPRE que sincronicemos, lo que puede producir duplicación en los datos.&lt;/p&gt;
+&lt;h2 id=&#34;creando-nuestras-fixtures&#34;&gt;Creando nuestras fixtures&lt;/h2&gt;
+&lt;p&gt;Como no es lo que queremos, obtener un archivo de &lt;code&gt;fixtures&lt;/code&gt; sólo para las pruebas. Django nos deja hacerlo fácilmente:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ python manage.py dumpdata blog &amp;gt; blog/fixtures/posts.json
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Si miramos nuestro archivo &lt;code&gt;blog/fixtures/posts.json&lt;/code&gt;, veremos que contiene los
+datos de los blogs que creamos, en formato &lt;a href=&#34;https://www.json.org/&#34;&gt;JSON&lt;/a&gt; . Si queremos usar el formato XML, basta con decirlo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ python manage.py dumpdata --format&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;xml blog &amp;gt; blog/fixtures/posts.xml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;añadiendo-las-fixtures-a-los-tests&#34;&gt;Añadiendo las fixtures a los tests&lt;/h2&gt;
+&lt;p&gt;Ya tenemos el modelo, una plantilla para los tests y los datos en formato json. ¡¡Automaticemos el proceso!! (archivo &lt;code&gt;blog/tests.py&lt;/code&gt;):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; django.test &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; TestCase
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; models &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Post
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Post1Test&lt;/span&gt;(TestCase):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;test_numero_elementos&lt;/span&gt;(self):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;        Comprobamos que NO se han cargado las fixtures
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;        &amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;assertEqual(&lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt;, len(Post&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;objects&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;all()))
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Post2Test&lt;/span&gt;(TestCase):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;    fixtures &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;posts.json&amp;#39;&lt;/span&gt;]
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;test_numero_elementos&lt;/span&gt;(self):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&amp;#34;&amp;#34;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;        Comprobamos que se han cargado las fixtures
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;        &amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;assertEqual(&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, len(Post&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;objects&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;all()))
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Como véis, he creado dos clases. En la segunda he añadido el atributo de clase &amp;ldquo;fixtures&amp;rdquo;, que es un iterable con el nombre de nuestro archivo (sin ruta). La primera clase no tiene ésto.&lt;/p&gt;
+&lt;p&gt;Por esa razón, django no carga ningún dato en la primera clase pero sí en la segunda; esto se debe a que la base de datos se resetea para cada &lt;em&gt;TestCase&lt;/em&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;sí-pero-yo-prefiero-xml&#34;&gt;Sí, pero&amp;hellip; yo prefiero XML&lt;/h3&gt;
+&lt;p&gt;Basta con que el archivo tenga extensión &lt;code&gt;.xml&lt;/code&gt; y django ya sabe lo que tiene que hacer.&lt;/p&gt;
+&lt;p&gt;Teóricamente se puede usar YAML, pero no lo he conseguido.&lt;/p&gt;
+&lt;h2 id=&#34;mi-archivo-json&#34;&gt;Mi archivo JSON&lt;/h2&gt;
+&lt;p&gt;Aquí tenéis mi archivo json, algo formateado para que quede más bonito (&lt;code&gt;blog/fixtures/posts.json&lt;/code&gt;):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;[
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  {&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pk&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;model&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;blog.post&amp;#34;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;fields&amp;#34;&lt;/span&gt;: {&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;body&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;\u00c9&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;ste es el cuerpo de mi primer post&amp;#34;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;              &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;title&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;primer post&amp;#34;&lt;/span&gt;}},
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;  {&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pk&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;model&amp;#34;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;blog.post&amp;#34;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;   &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;fields&amp;#34;&lt;/span&gt;: {&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;body&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;\u00c9&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;ste es el cuerpo de mi segundo post&amp;#34;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;              &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;title&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Segundo Post&amp;#34;&lt;/span&gt;}}
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;más-información&#34;&gt;Más información&lt;/h2&gt;
+&lt;p&gt;Pues la verdad es que he encontrado muy poco. Referiros a la &lt;a href=&#34;https://docs.djangoproject.com/en/1.3/topics/testing/&#34;&gt;propia
+documentación de Django&lt;/a&gt;.&lt;/p&gt;
+
+        
+      </description>
     </item>
     
   </channel>

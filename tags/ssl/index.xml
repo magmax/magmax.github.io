@@ -13,9 +13,163 @@
       <pubDate>Sat, 27 Jun 2015 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/creando-tu-propia-entidad-certificadora-ssl/</guid>
-      <description>Otro artículo que no es mío original, pero sinceramente, la idea que tengo de certificados es la justa. Este artículo ma ha parecido que va al grano y que cuenta por qué aparece el incómodo mensaje de &amp;ldquo;certificado no confiable&amp;rdquo; y cómo evitarlo.
-El artículo original es Creating Your Own SSL Certificate Authority (and Dumping Self Signed Certs), y creo que el autor es Tony Bourke, mirando los comentarios.
-Espero que os parezca tan interesante como a mí, aunque el último ejemplo lo he añadido sólo por completitud.</description>
+      <description>
+        
+          &lt;p&gt;Otro artículo que no es mío original, pero sinceramente, la idea que tengo de
+certificados es la justa. Este artículo ma ha parecido que va al grano y que
+cuenta por qué aparece el incómodo mensaje de &amp;ldquo;certificado no confiable&amp;rdquo; y cómo
+evitarlo.&lt;/p&gt;
+&lt;p&gt;El artículo original es &lt;a href=&#34;https://datacenteroverlords.com/2012/03/01/creating-your-own-ssl-certificate-authority/&#34;&gt;Creating Your Own SSL Certificate Authority (and
+Dumping Self Signed Certs)&lt;/a&gt;, y creo que el autor es Tony Bourke, mirando los
+comentarios.&lt;/p&gt;
+&lt;p&gt;Espero que os parezca tan interesante como a mí, aunque el último ejemplo lo he
+añadido sólo por completitud.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/ssl.jpg&#34;
+         alt=&#34;SSL&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;hr&gt;
+&lt;p&gt;SSL (o TSL si se quiere ser totalmente correcto) nos ofrece muchas cosas (a
+pesar de los defectos aparecidos recientemente):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Privacidad (deja de mirar mi password)&lt;/li&gt;
+&lt;li&gt;Integridad (los datos no se han modificado al vuelo)&lt;/li&gt;
+&lt;li&gt;Confianza (eres quien dices ser)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Se necesitan las tres cuando se construye algo en Amazon (¡maldito seas, Amazon
+Prime!). Pero también se utiliza SSL para las interfaces de usuario web y otras
+&lt;abbr title=&#34;Graphical User Interface&#34;&gt;GUI&lt;/abbr&gt;
+
+cuando se administras dispositivos bajo
+nuestro control.&lt;/p&gt;
+&lt;p&gt;Cuando un &lt;em&gt;website&lt;/em&gt; obtiene un certificado SSL, típicamente lo compra a una de
+las principales entidades certificadoras como DigiCert, Symantec (compraron la
+sección de registros de Verisign), o si te gusta el asesino de elefantes y
+libertad, GoDaddy. Oscilan entre $12 USD a varios cientos al año, dependiendo de
+la compañía y del nivel de confianza.&lt;/p&gt;
+&lt;p&gt;El beneficio que ofrecen estas entidades certificadoras consiste en una cadena
+de confianza. Tu navegador confía en ellas, ellas confían en un &lt;em&gt;website&lt;/em&gt;, por
+lo que tu navegador confía en el &lt;em&gt;website&lt;/em&gt; (se puede revisar su &lt;a href=&#34;https://datacenteroverlords.com/2011/09/25/ssl-who-do-you-trust/&#34;&gt;artículo sobre
+confianza SSL&lt;/a&gt;, que contiene el mejor diagrama SSL jamás imaginado).&lt;/p&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/ssl-creation/trustchain.png&#34;
+         alt=&#34;Cadena de confianza&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;p&gt;Nuestros dispositivos, por otra parte, aquéllos que configuras y a los que sólo accede tu organización, no necesitan esa cadena de confianza sobre infrastructuras públicas. Lo primero, puede resultar realmente caro comprar un certificado SSL para cada dispositivo que se controla. Y segundo, fuiste tú quien levantó esos dispositivos, por lo que no necesitas ese nivel de confianza.&lt;/p&gt;
+&lt;p&gt;Por eso las interfaces de usuario web (y otras interfaces basadas en SSL) casi
+siempre se protegen con certificados autofirmados. Son &lt;a href=&#34;https://www.madboa.com/geek/openssl/#cert-self&#34;&gt;realmente sencillos de
+crear&lt;/a&gt; y gratuítos. También proporcionan toda la seguiridad que implica la
+encriptación, aunque no hacen nada sobre la confianza. Por esa razón, cuando te
+conectas a un dispositivo con un certificado autofirmado verás algo como esto:&lt;/p&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/ssl-creation/securitywarningie.png&#34;
+         alt=&#34;Alerta de certificado en el Internet Explorer&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;p&gt;Por lo que tienes la elección, comprar un costoso certificado SSL de una
+&lt;abbr title=&#34;Certified Authority&#34;&gt;CA&lt;/abbr&gt;
+
+(Entidad Certificadora) u obtener esos errores. Bueno, hay una tercera opción, que es crear una entidad certificadora privada y venderlos completamente gratis.&lt;/p&gt;
+&lt;h2 id=&#34;openssl&#34;&gt;OpenSSL&lt;/h2&gt;
+&lt;p&gt;OpenSSL es una herramienta libre que viene en la mayoría de las instalaciones de
+MacOS X, Linux, *BSD y Unix. También se puede descargar el &lt;a href=&#34;https://www.slproweb.com/products/Win32OpenSSL.html&#34;&gt;binario para
+instalaciones Windows&lt;/a&gt;. Y OpenSSL es todo lo que se necesita para crear una entidad certificadora privada.&lt;/p&gt;
+&lt;p&gt;El proceso para crear tu propia entidad certificadora es muy simple:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Crear una clave privada.&lt;/li&gt;
+&lt;li&gt;Autofirmarla&lt;/li&gt;
+&lt;li&gt;Instalar la CA raíz en varias máquinas.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Una vez hecho esto, cada dispositivo que se maneje vía HTTPS sólo necesita tener creado su propio certificado con los pasos siguientes:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Crear un CSR por dispositivo.&lt;/li&gt;
+&lt;li&gt;Firmar el CSR con la clave CA raíz.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Puedes tener configurada la CA raíz en menos de una hora. Y aquí viene cómo hacerlo.&lt;/p&gt;
+&lt;h2 id=&#34;crear-el-certificado-raíz-se-hace-una-vez&#34;&gt;Crear el Certificado Raíz (se hace una vez)&lt;/h2&gt;
+&lt;p&gt;Crear el certificado raíz es fácil y se hace rápidamente. Con estos sencillos pasos se obtiene un certificado SSL raíz que se instalará en todos los escritorios, y una clave privada que se utilizará para firmar los certificados que se instalan en varios dispositivos.&lt;/p&gt;
+&lt;h3 id=&#34;crear-la-clave-raíz&#34;&gt;Crear la clave raíz&lt;/h3&gt;
+&lt;p&gt;El primer paso es crear la
+&lt;abbr title=&#34;private root key&#34;&gt;clave raíz privada&lt;/abbr&gt;
+
+que sólo requiere un paso. En el ejemplo de abajo, estoy creando una clave de
+2048 bits:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;openssl genrsa -out rootCA.key &lt;span style=&#34;color:#ae81ff&#34;&gt;2048&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Los tamaños de clave estándar actuales son 1024, 2048 y, aunque mucho menos extendido, 4096. Yo he elegido 2048, que es el más utilizado hoy en día. 4096 suele ser una exageración (y las claves con longitud 4096 es 5 veces más intensa computacionalmente que 2048), y se está abandonando 1024.&lt;/p&gt;
+&lt;p&gt;Nota importante: Mantener esta clave privada &lt;strong&gt;muy privada&lt;/strong&gt;. Ésta es la base de toda confianza para tus certificados, y si alguien obtiene una copia, podría generar certificados que acepte el navegador. También se puede crear una clave que esté protegida mediante una contraseña añadiendo &lt;code&gt;-des3&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;openssl genrsa -out rootCA.key &lt;span style=&#34;color:#ae81ff&#34;&gt;2048&lt;/span&gt; -des3
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Se pedirá que se introduzca una contraseña, y desde entonces se retará a introducir la contraseña cada vez que se use la clave. Claro, si olvidads la clave tendrás que hacer todo esto de nuevo.&lt;/p&gt;
+&lt;h3 id=&#34;el-siguiente-paso-es-autofirmar-este-certificado&#34;&gt;El siguiente paso es autofirmar este certificado&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;openssl req -x509 -new -nodes -key rootCA.key -days &lt;span style=&#34;color:#ae81ff&#34;&gt;1024&lt;/span&gt; -out rootCA.pem
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Lo que comenzará un &lt;em&gt;script&lt;/em&gt; interactivo que preguntará varios bits de información. Se rellenarán como vea conveniente:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;   You are about to be asked to enter information that will be incorporated
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;   into your certificate request.
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;   What you are about to enter is what is called a Distinguished Name or a DN.
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;   There are quite a few fields but you can leave some blank
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;   For some fields there will be a default value,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;   If you enter &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;.&amp;#39;&lt;/span&gt;, the field will be left blank.
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;   -----
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;   Country Name &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt; letter code&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;AU&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;:US
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;   State or Province Name &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;full name&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;Some-State&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;:Oregon
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;   Locality Name &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;eg, city&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[]&lt;/span&gt;:Portland
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;   Organization Name &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;eg, company&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;Internet Widgits Pty Ltd&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;:Overlords
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;   Organizational Unit Name &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;eg, section&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[]&lt;/span&gt;:IT
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;   Common Name &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;eg, YOUR name&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[]&lt;/span&gt;:Data Center Overlords
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;   Email Address &lt;span style=&#34;color:#f92672&#34;&gt;[]&lt;/span&gt;:none@none.com
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Una vez hecho, se creará un certificado SSL llamado &lt;strong&gt;rootCA.pem&lt;/strong&gt;, firmado por sí mismo, válido durante 1024 días, y que funcionará como tu certificado raíz. Lo más interesante de las autoridades certificadoras tradicionales es que ese certificado raíz está también autofirmado. Pero antes de comenzar una entidad certificadora propia, recuerde que el truco es mantener estos certificados en &lt;em&gt;cada navegador del mundo&lt;/em&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;instalar-el-certificado-raíz-en-las-máquinas&#34;&gt;Instalar el certificado raíz en las máquinas&lt;/h3&gt;
+&lt;p&gt;Para los portátiles/sobremesas/terminales, se necesitará instalar el certificado raíz en los repositorios de certificados confiables. Lo que puede ser un poco difícil.&lt;/p&gt;
+&lt;p&gt;Algunos navegadores utilizan el repositorio por defecto del sistema operativo. Por ejemplo, en Windows tanto IE como Chrome usan la gestión por defecto de certificados. Vaya a IE, &lt;strong&gt;Internet Options&lt;/strong&gt;, a la pestaña &lt;strong&gt;Contenido/Content&lt;/strong&gt;, y pulse el botón &lt;strong&gt;Certificados/Certificates&lt;/strong&gt;. En Chrome vaya a &lt;strong&gt;Opciones/Settings&lt;/strong&gt;, &lt;strong&gt;Mostrar opciones avanzadas/Show advanced settings&lt;/strong&gt; y &lt;strong&gt;Manejar certificados/Manage certificates&lt;/strong&gt;. Lo que se pretende es instalar el certificado CA raíz (no la clave) bajo la pestaña &lt;strong&gt;Trusted root Certificate Authorities&lt;/strong&gt;.&lt;/p&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/ssl-creation/setuprepo2.png&#34;
+         alt=&#34;Configuración en el IE&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;p&gt;Por el contrario, en Windows Firefox tiene su propio repositorio de certificados, por lo que si se utiliza IE o Chrome tanto como Firefox, se tendrá que instalar el certificado raíz tanto en el repositorio de Windows como en el de Firefox.&lt;/p&gt;
+&lt;p&gt;En Mac, Safari, Firefox y Chrome utilizan el sistema de gestión de certificados del Mac OS X, por lo que sólo se tendrá que instalar una vez. En Linux, creo que se gestiona desde cada navegador.&lt;/p&gt;
+&lt;h3 id=&#34;crear-un-certificado-hacer-una-vez-por-dispositivo&#34;&gt;Crear un certificado (hacer una vez por dispositivo)&lt;/h3&gt;
+&lt;p&gt;Será necesario seguir este proceso para cada dispositivo en el que se desee instalar un certificado confiable. Primero, al igual que con el paso del CA raíz, se necesita una clave privada (diferente de la del CA raíz).&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;openssl genrsa -out device.key &lt;span style=&#34;color:#ae81ff&#34;&gt;2048&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Una vez creada la clave, se generará la solicitud de firmado de certificado:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;openssl req -new -key device.key -out device.csr
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;El sistema realizará varias preguntas (País, Región/Provincia, etc.). Responder según corresponda. Sin embargo, la pregunta importante es &lt;strong&gt;common-name&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;Common Name &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;eg, YOUR name&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[]&lt;/span&gt;: 10.0.0.1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Lo que se ve en el campo de la dirección del navegador cuando se accede a tu dispositivo &lt;strong&gt;debe&lt;/strong&gt; ser lo que se ponga bajo el &lt;strong&gt;common name&lt;/strong&gt;, &lt;em&gt;incluso si es una dirección IP&lt;/em&gt;. Sí, incluso una dirección IP (IPv4 o IPv6) funciona como &lt;strong&gt;common name&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Si no se corresponden, incluso un certificado firmado adecuadamente no se validará adecuadamente, y se obtendrá el error de que &amp;ldquo;No se puede verificar la autenticidad&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;Una vez hecho esto, se firmará el CSR, lo que requiere la clave CA raíz:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;openssl x509 -req -in device.csr -CA root.pem -CAkey root.key -CAcreateserial -out device.crt -days &lt;span style=&#34;color:#ae81ff&#34;&gt;500&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Esto crea un certificado autofirmado llamado &lt;code&gt;device.crt&lt;/code&gt; que es válido durante 500 días (se puede ajustar el número de días, claro, pero no tiene sentido que sea mayor que el del certificado raíz).&lt;/p&gt;
+&lt;p&gt;El paso siguiente consiste en coger la clave y el certificado e instalarlos en el dispositivo. La mayoría de los dispositivos de red que se controlan mediante HTTPS tienen algún mecanismo para instalarlo. Por ejemplo, tengo un LTM VE (virtual edition) F5 como máquina virtual en mi host ESXi 4.&lt;/p&gt;
+&lt;p&gt;Entro en la
+&lt;abbr title=&#34;Graphical User Interface, o Interfaz Gráfica de Usuario&#34;&gt;GUI&lt;/abbr&gt;
+
+web del F5 (y debería ser la última vez que saluda el aviso) y voy
+a &lt;strong&gt;System&lt;/strong&gt;, &lt;strong&gt;Device Certificates&lt;/strong&gt;,  y &lt;strong&gt;Device Certificate&lt;/strong&gt;:&lt;/p&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/ssl-creation/importcert.png&#34;
+         alt=&#34;Configuración del F5&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;p&gt;En el desplegable selecciono &lt;strong&gt;Certificate and Key&lt;/strong&gt;, y bien puedo pegar el contenido de los ficheros con la clave y el certificado o puedo subirlos desde mi máquina:&lt;/p&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/ssl-creation/importcertandkeyf5.png&#34;
+         alt=&#34;Importando el certificado y la clave en el F5&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;p&gt;Después, todo lo que necesito hacer es cerrar el navegador y volver a entrar en la web del GUI. Si todo fue bien, no habrá aviso y se obtendrá un precioso verde en la barra de navegación:&lt;/p&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/ssl-creation/importedcertkeyf5.png&#34;
+         alt=&#34;Barra de navegación con el certificado correctamente firmado&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;p&gt;Y hablando de VMWare, ¿os suena, quizá, el molesto mensaje que se ve cuando se conecta contra un servidor ESXi?&lt;/p&gt;
+&lt;p&gt;Se puede eliminar creando una clave y certificado para el servidor ESXi e instalándola en &lt;code&gt;/etc/vmware/ssl/rui.crt&lt;/code&gt; y &lt;code&gt;/etc/vmware/ssl/rui.key&lt;/code&gt;.&lt;/p&gt;
+
+        
+      </description>
     </item>
     
   </channel>

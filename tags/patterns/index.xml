@@ -13,8 +13,174 @@
       <pubDate>Sat, 18 May 2013 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/patterns-observer/</guid>
-      <description>A menudo necesitamos realizar operaciones cuando ocurren eventos. En este tipo de situaciones existen dos soluciones: inyectar el objeto que tiene que recibir los eventos en el que los provoca o implementar el patrón Observer (&amp;ldquo;Observador&amp;rdquo;, pero es raro que alguien traduzca los nombres de los patrones).
-También es posible que un objeto genere eventos pero sean varios los consumidores de éstos. En swing, gtk,&amp;hellip; ocurre constantemente, utilizando los conocidos listeners.</description>
+      <description>
+        
+          &lt;p&gt;A menudo necesitamos realizar operaciones cuando ocurren eventos. En este tipo de situaciones existen dos soluciones: inyectar el objeto que tiene que recibir los eventos en el que los provoca o implementar el patrón &lt;em&gt;Observer&lt;/em&gt; (&amp;ldquo;Observador&amp;rdquo;, pero es raro que alguien traduzca los nombres de los patrones).&lt;/p&gt;
+&lt;p&gt;También es posible que un objeto genere eventos pero sean varios los consumidores de éstos.  En &lt;em&gt;swing&lt;/em&gt;, &lt;em&gt;gtk&lt;/em&gt;,&amp;hellip; ocurre constantemente, utilizando los conocidos &lt;em&gt;listeners&lt;/em&gt;. Pero&amp;hellip; ¿Qué es un &lt;em&gt;listener&lt;/em&gt; realmente? No es más que una implementación del patrón &lt;em&gt;Observer&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Veremos cómo utilizar este utilísimo patrón en Java y en Python.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/patterns.png&#34;
+         alt=&#34;Patterns&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;el-problema&#34;&gt;El problema.&lt;/h2&gt;
+&lt;p&gt;Veamos&amp;hellip; Tenemos algo muy importante que realizar en cuando ocurre un evento, por ejemplo, escribir por pantalla &amp;ldquo;Something happened!&amp;rdquo;. Nuestro evento va a ser que han pasado 100 ms.&lt;/p&gt;
+&lt;p&gt;Está claro que vamos a necesitar un hilo. El hilo será un &amp;ldquo;Observable&amp;rdquo;, es decir, un objeto que genera eventos. En el hilo principal crearemos un &amp;ldquo;Observer&amp;rdquo;, un objeto que realiza acciones cuando ocurren los eventos.&lt;/p&gt;
+&lt;p&gt;Veremos primero la solución en Java y después, en Python:&lt;/p&gt;
+&lt;h2 id=&#34;soluciones&#34;&gt;Soluciones&lt;/h2&gt;
+&lt;h3 id=&#34;java&#34;&gt;Java&lt;/h3&gt;
+&lt;p&gt;Comenzaremos por el programa principal, que nos servirá como declaración de intenciones:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;/* file: org/magmax/patterns/observer/Main.java */&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;package&lt;/span&gt; org.magmax.patterns.observer&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Main&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;	&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;String args&lt;span style=&#34;color:#f92672&#34;&gt;[])&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;throws&lt;/span&gt; InterruptedException &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;		MyObservable myobservable &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; MyObservable&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;		MyObserver myobserver &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; MyObserver&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;		myobservable&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;addObserver&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;myobserver&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;		Thread thread &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Thread&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;myobservable&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;		thread&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;start&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;		Thread&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;sleep&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;2000&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;		thread&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;stop&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;		System&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;out&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;println&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Finishing!&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;	&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Poco que explicar aquí: declaramos nuestro &lt;em&gt;observable&lt;/em&gt; y nuestro &lt;em&gt;observer&lt;/em&gt; y asociamos el &lt;em&gt;observer&lt;/em&gt; al &lt;em&gt;observable&lt;/em&gt;, lanzamos un hilo con el &lt;em&gt;observable&lt;/em&gt; y esperamos un rato. Al final imprimimos que hemos terminado.&lt;/p&gt;
+&lt;p&gt;El &lt;em&gt;observer&lt;/em&gt; se encuentra en el hilo principal; veamos lo que hace:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;/* file org/magmax/patterns/observer/MyObserver.java */&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;package&lt;/span&gt; org.magmax.patterns.observer&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; java.util.Observable&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; java.util.Observer&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;MyObserver&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;implements&lt;/span&gt; Observer &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;	&lt;span style=&#34;color:#a6e22e&#34;&gt;@Override&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;	&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;update&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;Observable observable&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; Object event&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;		System&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;out&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;println&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Something happened!&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;	&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Tan solo imprime la cadena &amp;ldquo;Something happened!&amp;rdquo;. Sin embargo aquí hay algunas cosas importantes: para empezar, está implementando la interfaz &lt;code&gt;Observer&lt;/code&gt;. Ésta interfaz nos la proporciona Java en su librería estándar, y nos obliga a implementar el método &lt;code&gt;update(Observable, Object)&lt;/code&gt;. Éste es el método al que se llamará, dentro del hilo que creó el objeto, cuando ocurra un evento en el &lt;em&gt;observable&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Y veamos cómo queda el &lt;em&gt;observable&lt;/em&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;/* file org/magmax/patterns/observer/MyObservable.java */&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;package&lt;/span&gt; org.magmax.patterns.observer&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; java.util.Observable&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;MyObservable&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;extends&lt;/span&gt; Observable &lt;span style=&#34;color:#66d9ef&#34;&gt;implements&lt;/span&gt; Runnable &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;	&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;fire_event&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;		&lt;span style=&#34;color:#66d9ef&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;notifyObservers&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Ey! What&amp;#39;s up?&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;		&lt;span style=&#34;color:#66d9ef&#34;&gt;this&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;setChanged&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;	&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;	&lt;span style=&#34;color:#a6e22e&#34;&gt;@Override&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;	&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;run&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;		&lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;			fire_event&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;			sleep&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;	&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;	&lt;span style=&#34;color:#66d9ef&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;sleep&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;		&lt;span style=&#34;color:#66d9ef&#34;&gt;try&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;			Thread&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;sleep&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;100&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24&lt;/span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;catch&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;InterruptedException e&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;25&lt;/span&gt;			&lt;span style=&#34;color:#75715e&#34;&gt;// TODO Auto-generated catch block
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;26&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;			e&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;printStackTrace&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;27&lt;/span&gt;		&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;28&lt;/span&gt;	&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;29&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Éste archivo es más largo, pero sólo por la verbosidad de Java. Veamos primero el método &lt;code&gt;sleep&lt;/code&gt;, que lo único que hace es dormirse durante 100 milisegundos. Una vez ignorado este método, queda algo muy pequeño.&lt;/p&gt;
+&lt;p&gt;Lo primero en lo que debemos fijarnos es en la clase padre: &lt;code&gt;Observable&lt;/code&gt;. Nuevamente, la librería estándar de Java nos ofrece herramientas para crear el patrón Observador. La clase &lt;code&gt;Observable&lt;/code&gt; nos ofrece métodos que utilizamos en el programa principal, como &lt;code&gt;addObserver&lt;/code&gt;, pero también algunos que necesitaremos en el &lt;em&gt;Observable&lt;/em&gt;, como son &lt;code&gt;notifyObservers(Object)&lt;/code&gt;, que genera un evento, y &lt;code&gt;setChanged()&lt;/code&gt;, que indica que hay cambios que publicar.&lt;/p&gt;
+&lt;p&gt;El evento disparado es la cadena &lt;em&gt;&amp;ldquo;Ey! What&amp;rsquo;s up?&amp;quot;&lt;/em&gt; que llegará al &lt;em&gt;Observer&lt;/em&gt;. Podéis mejorar el ejercicio imprimiendo el evento y comprobando así que lo que digo es cierto XD&lt;/p&gt;
+&lt;p&gt;Además, implementa la interfaz &lt;code&gt;Runnable&lt;/code&gt;, pero eso sólo es para trabajar con hilos. Esta interfaz nos obliga a implementar &lt;code&gt;run()&lt;/code&gt;, que es el bucle de eventos que disparará un evento y se dormirá hasta que el hilo muera.&lt;/p&gt;
+&lt;p&gt;Hay cosas mejorables en este código (llamar el método obsoleto &lt;code&gt;stop()&lt;/code&gt; de un hilo está muy feo), pero creo que queda claro el patrón Observador, que era la intención del artículo.&lt;/p&gt;
+&lt;h3 id=&#34;python&#34;&gt;Python&lt;/h3&gt;
+&lt;p&gt;Mientras Java nos proporciona herramientas para gestionar un patrón Observer, Python no lo hace. Así que tendremos que implementárnoslo nosotros. Voy a utilizar nombres similares a la implementación en Java y así podéis haceros una idea de lo que ocurre por debajo :D&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/usr/bin/python&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# file: observer.py&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; threading &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Thread
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; time
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Observable&lt;/span&gt;(object):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_observers &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; set()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;add_observer&lt;/span&gt;(self, observer):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_observers&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;add(observer)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;remove_observer&lt;/span&gt;(self, observer):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_observers&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;remove(observer)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;notify_observers&lt;/span&gt;(self, event):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; observer &lt;span style=&#34;color:#f92672&#34;&gt;in&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_observers:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;            observer&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;update(self, event)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Observer&lt;/span&gt;(object):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;update&lt;/span&gt;(self, observable, event):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;25&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;raise&lt;/span&gt; NotImplemented(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;This method is Abstract!&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;26&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;27&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;28&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;MyObservable&lt;/span&gt;(Thread, Observable):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;29&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; __init__(self, &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;args, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kargs):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;30&lt;/span&gt;        Thread&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;__init__(self, &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;args, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kargs)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;31&lt;/span&gt;        Observable&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;__init__(self, &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;args, &lt;span style=&#34;color:#f92672&#34;&gt;**&lt;/span&gt;kargs)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;32&lt;/span&gt;        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_finish &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; False
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;33&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;34&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;run&lt;/span&gt;(self):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;35&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;not&lt;/span&gt; self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_finish:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;36&lt;/span&gt;            self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;fire_event()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;37&lt;/span&gt;            time&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sleep(&lt;span style=&#34;color:#ae81ff&#34;&gt;0.1&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;38&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;39&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;fire_event&lt;/span&gt;(self):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;40&lt;/span&gt;        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;notify_observers(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Ey! What&amp;#39;s up?&amp;#34;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;41&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;42&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;stop&lt;/span&gt;(self):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;43&lt;/span&gt;        self&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;_finish &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; True
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;44&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;45&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;46&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;MyObserver&lt;/span&gt;(Observer):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;47&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;update&lt;/span&gt;(self, observable, event):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;48&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Something happened!&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;49&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;50&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;51&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;():
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;52&lt;/span&gt;    myobservable &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; MyObservable()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;53&lt;/span&gt;    myobserver &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; MyObserver()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;54&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;55&lt;/span&gt;    myobservable&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;add_observer(myobserver)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;56&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;57&lt;/span&gt;    myobservable&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;start()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;58&lt;/span&gt;    time&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;sleep(&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;59&lt;/span&gt;    myobservable&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;stop()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;60&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;61&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Finishing!&amp;#34;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;62&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;63&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;64&lt;/span&gt;    main()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Lo primero que hago es implementarme yo mi &lt;code&gt;Observer&lt;/code&gt; y mi &lt;code&gt;Observable&lt;/code&gt;. Así ya sólo tengo que heredar de ellos. Como veis, no es nada difícil: cuando se registra un &lt;code&gt;Observer&lt;/code&gt;, lo guardo en un &lt;code&gt;set&lt;/code&gt;; cuando se lanza un evento, notifico a todos los &lt;code&gt;Observers&lt;/code&gt; registrados en el &lt;code&gt;Observable&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Realmente, la clase &lt;code&gt;Observer&lt;/code&gt; no es necesaria en absoluto, ya que Python tiene &lt;em&gt;duck typing&lt;/em&gt;, pero queda mono y así se parece más a Java.&lt;/p&gt;
+&lt;p&gt;El resto es igual que en Java :D&lt;/p&gt;
+&lt;h2 id=&#34;problemas&#34;&gt;Problemas&lt;/h2&gt;
+&lt;p&gt;Venga, comencemos con los problemas: En Java, &lt;code&gt;Observable&lt;/code&gt; es una clase abstracta, por lo que no podemos usarla si tenemos que heredar de otra cosa. En Python esto no es un problema, gracias a la herencia múltiple, como podéis ver en el ejemplo de arriba.&lt;/p&gt;
+&lt;p&gt;Debo decir que los ejemplos mostrados no dejan de ser ejemplos y que son un poco guarros. Lo suyo es utilizar un objeto diferente como &amp;ldquo;&lt;em&gt;token&lt;/em&gt;&amp;rdquo; que se pasan el &lt;code&gt;Observer&lt;/code&gt; y el objeto que generará los eventos. Hacer que un objeto sea un &lt;code&gt;Observable&lt;/code&gt; además de hacer alguna otra cosa&amp;hellip; &lt;strong&gt;Viola el &lt;a href=&#34;https://en.wikipedia.org/wiki/Single_responsibility_principle&#34; title=&#34;Single Responsability Principle&#34;&gt;principio de única responsabilidad(SRP)&lt;/a&gt;&lt;/strong&gt;. Y claro, lo viola tanto en Java como en Python XD&lt;/p&gt;
+&lt;p&gt;Así que no quiere decir que, porque podamos usar la herencia múltiple e implementar un &lt;code&gt;Observable&lt;/code&gt; junto con otro objeto &lt;em&gt;no significa que debamos&lt;/em&gt; hacerlo. A las malas, si la necesidad es muy imperiosa, siempre podemos implementárnoslo a mano (seguirá violando el SRP)&lt;/p&gt;
+&lt;p&gt;No ocurre lo mismo con el &lt;code&gt;Observer&lt;/code&gt;, ya que éste no tiene una responsabilidad, sino una necesidad: la de enterarse de los eventos que ocurran.&lt;/p&gt;
+&lt;h2 id=&#34;más-información&#34;&gt;Más información&lt;/h2&gt;
+&lt;p&gt;Podéis encontrar más información en la &lt;a href=&#34;https://es.wikipedia.org/wiki/Observer_(patr%C3%B3n_de_dise%C3%B1o)&#34; title=&#34;Observer (patrón de diseño)&#34;&gt;wikipedia&lt;/a&gt;, que curiosamente también lo muestra en Java y Python, con implementaciones bastante parecidas XD (os aseguro que lo encontré después), aunque con una explicación mucho más detallada.&lt;/p&gt;
+&lt;p&gt;Y, por supuesto, el &lt;a href=&#34;https://www.amazon.com/Design-Patterns-Elements-Object-Oriented-ebook/dp/B000SEIBB8&#34; title=&#34;Design Patterns (GoF)&#34;&gt;Design Patterns, del GoF&lt;/a&gt;.&lt;/p&gt;
+
+        
+      </description>
     </item>
     
     <item>
@@ -23,8 +189,114 @@ También es posible que un objeto genere eventos pero sean varios los consumidor
       <pubDate>Mon, 23 Jan 2012 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/constructores-simples/</guid>
-      <description>Esta semana me he dado cuenta de la diferencia existente entre un constructor feo y uno bonito. Es curioso lo fácil que es hacerlo bien y lo poquito que cuesta, así que voy a compartir mis apreciaciones con vosotros, a ver qué opináis.
-Durante mi carrera profesional he hecho muchas cosas feas, así que no me echéis en cara si encontráis que he hecho algo diferente de lo que diga :D ¡Esto consiste en ir mejorando día a día!</description>
+      <description>
+        
+          &lt;p&gt;Esta semana me he dado cuenta de la diferencia existente entre un constructor feo y uno bonito. Es curioso lo fácil que es hacerlo bien y lo poquito que cuesta, así que voy a compartir mis apreciaciones con vosotros, a ver qué opináis.&lt;/p&gt;
+&lt;p&gt;Durante mi carrera profesional he hecho muchas cosas feas, así que no me echéis en cara si encontráis que he hecho algo diferente de lo que diga :D ¡Esto consiste en ir mejorando día a día!&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Actualización 2012/01/24&lt;/em&gt;: Por petición de &lt;em&gt;YeBeNeS&lt;/em&gt;, añado ejemplos en java.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/patterns.png&#34;
+         alt=&#34;Patterns&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h3 id=&#34;lanzando-excepciones&#34;&gt;Lanzando excepciones&lt;/h3&gt;
+&lt;p&gt;Tener un constructor que lanza excepciones es algo que ya resulta algo feo. Un constructor debería preparar el objeto para ser utilizado, no realizar una tarea. Dado que no realiza tareas, no debería lanzar ninguna excepción.&lt;/p&gt;
+&lt;p&gt;Cuando digo que no lanza excepciones no significa que las capture: digo que no las lanza porque no lo necesita. Las actividades que haga serán tan simples que no pueden fallar: inicializaciones y punto. Nada de operaciones. Las cosas complejas las dejamos para los métodos.&lt;/p&gt;
+&lt;p&gt;No hay nada más feo que un constructor que lanza excepciones. Es lo último que te esperas y es lo último que deseas que otros se encuentren.&lt;/p&gt;
+&lt;p&gt;Cuando el constructor tiene excepciones, éste sería el código mínimo para instanciarlo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;   &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;throws&lt;/span&gt; exception &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;   &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;// [...]
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;try&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    Example example &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Example&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;catch&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;Exception e&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;null-pointer-exception&#34;&gt;Null pointer exception&lt;/h3&gt;
+&lt;p&gt;Si un constructor no realiza operaciones, no puede darse el caso de acceder a un puntero inválido. El constructor sólo debería hacer asignaciones, nada más.&lt;/p&gt;
+&lt;h3 id=&#34;constructores-con-parámetros&#34;&gt;Constructores con parámetros&lt;/h3&gt;
+&lt;p&gt;Hay ocasiones en las que un objeto requiere de un parámetro para poder funcionar. En estos casos, está bien requerirlo en el constructor.&lt;/p&gt;
+&lt;p&gt;Cuando el número de parámetros es muy alto (es decir, DOS), entonces deberíamos
+plantearnos hacerlo de otra manera. Si el constructor requiere tantos
+parámetros, es posible que esté violando el &lt;a href=&#34;https://en.wikipedia.org/wiki/Single_responsibility_principle&#34;&gt;principio de única responsabilidad&lt;/a&gt; .&lt;/p&gt;
+&lt;p&gt;Otra costumbre que tomé y que he visto es la de crear un constructor con N parámetros, de manera que permita inicializar cada uno de sus atributos privados. La experiencia me ha demostrado que es una costumbre bastante mala&amp;hellip; en casi todos los casos.&lt;/p&gt;
+&lt;p&gt;En el caso de Java, es una mala costumbre lo mires como lo mires. ¿Cuál es el orden de los parámetros? Si tengo 3 parámetros&amp;hellip; ¿Tengo que hacer las 3 combinaciones de parámetros únicos, al menos 2 de 2 argumentos y otro de 3? ¿Y si, de pronto, necesito un cuarto atributo privado? ¿Cuántas combinaciones tengo que hacer?&lt;/p&gt;
+&lt;p&gt;En otros lenguajes, como Python, en el que los argumentos son nombrados, todo lo dicho no le afecta. Sin embargo, en este caso tendremos otro problema: ¿Y si ya no necesito uno de los argumentos o si necesito cambiarle el nombre?&lt;/p&gt;
+&lt;p&gt;A ver&amp;hellip; ante el código siguiente:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; value1&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; value2&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;private&lt;/span&gt; String juntaLaTrocola&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;private&lt;/span&gt; String gamusino&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; value1&lt;span style=&#34;color:#f92672&#34;&gt;){}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; a&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; b&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;String juntaLaTrocola&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;String gamusino&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; String &lt;span style=&#34;color:#a6e22e&#34;&gt;juntaLaTrocola&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Se me ocurren muchas preguntas:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;En el tercer constructor, ¿va primero el value1 o el value2?&lt;/li&gt;
+&lt;li&gt;¿Por qué no puedo construir un objeto sólo con &amp;ldquo;&lt;em&gt;gamusino&lt;/em&gt;&amp;rdquo;?&lt;/li&gt;
+&lt;li&gt;¿Por qué no puedo combinar valores numéricos y cadenas? ¿Es porque el programador se cansó (como en este caso)? ¿Es porque no debo? ¿Es porque se añadieron después?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Además, si heredas de la clase, ¡¡¡estás obligado a sobreescribir todos estos métodos!!!&lt;/p&gt;
+&lt;p&gt;¿Ejemplos? &lt;a href=&#34;https://docs.oracle.com/javase/6/docs/api/index.html&#34;&gt;JDialog&lt;/a&gt;  tiene 16 constructores distintos.&lt;/p&gt;
+&lt;h3 id=&#34;constructores-fatigados&#34;&gt;Constructores fatigados&lt;/h3&gt;
+&lt;p&gt;No hace mucho que yo mismo implementé un constructor que parseaba un archivo XML. Me pareció algo horrible, pero no encontraba otra manera mejor de hacerlo. ¿Alguien le ve lógica a esto? Yo, ahora, no.&lt;/p&gt;
+&lt;p&gt;Si tenemos un constructor que hace tanto trabajo, ¿cómo podemos mejorar nuestro código? No podemos usar el patrón &lt;em&gt;un método a una clase&lt;/em&gt;, porque tendremos que el constructor de la nueva clase hará, de nuevo, todo el trabajo. En caso contrario, ¿por qué tenemos dos clases? bastaría con sustituir la primera por la segunda.&lt;/p&gt;
+&lt;p&gt;No es algo tan raro de encontrar: la propia API de Java tiene métodos que lanzan excepciones o realizan mucho trabajo (&lt;em&gt;NOTA:&lt;/em&gt; buscando ejemplos no he encontrado ninguno que lance excepciones, pero sé que los he visto; ¿habrá sido en clases de terceros?):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;RMIConnectorServer&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;JMXServiceURL url&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; Map&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&lt;/span&gt;String&lt;span style=&#34;color:#f92672&#34;&gt;,?&amp;gt;&lt;/span&gt; environment&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; RMIServerImpl rmiServerImpl&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; MBeanServer mbeanServer&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;JDialog&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;Window owner&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; String title&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; Dialog&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;ModalityType&lt;/span&gt; modalityType&lt;span style=&#34;color:#f92672&#34;&gt;,&lt;/span&gt; GraphicsConfiguration gc&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;la-solución-fábricas&#34;&gt;La solución: Fábricas&lt;/h2&gt;
+&lt;p&gt;En ocasiones necesito dos constructores porque hay distintas maneras de usar el objeto. Veamos un ejemplo: Tengo una clase que se conecta a base de datos y que se puede utilizar de dos maneras diferentes: Con una base de datos real o con una base de datos en memoria.&lt;/p&gt;
+&lt;p&gt;Aquí tengo un problema. Uno de los constructores necesitará un argumento y el otro ninguno. No es lógico utilizar otro sistema para construir el objeto&amp;hellip; ¿O sí?&lt;/p&gt;
+&lt;p&gt;Tras haberlo hecho así numerosas veces, he descubierto que hay otra manera mucho más chula: Utilizando un método que me fabrique el objeto. De esta manera puedo diferenciar entre la forma de construirlo de una manera y la otra. Es decir: tendré el método &lt;em&gt;createInMemory&lt;/em&gt; y &lt;em&gt;createInFile&lt;/em&gt;. Opcionalmente podré transformar el constructor en privado para evitar su uso de forma indebida (aunque no soy muy partidario de esto).&lt;/p&gt;
+&lt;p&gt;Con esta simple transformación consigo que el constructor no lance excepciones y, además, tengo una manera elegante de ir construyendo el objeto con más de una instrucción, mucho más verboso cuando tenga que cambiarlo.&lt;/p&gt;
+&lt;p&gt;Otra ventaja: Si necesito añadir nuevos &amp;ldquo;constructores&amp;rdquo;, como por ejemplo una base de datos remota, bastará con ofrecer más fábricas: &lt;em&gt;createRemote&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Un ejemplo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;DataAccess&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;DataAccess&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; DataAccess &lt;span style=&#34;color:#a6e22e&#34;&gt;createInMemory&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;throws&lt;/span&gt; SQLException&lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;    DataAccess result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; DataAccess&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    result&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;setConnectionString&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;in memory&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;    result&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;buildDatabase&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; result&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;  &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; DataAccess &lt;span style=&#34;color:#a6e22e&#34;&gt;createMySql&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;throws&lt;/span&gt; SQLException&lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    DataAccess result &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; DataAccess&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    result&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;setConnectionString&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;mysql&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(!&lt;/span&gt;result&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;hasDatabase&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;())&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;        result&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;buildDatabase&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; result&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;fábricas-abstractas&#34;&gt;Fábricas abstractas&lt;/h3&gt;
+&lt;p&gt;Considero de suma importancia hacer nuestro código de manera que pueda crecer,
+sin limitarlo desde su creación. El uso de estas fábricas permite que en el
+futuro puedan transformarse fácilmente en &lt;a href=&#34;https://es.wikipedia.org/wiki/Abstract_Factory_(patr%C3%B3n_de_dise%C3%B1o)&#34;&gt;Fábricas Abstractas&lt;/a&gt;, dando mayor
+funcionalidad con unos cambios muy pequeños.&lt;/p&gt;
+&lt;h3 id=&#34;pruebas&#34;&gt;Pruebas&lt;/h3&gt;
+&lt;p&gt;Cuando se utiliza un constructor complejo, la realización de pruebas se ve
+obstaculizada. En cambio, cuando el constructor es simple y lo que se complican
+son las operaciones, resulta más sencillo de probar, ya que puedes construir el
+objeto en el &lt;em&gt;setUp&lt;/em&gt; con la completa seguridad de que no va a fallar. Sin
+embargo, cuando se utilizan constructores complejos, no hay manera de probarlo.&lt;/p&gt;
+&lt;p&gt;Si una operación (un método) lanza una excepción, la operación te está avisando
+de algo. Si es el constructor el que la lanza, no puedes estar seguro de qué
+operación se estaba realizando en ese momento. Esto dificulta terriblemente las
+pruebas y complica cualquier intento de &lt;em&gt;mockear&lt;/em&gt; el objeto.&lt;/p&gt;
+&lt;h2 id=&#34;conclusión&#34;&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;Ya que nuestras clases tienden a ser complejas, no ensuciemos el código desde el
+principio y tratemos de usar constructores sencillos. Cuando es el constructor
+el que hace el trabajo, ¿qué les queda a los métodos? Deleguemos este trabajo.&lt;/p&gt;
+
+        
+      </description>
     </item>
     
     <item>
@@ -33,9 +305,59 @@ Durante mi carrera profesional he hecho muchas cosas feas, así que no me echéi
       <pubDate>Mon, 16 Jan 2012 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/patron-singleton/</guid>
-      <description>Para qué sirve Permite tener una única instancia de un objeto en toda la aplicación
-  Cómo implementarlo en Java Necesitamos ocultar el constructor, haciéndolo privado. Para poder obtener el objeto, necesitaremos un método estático que lo construya si es necesario o lo devuelva si ya estaba construido. Hay varias implementaciones, por ejemplo:
-1public class Example { 2 private static Example instance = null; 3 4 private Example() { 5 } 6 7 public static Example getInstance() { 8 if (instance == null) 9 instance = new Example(); 10 return instance; 11 } 12} ¿Cuándo utilizarlo?</description>
+      <description>
+        
+          &lt;h2 id=&#34;para-qué-sirve&#34;&gt;Para qué sirve&lt;/h2&gt;
+&lt;p&gt;Permite tener una única instancia de un objeto en toda la aplicación&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/patterns.png&#34;
+         alt=&#34;Patrones de diseño&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;cómo-implementarlo-en-java&#34;&gt;Cómo implementarlo en Java&lt;/h2&gt;
+&lt;p&gt;Necesitamos ocultar el constructor, haciéndolo privado. Para poder obtener el objeto, necesitaremos un método estático que lo construya si es necesario o lo devuelva si ya estaba construido. Hay varias implementaciones, por ejemplo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; Example instance &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;private&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Example&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; Example &lt;span style=&#34;color:#a6e22e&#34;&gt;getInstance&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;()&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;instance &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;            instance &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;new&lt;/span&gt; Example&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; instance&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;cuándo-utilizarlo&#34;&gt;¿Cuándo utilizarlo?&lt;/h2&gt;
+&lt;p&gt;Ésta es la más fácil: &lt;em&gt;NUNCA&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Vale, pero&amp;hellip; para algo servirá&amp;hellip; &lt;em&gt;NO&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;¿El patrón singleton es el diablo? &lt;em&gt;SÍ&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;¿No hay ninguna excepción?&lt;/p&gt;
+&lt;p&gt;Tan solo se me han ocurrido dos casos en los que es posible que nos ayude este patrón. En cualquier otro caso es muy probable que traiga más problemas que soluciones. La primera de ellas es &lt;em&gt;el sistema de log&lt;/em&gt;. La segunda, &lt;em&gt;el sistema de configuración&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Tanto la configuración como el sistema de log son elementos de nuestra aplicación que se espera que no cambien demasiado a menudo, y deben ser accesibles desde todos los puntos de nuestra aplicación.&lt;/p&gt;
+&lt;h2 id=&#34;cosas-que-deben-tenerse-en-cuenta&#34;&gt;Cosas que deben tenerse en cuenta&lt;/h2&gt;
+&lt;p&gt;Si por una casualidad decidimos implementar un singleton o bien nos encontramos con un singleton, recomiendo siempre crear un método &lt;em&gt;reset&lt;/em&gt;, que permita establecer el estado inicial del singleton. Esto permitirá poder hacer pruebas, ya que podemos asumir que, por definición, &lt;em&gt;no se pueden hacer pruebas de un singleton&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Ahora bien: si vemos que vamos a necesitar más de un singleton (por ejemplo, necesitamos el sistema de log y la configuración), mi consejo es implementar ambos como objetos normales y crear un único singleton que permita crear y obtener la única instancia de ambos. A veces llaman a este método &amp;ldquo;&lt;em&gt;patrón toolbox&lt;/em&gt;&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;De esta manera podemos probar cada objeto por separado y tenemos un objeto que tan sólo construirá el resto. Aún así, insisto en que &lt;em&gt;no es una práctica recomendada&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;De hecho, como regla general, &lt;em&gt;no es recomendable utilizar clases estáticas&lt;/em&gt;, ya que suelen ser más complejas de probar y son más difíciles de &amp;ldquo;transformar&amp;rdquo;. Me explico: durante la vida del software, a menudo que van apareciendo nuevos requisitos, las cosas se transforman: los literales se transforman en constantes; las constantes, en variables; las variables en sentencias; las sentencias, en métodos; los métodos, en clases. Si tenemos un método estático, sólo puede derivar en una clase estática, lo que resulta imposible de probar y, además, imposible de paralelizar.&lt;/p&gt;
+&lt;p&gt;Imaginaos que tenemos una clase estática con una funcionalidad determinada y queremos usarla desde un servidor web. Bien: simplemente no podemos. Existen dos opciones:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;La clase tiene estado: dos accesos concurrentes alterarán el estado obteniendo resultados inciertos.&lt;/li&gt;
+&lt;li&gt;La clase no tiene estado: ¿Qué más nos da implementarla como dinámica? Quizá en el futuro sí necesitemos estado.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;resumiendo&#34;&gt;Resumiendo&lt;/h2&gt;
+&lt;p&gt;Así que ya sabéis: evitad el uso de &lt;em&gt;static&lt;/em&gt; en la medida de lo posible.&lt;/p&gt;
+&lt;h2 id=&#34;referencias&#34;&gt;Referencias&lt;/h2&gt;
+&lt;p&gt;Aunque me las pasó Julia después de haber escrito este artículo, creo que pueden resultar muy útiles:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://misko.hevery.com/2008/08/17/singletons-are-pathological-liars/&#34;&gt;Singletons are Pathological Liars&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://misko.hevery.com/2008/08/25/root-cause-of-singletons/&#34;&gt;Root Cause of Singletons&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://misko.hevery.com/code-reviewers-guide/flaw-brittle-global-state-singletons/&#34;&gt;Flaw: Brittle Global State &amp;amp; Singletons&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
     </item>
     
     <item>
@@ -44,8 +366,40 @@ Durante mi carrera profesional he hecho muchas cosas feas, así que no me echéi
       <pubDate>Mon, 02 Jan 2012 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/estatico-vs-dinamico/</guid>
-      <description>A menudo escribo tutoriales. Realmente, estos tutoriales son artículos de opinión: Alguien puede estar en desacuerdo conmigo. Siempre hay otra manera de hacer las cosas y es más que probable que yo no la conozca. En este caso va a ser más patente.
-En este caso vamos a ver las diferencias que hay entre hacer las cosas de manera estática y hacerlas dinámica. Y veremos también cómo hay más cosas estáticas de las que creemos.</description>
+      <description>
+        
+          &lt;p&gt;A menudo escribo tutoriales. Realmente, estos tutoriales son artículos de opinión: Alguien puede estar en desacuerdo conmigo. Siempre hay otra manera de hacer las cosas y es más que probable que yo no la conozca. En este caso va a ser más patente.&lt;/p&gt;
+&lt;p&gt;En este caso vamos a ver las diferencias que hay entre hacer las cosas de manera estática y hacerlas dinámica. Y veremos también cómo hay más cosas estáticas de las que creemos.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/programming.jpg&#34;
+         alt=&#34;En este caso, no importa el lenguaje&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;p&gt;Primero vamos a definir las cosas: algo es &lt;em&gt;estático&lt;/em&gt; cuando se impide su crecimiento. Algo es &lt;em&gt;dinámico&lt;/em&gt; si es permite el crecimiento sin grandes consecuencias para sus colaboradores.&lt;/p&gt;
+&lt;p&gt;Es obvio pensar que un &lt;em&gt;tipo básico&lt;/em&gt; (números y cadenas) es &lt;em&gt;estático&lt;/em&gt;. Tenemos el valor de la variable y nada más. No existe la posibilidad de agregar nada a un tipo básico.&lt;/p&gt;
+&lt;p&gt;Alguien puede decirme que en &lt;em&gt;Ruby&lt;/em&gt; sí se pueden añadir métodos a los &amp;ldquo;tipos básicos&amp;rdquo;. Por definición, si se pueden añadir métodos, no es un tipo básico. Es&amp;hellip; otra cosa.&lt;/p&gt;
+&lt;p&gt;También es obvio que un &lt;em&gt;array&lt;/em&gt; es &lt;em&gt;estático&lt;/em&gt;, ya que su tamaño es constante y cambiarlo implica una gestión algo ineficiente de la memoria.&lt;/p&gt;
+&lt;p&gt;Pero&amp;hellip; ¿Qué ocurre con los &lt;em&gt;vectores&lt;/em&gt;, &lt;em&gt;tablas hash&lt;/em&gt;, &lt;em&gt;sets&lt;/em&gt;, &amp;hellip;?&lt;/p&gt;
+&lt;p&gt;Pues a primera vista son dinámicos, ya que permiten modificar su tamaño. Sin embargo, desde otro punto de vista, &lt;em&gt;son completamente estáticos&lt;/em&gt;, ya que es una solución genérica a un problema y no admite su especialización.&lt;/p&gt;
+&lt;h2 id=&#34;consecuencias&#34;&gt;Consecuencias&lt;/h2&gt;
+&lt;p&gt;Darse cuenta de esto tiene consecuencias. La primera y más obvia es descubrir que no deberíamos usar estos tipos de forma automática. Es mejor &lt;em&gt;encapsularlos&lt;/em&gt; en clases específicas que los utilicen. De esta manera sí podremos especializarlos, adaptándolos a cada problema.&lt;/p&gt;
+&lt;p&gt;Pondremos un ejemplo: en uno de nuestros objetos necesitamos varias &lt;em&gt;tablas
+hash&lt;/em&gt;. A primera vista, estas tablas son todas iguales. Pero si fueran iguales,
+sería una sola tabla. Es decir: ya existe un elemento diferenciador. Sin
+embargo, desde nuestra clase estamos manejando las tres. Esto es, claramente,
+una violación del &lt;a href=&#34;https://en.wikipedia.org/wiki/Single_responsibility_principle*&#34;&gt;principio de única responsabilidad&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;¿Significa esto que tengo que pasar cada tabla a un objeto que la maneja? Sí, claramente.&lt;/p&gt;
+&lt;p&gt;Esto tiene su utilidad. Supongamos que esas tres tablas evolucionan de forma diferente. Por ejemplo, su tamaño es diferente. De pronto, descubrimos que una de las tablas se ha vuelto terriblemente grande. En el caso de tener un único objeto con todas las hashes, tenemos un problema. Si hemos aislado su manejo, podemos cambiar la implementación de una tabla hash por el de una &lt;em&gt;caché&lt;/em&gt;, guardando a disco los elementos menos utilizados, o incluso cambiarlo por una base de datos.&lt;/p&gt;
+&lt;p&gt;De esta manera, se demuestra que una lista o una tabla hash es &lt;em&gt;estática&lt;/em&gt;, ya que no admite cambios de implementación. No son objetos en sí mismos, sino que debemos considerarlos útiles cuando se encapsulan dentro de objetos que les aportan significado. Son herramientas, no objetos finales.&lt;/p&gt;
+&lt;h3 id=&#34;sacrificios&#34;&gt;Sacrificios&lt;/h3&gt;
+&lt;p&gt;A menudo sacrificamos la buena programación por terminar antes. Es lógico: programar bien lleva mucho tiempo. Sin embargo, hay que tratar de llegar a un compromiso entre el tiempo dedicado y la calidad del código. Eso es lo que diferencia a un programador de un profesional.&lt;/p&gt;
+&lt;p&gt;Un programador resuelve el problema. Un profesional aporta la mejor solución que conoce en cada momento.&lt;/p&gt;
+&lt;p&gt;Estos sacrificios pueden realizarse esporádicamente cuando los colaboradores de nuestra clase son otras clases privadas. Sin embargo, &lt;em&gt;compartir tipos básicos, una lista o una tabla hash por medio de una API puede ser el mayor de los errores&lt;/em&gt;, ya que estamos limitando su utilización. Probablemente sea siempre una mejor solución utilizar un objeto hecho a propósito.&lt;/p&gt;
+&lt;p&gt;Un ejemplo de esto puede verse en la autenticación. Tenemos nuestra preciosa función &amp;ldquo;autenticate(String user, String password)&amp;rdquo;. Sin embargo, ahora resulta que queremos autenticar un &lt;em&gt;OpenId&lt;/em&gt;. Nuestra función no ofrece suficiente versatilidad. Sin embargo, si hubiéramos encapsulado los datos en un objeto, tendríamos: &amp;ldquo;autenticate(Credentials credentials)&amp;rdquo;, lo que sí es suficientemente versátil.&lt;/p&gt;
+
+        
+      </description>
     </item>
     
     <item>
@@ -54,9 +408,205 @@ En este caso vamos a ver las diferencias que hay entre hacer las cosas de manera
       <pubDate>Thu, 02 Dec 2010 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/patrones-ejemplos/</guid>
-      <description>¿No os ha pasado nunca que encontráis un artículo tan bueno que decís &amp;ldquo;éste me lo guardo&amp;rdquo;? ¿Y qué ocurre cuando lo que os ha gustado tanto es un comentario?
-No he podido resistirme a hacerme eco de este comentario, encontrado en stackoverflow, de BalusC.
-   You can find an overview of a lot design patterns in Wikipedia . It also mentions which patterns are mentioned by GoF. I&amp;rsquo;ll sum them up here and try to assign as much as possible pattern implementations found in both the Java SE and Java EE API&amp;rsquo;s.</description>
+      <description>
+        
+          &lt;p&gt;¿No os ha pasado nunca que encontráis un artículo tan bueno que decís &amp;ldquo;éste me lo guardo&amp;rdquo;? ¿Y qué ocurre cuando lo que os ha gustado tanto es un comentario?&lt;/p&gt;
+&lt;p&gt;No he podido resistirme a hacerme eco de &lt;a href=&#34;https://stackoverflow.com/questions/1673841/examples-of-gof-design-patterns/2707195#2707195&#34;&gt;este comentario, encontrado en
+stackoverflow&lt;/a&gt;, de &lt;a href=&#34;https://balusc.blogspot.com/:&#34;&gt;BalusC&lt;/a&gt;.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/patterns.png&#34;
+         alt=&#34;Patrones de diseño&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;hr&gt;
+&lt;p&gt;You can find an overview of a lot design patterns in &lt;a href=&#34;https://en.wikipedia.org/wiki/Design_pattern_%28computer_science%29#Classification_and_list&#34;&gt;Wikipedia&lt;/a&gt; . It also mentions which patterns are mentioned by GoF. I&amp;rsquo;ll sum them up here and try to assign as much as possible pattern implementations found in both the Java SE and Java EE API&amp;rsquo;s.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;creational-patterns&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Creational_pattern&#34;&gt;Creational patterns&lt;/a&gt;&lt;/h2&gt;
+&lt;h3 id=&#34;abstract-factory&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Abstract_factory_pattern&#34;&gt;Abstract factory&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by creational methods returning an abstract/interface type&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Calendar.html#getInstance%28%29&#34;&gt;java.util.Calendar#getInstance()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Arrays.html#asList%28T...%29&#34;&gt;java.util.Arrays#asList()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/ResourceBundle.html#getBundle%28java.lang.String%29&#34;&gt;java.util.ResourceBundle#getBundle()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/net/URL.html#openConnection%28%29&#34;&gt;java.net.URL#openConnection()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/sql/DriverManager.html#getConnection%28java.lang.String%29&#34;&gt;java.sql.DriverManager#getConnection()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/sql/Connection.html#createStatement%28%29&#34;&gt;java.sql.Connection#createStatement()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/sql/Statement.html#executeQuery%28java.lang.String%29&#34;&gt;java.sql.Statement#executeQuery()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/text/NumberFormat.html#getInstance%28%29&#34;&gt;java.text.NumberFormat#getInstance()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/management/ManagementFactory.html&#34;&gt;java.lang.management.ManagementFactory&lt;/a&gt;  (all &lt;code&gt;getXXX()&lt;/code&gt; methods)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/nio/charset/Charset.html#forName%28java.lang.String%29&#34;&gt;java.nio.charset.Charset#forName()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/javax/xml/parsers/DocumentBuilderFactory.html#newInstance%28%29&#34;&gt;javax.xml.parsers.DocumentBuilderFactory#newInstance()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/javax/xml/transform/TransformerFactory.html#newInstance%28%29&#34;&gt;javax.xml.transform.TransformerFactory#newInstance()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/javax/xml/xpath/XPathFactory.html#newInstance%28%29&#34;&gt;javax.xml.xpath.XPathFactory#newInstance()&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;builder&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Builder_pattern&#34;&gt;Builder&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by creational methods returning the instance itself&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/StringBuilder.html#append%28boolean%29&#34;&gt;java.lang.StringBuilder#append()&lt;/a&gt;  (unsynchronized)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/StringBuffer.html#append%28boolean%29&#34;&gt;java.lang.StringBuffer#append()&lt;/a&gt;  (synchronized)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/nio/ByteBuffer.html#put%28byte%29&#34;&gt;java.nio.ByteBuffer#put()&lt;/a&gt;  (also on &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/nio/CharBuffer.html#put%28char%29&#34;&gt;CharBuffer&lt;/a&gt;, &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/nio/ShortBuffer.html#put%28java.nio.ShortBuffer%29&#34;&gt;ShortBuffer&lt;/a&gt;, &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/nio/IntBuffer.html#put%28int%29&#34;&gt;IntBuffer&lt;/a&gt;, &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/nio/LongBuffer.html#put%28java.nio.LongBuffer%29&#34;&gt;LongBuffer&lt;/a&gt;, &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/nio/FloatBuffer.html#put%28float%29&#34;&gt;FloatBuffer&lt;/a&gt;  and &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/nio/DoubleBuffer.html#put%28double%29&#34;&gt;DoubleBuffer&lt;/a&gt; )&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/javax/swing/GroupLayout.Group.html#addComponent%28java.awt.Component%29&#34;&gt;javax.swing.GroupLayout.Group#addComponent()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;All implementations of &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Appendable.html&#34;&gt;java.lang.Appendable&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;factory-method&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Factory_method_pattern&#34;&gt;Factory method&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by creational methods returning a concrete type&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Object.html#toString%28%29&#34;&gt;java.lang.Object#toString()&lt;/a&gt;  (overrideable in all subclasses)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Class.html#newInstance%28%29&#34;&gt;java.lang.Class#newInstance()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Integer.html#valueOf%28java.lang.String%29&#34;&gt;java.lang.Integer#valueOf(String)&lt;/a&gt;  (also on &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Boolean.html#valueOf%28boolean%29&#34;&gt;Boolean&lt;/a&gt;, &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Byte.html#valueOf%28byte%29&#34;&gt;Byte&lt;/a&gt;, &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Character.html#valueOf%28char%29&#34;&gt;Character&lt;/a&gt;, &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Short.html#valueOf%28java.lang.String%29&#34;&gt;Short&lt;/a&gt;, &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Long.html#valueOf%28java.lang.String%29&#34;&gt;Long&lt;/a&gt;, &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Float.html#valueOf%28float%29&#34;&gt;Float&lt;/a&gt;  and &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Double.html#valueOf%28double%29&#34;&gt;Double&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Class.html#forName%28java.lang.String%29&#34;&gt;java.lang.Class#forName()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/reflect/Array.html#newInstance%28java.lang.Class&#34;&gt;java.lang.reflect.Array#newInstance()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/reflect/Constructor.html#newInstance%28java.lang.Object...%29&#34;&gt;java.lang.reflect.Constructor#newInstance()&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;prototype&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Prototype_pattern&#34;&gt;Prototype&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by creational methods returning a &lt;em&gt;different&lt;/em&gt; instance of itself with the same properties&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Object.html#clone%28%29&#34;&gt;java.lang.Object#clone()&lt;/a&gt;  (the class has to implement &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Cloneable.html&#34;&gt;java.lang.Cloneable&lt;/a&gt; )&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;singleton&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Singleton_pattern&#34;&gt;Singleton&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by creational methods returning the &lt;em&gt;same&lt;/em&gt; instance (usually of itself) everytime&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Runtime.html#getRuntime%28%29&#34;&gt;java.lang.Runtime#getRuntime()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/awt/Desktop.html#getDesktop%28%29&#34;&gt;java.awt.Desktop#getDesktop()&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;structural-patterns&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Structural_pattern&#34;&gt;Structural patterns&lt;/a&gt;&lt;/h2&gt;
+&lt;h3 id=&#34;adapter&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Adapter_pattern&#34;&gt;Adapter&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by creational methods taking an instance of &lt;em&gt;different&lt;/em&gt; abstract/interface type and returning an implementation of own/another abstract/interface type which &lt;strong&gt;decorates/overrides&lt;/strong&gt; the given instance&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/io/InputStreamReader.html#InputStreamReader%28java.io.InputStream%29&#34;&gt;java.io.InputStreamReader(InputStream)&lt;/a&gt;  (returns a &lt;code&gt;Reader&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/io/OutputStreamWriter.html#OutputStreamWriter%28java.io.OutputStream%29&#34;&gt;java.io.OutputStreamWriter(OutputStream)&lt;/a&gt;  (returns a &lt;code&gt;Writer&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/javax/xml/bind/annotation/adapters/XmlAdapter.html#marshal%28BoundType%29&#34;&gt;javax.xml.bind.annotation.adapters.XmlAdapter#marshal()&lt;/a&gt;  and &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/javax/xml/bind/annotation/adapters/XmlAdapter.html#unmarshal%28ValueType%29&#34;&gt;#unmarshal()&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;bridge&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Bridge_pattern&#34;&gt;Bridge&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by creational methods taking an instance of &lt;em&gt;different&lt;/em&gt; abstract/interface type and returning an implementation of own abstract/interface type which &lt;em&gt;delegates/uses&lt;/em&gt; the given instance&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;None comes to mind yet. A fictive example would be &lt;code&gt;new LinkedHashMap(LinkedHashSet&amp;lt;K&amp;gt;, List&amp;lt;V&amp;gt;)&lt;/code&gt; which returns an unmodifiable linked map which doesn&amp;rsquo;t clone the items, but &lt;em&gt;uses&lt;/em&gt; them. The&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Collections.html#newSetFromMap%28java.util.Map%29&#34;&gt;java.util.Collections#newSetFromMap()&lt;/a&gt;  and &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Collections.html#singleton%28T%29&#34;&gt;singletonXXX()&lt;/a&gt;  methods however comes close.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;composite&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Composite_pattern&#34;&gt;Composite&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by behavioral methods taking an instance of &lt;em&gt;same&lt;/em&gt; abstract/interface type&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Map.html#putAll%28java.util.Map%29&#34;&gt;java.util.Map#putAll(Map)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/List.html#addAll%28java.util.Collection%29&#34;&gt;java.util.List#addAll(Collection)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Set.html#addAll%28java.util.Collection%29&#34;&gt;java.util.Set#addAll(Collection)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/nio/ByteBuffer.html#put%28java.nio.ByteBuffer%29&#34;&gt;java.nio.ByteBuffer#put(ByteBuffer)&lt;/a&gt;  (also on &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/nio/CharBuffer.html#put%28char%29&#34;&gt;CharBuffer&lt;/a&gt;, &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/nio/ShortBuffer.html#put%28java.nio.ShortBuffer%29&#34;&gt;ShortBuffer&lt;/a&gt;, &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/nio/IntBuffer.html#put%28int%29&#34;&gt;IntBuffer&lt;/a&gt;, &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/nio/LongBuffer.html#put%28java.nio.LongBuffer%29&#34;&gt;LongBuffer&lt;/a&gt;, &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/nio/FloatBuffer.html#put%28float%29&#34;&gt;FloatBuffer&lt;/a&gt;  and &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/nio/DoubleBuffer.html#put%28double%29&#34;&gt;DoubleBuffer&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/awt/Container.html#add%28java.awt.Component%29&#34;&gt;java.awt.Container#add(Component)&lt;/a&gt;  (practically all over Swing thus)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;decorator&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Decorator_pattern&#34;&gt;Decorator&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by creational methods taking an instance of &lt;em&gt;same&lt;/em&gt; abstract/interface type&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;All subclasses of &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/io/InputStream.html&#34;&gt;java.io.InputStream&lt;/a&gt;, &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/io/OutputStream.html&#34;&gt;OutputStream&lt;/a&gt; , &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/io/Reader.html&#34;&gt;Reader&lt;/a&gt;  and&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/io/Writer.html&#34;&gt;Writer&lt;/a&gt;  have a constructor taking an instance of same type.&lt;/li&gt;
+&lt;li&gt;Almost all implementations of &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/List.html&#34;&gt;java.util.List&lt;/a&gt; , &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Set.html&#34;&gt;Set&lt;/a&gt;  and &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Map.html&#34;&gt;Map&lt;/a&gt;  have a constructor taking an instance of same type.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Collections.html&#34;&gt;java.util.Collections&lt;/a&gt; , the &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Collections.html#checkedCollection%28java.util.Collection&#34;&gt;checkedXXX()&lt;/a&gt; ,%20java.lang.Class%29,&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Collections.html#synchronizedCollection%28java.util.Collection%29&#34;&gt;synchronizedXXX()&lt;/a&gt;  and &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Collections.html#unmodifiableCollection%28java.util.Collection%29&#34;&gt;unmodifiableXXX()&lt;/a&gt;  methods.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServletRequestWrapper.html&#34;&gt;javax.servlet.http.HttpServletRequestWrapper&lt;/a&gt;  and &lt;a href=&#34;https://java.sun.com/javaee/5/docs/api/javax/servlet/http/HttpServletResponseWrapper.html&#34;&gt;HttpServletResponseWrapper&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;facade&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Facade_pattern&#34;&gt;Facade&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by behavioral methods which internally uses instances of &lt;em&gt;different&lt;/em&gt; independent abstract/interface types&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javaee/6/docs/api/javax/faces/webapp/FacesServlet.html&#34;&gt;javax.faces.webapp.FacesServlet&lt;/a&gt; , it internally uses under each the&lt;/li&gt;
+&lt;li&gt;abstract/interface types &lt;a href=&#34;https://java.sun.com/javaee/6/docs/api/javax/servlet/ServletContext.html&#34;&gt;ServletContext&lt;/a&gt; , &lt;a href=&#34;https://java.sun.com/javaee/6/docs/api/javax/faces/lifecycle/Lifecycle.html&#34;&gt;LifeCycle&lt;/a&gt; , &lt;a href=&#34;https://java.sun.com/javaee/6/docs/api/javax/faces/application/ViewHandler.html&#34;&gt;ViewHandler&lt;/a&gt; ,&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javaee/6/docs/api/javax/faces/application/NavigationHandler.html&#34;&gt;NavigationHandler&lt;/a&gt;  and many more without that the enduser has to worry about it (which are however overrideable by injection).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;flyweight&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Flyweight_pattern&#34;&gt;Flyweight&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by creational methods returning a cached instance, a bit the &amp;ldquo;multiton&amp;rdquo; idea&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Integer.html#valueOf%28int%29&#34;&gt;java.lang.Integer#valueOf(int)&lt;/a&gt;  (also on &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Boolean.html#valueOf%28boolean%29&#34;&gt;Boolean&lt;/a&gt; , &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Byte.html#valueOf%28byte%29&#34;&gt;Byte&lt;/a&gt; , &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Character.html#valueOf%28char%29&#34;&gt;Character&lt;/a&gt; ,&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Short.html#valueOf%28java.lang.String%29&#34;&gt;Short&lt;/a&gt; , &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Long.html#valueOf%28java.lang.String%29&#34;&gt;Long&lt;/a&gt; , &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Float.html#valueOf%28float%29&#34;&gt;Float&lt;/a&gt;  and &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Double.html#valueOf%28double%29&#34;&gt;Double&lt;/a&gt; )&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;proxy&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Proxy_pattern&#34;&gt;Proxy&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by creational methods which returns an implementation of given abstract/interface type which in turn &lt;em&gt;delegates/uses&lt;/em&gt; a &lt;em&gt;different&lt;/em&gt; implementation of given abstract/interface type&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/reflect/Proxy.html&#34;&gt;java.lang.reflect.Proxy&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/rmi/package-summary.html&#34;&gt;java.rmi.*&lt;/a&gt; , the whole API actually.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The Wikipedia example is IMHO a bit poor, lazy loading has actually completely nothing to do with the proxy pattern at all&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;behavioral-patterns&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Behavioral_pattern&#34;&gt;Behavioral patterns&lt;/a&gt;&lt;/h2&gt;
+&lt;h3 id=&#34;chain-of-responsibility&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Chain_of_responsibility_pattern&#34;&gt;Chain of responsibility&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by behavioral methods which (indirectly) invokes the same method in &lt;em&gt;another&lt;/em&gt; implementation of &lt;em&gt;same&lt;/em&gt; abstract/interface type in a queue&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/logging/Logger.html#log%28java.util.logging.Level&#34;&gt;java.util.logging.Logger#log()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javaee/6/docs/api/javax/servlet/Filter.html#doFilter%28javax.servlet.ServletRequest&#34;&gt;javax.servlet.Filter#doFilter()&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;command&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Command_pattern&#34;&gt;Command&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by behavioral methods in an abstract/interface type which invokes a method in an implementation of a &lt;em&gt;different&lt;/em&gt; abstract/interface type which has been &lt;em&gt;encapsulated&lt;/em&gt; by the command implementation during its creation&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;All implementations of &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/Runnable.html&#34;&gt;java.lang.Runnable&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;All implementations of &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/javax/swing/Action.html&#34;&gt;javax.swing.Action&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;interpreter&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Interpreter_pattern&#34;&gt;Interpreter&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by behavioral methods returning a &lt;em&gt;structurally&lt;/em&gt; different instance/type of the given instance/type; note that parsing/formatting is not part of the pattern, determining the pattern and how to apply it is&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/regex/Pattern.html&#34;&gt;java.util.Pattern&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/text/Normalizer.html&#34;&gt;java.text.Normalizer&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;All subclasses of &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/text/Format.html&#34;&gt;java.text.Format&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;All subclasses of &lt;a href=&#34;https://java.sun.com/javaee/6/docs/api/javax/el/ELResolver.html&#34;&gt;javax.el.ELResolver&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;iterator&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Iterator_pattern&#34;&gt;Iterator&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by behavioral methods sequentially returning instances of a &lt;em&gt;different&lt;/em&gt; type from a queue&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;All implementations of &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Iterator.html&#34;&gt;java.util.Iterator&lt;/a&gt;  (thus under each also &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Scanner.html!&#34;&gt;java.util.Scanner&lt;/a&gt; ).&lt;/li&gt;
+&lt;li&gt;All implementations of &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Enumeration.html&#34;&gt;java.util.Enumeration&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;mediator&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Mediator_pattern&#34;&gt;Mediator&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by behavioral methods taking an instance of different abstract/interface type (usually using the command pattern) which delegates/uses the given instance&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Timer.html&#34;&gt;java.util.Timer&lt;/a&gt;  (all &lt;code&gt;scheduleXXX()&lt;/code&gt; methods)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/concurrent/Executor.html#execute%28java.lang.Runnable%29&#34;&gt;java.util.concurrent.Executor#execute()&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/concurrent/ExecutorService.html&#34;&gt;java.util.concurrent.ExecutorService&lt;/a&gt;  (the &lt;code&gt;invokeXXX()&lt;/code&gt; and &lt;code&gt;submit()&lt;/code&gt; methods)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/concurrent/ScheduledExecutorService.html&#34;&gt;java.util.concurrent.ScheduledExecutorService&lt;/a&gt;  (all &lt;code&gt;scheduleXXX()&lt;/code&gt; methods)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/lang/reflect/Method.html#invoke%28java.lang.Object&#34;&gt;java.lang.reflect.Method#invoke()&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;memento&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Memento_pattern&#34;&gt;Memento&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by behavioral methods which internally changes the state of the &lt;em&gt;whole&lt;/em&gt; instance&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Date.html&#34;&gt;java.util.Date&lt;/a&gt;  (the setter methods do that, &lt;code&gt;Date&lt;/code&gt; is internally represented by a &lt;code&gt;long&lt;/code&gt; value)&lt;/li&gt;
+&lt;li&gt;All implementations of &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/io/Serializable.html&#34;&gt;java.io.Serializable&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;All implementations of &lt;a href=&#34;https://java.sun.com/javaee/6/docs/api/javax/faces/component/StateHolder.html&#34;&gt;javax.faces.component.StateHolder&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;observer-or-publishsubscribe&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Observer_pattern&#34;&gt;Observer (or Publish/Subscribe)&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by behavioral methods which invokes a method on an instance of &lt;em&gt;another&lt;/em&gt; abstract/interface type, depending on own state&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Observer.html/%22java.util.Observable%22:https://java.sun.com/javase/6/docs/api/java/util/Observable.html&#34;&gt;java.util.Observer&lt;/a&gt;  (rarely used in real world though)&lt;/li&gt;
+&lt;li&gt;All implementations of &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/EventListener.html&#34;&gt;java.util.EventListener&lt;/a&gt;  (practically all over Swing thus)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javaee/6/docs/api/javax/servlet/http/HttpSessionBindingListener.html&#34;&gt;javax.servlet.http.HttpSessionBindingListener&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javaee/6/docs/api/javax/servlet/http/HttpSessionAttributeListener.html&#34;&gt;javax.servlet.http.HttpSessionAttributeListener&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javaee/6/docs/api/javax/faces/event/PhaseListener.html&#34;&gt;javax.faces.event.PhaseListener&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;state&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/State_pattern&#34;&gt;State&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by behavioral methods which changes its behaviour depending on the instance&amp;rsquo;s state which can be controlled externally&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;All implementations of &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Iterator.html&#34;&gt;java.util.Iterator&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javaee/6/docs/api/javax/faces/lifecycle/Lifecycle.html#execute%28javax.faces.context.FacesContext%29&#34;&gt;javax.faces.lifecycle.LifeCycle#execute()&lt;/a&gt;  (controlled by &lt;a href=&#34;https://java.sun.com/javaee/6/docs/api/javax/faces/webapp/FacesServlet.html&#34;&gt;FacesServlet&lt;/a&gt; , the behaviour is dependent on current phase (state) of JSF lifecycle)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;strategy&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Strategy_pattern&#34;&gt;Strategy&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by behavioral methods in an abstract/interface type which invokes a method in an implementation of a &lt;em&gt;different&lt;/em&gt; abstract/interface type which has been &lt;em&gt;passed-in&lt;/em&gt; as method argument into the strategy implementation&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/Comparator.html#compare%28T&#34;&gt;java.util.Comparator#compare()&lt;/a&gt; , executed by under each &lt;code&gt;Collections#sort()&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javaee/6/docs/api/javax/servlet/http/HttpServlet.html&#34;&gt;javax.servlet.http.HttpServlet&lt;/a&gt; , the &lt;code&gt;service()&lt;/code&gt; and all &lt;code&gt;doXXX()&lt;/code&gt; methods take &lt;code&gt;HttpServletRequest&lt;/code&gt; and &lt;code&gt;HttpServletResponse&lt;/code&gt; and the implementor has to process them (and not to get hold of them as instance variables!).&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javaee/6/docs/api/javax/servlet/Filter.html#doFilter%28javax.servlet.ServletRequest&#34;&gt;javax.servlet.Filter#doFilter()&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;template-method&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Template_method_pattern&#34;&gt;Template method&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by behavioral methods which already have a &amp;ldquo;default&amp;rdquo; behaviour definied by an abstract type&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;All non-abstract methods of &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/io/InputStream.html&#34;&gt;java.io.InputStream&lt;/a&gt; , &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/io/OutputStream.html&#34;&gt;java.io.OutputStream&lt;/a&gt; , &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/io/Reader.html&#34;&gt;java.io.Reader&lt;/a&gt;  and &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/io/Writer.html&#34;&gt;java.io.Writer&lt;/a&gt; .&lt;/li&gt;
+&lt;li&gt;All non-abstract methods of &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/AbstractList.html&#34;&gt;java.util.AbstractList&lt;/a&gt; , &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/AbstractSet.html&#34;&gt;java.util.AbstractSet&lt;/a&gt;  and &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/java/util/AbstractMap.html&#34;&gt;java.util.AbstractMap&lt;/a&gt; .&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javaee/6/docs/api/javax/servlet/http/HttpServlet.html&#34;&gt;javax.servlet.http.HttpServlet&lt;/a&gt; , all the &lt;code&gt;doXXX()&lt;/code&gt; methods by default sends a HTTP 405 &amp;ldquo;Method Not Allowed&amp;rdquo; error to the response. You&amp;rsquo;re free to implement none or any of them.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;visitor&#34;&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Visitor_pattern&#34;&gt;Visitor&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Recognizeable by two &lt;em&gt;different&lt;/em&gt; abstract/interface types which has methods definied which takes each the &lt;em&gt;other&lt;/em&gt; abstract/interface type; the one actually calls the method of the other and the other executes the desired strategy on it&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/javax/lang/model/element/AnnotationValue.html&#34;&gt;javax.lang.model.element.AnnotationValue&lt;/a&gt;  and &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/javax/lang/model/element/AnnotationValueVisitor.html&#34;&gt;javax.lang.model.element.AnnotationValueVisitor&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/javax/lang/model/element/Element.html&#34;&gt;javax.lang.model.element.Element&lt;/a&gt;  and &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/javax/lang/model/element/ElementVisitor.html&#34;&gt;javax.lang.model.element.ElementVisitor&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://java.sun.com/javase/6/docs/api/javax/lang/model/type/TypeMirror.html&#34;&gt;javax.lang.model.type.TypeMirror&lt;/a&gt;  and &lt;a href=&#34;https://java.sun.com/javase/6/docs/api/javax/lang/model/type/TypeVisitor.html&#34;&gt;javax.lang.model.type.TypeVisitor&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
     </item>
     
     <item>
@@ -65,8 +615,24 @@ No he podido resistirme a hacerme eco de este comentario, encontrado en stackove
       <pubDate>Sun, 12 Sep 2010 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/patrones-sistema-log/</guid>
-      <description>Voy a comenzar una serie de posts con la idea de mejorar la capacidad de identificar patrones y aprender cómo implementarlos. Esto ayudará al lector y también a mí a manejar Patrones de programación de una manera mucho más habitual.
-  La manera será la siguiente: En unos casos, pondré un trozo de código y se tendrá que averiguar a qué patrón de diseño se corresponde. En otros casos, plantearé un problema y habrá que identificar el patrón a utilizar y utilizarlo.</description>
+      <description>
+        
+          &lt;p&gt;Voy a comenzar una serie de posts con la idea de mejorar la capacidad de identificar patrones y aprender cómo implementarlos. Esto ayudará al lector y también a mí a manejar Patrones de programación de una manera mucho más habitual.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/patterns.png&#34;
+         alt=&#34;Patrones de diseño&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;p&gt;La manera será la siguiente: En unos casos, pondré un trozo de código y se tendrá que averiguar a qué patrón de diseño se corresponde. En otros casos, plantearé un problema y habrá que identificar el patrón a utilizar y utilizarlo.&lt;/p&gt;
+&lt;p&gt;Todos los ejemplos tratarán de ser sencillos y útiles en el mundo real.&lt;/p&gt;
+&lt;p&gt;Usaré Java 1.6 para las implementaciones.&lt;/p&gt;
+&lt;p&gt;En esta primera sesión, vamos a tratar de solucionar un problema bastante habitual.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Problema:&lt;/em&gt; Queremos hacer un sistema de log propio, de manera que nuestro programa principal pueda enviar mensajes desde donde quiera. El log deberá abrir un archivo e ir guardando información con un formato determinado. Es imprescindible, por eficiencia, no tener que estar abriendo el archivo en el que escribir cada vez que se quiera realizar esta operación. Además, se agradecería si no hubiera que inicializar esta funcionalidad.&lt;/p&gt;
+&lt;p&gt;Solución: el próximo día 27 (si nadie lo ha sacado antes).&lt;/p&gt;
+
+        
+      </description>
     </item>
     
     <item>
@@ -75,8 +641,74 @@ No he podido resistirme a hacerme eco de este comentario, encontrado en stackove
       <pubDate>Sat, 21 Aug 2010 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/api-windows/</guid>
-      <description>Para mi más completa desgracia, últimamente me he tenido que pelear bastante con la API de Windows. No será la primera vez que digo que esta API tiene tantas cosas mal hechas que darían para escribir un libro. Y voy a comenzar por ahí.
-Voy a utilizar la API pública de microsoft para explicar cosas que NUNCA deberían haberse hecho así. Si hay un millón de opciones, se ha elegido la peor.</description>
+      <description>
+        
+          &lt;p&gt;Para mi más completa desgracia, últimamente me he tenido que pelear bastante con la API de Windows. No será la primera vez que digo que esta API tiene tantas cosas mal hechas que darían para escribir un libro. Y voy a comenzar por ahí.&lt;/p&gt;
+&lt;p&gt;Voy a utilizar la API pública de microsoft para explicar cosas que NUNCA deberían haberse hecho así. Si hay un millón de opciones, se ha elegido la peor.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/windows.png&#34;
+         alt=&#34;Microsoft windows&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;p&gt;Hoy tan sólo voy a analizar una función de esta API: &lt;a href=&#34;https://msdn.microsoft.com/en-us/library/ms679351%28VS.85%29.aspx&#34;&gt;FormatMessage&lt;/a&gt; .&lt;/p&gt;
+&lt;p&gt;Cuando programo en GNU/Linux y alguna función del sistema da error, lo habitual
+es que se pueda consultar el error genérico preguntándole a &lt;code&gt;errno&lt;/code&gt;. En Windows
+es exactamente igual, solo que hay que llamar a &lt;code&gt;GetLastError()&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Cuando en GNU/Linux queremos obtener una cadena de texto genérica que explique
+el código de error, basta con llamar a &lt;a href=&#34;https://linux.die.net/man/3/strerror&#34;&gt;strerror&lt;/a&gt; , que devuelve una cadena
+constante (es decir, que no tenemos que liberar) con el mensaje de error. Si lo
+preferimos, podemos usar &lt;code&gt;strerror_r&lt;/code&gt; , que nos copia la cadena a un buffer.&lt;/p&gt;
+&lt;p&gt;En la API de windows existe una función semejante. O debería decir una
+&amp;ldquo;aberración&amp;rdquo; semejante. El problema es que han juntado las dos funcionalidades
+en una.&lt;/p&gt;
+&lt;h2 id=&#34;aberraciones&#34;&gt;Aberraciones&lt;/h2&gt;
+&lt;h3 id=&#34;aberración-1-una-función-con-7-parámetros&#34;&gt;Aberración 1: una función con 7 parámetros&lt;/h3&gt;
+&lt;p&gt;Algo tan simple como buscar en un vector de cadenas de texto y devolver una me obliga a llamar a una función con 7 parámetros.&lt;/p&gt;
+&lt;h3 id=&#34;aberración-2-números-mágicos&#34;&gt;Aberración 2: Números mágicos&lt;/h3&gt;
+&lt;p&gt;El primer parámetro es una combinación de números mágicos que tengo que conocer
+y saber cómo mezclar (mediante operaciones &lt;code&gt;OR&lt;/code&gt;).&lt;/p&gt;
+&lt;h3 id=&#34;aberración-3-decidir-el-modo-de-funcionamiento-en-función-a-un-parámetro&#34;&gt;Aberración 3: Decidir el modo de funcionamiento en función a un parámetro&lt;/h3&gt;
+&lt;p&gt;El primero de los parámetros es un número que va a alterar el comportamiento de
+toda la función. Una equivocación aquí y podré obtener un bonito &lt;code&gt;Segmentation Fault&lt;/code&gt; o me dejaré memoria sin liberar. Ideal para los amantes de los deportes
+de riesgo.&lt;/p&gt;
+&lt;h3 id=&#34;aberración-4-cambiar-el-tipo-de-un-dato-en-función-a-otro-parámetro&#34;&gt;Aberración 4: Cambiar el tipo de un dato en función a otro parámetro&lt;/h3&gt;
+&lt;p&gt;Dependiendo de lo indicado en el primero de los parámetros (flags), se decide si
+se está utilizando un puntero a caracter o un puntero a puntero a caracter.
+Vamos, lo mismito.&lt;/p&gt;
+&lt;h3 id=&#34;aberración-5-mezclar-parámetros-de-entrada-con-parámetros-de-salida&#34;&gt;Aberración 5: Mezclar parámetros de entrada con parámetros de salida&lt;/h3&gt;
+&lt;p&gt;Es deseable evitar devoler datos mediante los parámetros, aunque en C hay muchas
+veces que no queda más remedio. Pero lo habitual es poner los de salida al
+final, de forma que quede una estructura lógica: primero entran datos y luego
+salen.&lt;/p&gt;
+&lt;p&gt;Como somos más chulos que un ocho y queremos amargarle la vida al que venga
+detrás, mezclamos los parámetros de entrada y los de salida que lo adivine el
+siguiente.&lt;/p&gt;
+&lt;h3 id=&#34;aberración-6-parámetros-opcionales&#34;&gt;Aberración 6: Parámetros opcionales&lt;/h3&gt;
+&lt;p&gt;Por si resulta fácil usar la función, haremos que algunos de los parámetros sean
+opcionales. Así ignoraremos lo que pongan aquí si se han equivocado en los
+&amp;ldquo;flags&amp;rdquo; iniciales.&lt;/p&gt;
+&lt;h2 id=&#34;defender-lo-indefendible&#34;&gt;Defender lo indefendible&lt;/h2&gt;
+&lt;p&gt;¿Cómo puede haber una mente tan retorcida como para engendrar semejante cúmulo
+de malas prácticas? ¿Cómo puede defenderse que una función con estas
+características es &amp;ldquo;usable&amp;rdquo;?&lt;/p&gt;
+&lt;p&gt;Sinceramente, a veces me maravillo a mí mismo de las excusas que damos los
+programadores. Seguramente fue un intento de evitar tener que escribir
+diferentes funciones para &amp;ldquo;hacer lo mismo&amp;rdquo; (si una función reserva memoria y
+otra no, ya no hacen lo mismo).&lt;/p&gt;
+&lt;p&gt;O una manera de recordar fácilmente qué función hace lo que quiero (claro, con
+una función ya lo hago todo), frustrada por el hecho de que necesito consultar
+la ayuda para ver qué &amp;ldquo;flags&amp;rdquo; tengo que activar.&lt;/p&gt;
+&lt;p&gt;O una manera de poder incrementar la funcionalidad de la función sin tener que
+escribir funciones nuevas. Parece una gilipollez, pero esto lo he oído mucho más
+de lo que me gustaría.&lt;/p&gt;
+&lt;p&gt;En fin, que cada vez que una función de la API me da un error, me imprimo el
+código ya buscaré en la ayuda de Microsoft, que por lo menos estaré seguro de
+que mi programa no va a explotar.&lt;/p&gt;
+&lt;p&gt;Próximamente: imprimir un documento con la API de Windows.&lt;/p&gt;
+
+        
+      </description>
     </item>
     
   </channel>

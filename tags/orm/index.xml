@@ -13,8 +13,65 @@
       <pubDate>Thu, 16 Apr 2015 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/peewee-un-orm-para-python/</guid>
-      <description>Estoy acostumbrándome a usar Django para casi todo, y su ORM para acceder a la base de datos. Es muy completo y permite evitar tener que escribir SQL a mano, añadiendo la posibilidad de cambiar de motor de base de datos sin que sea traumático.
-Sin embargo, a veces necesito guardar cosas en disco desde programas de línea de órdenes, y no me parece bien depender de Django para algo así.</description>
+      <description>
+        
+          &lt;p&gt;Estoy acostumbrándome a usar &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt; para casi todo, y su &lt;a href=&#34;https://en.wikipedia.org/wiki/Object-relational_mapping&#34;&gt;ORM&lt;/a&gt; para acceder a
+la base de datos. Es muy completo y permite evitar tener que escribir &lt;a href=&#34;https://es.wikipedia.org/wiki/SQL&#34;&gt;SQL&lt;/a&gt; a
+mano, añadiendo la posibilidad de cambiar de motor de base de datos sin que sea
+traumático.&lt;/p&gt;
+&lt;p&gt;Sin embargo, a veces necesito guardar cosas en disco desde programas de línea
+de órdenes, y no me parece bien depender de &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt; para algo así. En estos
+casos suelo usar &lt;a href=&#34;https://docs.python.org/3.4/library/shelve.html&#34;&gt;Shelve&lt;/a&gt;, de la librería estándar, pero no es lo
+suficientemente versátil: no admite concurrencia.&lt;/p&gt;
+&lt;p&gt;En este post voy a explicar cómo utilizar &lt;a href=&#34;https://peewee.readthedocs.org/en/latest/&#34;&gt;Peewee&lt;/a&gt; como &lt;a href=&#34;https://en.wikipedia.org/wiki/Object-relational_mapping&#34;&gt;ORM&lt;/a&gt;.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/python.png&#34;
+         alt=&#34;Python&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;peewee&#34;&gt;Peewee&lt;/h2&gt;
+&lt;p&gt;Lo primero que me llamó la atención de &lt;a href=&#34;https://peewee.readthedocs.org/en/latest/&#34;&gt;Peewee&lt;/a&gt; es la documentación, ya que su &lt;a href=&#34;https://peewee.readthedocs.org/en/latest/peewee/quickstart.html#quickstart&#34;&gt;Quickstart&lt;/a&gt; es sencillo de entender y va al grano.&lt;/p&gt;
+&lt;p&gt;Veamos un ejemplo mínimo (sacado del &lt;a href=&#34;https://peewee.readthedocs.org/en/latest/peewee/quickstart.html#quickstart&#34;&gt;Quickstart&lt;/a&gt;):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; peewee &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;db &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; SqliteDatabase(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;people.db&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Person&lt;/span&gt;(Model):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;    name &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; CharField()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    birthday &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; DateField()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;    is_relative &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; BooleanField()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Meta&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;        database &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; db &lt;span style=&#34;color:#75715e&#34;&gt;# This model uses the &amp;#34;people.db&amp;#34; database.&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Resulta fácil de leer, ¿verdad?&lt;/p&gt;
+&lt;p&gt;En este caso se crea una tabla &lt;code&gt;Person&lt;/code&gt;. Vamos a conectarnos y a crear algunos datos:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# from datetime import date&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;db&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;connect()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;db&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;create_tables([Person], safe&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;uncle_bob &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Person(name&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Bob&amp;#39;&lt;/span&gt;, birthday&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;date(&lt;span style=&#34;color:#ae81ff&#34;&gt;1960&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;15&lt;/span&gt;), is_relative&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt;uncle_bob&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;save()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Como veis, conectamos a la base de datos, se crean las bases de datos (el &lt;code&gt;safe&lt;/code&gt; permite evitar un error si las tablas ya existen) y se crea una entrada.&lt;/p&gt;
+&lt;p&gt;Vamos ahora a corregir la fecha de nacimiento:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# from datetime import date&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;db&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;connect()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;4&lt;/span&gt;db&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;create_tables([Person], safe&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;True)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;5&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;6&lt;/span&gt;uncle_bob &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Person&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get(Person&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;name &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Bob&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;7&lt;/span&gt;uncle_bob&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;birthday &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; date(&lt;span style=&#34;color:#ae81ff&#34;&gt;1965&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;25&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;8&lt;/span&gt;uncle_bob&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;save()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Simple y claro.&lt;/p&gt;
+&lt;h3 id=&#34;sgbd&#34;&gt;SGBD&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://peewee.readthedocs.org/en/latest/&#34;&gt;Peewee&lt;/a&gt; soporta distintos SGBD, es decir, &lt;em&gt;Sistemas Gestores de Bases de Datos&lt;/em&gt; (en inglés, DBMS, de &lt;em&gt;Database Management Systems&lt;/em&gt;). Desgraciadamente sólo soporta tres, pero suelen ser los más habituales: &lt;a href=&#34;https://www.sqlite.org/&#34;&gt;SQLite&lt;/a&gt;, &lt;a href=&#34;https://www.mysql.com/&#34;&gt;MySQL&lt;/a&gt; y &lt;a href=&#34;https://www.postgresql.org.es/&#34;&gt;Postgresql&lt;/a&gt;. Basta con cambiar la declaración inicial de &lt;code&gt;db&lt;/code&gt; y está hecho.&lt;/p&gt;
+&lt;h2 id=&#34;pwiz&#34;&gt;pwiz&lt;/h2&gt;
+&lt;p&gt;Por si no fuera ya bastante molón de por sí, incluye &lt;code&gt;pwiz&lt;/code&gt;, que es un programa que permite obtener los modelos &lt;a href=&#34;https://peewee.readthedocs.org/en/latest/&#34;&gt;Peewee&lt;/a&gt; a partir de la base de datos:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;python -m pwiz -e postgresql my_blog &amp;gt; blog_models.py
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+        
+      </description>
     </item>
     
   </channel>

@@ -13,9 +13,320 @@
       <pubDate>Sat, 22 Aug 2015 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/en/blog/python-distribuido-celery/</guid>
-      <description>Nowadays, SOA architectures is in fashion. These architectures use little and very specific services, so they interact each other.
-In this post I&amp;rsquo;ll show how to use Celery in order to create a SOA architecture.
-  About Celery Celery is not a communication system, because it uses RabbitMQ, Redis, etc. as communication system. The same applies to argue it is not a message queue system. Neither it is a protocol, because it uses AMQP.</description>
+      <description>
+        
+          &lt;p&gt;Nowadays,
+&lt;abbr title=&#34;Service Oriented Architectures&#34;&gt;SOA&lt;/abbr&gt;
+
+architectures is in fashion. These architectures use little and very specific services, so they interact each other.&lt;/p&gt;
+&lt;p&gt;In this post I&amp;rsquo;ll show how to use &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; in order to create a SOA architecture.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/python.png&#34;
+         alt=&#34;Python&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;about-celery&#34;&gt;About Celery&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; is not a communication system, because it uses &lt;a href=&#34;https://www.rabbitmq.com&#34;&gt;RabbitMQ&lt;/a&gt;, &lt;a href=&#34;https://redis.io/&#34;&gt;Redis&lt;/a&gt;, etc. as communication system. The same applies to argue it is not a message queue system. Neither it is a protocol, because it uses &lt;a href=&#34;https://www.amqp.org/&#34;&gt;AMQP&lt;/a&gt;. Neither it is an abstraction over all these, because &lt;a href=&#34;https://kombu.readthedocs.org/en/latest/&#34;&gt;Kombu&lt;/a&gt; does that work, the communications library it uses under the hood.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; is a set ot tools to work easily with several services, something like syntactic sugar. It allows to launch services as &lt;strong&gt;tasks&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;how-to-install-it&#34;&gt;How to install it&lt;/h2&gt;
+&lt;p&gt;It is very easy to install; with &lt;code&gt;pip&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;pip install celery
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;or &lt;code&gt;apt&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;apt-get install python-celery
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The problem here is we need a &lt;strong&gt;Broker&lt;/strong&gt;. The &lt;strong&gt;Broker&lt;/strong&gt; is the way to transport messages from a service to another. In this case, we need a message queue.&lt;/p&gt;
+&lt;p&gt;We will use two of them as example: &lt;a href=&#34;https://www.rabbitmq.com&#34;&gt;RabbitMQ&lt;/a&gt; and &lt;a href=&#34;https://redis.io/&#34;&gt;Redis&lt;/a&gt;. The first one is somehow&amp;hellip; complicated, but very interesting if you already know and install the &lt;a href=&#34;https://www.rabbitmq.com/management.html&#34;&gt;management plugin&lt;/a&gt;. The second one is easier to be installed, but more difficult to see what is happening internally. To use &lt;a href=&#34;https://redis.io/&#34;&gt;Redis&lt;/a&gt; you will also require the library; with &lt;code&gt;pip&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;pip install redis
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;or with &lt;code&gt;apt&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;apt-get install python-redis
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;example&#34;&gt;Example&lt;/h2&gt;
+&lt;h3 id=&#34;creating-services&#34;&gt;Creating services&lt;/h3&gt;
+&lt;p&gt;Let&amp;rsquo;s start creating a little service to multiply two numbers:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Celery service example: task to multiply two numbers&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; celery &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Celery
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# RabbitMQ&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#app = Celery(&amp;#39;tasks&amp;#39;, broker=&amp;#39;amqp://guest@localhost//&amp;#39;, backend=&amp;#39;amqp&amp;#39;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Redis&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Celery(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;tasks&amp;#39;&lt;/span&gt;, broker&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;, backend&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;@app.task&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;multiply&lt;/span&gt;(a, b):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; a &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; b&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;The overhead added by &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; is quite small: importing the library, connecting (&lt;code&gt;app&lt;/code&gt;) and adding a decorator to our service.&lt;/p&gt;
+&lt;p&gt;It is already executable:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;$ celery worker --loglevel&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;info -A tasks
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt; -------------- celery@nightcrawler v3.1.17 &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;Cipater&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;---- **** -----
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;--- * ***  * -- Linux-3.16.0-4-amd64-x86_64-with-debian-8.0
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;-- * - **** ---
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;- ** ---------- &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;config&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;- ** ---------- .&amp;gt; app:         tasks:0x7f3476eb9b90
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;- ** ---------- .&amp;gt; transport:   redis://localhost:6379/0
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;- ** ---------- .&amp;gt; results:     redis://localhost:6379/0
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;- *** --- * --- .&amp;gt; concurrency: &lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;prefork&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;-- ******* ----
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;--- ***** ----- &lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;queues&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt; -------------- .&amp;gt; celery           exchange&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;celery&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;direct&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; key&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;celery
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;tasks&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;  . tasks.multiply
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;2015-03-20 21:56:16,526: INFO/MainProcess&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; Connected to redis://localhost:6379/0
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;2015-03-20 21:56:16,541: INFO/MainProcess&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; mingle: searching &lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; neighbors
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;2015-03-20 21:56:17,780: INFO/MainProcess&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; mingle: all alone
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;2015-03-20 21:56:17,791: WARNING/MainProcess&lt;span style=&#34;color:#f92672&#34;&gt;]&lt;/span&gt; celery@nightcrawler ready.&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;There is a lot of information here:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Used versions&lt;/li&gt;
+&lt;li&gt;Created queues&lt;/li&gt;
+&lt;li&gt;Brokers used to transport and retrieve results&lt;/li&gt;
+&lt;li&gt;Number of workers, that is, processes available to process a request in a concurrent way.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;And more, but it can be ignored right now.&lt;/p&gt;
+&lt;p&gt;We will leave it running.&lt;/p&gt;
+&lt;h3 id=&#34;running-services&#34;&gt;Running services&lt;/h3&gt;
+&lt;p&gt;That was the &lt;em&gt;subscriptor&lt;/em&gt;. Let create the &lt;em&gt;publisher&lt;/em&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Celery client example: request for two numbers multiplication&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; celery &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Celery
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# RabbitMQ&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#app = Celery(&amp;#39;tasks&amp;#39;, broker=&amp;#39;amqp://guest@localhost//&amp;#39;, backend=&amp;#39;amqp&amp;#39;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Redis&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Celery(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;tasks&amp;#39;&lt;/span&gt;, broker&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;, backend&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;promise &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;send_task(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;tasks.multiply&amp;#39;&lt;/span&gt;, args&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;])
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(promise&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get())&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This is more complicated&amp;hellip; but quick to be explained:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;First part is the same than before, because we need to conect to the same server.&lt;/li&gt;
+&lt;li&gt;Second part runs the task with its name, passing the arguments. That returns a &lt;em&gt;promise&lt;/em&gt;. At this point we have leaved a message in the queue.&lt;/li&gt;
+&lt;li&gt;Finally, the &lt;em&gt;promise&lt;/em&gt; is resolved with &lt;code&gt;promise.get()&lt;/code&gt;. Whenever, the service had read and processed the message, and it has leaved the result in other queue and, with this method, it is read.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;So it seems complicated&amp;hellip; but it could be even more.&lt;/p&gt;
+&lt;p&gt;Anyways, I&amp;rsquo;ve saved a video to see it all:&lt;/p&gt;
+
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;https://www.youtube.com/embed/Lf4Q7K6Ab_g&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&#34;everything-together-is-easier&#34;&gt;Everything together is easier&lt;/h3&gt;
+&lt;p&gt;You can put it all together in the same file, and everything become easier. This is not always possible and can give problems (like every change implies to reboot both client and service), but is very educational:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Celery full example: publisher/subscriber to request a multiplication&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; celery &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Celery
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# RabbitMQ&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#app = Celery(&amp;#39;tasks&amp;#39;, broker=&amp;#39;amqp://guest@localhost//&amp;#39;, backend=&amp;#39;amqp&amp;#39;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Redis&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Celery(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;tasks&amp;#39;&lt;/span&gt;, broker&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;, backend&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;@app.task&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;multiply&lt;/span&gt;(a, b):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; a &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; b
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;():
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;    promise &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; multiply&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;delay(&lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(promise&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get())
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;    main()&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now we are running a task method directly, so we get the task.&lt;/p&gt;
+&lt;p&gt;And now we have a very complicated way to multiply two numbers :)&lt;/p&gt;
+&lt;h2 id=&#34;tools&#34;&gt;Tools&lt;/h2&gt;
+&lt;p&gt;As I said before, &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; gives you tools and syntactic sugar.&lt;/p&gt;
+&lt;p&gt;First of all, we&amp;rsquo;ll see &lt;em&gt;partials&lt;/em&gt;. They are functions with some parameters already set.&lt;/p&gt;
+&lt;p&gt;It is very easy to create the &lt;em&gt;partial&lt;/em&gt; &lt;code&gt;duplicate&lt;/code&gt; by forcing the first parameter of &lt;code&gt;multiply&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Celery full example: multiply two numbers with partials&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; celery &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Celery
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# RabbitMQ&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#app = Celery(&amp;#39;tasks&amp;#39;, broker=&amp;#39;amqp://guest@localhost//&amp;#39;, backend=&amp;#39;amqp&amp;#39;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Redis&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Celery(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;tasks&amp;#39;&lt;/span&gt;, broker&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;, backend&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;@app.task&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;multiply&lt;/span&gt;(a, b):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; a &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; b
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;
+&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;():
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;    duplicate &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; multiply&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;si(&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;)
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;    promise &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; duplicate&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;delay(&lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;)
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(promise&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get())
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;    main()&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+:start-line: 12
+:end-line: 16
+:number-lines: 13&lt;/p&gt;
+&lt;p&gt;Yeah, partials are built with method &lt;code&gt;.si&lt;/code&gt;, despite we can use &lt;code&gt;.s&lt;/code&gt; too. The fist one is &lt;em&gt;immutable&lt;/em&gt; (that explains the &lt;code&gt;i&lt;/code&gt;). It is very difficult to explain this before explaining another &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; tool: &lt;code&gt;Chains&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; allows to chain tasks, so the result of one is the first parameter of the next one. Why the first one? It works so. It is a fucking shit, but works so.&lt;/p&gt;
+&lt;p&gt;Sometimes we will require chained tasks just to set an order, so we can ignore the previous result. Here is when we can use the immutable functions, because they won&amp;rsquo;t use the previous task result.&lt;/p&gt;
+&lt;p&gt;I suppose you have noticed I use &amp;ldquo;functions&amp;rdquo; or &amp;ldquo;services&amp;rdquo; equally.&lt;/p&gt;
+&lt;p&gt;But too much talk; let&amp;rsquo;s concat something:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Celery example: multiply with chains&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; celery &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Celery
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# RabbitMQ&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#app = Celery(&amp;#39;tasks&amp;#39;, broker=&amp;#39;amqp://guest@localhost//&amp;#39;, backend=&amp;#39;amqp&amp;#39;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Redis&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Celery(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;tasks&amp;#39;&lt;/span&gt;, broker&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;, backend&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;@app.task&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;multiply&lt;/span&gt;(a, b):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; a &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; b
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;
+&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; celery &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; chain
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;():
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;    duplicate &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; multiply&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;s(&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;)
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;    task &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; chain(multiply&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;s(&lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;), multiply&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;s(&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;))
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;    promise &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; task&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;delay()
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(promise&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get())
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;    main()&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;As I said before, &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; gives syntactic sugar, so it can be rewritten to:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Celery example: multiply with chains using pipes (syntactic sugar)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; celery &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Celery
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# RabbitMQ&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#app = Celery(&amp;#39;tasks&amp;#39;, broker=&amp;#39;amqp://guest@localhost//&amp;#39;, backend=&amp;#39;amqp&amp;#39;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Redis&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Celery(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;tasks&amp;#39;&lt;/span&gt;, broker&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;, backend&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;@app.task&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;multiply&lt;/span&gt;(a, b):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; a &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; b
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;
+&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;():
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;    duplicate &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; multiply&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;s(&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;)
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;    task &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; multiply&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;s(&lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; multiply&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;s(&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;)
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;    promise &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; task&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;delay()
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(promise&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get())
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;    main()&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;And here is where fun starts: we have a &lt;strong&gt;canvas&lt;/strong&gt;, that is, a task workflow. Believe ir or not, if you launch several &lt;em&gt;workers&lt;/em&gt; in different hosts and all of them are connected to the same &lt;em&gt;broker&lt;/em&gt;, each operation could run in a different host.&lt;/p&gt;
+&lt;p&gt;But&amp;hellip; Why the &lt;em&gt;canvas&lt;/em&gt; if all the operations run sequentially? Because we can process them concurrently with &lt;code&gt;Groups&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Celery example: several multiplications with chains and groups (canvas)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; celery &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Celery
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# RabbitMQ&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#app = Celery(&amp;#39;tasks&amp;#39;, broker=&amp;#39;amqp://guest@localhost//&amp;#39;, backend=&amp;#39;amqp&amp;#39;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Redis&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Celery(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;tasks&amp;#39;&lt;/span&gt;, broker&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;, backend&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;@app.task&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;multiply&lt;/span&gt;(a, b):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; a &lt;span style=&#34;color:#f92672&#34;&gt;*&lt;/span&gt; b
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;
+&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; celery &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; group
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;():
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;    duplicate &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; multiply&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;s(&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;)
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;    task &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; group(
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;        multiply&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;s(&lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;5&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; multiply&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;s(&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;),
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;        multiply&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;s(&lt;span style=&#34;color:#ae81ff&#34;&gt;9&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; multiply&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;s(&lt;span style=&#34;color:#ae81ff&#34;&gt;4&lt;/span&gt;),
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;        multiply&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;s(&lt;span style=&#34;color:#ae81ff&#34;&gt;9&lt;/span&gt;, &lt;span style=&#34;color:#ae81ff&#34;&gt;7&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;|&lt;/span&gt; duplicate,
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;    )
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;    promise &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; task&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;delay()
+&lt;/span&gt;&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;print&lt;/span&gt;(promise&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;get())
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;25&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;26&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; __name__ &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;:
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;27&lt;/span&gt;    main()&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;There is even more syntactic sugar, like &lt;code&gt;chords&lt;/code&gt;, &lt;code&gt;maps&lt;/code&gt;, &lt;code&gt;starmaps&lt;/code&gt; and &lt;code&gt;chunks&lt;/code&gt;, but we won&amp;rsquo;t browse them. This is an introductory post. &lt;a href=&#34;https://celery.readthedocs.org/en/latest/userguide/canvas.html&#34;&gt;You can read more about Canvas&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;the-beat&#34;&gt;The Beat&lt;/h3&gt;
+&lt;p&gt;Other important tool in &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; is the &lt;strong&gt;Beat&lt;/strong&gt;. It is a beat or a periodic signal. We can start it in the worker with &lt;code&gt;--beat&lt;/code&gt; option. While &lt;a href=&#34;https://github.com/celery/celery/issues/1495&#34;&gt;Beat exclusiveness&lt;/a&gt; is not added, it is important to run just one or we will receive more than one &lt;em&gt;beat&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;This &lt;em&gt;beat&lt;/em&gt; allows us to run periodic tasks.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s see a small example: we are going to multiply the hour by 2 every 10 seconds:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Celery beat example: periodic date operation&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; datetime
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; celery &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Celery
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; celery &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; group
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# RabbitMQ&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#app = Celery(&amp;#39;tasks&amp;#39;, broker=&amp;#39;amqp://guest@localhost//&amp;#39;, backend=&amp;#39;amqp&amp;#39;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Redis&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Celery(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;tasks&amp;#39;&lt;/span&gt;, broker&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;, backend&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;@app.task&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;add_days&lt;/span&gt;(days):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;now() &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;timedelta(days&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;days)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;conf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;update(
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;    CELERYBEAT_SCHEDULE&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;{
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;multiply-each-10-seconds&amp;#39;&lt;/span&gt;: {
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;task&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;tasks.add_days&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;schedule&amp;#39;&lt;/span&gt;: datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;timedelta(seconds&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;),
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;args&amp;#39;&lt;/span&gt;: (&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, )
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;        },
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;    },
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;)&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;And here you have the video:&lt;/p&gt;
+
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;https://www.youtube.com/embed/qTXJUnV0oHU&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Again, I&amp;rsquo;m going to stop here; I can only show a little about it. You can read more about &lt;a href=&#34;https://celery.readthedocs.org/en/latest/userguide/periodic-tasks.html&#34;&gt;periodic tasks&lt;/a&gt; if you are interested in.&lt;/p&gt;
+&lt;h3 id=&#34;warning-pickle&#34;&gt;Warning: pickle&lt;/h3&gt;
+&lt;p&gt;Perhaps you see a warning like &lt;code&gt;warnings.warn(CDeprecationWarning(W_PICKLE_DEPRECATED))&lt;/code&gt;. This is because we are using the &lt;a href=&#34;https://docs.python.org/3.4/library/pickle.html&#34;&gt;pickle&lt;/a&gt; serializer, which is deprecated. You can avoid it by adding:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Celery beat example: periodic date operation&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; datetime
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; celery &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Celery
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; celery &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; group
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# RabbitMQ&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#app = Celery(&amp;#39;tasks&amp;#39;, broker=&amp;#39;amqp://guest@localhost//&amp;#39;, backend=&amp;#39;amqp&amp;#39;)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Redis&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;app &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; Celery(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;tasks&amp;#39;&lt;/span&gt;, broker&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;, backend&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redis://localhost:6379/0&amp;#39;&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;@app.task&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;def&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;add_days&lt;/span&gt;(days):
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;    &lt;span style=&#34;color:#66d9ef&#34;&gt;return&lt;/span&gt; datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;now() &lt;span style=&#34;color:#f92672&#34;&gt;+&lt;/span&gt; datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;timedelta(days&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;days)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;app&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;conf&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;update(
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;    CELERYBEAT_SCHEDULE&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;{
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;multiply-each-10-seconds&amp;#39;&lt;/span&gt;: {
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;task&amp;#39;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;tasks.add_days&amp;#39;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;schedule&amp;#39;&lt;/span&gt;: datetime&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;timedelta(seconds&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;),
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;            &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;args&amp;#39;&lt;/span&gt;: (&lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;, )
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;21&lt;/span&gt;        },
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;22&lt;/span&gt;    },
+&lt;span style=&#34;display:block;width:100%;background-color:#3c3d38&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;23&lt;/span&gt;    CELERY_ACCEPT_CONTENT &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;json&amp;#39;&lt;/span&gt;],
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;24&lt;/span&gt;)&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h2 id=&#34;complex-environments&#34;&gt;Complex environments&lt;/h2&gt;
+&lt;p&gt;Obviously, I&amp;rsquo;ve talked just about basic &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt;. We&amp;rsquo;ve used just a queue to communicate. As long as &lt;a href=&#34;https://www.rabbitmq.com&#34;&gt;RabbitMQ&lt;/a&gt; allows queue operations, &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; too.&lt;/p&gt;
+&lt;p&gt;You can:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;assign different queues to perform different tasks, so not all workers listen all requests or to assign different workers to different queues.&lt;/li&gt;
+&lt;li&gt;route messages between queues.&lt;/li&gt;
+&lt;li&gt;send messages to all queues (&lt;strong&gt;topic&lt;/strong&gt;).&lt;/li&gt;
+&lt;li&gt;&amp;hellip;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I&amp;rsquo;m not going to explain it deeply, but I&amp;rsquo;m going to describe the message path. This information is required to understand how routing works (found at &lt;a href=&#34;https://celery.readthedocs.org/en/latest/userguide/routing.html#exchanges-queues-and-routing-keys&#34;&gt;Exchanges, queues and routing keys&lt;/a&gt;):&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Message is sent. It is leaved in an &lt;strong&gt;EXCHANGE&lt;/strong&gt;. If it doesn&amp;rsquo;t exist, &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; will create it.&lt;/li&gt;
+&lt;li&gt;The &lt;strong&gt;EXCHANGE&lt;/strong&gt; routes the message to one or more queues, depending on its configuration. If queues doesn&amp;rsquo;t exist, &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; will care.&lt;/li&gt;
+&lt;li&gt;The message waits in the queue until a consumer takeExchanges it. At this moment, the message is blocked to avoid other consumers to take it.&lt;/li&gt;
+&lt;li&gt;After processing it, consumer sends an &lt;strong&gt;ACK&lt;/strong&gt; and the message is finally removed.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;By default, &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt; creates queues with the &lt;em&gt;exchange&lt;/em&gt; name and binds them in a direct way, that is, every message that gets the &lt;em&gt;exchange&lt;/em&gt; is routed to that queue.&lt;/p&gt;
+&lt;p&gt;You can play with routings and create really complex architectures, so any message arrives to its target depending on the operation.&lt;/p&gt;
+&lt;h2 id=&#34;more-information&#34;&gt;More information&lt;/h2&gt;
+&lt;p&gt;The post &lt;a href=&#34;https://abhishek-tiwari.com/post/amqp-rabbitmq-and-celery-a-visual-guide-for-dummies&#34;&gt;AMQP, RabbitMQ and Celery - A Visual Guide For Dummies&lt;/a&gt; has beginner level, but I like it a lot because it explains everything with images. &lt;a href=&#34;https://www.digitalocean.com/community/tutorials/how-to-use-celery-with-rabbitmq-to-queue-tasks-on-an-ubuntu-vps&#34;&gt;How To Use Celery with RabbitMQ to Queue Tasks on an Ubuntu VPS&lt;/a&gt; is good too, and the PyCon slides &lt;a href=&#34;https://www.imankulov.name/posts/celery-for-internal-api.html&#34;&gt;Celery for Internal API in SOA infrastructure&lt;/a&gt; too.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.caktusgroup.com/blog/2014/06/23/scheduling-tasks-celery/&#34;&gt;Getting Started Scheduling Tasks with Celery&lt;/a&gt; is about configuring periodic tasks in a dynamic way by using &lt;a href=&#34;https://pypi.python.org/pypi/django-celery&#34;&gt;DJCelery&lt;/a&gt;, quite interesting to use it with &lt;a href=&#34;https://www.djangoproject.com/&#34;&gt;Django&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In order to understand it under the hood, I recommend &lt;a href=&#34;https://www.rabbitmq.com/tutorials/amqp-concepts.html&#34;&gt;AMQP 0-9-1 Model Explained&lt;/a&gt;, where &lt;a href=&#34;https://www.amqp.org/&#34;&gt;AMQP&lt;/a&gt; protocol is explained. It is very interesing to try complex routings. &lt;a href=&#34;https://rajith.2rlabs.com/2007/10/13/amqp-in-10-mins-part3-flexible-routing-model/&#34;&gt;AMQP in 10 mins : Part3 – Flexible Routing Model&lt;/a&gt; talks about that too, but is easier and just explains the basic concepts.&lt;/p&gt;
+&lt;p&gt;If you want to participate in a project using &lt;a href=&#34;https://www.celeryproject.org/&#34;&gt;Celery&lt;/a&gt;, I can cheer you to help me with &lt;a href=&#34;https://github.com/djcron-project/&#34;&gt;DJCron&lt;/a&gt;, a wrapper over &lt;a href=&#34;https://pypi.python.org/pypi/django-celery&#34;&gt;DJCelery&lt;/a&gt; that allows to configure distributed tasks dinamically, adding some extra features over  &lt;a href=&#34;https://pypi.python.org/pypi/django-celery&#34;&gt;DJCelery&lt;/a&gt;.&lt;/p&gt;
+
+        
+      </description>
     </item>
     
     <item>
@@ -24,9 +335,71 @@ In this post I&amp;rsquo;ll show how to use Celery in order to create a SOA arch
       <pubDate>Fri, 22 Feb 2013 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/en/blog/why-python-rocks/</guid>
-      <description>After writting the article Why Java rocks, I have no other option than writting why Python rocks.
-Before starting, I might advise you that Python is my favourite language. And this is like search your best friends defects.
-  Python Rocks Dynamic typing Opposite to people&amp;rsquo;s opinion, Python is strongly typed. But it is dynamically typed also. You cannot modify the type of a variable, but you can reuse the same variable to point to&amp;hellip; another thing.</description>
+      <description>
+        
+          &lt;p&gt;After writting the article &lt;a href=&#34;https://magmax.org/en/blog/why-java-rocks/&#34;&gt;Why Java rocks&lt;/a&gt;, I have no other option than writting why Python rocks.&lt;/p&gt;
+&lt;p&gt;Before starting, I might advise you that Python is my favourite language. And this is like search your best friends defects.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/python.png&#34;
+         alt=&#34;Python&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;python-rocks&#34;&gt;Python Rocks&lt;/h2&gt;
+&lt;h3 id=&#34;dynamic-typing&#34;&gt;Dynamic typing&lt;/h3&gt;
+&lt;p&gt;Opposite to people&amp;rsquo;s opinion, Python is strongly typed. But it is dynamically typed also. You cannot modify the type of a variable, but you can reuse the same variable to point to&amp;hellip; another thing.&lt;/p&gt;
+&lt;h3 id=&#34;dynamic-inheritance&#34;&gt;Dynamic inheritance&lt;/h3&gt;
+&lt;p&gt;In addition, it follows the &lt;strong&gt;duck typing&lt;/strong&gt; principle: &amp;ldquo;If it looks like a duck, swims like a duck, and quacks like a duck, then it probably is a duck&amp;rdquo;. This simplifies the inheritance management, because it is not necessary to inherit from anything. If only it has the required methods implemented, then it matches the interface. That&amp;rsquo;s all.&lt;/p&gt;
+&lt;h3 id=&#34;objects-are-first-class-citizens&#34;&gt;Objects are first class citizens&lt;/h3&gt;
+&lt;p&gt;What means that any object can be used as a parameter of any method.&lt;/p&gt;
+&lt;h3 id=&#34;everything-is-an-object&#34;&gt;Everything is an object&lt;/h3&gt;
+&lt;p&gt;Whatever: basic types, a method, a class&amp;hellip; Everything is an object. If you mix this with the previous feature, everything can be used as a parameter of a function. Or can be stored in a variable, an array, a hash, &amp;hellip;&lt;/p&gt;
+&lt;h3 id=&#34;hashes-and-arrays-are-built-ins&#34;&gt;Hashes and arrays are built-ins&lt;/h3&gt;
+&lt;p&gt;You can instanciate a hash or an array directly, without any reserved words or difficult API structures.&lt;/p&gt;
+&lt;h3 id=&#34;wide-api&#34;&gt;Wide API&lt;/h3&gt;
+&lt;p&gt;Standard Python has everything you can need, since command line managers to web servers, passing over threads management, configuration files management, XML readers, other language parsers, TK graphical interfaces,&amp;hellip; whatever you want.&lt;/p&gt;
+&lt;h3 id=&#34;command-line-interpreter&#34;&gt;Command line interpreter&lt;/h3&gt;
+&lt;p&gt;The command line interpreter is a marvel. Even more if you use any interpreter &lt;strong&gt;with steroids&lt;/strong&gt;, like &lt;a href=&#34;https://ipython.org/&#34;&gt;ipython&lt;/a&gt; or &lt;a href=&#34;https://bpython-interpreter.org/&#34;&gt;bpython&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;zip-support-built-in&#34;&gt;Zip support built-in&lt;/h3&gt;
+&lt;p&gt;Zip support is native. You can store anything in a zip and try to execute it with python, and it will look for the file &lt;strong&gt;&lt;strong&gt;main&lt;/strong&gt;.py&lt;/strong&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;structured&#34;&gt;Structured&lt;/h3&gt;
+&lt;p&gt;As far as it is strongly indented, document indentation should be perfectly readable.&lt;/p&gt;
+&lt;h3 id=&#34;expected-and-homogeneous&#34;&gt;Expected and homogeneous&lt;/h3&gt;
+&lt;p&gt;When you are a newbie in the language and you learn the basic functionality, whatever you want to do you &lt;em&gt;know how&lt;/em&gt;. This is because it is homogeneous, and everything is executed in the most expected way.&lt;/p&gt;
+&lt;p&gt;Usually there is only a right way to do things. If you try another way, it would be more hard (until you realize of it).&lt;/p&gt;
+&lt;h3 id=&#34;web-oriented&#34;&gt;Web oriented&lt;/h3&gt;
+&lt;p&gt;From its base. And there are a load of platforms to develop for the web.&lt;/p&gt;
+&lt;h3 id=&#34;properties&#34;&gt;Properties&lt;/h3&gt;
+&lt;p&gt;Forgive getters/setters. That is not &lt;em&gt;pythonic&lt;/em&gt;. In python we use public vars. If you want to modify its usage afterwards, it is enough to upgrade them to &lt;strong&gt;properties&lt;/strong&gt;, but its external usage will be the same.&lt;/p&gt;
+&lt;h3 id=&#34;public&#34;&gt;Public&lt;/h3&gt;
+&lt;p&gt;Everything is public. The only private things are by convention, so they are accesible too.&lt;/p&gt;
+&lt;h3 id=&#34;small&#34;&gt;Small&lt;/h3&gt;
+&lt;p&gt;Whatever you want to do is small. Since the own compiler and interpreter that requires about 20 Mb. Everything is easy with Python.&lt;/p&gt;
+&lt;h3 id=&#34;fast&#34;&gt;Fast&lt;/h3&gt;
+&lt;p&gt;Speedy. So in its execution as in its development.&lt;/p&gt;
+&lt;h2 id=&#34;python-do-not-rocks&#34;&gt;Python do not rocks&lt;/h2&gt;
+&lt;h3 id=&#34;global-interpreter-lock-gil&#34;&gt;Global Interpreter Lock (GIL)&lt;/h3&gt;
+&lt;p&gt;It is a &lt;em&gt;mutex&lt;/em&gt; that avoids that several Python threads may be executed simultaneously. This can cause horrible performance problems and, what is more, it cannot take advantage of all system resources: multiprocess systems are strongly limited.&lt;/p&gt;
+&lt;h3 id=&#34;network-library&#34;&gt;Network library&lt;/h3&gt;
+&lt;p&gt;Standard Python has a network library too complex and few &lt;em&gt;pythonic&lt;/em&gt; in its API. Fortunatelly, we have &lt;a href=&#34;https://www.gevent.org/&#34;&gt;GEvent library&lt;/a&gt; and &lt;a href=&#34;https://docs.python-requests.org/en/latest/index.html&#34;&gt;requests library&lt;/a&gt;, that solve the proble, but they are out of standard API.&lt;/p&gt;
+&lt;h3 id=&#34;package-systems&#34;&gt;Package systems&lt;/h3&gt;
+&lt;p&gt;Despite all Python advantages, the package system is depresing: &lt;a href=&#34;https://packages.python.org/distribute/easy_install.html&#34;&gt;easy_install&lt;/a&gt; is not so &amp;ldquo;&lt;em&gt;easy&lt;/em&gt;&amp;rdquo;, and there are problems to retrieve a fixed version of a package. There are &lt;a href=&#34;https://farmdev.com/thoughts/76/the-python-packaging-problem/&#34;&gt;some more problems&lt;/a&gt;, but I think that it is enough with what I said.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Update&lt;/strong&gt;: now we have &lt;a href=&#34;https://pypi.python.org/pypi/pip&#34;&gt;pip&lt;/a&gt; that seems to be easy to use and looks like the standard package management system.&lt;/p&gt;
+&lt;h3 id=&#34;the-hateful-self-var&#34;&gt;The hateful &lt;em&gt;self&lt;/em&gt; var&lt;/h3&gt;
+&lt;p&gt;Usually it is hateful to explicitly pass the &lt;em&gt;self&lt;/em&gt; variable as first parameter for every method. But this feature allows you to use several oparations that are uglier in other languages or, they cannot be used at all.&lt;/p&gt;
+&lt;h3 id=&#34;indented&#34;&gt;Indented!&lt;/h3&gt;
+&lt;p&gt;A lot of people finds the strongly type as a problems. It is a mixed bag for me. Globally I like it, but I have to admit that it is a disadvantage some times.&lt;/p&gt;
+&lt;h3 id=&#34;there-is-no-ide&#34;&gt;There is no IDE&lt;/h3&gt;
+&lt;p&gt;It is quite difficult to build an IDE for a language which can modify its methods in run time. But there are some of them good enough. Despite of them, I use my lovely Emacs.&lt;/p&gt;
+&lt;h3 id=&#34;good-for-scripts-but-nothing-more&#34;&gt;Good for scripts but nothing more&lt;/h3&gt;
+&lt;p&gt;Somple people argue that, but I do not think so. I think that BitBucket is made with Python, and Google uses it too.&lt;/p&gt;
+&lt;h3 id=&#34;method-overload&#34;&gt;Method overload&lt;/h3&gt;
+&lt;p&gt;Along it is not typed, it is impossible to manage method overload. But it has an easy default valuated system for parameters that is versatile enouth.&lt;/p&gt;
+&lt;h2 id=&#34;end&#34;&gt;End&lt;/h2&gt;
+&lt;p&gt;There are a lot of reasons to use Python and very few to not doing it. It is so beautiful!&lt;/p&gt;
+
+        
+      </description>
     </item>
     
     <item>
@@ -35,8 +408,35 @@ Before starting, I might advise you that Python is my favourite language. And th
       <pubDate>Thu, 26 Jan 2012 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/en/blog/python-asignaciones/</guid>
-      <description>Some time ago, Manolowar showed me the operator [&amp;ldquo;Elvis] from Groovy .
-  This operator, written like: ?: is called in this way because it looks like an emoticon with toupee, just like Elvis Presley. It can be used like in C or Java (separated) or all together. When it is all together, it means something like: &amp;ldquo;If value is false, assign me it, and if not, assign me this other one&amp;rdquo;.</description>
+      <description>
+        
+          &lt;p&gt;Some time ago, Manolowar showed me the operator [&amp;ldquo;Elvis]  from &lt;a href=&#34;https://groovy.codehaus.org/&#34;&gt;Groovy&lt;/a&gt; .&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/python.png&#34;
+         alt=&#34;Python&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;p&gt;This operator, written like: &lt;code&gt;?:&lt;/code&gt; is called in this way because it looks like an emoticon with toupee, just like Elvis Presley. It can be used like in C or Java (separated) or all together. When it is all together, it means something like: &amp;ldquo;If value is false, assign me it, and if not, assign me this other one&amp;rdquo;. Here you are an example:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;Integer i &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;null&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;int&lt;/span&gt; a &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; i &lt;span style=&#34;color:#f92672&#34;&gt;?:&lt;/span&gt; 0&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Here we want to assign value of &amp;ldquo;I&amp;rdquo; to &amp;ldquo;A&amp;rdquo;. This is a problem, because &amp;ldquo;I&amp;rdquo; admits nulls but &amp;ldquo;A&amp;rdquo; does not. With this easy way I solved the problem.&lt;/p&gt;
+&lt;p&gt;But&amp;hellip; Isn&amp;rsquo;t this article about &lt;em&gt;Python&lt;/em&gt;?&lt;/p&gt;
+&lt;p&gt;Yes, it does. Yesteray David told me about the way of doing just this with &lt;em&gt;Python&lt;/em&gt; and, IMHO, it is more pretty. You only have to use the &amp;ldquo;&lt;em&gt;OR&lt;/em&gt;&amp;rdquo; operator.&lt;/p&gt;
+&lt;p&gt;Opposite I was thinking till now, &amp;ldquo;OR&amp;rdquo; in Python does not return a boolean value; it evals the expression and returns the first result that is not false. So, we can find:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;i &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; None
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;a &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; i &lt;span style=&#34;color:#f92672&#34;&gt;or&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;7&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;And &amp;ldquo;A&amp;rdquo; will be 7, because &amp;ldquo;I&amp;rdquo; is false and the last evaluated value that is not false is 7.&lt;/p&gt;
+&lt;p&gt;The advantage of using this is that it can be concatenated. Example (do not at home):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;a &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;0&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;or&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;or&lt;/span&gt; [] &lt;span style=&#34;color:#f92672&#34;&gt;or&lt;/span&gt; {} &lt;span style=&#34;color:#f92672&#34;&gt;or&lt;/span&gt; False &lt;span style=&#34;color:#f92672&#34;&gt;or&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Everything else is false&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Which one is the resulting value in this case?&lt;/p&gt;
+&lt;p&gt;As you can see, every condition is false but the last one, so the final A value will be &amp;ldquo;Everything else is false&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;Use it carefully!!!&lt;/p&gt;
+&lt;h2 id=&#34;notes&#34;&gt;Notes&lt;/h2&gt;
+&lt;p&gt;I have been very careful trying to say that it searchs the first &lt;a href=&#34;https://docs.python.org/release/2.5.2/lib/truth.html&#34;&gt;that is not false&amp;rdquo;. This do not mean &amp;ldquo;the first that is true&amp;rdquo;, because &amp;ldquo;truth&amp;rdquo; is True. It is the very first that do not match &amp;ldquo;a false condition&lt;/a&gt; .&lt;/p&gt;
+
+        
+      </description>
     </item>
     
   </channel>

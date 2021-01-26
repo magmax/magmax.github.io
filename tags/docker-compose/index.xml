@@ -13,9 +13,81 @@
       <pubDate>Mon, 28 Mar 2016 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/lamp-con-docker/</guid>
-      <description>Hace algún tiempo que escribí los artículos LAMP con Puppet y LAMP con Salt. Desde entonces ha llovido mucho y&amp;hellip; bueno, creo que los sistemas tipo Salt y Puppet están casi obsoletos, gracias a nuevas tecnologías como Docker.
-Pero antes de criticarme por esa afirmación, ruego al lector que se lea este artículo y luego decida por sí mismo.
-Igual que en los otros ejercicios, montaremos una arquitectura LAMP (Linux + Apache + MySQL + PHP) que tan de moda ha estado durante mucho tiempo.</description>
+      <description>
+        
+          &lt;p&gt;Hace algún tiempo que escribí los artículos &lt;a href=&#34;https://magmax.org/blog/lamp-con-puppet/&#34;&gt;LAMP con Puppet&lt;/a&gt; y &lt;a href=&#34;https://magmax.org/blog/lamp-con-salt/&#34;&gt;LAMP con Salt&lt;/a&gt;.
+Desde entonces ha llovido mucho y&amp;hellip; bueno, creo que los sistemas tipo &lt;a href=&#34;https://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt; y
+&lt;a href=&#34;https://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt; están casi obsoletos, gracias a nuevas tecnologías como &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Pero antes de criticarme por esa afirmación, ruego al lector que se lea este artículo y luego decida por sí mismo.&lt;/p&gt;
+&lt;p&gt;Igual que en los otros ejercicios, montaremos una arquitectura LAMP (Linux + Apache + MySQL + PHP) que tan de moda ha estado durante mucho tiempo.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/containers.jpg&#34;
+         alt=&#34;Containers&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;código-a-ejecutar&#34;&gt;Código a ejecutar&lt;/h2&gt;
+&lt;p&gt;Como las cosas evolucionan, PHP también lo ha hecho y el programita de ejemplo que usé ya no funciona en PHP 5.6. Así que me he visto obligado a modificar ligeramente el programa de ejemplo.&lt;/p&gt;
+&lt;p&gt;Podéis descargarlo de GitHub así:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ git clone https://github.com/magmax/small_php_example.git -b mysqli
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Veréis que en el directorio &lt;code&gt;small_php_example&lt;/code&gt; tenéis un programa muy sencillito que muestra las tablas disponibles en la base de datos.&lt;/p&gt;
+&lt;h2 id=&#34;docker-para-php-con-mysql&#34;&gt;Docker para PHP con MySQL&lt;/h2&gt;
+&lt;p&gt;Otro problema es que no he encontrado ninguna imagen Docker de PHP con soporte
+para MySQL, pero es muy sencillo construir una, así que vamos a ello. Aquí
+podría ayudar el &lt;a href=&#34;https://magmax.org/blog/lamp-con-salt/&#34;&gt;artículo que escribí sobre Docker&lt;/a&gt;, que podéis usar para ampliar conceptos.&lt;/p&gt;
+&lt;p&gt;Necesitamos crear el fichero &lt;code&gt;php.dockerfile&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-dockerfile&#34; data-lang=&#34;dockerfile&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;FROM&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt; php:5.6-apache&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;RUN&lt;/span&gt;  docker-php-ext-install mysqli&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y ejecutar la siguiente orden:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;docker build -t php-mysql -f php.dockerfile .
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y tendremos disponible la imagen &lt;code&gt;php-mysql&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Con esto tendremos ya todas las piezas. Ahora vamos a unirlas.&lt;/p&gt;
+&lt;h2 id=&#34;docker-compose&#34;&gt;Docker Compose&lt;/h2&gt;
+&lt;p&gt;Existe una aplicación (Python :D) que permite gestionar grupos de Dockers
+llamada &lt;a href=&#34;https://docs.docker.com/compose/&#34;&gt;docker-compose&lt;/a&gt;. Se puede instalar en un &lt;a href=&#34;https://virtualenv.pypa.io/en/latest/&#34;&gt;virtualenv&lt;/a&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;$ virtualenv venv
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;$ . venv/bin/activate
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;3&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;venv&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; $ pip install docker-compose
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;A continuación necesitamos un archivo de definición. Éste es suficiente:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-dockerfile&#34; data-lang=&#34;dockerfile&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;version: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;2&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;services:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;  db:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    image: mysql:5.7.11&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    environment:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - MYSQL_ROOT_PASSWORD&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;foo&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;  app:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    image: php-mysql&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    ports:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - 80:80&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    volumes:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - ./small_php_example:/var/www/html/&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    depends_on:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - db&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    links:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - db&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;    environment:&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - MYSQL_SERVER&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;db&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - MYSQL_PASSWORD&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;foo&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;20&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;&lt;/span&gt;      - MYSQL_USER&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;root&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Poco que explicar&amp;hellip; Tenemos 2 servicios: la base de datos y la aplicación. El primero usa una imagen con MySQL (definiendo la contraseña) y el segundo un Apache con PHP que monta nuestra aplicación en &lt;code&gt;/var/www/html&lt;/code&gt;, expone el puerto del Docker 80 con el local 80 y enlaza con el primer Docker; bueno, y define algunas variables de entorno para poder conectar.&lt;/p&gt;
+&lt;p&gt;Lo único digno de explicar aquí es que al linkar la máquina se añade al &lt;code&gt;/etc/hosts&lt;/code&gt;, por lo que tenemos acceso a la máquina usando su nombre: &lt;code&gt;db&lt;/code&gt;. Por eso el valor de la variable &lt;code&gt;MYSQL_SERVER&lt;/code&gt; es, simplemente, &lt;code&gt;db&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Dicho de otro modo: vamos a crear dos Dockers que trabajarán juntos. Y todo con esta orden:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;venv&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; $ docker-compose up
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Tardará un poquito, pero tendremos nuestra aplicación corriendo en localhost:80&lt;/p&gt;
+&lt;h2 id=&#34;conclusiones&#34;&gt;Conclusiones&lt;/h2&gt;
+&lt;p&gt;Ventajas sobre &lt;a href=&#34;https://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt;, &lt;a href=&#34;https://www.saltstack.com/&#34;&gt;Salt&lt;/a&gt; o &lt;a href=&#34;https://www.chef.io/&#34;&gt;Chef&lt;/a&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;es más sencillo.&lt;/li&gt;
+&lt;li&gt;más ortogonal: se crea el Docker con órdenes típicas del sistema elegido y se usa.&lt;/li&gt;
+&lt;li&gt;permite mezclar distribuciones fácilmente.&lt;/li&gt;
+&lt;li&gt;Se pueden lanzar varias copias de un mismo Docker sobre la misma máquina.&lt;/li&gt;
+&lt;li&gt;Es replicable. Con los sistemas de orquestación puede cambiar una versión de una librería entre ejecuciones, haciendo que una funcione y otra falle.&lt;/li&gt;
+&lt;li&gt;Es más difícil que se rompa. No es extraño que la entrada de una máquina nueva
+en &lt;a href=&#34;https://puppetlabs.com/&#34;&gt;Puppet&lt;/a&gt; me descubra un bug en la definición.&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
     </item>
     
   </channel>

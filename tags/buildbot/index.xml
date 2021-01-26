@@ -13,8 +13,105 @@
       <pubDate>Sun, 10 Feb 2013 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/buildbot-organization/</guid>
-      <description>Buildbot es un servidor de integración contínua. Está implementado en Python y su configuración se realiza también en Python, aunque puede utilizarse para ejecutar cualquier tipo de tarea. Ya escribí un artículo introductorio, pero hoy vamos a entender lo que se hizo allí, volviendo a empezar, pero esta vez desde cero.
-Hay muy poca documentación al respecto, por lo que he decido contar un poco más sobre este servidor. En esta ocasión, veremos la organización básica.</description>
+      <description>
+        
+          &lt;p&gt;Buildbot es un servidor de integración contínua. Está implementado en Python y su configuración se realiza también en Python, aunque puede utilizarse para ejecutar cualquier tipo de tarea. Ya escribí un &lt;a href=&#34;https://magmax.org/blog/buildbot/&#34;&gt;artículo introductorio&lt;/a&gt;, pero hoy vamos a entender lo que se hizo allí, volviendo a empezar, pero esta vez desde cero.&lt;/p&gt;
+&lt;p&gt;Hay muy poca documentación al respecto, por lo que he decido contar un poco más sobre este servidor. En esta ocasión, veremos la organización básica.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/buildbot.png&#34;
+         alt=&#34;Buildbot&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;desde-muy-arriba&#34;&gt;Desde muy arriba&lt;/h2&gt;
+&lt;p&gt;La primera división es fácil: hay un maestro y uno o varios clientes. Los clientes se registran en el servidor y, a partir de este momento, el servidor gestiona su disponibilidad, asignándoles trabajos.&lt;/p&gt;
+&lt;p&gt;Pero&amp;hellip; ¿qué es un trabajo? ¿Cómo se asocian trabajos y clientes? ¿Se puede ejecutar de cualquier manera? Para entender esto es necesario bajar un peldaño en la organización.&lt;/p&gt;
+&lt;h2 id=&#34;desde-dentro&#34;&gt;Desde dentro&lt;/h2&gt;
+&lt;h3 id=&#34;glosario&#34;&gt;Glosario&lt;/h3&gt;
+&lt;p&gt;Antes de continuar, es necesario definir un glosario básico:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;slave&lt;/strong&gt;: cada uno de los clientes. Cuentan como programas, independientemente de la máquina en la que se encuentren. Dicho de otro modo, pueden encontrarse donde el maestro o varios en la misma máquina física.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;change source&lt;/strong&gt;: Eventos que indican que ha ocurrido un cambio. Por ejemplo, un cambio en una rama en un repositorio, en un fichero, etc.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;builders&lt;/strong&gt;: Definen el trabajo propiamente dicho. Están divididos en distintas etapas.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;steps&lt;/strong&gt;: Cada una de las etapas en las que está dividido un &lt;em&gt;builder&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;scheduler&lt;/strong&gt;: Son planificaciones de trabajos. Son la chispa que desencadena una ejecución.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;relaciones&#34;&gt;Relaciones&lt;/h3&gt;
+&lt;p&gt;Ya conocemos nuestros componentes. Es hora de ver cómo se relacionan entre ellos. Veremos que resulta bastante sencillo:&lt;/p&gt;
+&lt;p&gt;Cada &lt;strong&gt;slave&lt;/strong&gt; tiene un nombre único, por el que podemos referenciarlo en cualquier momento. Durante su definición no se relacionan con nadie.&lt;/p&gt;
+&lt;p&gt;Las &lt;strong&gt;change source&lt;/strong&gt; definen eventos como tales. Desencadenan eventos, por lo que sólo dependen de repositorios o de cambios en el entorno.&lt;/p&gt;
+&lt;p&gt;Los &lt;strong&gt;builders&lt;/strong&gt; son la parte más importante y compleja. Contienen cada uno de los &lt;strong&gt;steps&lt;/strong&gt; a ejecutar. Éstos serán secuenciales, aunque hay maneras de hacer &lt;em&gt;detach&lt;/em&gt; sobre ellos.&lt;/p&gt;
+&lt;p&gt;Aquí hay una cosa rara en &lt;em&gt;BuildBot&lt;/em&gt;: Dado que los &lt;strong&gt;builders&lt;/strong&gt; son tan complejos, se han dividido en dos etapas. Por una parte, hay que crear la lista de &lt;em&gt;steps&lt;/em&gt; con un &lt;strong&gt;BuildFactory&lt;/strong&gt;. Una vez tenemos las fábricas, emparejaremos &lt;strong&gt;slaves&lt;/strong&gt; y &lt;strong&gt;factories&lt;/strong&gt; dándoles un nombre y generando el &lt;em&gt;builder&lt;/em&gt; propiamente dicho.&lt;/p&gt;
+&lt;p&gt;Dicho de otra manera, le damos un nombre a la lista de pasos creada y lo asociamos con los &lt;em&gt;slaves&lt;/em&gt; que pueden ejecutar esta &lt;em&gt;build&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Los &lt;strong&gt;schedulers&lt;/strong&gt; pueden unir un &lt;strong&gt;change source&lt;/strong&gt; con los &lt;strong&gt;builders&lt;/strong&gt;, de manera que un cambio desencadene una build. Existe un tipo de &lt;em&gt;scheduler&lt;/em&gt; especial que tiene un &lt;em&gt;change source&lt;/em&gt; implícito: es el de &amp;ldquo;&lt;em&gt;forzar build&lt;/em&gt;&amp;quot;; en este caso, el evento es un &lt;em&gt;click&lt;/em&gt; de ratón en la propia página web. En el archivo de configuración no lo veremos porque, como digo, es implícito. En algunos casos, admiten además algún tipo de filtro.&lt;/p&gt;
+&lt;h3 id=&#34;ejemplo-mínimo&#34;&gt;Ejemplo mínimo&lt;/h3&gt;
+&lt;p&gt;Vamos a ver un pequeño ejemplo: un &lt;strong&gt;slave&lt;/strong&gt;, un &lt;strong&gt;scheduler&lt;/strong&gt; y un &lt;strong&gt;builder&lt;/strong&gt; con un único &lt;strong&gt;step&lt;/strong&gt;. Voy a separar los &lt;em&gt;imports&lt;/em&gt; y las inicializaciones para facilitar la lectura de lo que realmente importa:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/usr/bin/env python&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# -*- coding: utf-8 -*-&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# imports&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; buildbot.buildslave &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; BuildSlave
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; buildbot.schedulers.forcesched &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; ForceScheduler
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; buildbot.steps.shell &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; ShellCommand
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; buildbot.process.factory &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; BuildFactory
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; buildbot.config &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; BuilderConfig
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# inicializaciones&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;c &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; BuildmasterConfig &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {}
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;slaves&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; []
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;builders&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; []
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;schedulers&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; []
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y ahora el código que realmente añade valor:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# creamos el slave&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;slaves&amp;#39;&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(BuildSlave(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;my slave&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;shared secret&amp;#34;&lt;/span&gt;))
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# creamos un step y con él una fábrica&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;my_step &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; ShellCommand(name&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Dormir&amp;#34;&lt;/span&gt;, command&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;sleep&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;60&amp;#34;&lt;/span&gt;])
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;my_factory &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; BuildFactory([my_step])
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Ahora creamos el builder y lo añadimos a la lista&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;my_builder &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; BuilderConfig(
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;    name&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;my builder&amp;#34;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;		descriptionDone&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;built&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#75715e&#34;&gt;# se muestra en el waterfall cuando ha terminado&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;    slavenames&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;my slave&amp;#39;&lt;/span&gt;],
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;13&lt;/span&gt;    factory&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;my_factory)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;14&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;builders&amp;#39;&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(my_builder)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;15&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;16&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Finalmente, creamos el scheduler (se lanzará con un click en la web)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;17&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;schedulers&amp;#39;&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(ForceScheduler(
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;18&lt;/span&gt;    name&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ejecutar&amp;#34;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;19&lt;/span&gt;    builderNames&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;my builder&amp;#34;&lt;/span&gt;]))
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Y eso es todo. En el archivo de configuración por defecto se organiza de otra manera, pero nada más. La gente de &lt;em&gt;buildbot&lt;/em&gt; prefiere retrasar los &lt;em&gt;imports&lt;/em&gt; e inicializaciones hasta el comienzo del bloque en el que se va a utilizar; los bloques están definidos por comentarios explicativos. Pero a todos los efectos, es lo mismo que este ejemplo.&lt;/p&gt;
+&lt;h3 id=&#34;el-resto-de-la-configuración&#34;&gt;El resto de la configuración&lt;/h3&gt;
+&lt;p&gt;Hay ciertos parámetros extra que también se indican aquí, como el puerto por defecto en el que se va a escuchar, la base de datos, etc. Me he centrado exclusivamente en la definición de un trabajo sencillo, con el objetivo de enseñar cómo funciona.&lt;/p&gt;
+&lt;p&gt;Esta información es la siguiente:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Configuración:&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 2&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;slavePortnum&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;9989&lt;/span&gt;  &lt;span style=&#34;color:#75715e&#34;&gt;# igual en los esclavos&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 3&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;title&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Titulo en la web&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 4&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;titleURL&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://magmax.org&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 5&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;buildbotURL&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://localhost:8010/&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 6&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;db&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 7&lt;/span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;db_url&amp;#39;&lt;/span&gt; : &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;sqlite:///state.sqlite&amp;#34;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 8&lt;/span&gt;}
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 9&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;10&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Añadiendo la web por defecto:&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;11&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; buildbot.status &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; html
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;12&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;status&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [ html&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;WebStatus(http_port&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;8010&lt;/span&gt;) ]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;En el archivo de configuración autogenerado, esta información general se encuentra desperdigada por todas partes.&lt;/p&gt;
+&lt;p&gt;Y, a parte de lo que ya hemos contado, el archivo de configuración no tiene nada más.&lt;/p&gt;
+&lt;h3 id=&#34;un-poco-de-teoría&#34;&gt;Un poco de teoría&lt;/h3&gt;
+&lt;p&gt;Lo único importante es definir el &lt;strong&gt;BuildMasterConfig&lt;/strong&gt; (al que hemos hecho un punterito llamado &amp;ldquo;c&amp;rdquo; para abreviar). Como veréis, este objeto global es nuestro programa, y en el ejemplo hemos definido las siguientes claves:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;slaves&lt;/strong&gt;: es una lista, con los &lt;em&gt;slaves&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;builders&lt;/strong&gt;: lista con los &lt;strong&gt;builders&lt;/strong&gt;, ya asociados a los &lt;em&gt;slaves&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;schedulers&lt;/strong&gt;: lista con los &lt;em&gt;schedulers&lt;/em&gt;, ya asociados a los &lt;em&gt;builders&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;conclusiones&#34;&gt;Conclusiones&lt;/h2&gt;
+&lt;p&gt;Como se puede apreciar, es una arquitectura muy simple. La dificultad de comprensión viene asociada a la porquería que rodea a las definiciones e inicializaciones y otros requisitos de python.&lt;/p&gt;
+&lt;p&gt;Además, en mi opinión, la estructura del archivo es errónea, ya que por defecto definen los &lt;em&gt;schedulers&lt;/em&gt; antes que los &lt;em&gt;builders&lt;/em&gt;, cuando es más natural hacerlo justo al revés.&lt;/p&gt;
+
+        
+      </description>
     </item>
     
     <item>
@@ -23,9 +120,278 @@ Hay muy poca documentación al respecto, por lo que he decido contar un poco má
       <pubDate>Thu, 02 Aug 2012 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/buildbot/</guid>
-      <description>Como prometí en el artículo anterior, es hora de presentar otra alternativa para la Integración Contínua (CI, o Continuous Integration).
-No es la única alternativa, pero yo sólo he trasteado con Jenkins y con BuildBot.
-  Maestro/Esclavo De la misma manera que Jenkins, BuildBot tiene una arquitectura Maestro/Esclavo. Sin embargo, Jenkins nos gestionaba la instalación de los esclavos, mientras que BuildBot no lo hará. En general, es menos amigable que Jenkins.</description>
+      <description>
+        
+          &lt;p&gt;Como prometí en el &lt;a href=&#34;https://magmax.org/blog/jenkins/&#34;&gt;artículo anterior&lt;/a&gt;, es hora de presentar otra alternativa para la Integración Contínua (&lt;em&gt;CI&lt;/em&gt;, o &lt;em&gt;Continuous Integration&lt;/em&gt;).&lt;/p&gt;
+&lt;p&gt;No es la única alternativa, pero yo sólo he trasteado con &lt;a href=&#34;https://jenkins-ci.org/&#34;&gt;Jenkins&lt;/a&gt; y con &lt;a href=&#34;https://buildbot.net/&#34;&gt;BuildBot&lt;/a&gt;.&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/buildbot.png&#34;
+         alt=&#34;Buildbot&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;maestroesclavo&#34;&gt;Maestro/Esclavo&lt;/h2&gt;
+&lt;p&gt;De la misma manera que Jenkins, BuildBot tiene una arquitectura Maestro/Esclavo. Sin embargo, Jenkins nos gestionaba la instalación de los esclavos, mientras que BuildBot no lo hará. En general, es menos amigable que Jenkins.&lt;/p&gt;
+&lt;p&gt;Cuando comenzamos un proyecto hay que crear el maestro y después crear los esclavos. Este es un proceso sencillo que veremos mediante un ejemplo.&lt;/p&gt;
+&lt;h3 id=&#34;instalando&#34;&gt;Instalando&lt;/h3&gt;
+&lt;p&gt;El maestro y el esclavo son paquetes debian separados. Eso nos permite instalarlos sólo allí donde hacen falta. En el ejemplo se considerará que ambos están en la misma máquina, aunque no tendría por qué.&lt;/p&gt;
+&lt;p&gt;Se puede ejecutar en casi cualquier parte, ya que está escrito en python. Basta con tener el intérprete instalado en la máquina.&lt;/p&gt;
+&lt;h2 id=&#34;el-ejemplo&#34;&gt;El ejemplo&lt;/h2&gt;
+&lt;p&gt;Y como ejemplo, trataré de realizar lo mismo que ya hicimos en Jenkins: Vamos a configurar &lt;a href=&#34;https://www.pydoubles.org/&#34;&gt;pyDoubles&lt;/a&gt; para ejecutarlo con BuildBot.&lt;/p&gt;
+&lt;h3 id=&#34;creando-el-esclavo&#34;&gt;Creando el esclavo&lt;/h3&gt;
+&lt;p&gt;Comienzo por el esclavo porque no vamos a configurar nada, así que bastará con ejecutar:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ buildslave create-slave -r ./example-slave localhost example-slave pass
+mkdir ./example-slave
+chdir ./example-slave
+mkdir ./example-slave/info
+Creating info/admin, you need to edit it appropriately
+Creating info/host, you need to edit it appropriately
+Not creating info/access_uri - add it if you wish
+Please edit the files in ./example-slave/info appropriately.
+buildslave configured in ./example-slave
+$
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Como véis, un proceso bastante sencillo. Y ahora sólo hay que seguir las instrucciones y editar los archivos que se indican: &lt;code&gt;info/admin&lt;/code&gt;, &lt;code&gt;info/host&lt;/code&gt; y uno que no indica claramente, que es el &lt;code&gt;buildbot.tac&lt;/code&gt;. Si abrís los archivos, veréis que &lt;code&gt;buildbot.tac&lt;/code&gt; es un programa python. Realmente no es necesario saber python para editarlo, ya que la plantilla es autoexplicativa. En nuestro caso, ni siquiera es necesario editarlo porque va a estar todo en local.&lt;/p&gt;
+&lt;p&gt;La opción &amp;lsquo;&lt;code&gt;-r&lt;/code&gt;&amp;rsquo; que utilicé en la línea de órdenes sirve para que utilice rutas relativas. Así, podríamos mover de directorio la configuración del esclavo.&lt;/p&gt;
+&lt;p&gt;En el caso del esclavo está claro qué archivos podemos mantener en un sistema de control de versiones: los tres indicados (&lt;code&gt;info/admin&lt;/code&gt;, &lt;code&gt;info/host&lt;/code&gt; y &lt;code&gt;buildbot.tac&lt;/code&gt;).&lt;/p&gt;
+&lt;h3 id=&#34;creando-el-maestro&#34;&gt;Creando el maestro&lt;/h3&gt;
+&lt;p&gt;De manera similar al esclavo, podemos crear el maestro:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ buildbot create-master -r example-master
+mkdir ./example-master
+creating master.cfg.sample
+populating public_html/
+creating database (sqlite:///state.sqlite)
+buildmaster configured in ./example-master
+$
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Como podeis observar ahora tardará un poco más, ya que tiene que crear e inicializar la base de datos. Por defecto utilizará &lt;strong&gt;sqlite&lt;/strong&gt;, pero podemos configurarlo contra un &lt;strong&gt;mysql&lt;/strong&gt;. Para el ejemplo, &lt;strong&gt;sqlite&lt;/strong&gt; será suficiente.&lt;/p&gt;
+&lt;p&gt;Veamos lo que nos ha creado aquí:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;.
+├── buildbot.tac
+├── master.cfg.sample
+├── public_html
+│   ├── bg_gradient.jpg
+│   ├── default.css
+│   ├── favicon.ico
+│   └── robots.txt
+└── state.sqlite
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Lo primero es mover el archivo &amp;ldquo;&lt;code&gt;master.cfg.sample&lt;/code&gt;&amp;rdquo; a &amp;ldquo;&lt;code&gt;master.cfg&lt;/code&gt;&amp;rdquo;. Éste será nuestra plantilla a modificar.&lt;/p&gt;
+&lt;p&gt;¿Qué tendríamos que guardar en un sistema de control de versiones? Pues basta con guardar &lt;code&gt;buildbot.tac&lt;/code&gt; y &lt;code&gt;master.cfg&lt;/code&gt;. Nada más. El resto de los archivos podemos volver a obtenerlos con la orden (fijáos que lo ejecuto desde dentro del directorio creado):&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;example-master$ buildbot upgrade-master
+checking for running master
+checking master.cfg
+upgrading basedir
+populating public_html/
+populating ./public_html/favicon.ico
+populating ./public_html/robots.txt
+populating ./public_html/bg_gradient.jpg
+populating ./public_html/default.css
+populating ./master.cfg.sample
+upgrading database (sqlite:///state.sqlite)
+
+upgrade complete
+example-master$
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Evidentemente, perderemos el histórico de datos, pero&amp;hellip; ¿es realmente importante? Si es así, recomiendo hacer copias de seguridad como se harían de cualquier otra base de datos. Y, evidentemente, no utilizar sqlite.&lt;/p&gt;
+&lt;h3 id=&#34;configurando-el-maestro&#34;&gt;Configurando el maestro&lt;/h3&gt;
+&lt;p&gt;Ahora es necesario configurar el maestro. Podéis observar el parecido que hay en el archivo &lt;code&gt;buildbot.tac&lt;/code&gt; con el del esclavo. Dejaremos las opciones tal y como están.&lt;/p&gt;
+&lt;p&gt;Vamos con el complicado: &lt;code&gt;master.cfg&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Sí, es python. Pero para hacer lo básico no es necesario saber python, sino seguir los consejos de los comentarios. La ventaja de utilizar python es que ofrece mucha versatilidad.&lt;/p&gt;
+&lt;p&gt;Por defecto trae configurado el proyecto &lt;em&gt;pyFlakes&lt;/em&gt;, que vamos a cambiar por &lt;strong&gt;pyDoubles&lt;/strong&gt;. Veremos que no es tan complejo. Voy a pegar todo el archivo, pero si lo comparáis, veréis que sólo han cambiado las secciones &amp;ldquo;&lt;em&gt;ChangeSources&lt;/em&gt;&amp;rdquo;, &amp;ldquo;&lt;em&gt;Builders&lt;/em&gt;&amp;rdquo; y &amp;ldquo;&lt;em&gt;Project Identity&lt;/em&gt; &amp;quot;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  1&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# -*- python -*-&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  2&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# ex: set syntax=python:&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  3&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  4&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# This is a sample buildmaster config file. It must be installed as&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  5&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# &amp;#39;master.cfg&amp;#39; in your buildmaster&amp;#39;s base directory.&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  6&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  7&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# This is the dictionary that the buildmaster pays attention to. We also use&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  8&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# a shorter alias to save typing.&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;  9&lt;/span&gt;c &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; BuildmasterConfig &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {}
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 10&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 11&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;####### BUILDSLAVES&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 12&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 13&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# The &amp;#39;slaves&amp;#39; list defines the set of recognized buildslaves. Each element is&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 14&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# a BuildSlave object, specifying a unique slave name and password.  The same&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 15&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# slave name and password must be configured on the slave.&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 16&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; buildbot.buildslave &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; BuildSlave
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 17&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;slaves&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; [BuildSlave(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;example-slave&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pass&amp;#34;&lt;/span&gt;)]
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 18&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 19&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# &amp;#39;slavePortnum&amp;#39; defines the TCP port to listen on for connections from slaves.&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 20&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# This must match the value configured into the buildslaves (with their&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 21&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# --master option)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 22&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;slavePortnum&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;9989&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 23&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 24&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;####### CHANGESOURCES&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 25&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 26&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# the &amp;#39;change_source&amp;#39; setting tells the buildmaster how it should find out&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 27&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# about source code changes.  Here we point to the buildbot clone of pyflakes.&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 28&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 29&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; buildbot.changes.gitpoller &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; GitPoller
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 30&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;change_source&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; []
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 31&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#c[&amp;#39;change_source&amp;#39;].append(GitPoller(&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 32&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#        &amp;#39;git://github.com/buildbot/pyflakes.git&amp;#39;,&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 33&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#        workdir=&amp;#39;gitpoller-workdir&amp;#39;, branch=&amp;#39;master&amp;#39;,&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 34&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#        pollinterval=300))&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 35&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 36&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;####### SCHEDULERS&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 37&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 38&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Configure the Schedulers, which decide how to react to incoming changes.  In this&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 39&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# case, just kick off a &amp;#39;runtests&amp;#39; build&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 40&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 41&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; buildbot.schedulers.basic &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; SingleBranchScheduler
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 42&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; buildbot.schedulers.forcesched &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; ForceScheduler
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 43&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; buildbot.changes &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; filter
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 44&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;schedulers&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; []
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 45&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;schedulers&amp;#39;&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(SingleBranchScheduler(
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 46&lt;/span&gt;                            name&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;all&amp;#34;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 47&lt;/span&gt;                            change_filter&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;filter&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;ChangeFilter(branch&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;master&amp;#39;&lt;/span&gt;),
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 48&lt;/span&gt;                            treeStableTimer&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;None,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 49&lt;/span&gt;                            builderNames&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;runtests&amp;#34;&lt;/span&gt;]))
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 50&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;schedulers&amp;#39;&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(ForceScheduler(
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 51&lt;/span&gt;                            name&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;force&amp;#34;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 52&lt;/span&gt;                            builderNames&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;runtests&amp;#34;&lt;/span&gt;]))
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 53&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 54&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;####### BUILDERS&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 55&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 56&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# The &amp;#39;builders&amp;#39; list defines the Builders, which tell Buildbot how to perform a build:&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 57&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# what steps, and which slaves can execute them.  Note that any particular build will&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 58&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# only take place on one slave.&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 59&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 60&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; buildbot.process.factory &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; BuildFactory
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 61&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; buildbot.steps.source &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; Mercurial
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 62&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; buildbot.steps.shell &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; ShellCommand
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 63&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 64&lt;/span&gt;factory &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; BuildFactory()
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 65&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# check out the source&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 66&lt;/span&gt;factory&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;addStep(Mercurial(repourl&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;https://bitbucket.org/carlosble/pydoubles&amp;#39;&lt;/span&gt;, mode&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;copy&amp;#39;&lt;/span&gt;))
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 67&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# run the tests (note that this will require that &amp;#39;trial&amp;#39; is installed)&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 68&lt;/span&gt;factory&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;addStep(ShellCommand(command&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;nosetests&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pyDoublesTests/unit.py&amp;#34;&lt;/span&gt;]))
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 69&lt;/span&gt;factory&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;addStep(ShellCommand(command&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;nosetests&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pyDoublesTests/hamcrest_integration.py&amp;#34;&lt;/span&gt;]))
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 70&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 71&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; buildbot.config &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; BuilderConfig
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 72&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 73&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;builders&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; []
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 74&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;builders&amp;#39;&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 75&lt;/span&gt;    BuilderConfig(name&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;runtests&amp;#34;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 76&lt;/span&gt;      slavenames&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;example-slave&amp;#34;&lt;/span&gt;],
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 77&lt;/span&gt;      factory&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;factory))
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 78&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 79&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;####### STATUS TARGETS&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 80&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 81&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# &amp;#39;status&amp;#39; is a list of Status Targets. The results of each build will be&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 82&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# pushed to these targets. buildbot/status/*.py has a variety to choose from,&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 83&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# including web pages, email senders, and IRC bots.&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 84&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 85&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;status&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; []
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 86&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 87&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; buildbot.status &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; html
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 88&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;from&lt;/span&gt; buildbot.status.web &lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; authz, auth
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 89&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 90&lt;/span&gt;authz_cfg&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;authz&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;Authz(
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 91&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# change any of these to True to enable; see the manual for more&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 92&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# options&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 93&lt;/span&gt;    auth&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;auth&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;BasicAuth([(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pyflakes&amp;#34;&lt;/span&gt;,&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;pyflakes&amp;#34;&lt;/span&gt;)]),
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 94&lt;/span&gt;    gracefulShutdown &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; False,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 95&lt;/span&gt;    forceBuild &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;auth&amp;#39;&lt;/span&gt;, &lt;span style=&#34;color:#75715e&#34;&gt;# use this to test your slave once it is set up&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 96&lt;/span&gt;    forceAllBuilds &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; False,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 97&lt;/span&gt;    pingBuilder &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; False,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 98&lt;/span&gt;    stopBuild &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; False,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt; 99&lt;/span&gt;    stopAllBuilds &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; False,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;100&lt;/span&gt;    cancelPendingBuild &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; False,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;101&lt;/span&gt;)
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;102&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;status&amp;#39;&lt;/span&gt;]&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;append(html&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;WebStatus(http_port&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;8010&lt;/span&gt;, authz&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;authz_cfg))
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;103&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;104&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;####### PROJECT IDENTITY&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;105&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;106&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# the &amp;#39;title&amp;#39; string will appear at the top of this buildbot&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;107&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# installation&amp;#39;s html.WebStatus home page (linked to the&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;108&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# &amp;#39;titleURL&amp;#39;) and is embedded in the title of the waterfall HTML page.&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;109&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;110&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;title&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;My BuildBot Installation&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;111&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;titleURL&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://www.magmax.org&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;112&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;113&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# the &amp;#39;buildbotURL&amp;#39; string should point to the location where the buildbot&amp;#39;s&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;114&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# internal web server (usually the html.WebStatus page) is visible. This&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;115&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# typically uses the port number set in the Waterfall &amp;#39;status&amp;#39; entry, but&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;116&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# with an externally-visible host name which the buildbot cannot figure out&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;117&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# without some help.&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;118&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;119&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;buildbotURL&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://localhost:8010/&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;120&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;121&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;####### DB URL&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;122&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;123&lt;/span&gt;c[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;db&amp;#39;&lt;/span&gt;] &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; {
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;124&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# This specifies what database buildbot uses to store its state.  You can leave&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;125&lt;/span&gt;    &lt;span style=&#34;color:#75715e&#34;&gt;# this at its default for all but the largest installations.&lt;/span&gt;
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;126&lt;/span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;db_url&amp;#39;&lt;/span&gt; : &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;sqlite:///state.sqlite&amp;#34;&lt;/span&gt;,
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;127&lt;/span&gt;}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;ejecutando-el-maestro&#34;&gt;Ejecutando el maestro&lt;/h3&gt;
+&lt;p&gt;Ningún misterio: desde el directorio del maestro, basta ejecutar:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;example-master$ buildbot start
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h3 id=&#34;ejecutando-el-esclavo&#34;&gt;Ejecutando el esclavo&lt;/h3&gt;
+&lt;p&gt;Tampoco tiene misterio: desde el directorio del esclavo, basta ejecutar:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;example-slave$ buildslave start
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Y todo debería ir correctamente.&lt;/p&gt;
+&lt;h2 id=&#34;lanzando-una-build-cómo-usar-la-gui&#34;&gt;Lanzando una build (cómo usar la GUI)&lt;/h2&gt;
+&lt;p&gt;Si os habéis fijado en los logs o en el archivo de configuración, el maestro está sirviendo una web en &lt;a href=&#34;https://localhost:8010/&#34;&gt;https://localhost:8010/&lt;/a&gt;. Lo primero que haremos será &lt;em&gt;LogIn&lt;/em&gt;. Como no lo hemos modificado en el archivo de configuración, bastará con usar &lt;strong&gt;pyflakes/pyflakes&lt;/strong&gt; (si dudáis, mirad la sección de autenticación del archivo &lt;code&gt;master.cfg&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;Una vez autenticados, podemos irnos a la sección &amp;ldquo;&lt;em&gt;Waterfall&lt;/em&gt;&amp;rdquo; y pulsar sobre &amp;ldquo;&lt;strong&gt;runtests&lt;/strong&gt;&amp;rdquo;. Eso nos mostrará la página de ejecución de tests, donde está todo configurado. Basta pulsar el botón &amp;ldquo;&lt;strong&gt;Force Build&lt;/strong&gt;&amp;rdquo;. Y, si todo es correcto, debería haberse ejecutado la batería de pruebas.&lt;/p&gt;
+&lt;p&gt;La ventana más útil para ver resultados es la de &lt;em&gt;Waterfall&lt;/em&gt;. A partir de ahí no os costará mucho navegar el resto.&lt;/p&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/buildbot-grid.jpg&#34;
+         alt=&#34;Buildbot grid&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;comparativa-entre-buildbot-y-jenkins&#34;&gt;Comparativa entre BuildBot y Jenkins&lt;/h2&gt;
+&lt;p&gt;A menudo las comparativas son odiosas. Éste es uno de esos casos. No se puede decir que uno sea mejor que el otro, pero sí que cada cual tiene sus puntos fuertes.&lt;/p&gt;
+&lt;p&gt;Voy a exponer algunas de estas ventajas de cada uno.&lt;/p&gt;
+&lt;h3 id=&#34;guardando-las-configuraciones&#34;&gt;Guardando las configuraciones&lt;/h3&gt;
+&lt;p&gt;Ambos utilizan una base de datos para almacenar los resultados. Sin embargo, la forma de guardar las configuraciones de los trabajos es completamente diferente: Jenkins utiliza archivos XML, mientras que BuildBot utiliza un único archivo Python.&lt;/p&gt;
+&lt;p&gt;Dado que los archivos de Jenkins no se modificarán a mano, sino utilizando la GUI, resultará dificil mantenerlos en un sistema de control de versiones. Sin embargo, resulta muy sencillo hacerlo con BuildBot.&lt;/p&gt;
+&lt;h3 id=&#34;configuraciones-cambiantes&#34;&gt;Configuraciones cambiantes&lt;/h3&gt;
+&lt;p&gt;Si tenemos configuraciones que cambian mucho, entonces es mejor no utilizar BuildBot. En BuildBot las configuraciones son estáticas y se requiere un reinicio del maestro para aplicar los cambios. Por esa razón, en estos casos es mejor utilizar Jenkins.&lt;/p&gt;
+&lt;p&gt;Si lo único que va a cambiar son algunos parámetros, entonces sí podemos plantearnos usar BuildBot.&lt;/p&gt;
+&lt;h3 id=&#34;try&#34;&gt;Try&lt;/h3&gt;
+&lt;p&gt;BuildBot tiene una característica que Jenkins no tiene: el &lt;strong&gt;try&lt;/strong&gt;. Sirve para &amp;ldquo;&lt;em&gt;intentar&lt;/em&gt;&amp;rdquo; una build, de manera que coja los cambios locales, aunque no estén en el repositorio, e intente realizar una build con ellos. Esta característica puede resultar de mucha utilidad cuando se quieren probar situaciones que pueden no funcionar correctamente o para probar el propio sistema de CI.&lt;/p&gt;
+&lt;h3 id=&#34;bonito&#34;&gt;Bonito&lt;/h3&gt;
+&lt;p&gt;Indiscutiblemente, Jenkins es mucho más bonito que BuildBot. Han cuidado mucho más la interfaz.&lt;/p&gt;
+&lt;p&gt;Además, BuildBot ofrece los resultados sin más, mientras que Jenkins permite procesarlos y presentarlos con una interfaz más bonita.&lt;/p&gt;
+&lt;h3 id=&#34;ampliable&#34;&gt;Ampliable&lt;/h3&gt;
+&lt;p&gt;Jenkins permite la fácil ampliación mediante la creación de &lt;em&gt;plug-ins&lt;/em&gt;. Estas extensiones requieren conocimientos de Java, &lt;a href=&#34;https://commons.apache.org/jelly/&#34;&gt;Jelly&lt;/a&gt; y, probablemente, un poco de Groovy, además de conocer la API.&lt;/p&gt;
+&lt;p&gt;Con BuildBot es probable que no necesitemos de ampliaciones, ya que se puede programar sobre la propia build. En caso de necesitarlas, basta con escribir el programa Python adecuado. Para ello, podemos basarnos en el propio código de la clase de la que heredaremos.&lt;/p&gt;
+&lt;p&gt;Para algunas cosas, será más sencillo el sistema de Jenkins. Para otras, el de BuildBot.&lt;/p&gt;
+&lt;h3 id=&#34;rápido&#34;&gt;Rápido&lt;/h3&gt;
+&lt;p&gt;Jenkins tarda más de un minuto en reiniciarse. BuildBot breves segundos.&lt;/p&gt;
+&lt;p&gt;Tras un reinicio, Jenkins pierde el control de los esclavos: no sabe si están ejecutando algo, así que es probable que los trate como desocupados. Esto puede producir que fallen tanto el trabajo en curso como el nuevo. En el caso de que no lance un nuevo trabajo, Jenkins ignorará los resultados del trabajo en curso, por lo que se habrá perdido irremediablemente.&lt;/p&gt;
+&lt;p&gt;Con BuildBot también se pierde la ejecución en curso. Además, cuando recupera el contacto con el esclavo, relanzará la build que estaba a medias. Sin embargo, el maestro reinicia al esclavo, evitando que haya dos instancias del esclavo corriendo simultáneamente.&lt;/p&gt;
+&lt;p&gt;La documentación de Jenkins es extensa, pero entrar en el código suele ser complejo. La documentación de BuildBot es bastante buena, aunque la página web está desactualizada: recomiendo descargarse el código y leer la documentación directamente de allí (formato &lt;em&gt;sphinx&lt;/em&gt;, que podéis compilar en vuestras máquinas). De todas maneras, es código Python, que suele ser bastante legible.&lt;/p&gt;
+&lt;h3 id=&#34;api&#34;&gt;API&lt;/h3&gt;
+&lt;p&gt;Jenkins tiene API en formatos JSON y XML. Además, ofrece un cliente java bastante potente.&lt;/p&gt;
+&lt;p&gt;BuildBot tiene API en formato JSON. Es algo más sencilla, pero es normal: la mayor parte de las cosas que queremos hacer estarán escritas en python, en el archivo de configuración.&lt;/p&gt;
+&lt;p&gt;Jenkins, además, ofrece una interfaz Groovy, sólo disponible para administradores. Sobre esta interfaz debo prevenir que es peligrosa: un descuido en una condición y puedes renombrar todos los trabajos en curso; un &lt;code&gt;System.exit&lt;/code&gt;, y se apagará el servidor.&lt;/p&gt;
+&lt;h2 id=&#34;otras-opciones&#34;&gt;Otras opciones&lt;/h2&gt;
+&lt;p&gt;No son las dos únicas opciones disponibles. Existen muchas otras, de libre disposición, como &lt;a href=&#34;https://cruisecontrol.sourceforge.net/&#34;&gt;CruiseControl&lt;/a&gt;, &lt;a href=&#34;https://jenkins-ci.org/&#34;&gt;Jenkins&lt;/a&gt;, &lt;a href=&#34;https://buildbot.net/&#34;&gt;BuildBot&lt;/a&gt;, &lt;a href=&#34;https://gump.apache.org/&#34;&gt;Apache Gump&lt;/a&gt; o &lt;a href=&#34;https://continuum.apache.org/&#34;&gt;Apache Continuum&lt;/a&gt;. También hay aplicaciones propietarias, como &lt;a href=&#34;https://www.atlassian.com/es/software/bamboo/overview&#34;&gt;Bamboo&lt;/a&gt; o &lt;a href=&#34;https://en.wikipedia.org/wiki/Azure_DevOps_Server&#34;&gt;Team Foundation Server&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Otro ejemplo es &lt;a href=&#34;https://travis-ci.org/&#34;&gt;Travis-CI&lt;/a&gt;. En este caso, nos venden el servicio, ya que no resulta sencillo encontrar información sobre cómo instalárnoslo. Aún así, es software libre y el código está disponible.&lt;/p&gt;
+&lt;p&gt;Como véis, todas estas sólo las mencionaré, ya que nunca las he utilizado. Hay muchas otras. Tan sólo tenéis que elegir una y comenzar a usarla.&lt;/p&gt;
+&lt;h2 id=&#34;en-producción&#34;&gt;En producción&lt;/h2&gt;
+&lt;p&gt;Y como no hay nada mejor que un ejemplo, podéis visitar los &lt;em&gt;waterfall&lt;/em&gt; de gente que ya lo está usando:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://builder.blender.org/waterfall&#34;&gt;Blender&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://chromium-build.appspot.com/p/chromium/console&#34;&gt;Chromium&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://build.gnome.org/&#34;&gt;Gnome&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://buildbot.python.org/all/waterfall&#34;&gt;Python&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;y-fin&#34;&gt;Y fin&lt;/h2&gt;
+&lt;p&gt;Realmente las condiciones para utilizar cualquier sistema de integración contínua son las mismas: &lt;strong&gt;deben existir pruebas&lt;/strong&gt; y &lt;strong&gt;debe ser fácil de desplegar&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;La elección de un buen servidor de integración contínua es importante. Al principio será más un estorbo que otra cosa, pero poco a poco termina transformándose en un servicio crítico que, cuando está parado, la empresa no avanza.&lt;/p&gt;
+&lt;p&gt;Puede parecer exagerado, pero la dependencia con el mismo es importante: termina siendo el &lt;em&gt;juez supremo&lt;/em&gt; de nuestros cambios. Si el servidor de CI no lo aprueba, nuestros cambios no se aplican. Da igual cómo nos defendamos o cómo queramos interpretarlo: si no hay verde, nuestro trabajo no está terminado.&lt;/p&gt;
+&lt;p&gt;Además, un buen servidor de CI nos permitirá recoger estadísticas de uso, de manera que podamos optimizar el proceso. Será interesante evaluar la posibilidad de lanzar varios hilos, comprar más hardware (más esclavos), evaluar el impacto de un cambio, comprobar el estilo de nuestro código, etc.&lt;/p&gt;
+&lt;p&gt;Elegid uno, y usadlo.&lt;/p&gt;
+
+        
+      </description>
     </item>
     
   </channel>

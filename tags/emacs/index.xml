@@ -13,10 +13,37 @@
       <pubDate>Sun, 24 Mar 2013 00:00:00 +0000</pubDate>
       
       <guid>https://magmax.org/blog/emacs-y-ficheros-basura/</guid>
-      <description>Este artículo ya lo escribí en Crysol, pero lo replico aquí porque he estado a punto de volver a currármelo porque no lo encontraba XD
-Estaba harto de encontrarme ficheros ~, ## y .semantic por todas partes, y puede llegar a ser muy aburrido borrarlos periódicamente. ¡Tiene que haber alguna manera de optimizar esto! Y, efectivamente&amp;hellip;
-  Ingredientes Pues Emacs. No más.
-Backups Hoy vamos a tocar a saco el .</description>
+      <description>
+        
+          &lt;p&gt;Este artículo ya lo escribí en &lt;a href=&#34;https://crysol.org/es/node/589&#34; title=&#34;TES: Eliminar ficheros basura generados por Emacs&#34;&gt;Crysol&lt;/a&gt;, pero lo replico aquí porque he estado a punto de volver a currármelo porque no lo encontraba XD&lt;/p&gt;
+&lt;p&gt;Estaba harto de encontrarme ficheros ~, ## y &lt;em&gt;.semantic&lt;/em&gt; por todas partes, y puede llegar a ser muy aburrido borrarlos periódicamente. ¡Tiene que haber alguna manera de optimizar esto! Y, efectivamente&amp;hellip;&lt;/p&gt;
+&lt;!-- raw HTML omitted --&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://magmax.org/images/emacs.png&#34;
+         alt=&#34;Emacs&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h1 id=&#34;ingredientes&#34;&gt;Ingredientes&lt;/h1&gt;
+&lt;p&gt;Pues &lt;strong&gt;Emacs&lt;/strong&gt;. No más.&lt;/p&gt;
+&lt;h1 id=&#34;backups&#34;&gt;Backups&lt;/h1&gt;
+&lt;p&gt;Hoy vamos a tocar a saco el &lt;code&gt;.emacs&lt;/code&gt; (recordad que en Windón es &lt;code&gt;_emacs&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;Para empezar, veamos los backups, es decir, los ficheros ~. Éstos se crean como medida de recuperación ante fallos. Hay gente a la que le gustaría que no existieran. Hay gente que quiere más backups.&lt;/p&gt;
+&lt;p&gt;Existe una variable llamada &lt;strong&gt;version-control&lt;/strong&gt; que nos permite crear ficheros &lt;code&gt;loquesea~1~&lt;/code&gt; de tal manera que podamos tener más de 1 backup. Sus valores son &lt;code&gt;t&lt;/code&gt; para que se hagan; &lt;code&gt;nil&lt;/code&gt; para que no se hagan y &lt;code&gt;t never&lt;/code&gt; que es lo mismo pero así, como con más énfasis: ¡que no pongas versiones!. Yo me quedo con una única versión, así que tengo:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-lisp&#34; data-lang=&#34;lisp&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;    (&lt;span style=&#34;color:#66d9ef&#34;&gt;setq&lt;/span&gt; version-control &lt;span style=&#34;color:#66d9ef&#34;&gt;t&lt;/span&gt; never)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Por si acaso, le digo también que me borre las versiones viejas:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-lisp&#34; data-lang=&#34;lisp&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;    (&lt;span style=&#34;color:#66d9ef&#34;&gt;setq&lt;/span&gt; delete-old-versions &lt;span style=&#34;color:#66d9ef&#34;&gt;t&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;situar-ficheros&#34;&gt;Situar ficheros&lt;/h1&gt;
+&lt;p&gt;Vale, ahora ya se hacen los backups que yo quiero&amp;hellip; Pero sigo teniendo los *~, #*# y &lt;em&gt;*.semantic&lt;/em&gt; por todas partes:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-lisp&#34; data-lang=&#34;lisp&#34;&gt;&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;1&lt;/span&gt;    (&lt;span style=&#34;color:#66d9ef&#34;&gt;setq&lt;/span&gt; backup-directory-alist (&lt;span style=&#34;color:#66d9ef&#34;&gt;quote&lt;/span&gt; ((&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.*&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;~/.emacs_backups/&amp;#34;&lt;/span&gt;))))
+&lt;span style=&#34;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f&#34;&gt;2&lt;/span&gt;    (&lt;span style=&#34;color:#66d9ef&#34;&gt;setq&lt;/span&gt; semanticdb-default-save-directory &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;~/.emacs_semantic/&amp;#34;&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;La primera instrucción indica dónde quiero que me deje los ~ y la segunda, dónde los &lt;em&gt;.semantic&lt;/em&gt;. Es &lt;strong&gt;MUY IMPORTANTE&lt;/strong&gt; que estos directorios existan. Además, hago que comiencen por punto, para que así existan, pero yo no los veo ;)&lt;/p&gt;
+&lt;p&gt;La segunda de las instrucciones indica dónde debe dejar los &lt;em&gt;.semantic&lt;/em&gt;, como es evidente.&lt;/p&gt;
+&lt;p&gt;Y con esto tengo los directorios limpitos de basura (vamos, con la justa ;D )&lt;/p&gt;
+&lt;h1 id=&#34;referencias&#34;&gt;Referencias&lt;/h1&gt;
+&lt;p&gt;Aunque aún no lo he puesto, la referencia es obvia: El &lt;a href=&#34;https://www.gnu.org/software/emacs/manual/emacs.html#Backup&#34; title=&#34;GNU Emacs manual&#34;&gt;manual de Emacs&lt;/a&gt;.&lt;/p&gt;
+
+        
+      </description>
     </item>
     
   </channel>
