@@ -11,10 +11,10 @@ No he podido quitarme la charla de la cabeza en todo el fin de semana, y he inve
 El artículo original, &lsquo;Python Compiler Internals&rsquo;  lo escribió Thomas Lee  (@tglee ) en el 2008, pero es perfectamente válido hoy en día. Me gustó por lo sencillo y por lo acertado del ejemplo.
 Espero que también os guste:" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://magmax.org/blog/python-compiler-internals/" />
-<meta property="og:image" content="https://magmax.org/icons/favicon.png"/>
+<meta property="og:url" content="https://magmax.org/blog/python-compiler-internals/" /><meta property="og:image" content="https://magmax.org/icons/favicon.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2012-05-20T00:00:00+00:00" />
 <meta property="article:modified_time" content="2021-01-28T00:00:00+00:00" /><meta property="og:site_name" content="El blog de MagMax" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://magmax.org/icons/favicon.png"/>
 
@@ -125,9 +125,8 @@ Espero que también os guste:"/>
 <p>No he podido quitarme la charla de la cabeza en todo el fin de semana, y he investigado cómo funciona Python por dentro. Goran se quejaba de que hay muy poca información sobre PHP, y tampoco hay tanta sobre Python. Pero encontré este artículo, me gustó y he tenido que traducirlo. Lo mejor es que todos los lenguajes que están de moda (PHP, Python, Ruby, Java, &hellip;) se basan en los mismos principios, aunque algunos de ellos tienen mayor acierto que otros, y la implementación, que es completamente diferente.</p>
 <p>El artículo original, <a href="https://tomlee.co/wp-content/uploads/2008/12/python-language-internals.pdf" target="_blank" rel="noopener noreffer">&lsquo;Python Compiler Internals&rsquo;</a>  lo escribió <a href="https://tomlee.co" target="_blank" rel="noopener noreffer">Thomas Lee</a>  (<a href="https://twitter.com/#!/tglee" target="_blank" rel="noopener noreffer">@tglee</a> ) en el 2008, pero es perfectamente válido hoy en día. Me gustó por lo sencillo y por lo acertado del ejemplo.</p>
 <p>Espero que también os guste:</p>
-<figure>
-    <img src="/images/python.png"
-         alt="Python"/> 
+<figure><img src="/images/python.png"
+         alt="Python"/>
 </figure>
 
 <hr>
@@ -138,7 +137,7 @@ Espero que también os guste:"/>
 <p>Con el fin de demostrar cómo encajan entre sí los distintos componentes del compilador de Python, usaremos como base el código de Python 2.6 caminando hacia la agregación de una nueva estructura del lenguaje: la instrucción <em>&ldquo;unless&rdquo;</em>, mostrada en el listado siguiente:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -146,11 +145,11 @@ Espero que también os guste:"/>
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">sys</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="n">passwd</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
 <span class="n">unless</span> <span class="n">passwd</span> <span class="o">==</span> <span class="s1">&#39;tehsecret&#39;</span><span class="p">:</span>
-       <span class="k">print</span> <span class="s1">&#39;Password do not match. Exiting!&#39;</span>
+       <span class="nb">print</span> <span class="s1">&#39;Password do not match. Exiting!&#39;</span>
        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </code></pre></td></tr></table>
 </div>
@@ -166,14 +165,14 @@ Espero que también os guste:"/>
 <p>Ahora, para añadir nuestra nueva instrucción <code>unless</code> al lenguaje Python, primero tenemos que modificar el archivo de gramática (<a href="https://svn.python.org/projects/python/tags/r26b3/Grammar/Grammar" target="_blank" rel="noopener noreffer">Grammar/Grammar</a>)  para describir la sintaxis de esta característica, como en el listado siguiente:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cm">/* Grammar/Grammar:78 */</span>
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cm">/* Grammar/Grammar:78 */</span>
 <span class="nl">if_stmt</span><span class="p">:</span> <span class="err">&#39;</span><span class="k">if</span><span class="err">&#39;</span> <span class="n">test</span> <span class="sc">&#39;:&#39;</span> <span class="n">suite</span> <span class="p">(</span><span class="err">&#39;</span><span class="n">elif</span><span class="err">&#39;</span> <span class="n">test</span> <span class="sc">&#39;:&#39;</span> <span class="n">suite</span><span class="p">)</span><span class="o">*</span> <span class="p">[</span><span class="err">&#39;</span><span class="k">else</span><span class="sc">&#39; &#39;</span><span class="o">:</span><span class="err">&#39;</span> <span class="n">suite</span><span class="p">]</span>
 <span class="nl">while_stmt</span><span class="p">:</span> <span class="err">&#39;</span><span class="k">while</span><span class="err">&#39;</span> <span class="n">test</span> <span class="sc">&#39;:&#39;</span> <span class="n">suite</span> <span class="p">[</span><span class="err">&#39;</span><span class="k">else</span><span class="sc">&#39; &#39;</span><span class="o">:</span><span class="err">&#39;</span> <span class="n">suite</span><span class="p">]</span>
 <span class="nl">unless_stmt</span><span class="p">:</span> <span class="err">&#39;</span><span class="n">unless</span><span class="err">&#39;</span> <span class="n">test</span> <span class="sc">&#39;:&#39;</span> <span class="n">suite</span>
@@ -183,14 +182,14 @@ Espero que también os guste:"/>
 </div><p>Dado que nuesta instrucción <code>unless</code> es realmente una instrucción &ldquo;if&rdquo; con la lógica invertida, para implementarlo <em>podríamos</em> utilizar los nodos AST del &ldquo;if&rdquo; y el &ldquo;Not&rdquo; existentes. De hecho, así es como se introdujo la sintaxis el try&hellip;except&hellip;finally en Python 2.5. De todas formas, para los propósitos de este artículo se modificará la estructura AST para poder demostrar cómo generar <em>bytecode</em> para nuestra nueva construcción. Con tal fin, se modifica <a href="https://svn.python.org/projects/python/tags/r26b3/Parser/Python.asdl" target="_blank" rel="noopener noreffer">Parser/Python.asdl</a>  &ndash; que contiene la definición del AST &ndash; como en el listado siguiente:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cm">/* Parser/Python.asdl:25 */</span>
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cm">/* Parser/Python.asdl:25 */</span>
     <span class="o">|</span> <span class="n">For</span><span class="p">(</span><span class="n">expr</span> <span class="n">target</span><span class="p">,</span> <span class="n">expr</span> <span class="n">iter</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">orelse</span><span class="p">)</span>
     <span class="o">|</span> <span class="n">While</span><span class="p">(</span><span class="n">expr</span> <span class="n">test</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">orelse</span><span class="p">)</span>
     <span class="o">|</span> <span class="n">Unless</span><span class="p">(</span><span class="n">expr</span> <span class="n">test</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">)</span>
@@ -200,7 +199,7 @@ Espero que también os guste:"/>
 </div><p>Finalmente, necesitamos añadir algo de código para manejar la transformación de la gramática al AST en <a href="https://svn.python.org/projects/python/tags/r26b3/Python/ast.c" target="_blank" rel="noopener noreffer">Python/ast.c</a> . Aquí añadimos <code>ast_for_unless_stmt</code>, como se muestra a continuación:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -224,7 +223,7 @@ Espero que también os guste:"/>
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cm">/* Python/ast.c:2805 */</span>
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cm">/* Python/ast.c:2805 */</span>
 <span class="k">static</span> <span class="n">stmt_ty</span>
 <span class="nf">ast_for_unless_stmt</span><span class="p">(</span><span class="k">struct</span> <span class="nc">compiling</span><span class="o">*</span> <span class="n">c</span><span class="p">,</span> <span class="k">const</span> <span class="n">node</span> <span class="o">*</span><span class="n">n</span><span class="p">)</span>
 <span class="p">{</span>
@@ -252,11 +251,11 @@ Espero que también os guste:"/>
 <p>Note que puede necesitar regenerar explícitamente algunos ficheros tras realizar estos cambios:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">$ rm -f Python/graminit.c <span class="o">&amp;&amp;</span> make Python/graminit.c
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ rm -f Python/graminit.c <span class="o">&amp;&amp;</span> make Python/graminit.c
 $ rm -f Python/Python-ast.c <span class="o">&amp;&amp;</span> make Python/Python-ast.c
 </code></pre></td></tr></table>
 </div>
@@ -266,7 +265,7 @@ $ rm -f Python/Python-ast.c <span class="o">&amp;&amp;</span> make Python/Python
 <p>Antes de ver más código fuente, es importante comprender que el intérprete de <em>bytecode</em> de Python es una máquina virtual basada en pila. Esto significa que el proceso de ejecutar <em>bytecode</em> manipula una pila de datos, con instrucciones que añaden, eliminan y operan sobre el par de elementos de la cima de la pila. Con esto en mente, veamos cómo generar <em>bytecode</em> desde nuestro nuevo nodo AST Unless en el listado siguiente (veremos lo que hace realmente el <em>bytecode</em> en la sección siguiente):</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -297,7 +296,7 @@ $ rm -f Python/Python-ast.c <span class="o">&amp;&amp;</span> make Python/Python
 </span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cm">/* Python/compile.c:1623 */</span>
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cm">/* Python/compile.c:1623 */</span>
 <span class="k">static</span> <span class="kt">int</span>
 <span class="nf">compiler_unless</span><span class="p">(</span><span class="k">struct</span> <span class="nc">compiler</span> <span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="n">stmt_ty</span> <span class="n">s</span><span class="p">)</span>
 <span class="p">{</span>
@@ -331,7 +330,7 @@ $ rm -f Python/Python-ast.c <span class="o">&amp;&amp;</span> make Python/Python
 </div><p>En este punto, nuestra implementación de la instrucción &ldquo;Unless&rdquo; está terminada. Recompile Python y pruébelo:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -341,7 +340,7 @@ $ rm -f Python/Python-ast.c <span class="o">&amp;&amp;</span> make Python/Python
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">$ ./configure <span class="o">&amp;&amp;</span> make clean <span class="o">&amp;&amp;</span> make
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ ./configure <span class="o">&amp;&amp;</span> make clean <span class="o">&amp;&amp;</span> make
 $ ./python <span class="s">&lt;&lt;EOF
 </span><span class="s">&gt; dv = False
 </span><span class="s">&gt; unless v:
@@ -399,7 +398,7 @@ Traducción: <a href="https://magmax.org" target="_blank" rel="noopener noreffer
                 Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
             </noscript></div></article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Provisto por <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.79.1">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Provisto por <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.91.2">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Miguel Ángel</a></span></div>
         </div>
     </footer></div>

@@ -8,10 +8,10 @@
         <title>Distributed Python: Celery - MagMax&#39;s blog</title><meta name="Description" content="Python service oriented by using message queues, using Celery"><meta property="og:title" content="Distributed Python: Celery" />
 <meta property="og:description" content="Python service oriented by using message queues, using Celery" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://magmax.org/en/blog/python-distribuido-celery/" />
-<meta property="og:image" content="https://magmax.org/icons/favicon.png"/>
+<meta property="og:url" content="https://magmax.org/en/blog/python-distribuido-celery/" /><meta property="og:image" content="https://magmax.org/icons/favicon.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2015-08-22T00:00:00+00:00" />
 <meta property="article:modified_time" content="2021-01-28T00:00:00+00:00" /><meta property="og:site_name" content="MagMax&#39;s blog" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://magmax.org/icons/favicon.png"/>
 
@@ -130,9 +130,8 @@
 
 architectures is in fashion. These architectures use little and very specific services, so they interact each other.</p>
 <p>In this post I&rsquo;ll show how to use <a href="https://www.celeryproject.org/" target="_blank" rel="noopener noreffer">Celery</a> in order to create a SOA architecture.</p>
-<figure>
-    <img src="/images/python.png"
-         alt="Python"/> 
+<figure><img src="/images/python.png"
+         alt="Python"/>
 </figure>
 
 <h2 id="about-celery">About Celery</h2>
@@ -142,38 +141,38 @@ architectures is in fashion. These architectures use little and very specific se
 <p>It is very easy to install; with <code>pip</code>:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">pip install celery
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">pip install celery
 </code></pre></td></tr></table>
 </div>
 </div><p>or <code>apt</code>:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">apt-get install python-celery
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">apt-get install python-celery
 </code></pre></td></tr></table>
 </div>
 </div><p>The problem here is we need a <strong>Broker</strong>. The <strong>Broker</strong> is the way to transport messages from a service to another. In this case, we need a message queue.</p>
 <p>We will use two of them as example: <a href="https://www.rabbitmq.com" target="_blank" rel="noopener noreffer">RabbitMQ</a> and <a href="https://redis.io/" target="_blank" rel="noopener noreffer">Redis</a>. The first one is somehow&hellip; complicated, but very interesting if you already know and install the <a href="https://www.rabbitmq.com/management.html" target="_blank" rel="noopener noreffer">management plugin</a>. The second one is easier to be installed, but more difficult to see what is happening internally. To use <a href="https://redis.io/" target="_blank" rel="noopener noreffer">Redis</a> you will also require the library; with <code>pip</code>:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">pip install redis
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">pip install redis
 </code></pre></td></tr></table>
 </div>
 </div><p>or with <code>apt</code>:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">apt-get install python-redis
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">apt-get install python-redis
 </code></pre></td></tr></table>
 </div>
 </div><h2 id="example">Example</h2>
@@ -181,7 +180,7 @@ architectures is in fashion. These architectures use little and very specific se
 <p>Let&rsquo;s start creating a little service to multiply two numbers:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -194,7 +193,7 @@ architectures is in fashion. These architectures use little and very specific se
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery service example: task to multiply two numbers</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery service example: task to multiply two numbers</span>
 <span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
 
 <span class="c1"># RabbitMQ</span>
@@ -202,7 +201,7 @@ architectures is in fashion. These architectures use little and very specific se
 <span class="c1"># Redis</span>
 <span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s1">&#39;tasks&#39;</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s1">&#39;redis://localhost:6379/0&#39;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;redis://localhost:6379/0&#39;</span><span class="p">)</span>
 
-<span class="nd">@app.task</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">task</span>
 <span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span></code></pre></td></tr></table>
 </div>
@@ -211,7 +210,7 @@ architectures is in fashion. These architectures use little and very specific se
 <p>It is already executable:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -236,7 +235,7 @@ architectures is in fashion. These architectures use little and very specific se
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">$ celery worker --loglevel<span class="o">=</span>info -A tasks
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ celery worker --loglevel<span class="o">=</span>info -A tasks
 
  -------------- celery@nightcrawler v3.1.17 <span class="o">(</span>Cipater<span class="o">)</span>
 ---- **** -----
@@ -274,7 +273,7 @@ architectures is in fashion. These architectures use little and very specific se
 <p>That was the <em>subscriptor</em>. Let create the <em>publisher</em>.</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -287,7 +286,7 @@ architectures is in fashion. These architectures use little and very specific se
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery client example: request for two numbers multiplication</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery client example: request for two numbers multiplication</span>
 <span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
 
 <span class="c1"># RabbitMQ</span>
@@ -297,7 +296,7 @@ architectures is in fashion. These architectures use little and very specific se
 
 <span class="n">promise</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">send_task</span><span class="p">(</span><span class="s1">&#39;tasks.multiply&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
 
-<span class="k">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span></code></pre></td></tr></table>
+<span class="nb">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span></code></pre></td></tr></table>
 </div>
 </div>
 <p>This is more complicated&hellip; but quick to be explained:</p>
@@ -317,7 +316,7 @@ architectures is in fashion. These architectures use little and very specific se
 <p>You can put it all together in the same file, and everything become easier. This is not always possible and can give problems (like every change implies to reboot both client and service), but is very educational:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -337,7 +336,7 @@ architectures is in fashion. These architectures use little and very specific se
 </span><span class="lnt">18
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery full example: publisher/subscriber to request a multiplication</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery full example: publisher/subscriber to request a multiplication</span>
 <span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
 
 <span class="c1"># RabbitMQ</span>
@@ -345,13 +344,13 @@ architectures is in fashion. These architectures use little and very specific se
 <span class="c1"># Redis</span>
 <span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s1">&#39;tasks&#39;</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s1">&#39;redis://localhost:6379/0&#39;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;redis://localhost:6379/0&#39;</span><span class="p">)</span>
 
-<span class="nd">@app.task</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">task</span>
 <span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
     <span class="n">promise</span> <span class="o">=</span> <span class="n">multiply</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span></code></pre></td></tr></table>
@@ -365,7 +364,7 @@ architectures is in fashion. These architectures use little and very specific se
 <p>It is very easy to create the <em>partial</em> <code>duplicate</code> by forcing the first parameter of <code>multiply</code>:</p>
 <p><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -386,7 +385,7 @@ architectures is in fashion. These architectures use little and very specific se
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery full example: multiply two numbers with partials</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery full example: multiply two numbers with partials</span>
 <span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
 
 <span class="c1"># RabbitMQ</span>
@@ -394,14 +393,14 @@ architectures is in fashion. These architectures use little and very specific se
 <span class="c1"># Redis</span>
 <span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s1">&#39;tasks&#39;</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s1">&#39;redis://localhost:6379/0&#39;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;redis://localhost:6379/0&#39;</span><span class="p">)</span>
 
-<span class="nd">@app.task</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">task</span>
 <span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
 
 <span class="hl"><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
 </span><span class="hl">    <span class="n">duplicate</span> <span class="o">=</span> <span class="n">multiply</span><span class="o">.</span><span class="n">si</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 </span><span class="hl">    <span class="n">promise</span> <span class="o">=</span> <span class="n">duplicate</span><span class="o">.</span><span class="n">delay</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-</span><span class="hl">    <span class="k">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+</span><span class="hl">    <span class="nb">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
 </span>
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span></code></pre></td></tr></table>
@@ -417,7 +416,7 @@ architectures is in fashion. These architectures use little and very specific se
 <p>But too much talk; let&rsquo;s concat something:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -442,7 +441,7 @@ architectures is in fashion. These architectures use little and very specific se
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery example: multiply with chains</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery example: multiply with chains</span>
 <span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
 
 <span class="c1"># RabbitMQ</span>
@@ -450,7 +449,7 @@ architectures is in fashion. These architectures use little and very specific se
 <span class="c1"># Redis</span>
 <span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s1">&#39;tasks&#39;</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s1">&#39;redis://localhost:6379/0&#39;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;redis://localhost:6379/0&#39;</span><span class="p">)</span>
 
-<span class="nd">@app.task</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">task</span>
 <span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
 
@@ -461,7 +460,7 @@ architectures is in fashion. These architectures use little and very specific se
 </span><span class="hl">
 </span><span class="hl">    <span class="n">task</span> <span class="o">=</span> <span class="n">chain</span><span class="p">(</span><span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
 </span><span class="hl">    <span class="n">promise</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">delay</span><span class="p">()</span>
-</span><span class="hl">    <span class="k">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+</span><span class="hl">    <span class="nb">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
 </span>
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span></code></pre></td></tr></table>
@@ -470,7 +469,7 @@ architectures is in fashion. These architectures use little and very specific se
 <p>As I said before, <a href="https://www.celeryproject.org/" target="_blank" rel="noopener noreffer">Celery</a> gives syntactic sugar, so it can be rewritten to:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -493,7 +492,7 @@ architectures is in fashion. These architectures use little and very specific se
 </span><span class="lnt">21
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery example: multiply with chains using pipes (syntactic sugar)</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery example: multiply with chains using pipes (syntactic sugar)</span>
 <span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
 
 <span class="c1"># RabbitMQ</span>
@@ -501,7 +500,7 @@ architectures is in fashion. These architectures use little and very specific se
 <span class="c1"># Redis</span>
 <span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s1">&#39;tasks&#39;</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s1">&#39;redis://localhost:6379/0&#39;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;redis://localhost:6379/0&#39;</span><span class="p">)</span>
 
-<span class="nd">@app.task</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">task</span>
 <span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
 
@@ -510,7 +509,7 @@ architectures is in fashion. These architectures use little and very specific se
 </span><span class="hl">
 </span><span class="hl">    <span class="n">task</span> <span class="o">=</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">|</span> <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 </span><span class="hl">    <span class="n">promise</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">delay</span><span class="p">()</span>
-</span><span class="hl">    <span class="k">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+</span><span class="hl">    <span class="nb">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
 </span>
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span></code></pre></td></tr></table>
@@ -520,7 +519,7 @@ architectures is in fashion. These architectures use little and very specific se
 <p>But&hellip; Why the <em>canvas</em> if all the operations run sequentially? Because we can process them concurrently with <code>Groups</code>:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -549,7 +548,7 @@ architectures is in fashion. These architectures use little and very specific se
 </span><span class="lnt">27
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery example: several multiplications with chains and groups (canvas)</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery example: several multiplications with chains and groups (canvas)</span>
 <span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
 
 <span class="c1"># RabbitMQ</span>
@@ -557,7 +556,7 @@ architectures is in fashion. These architectures use little and very specific se
 <span class="c1"># Redis</span>
 <span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s1">&#39;tasks&#39;</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s1">&#39;redis://localhost:6379/0&#39;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;redis://localhost:6379/0&#39;</span><span class="p">)</span>
 
-<span class="nd">@app.task</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">task</span>
 <span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
 
@@ -572,7 +571,7 @@ architectures is in fashion. These architectures use little and very specific se
 </span><span class="hl">        <span class="n">multiply</span><span class="o">.</span><span class="n">s</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span> <span class="o">|</span> <span class="n">duplicate</span><span class="p">,</span>
 </span><span class="hl">    <span class="p">)</span>
 </span><span class="hl">    <span class="n">promise</span> <span class="o">=</span> <span class="n">task</span><span class="o">.</span><span class="n">delay</span><span class="p">()</span>
-</span><span class="hl">    <span class="k">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+</span><span class="hl">    <span class="nb">print</span><span class="p">(</span><span class="n">promise</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
 </span>
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span></code></pre></td></tr></table>
@@ -585,7 +584,7 @@ architectures is in fashion. These architectures use little and very specific se
 <p>Let&rsquo;s see a small example: we are going to multiply the hour by 2 every 10 seconds:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -610,7 +609,7 @@ architectures is in fashion. These architectures use little and very specific se
 </span><span class="lnt">23
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery beat example: periodic date operation</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery beat example: periodic date operation</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
 <span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">group</span>
@@ -620,7 +619,7 @@ architectures is in fashion. These architectures use little and very specific se
 <span class="c1"># Redis</span>
 <span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s1">&#39;tasks&#39;</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s1">&#39;redis://localhost:6379/0&#39;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;redis://localhost:6379/0&#39;</span><span class="p">)</span>
 
-<span class="nd">@app.task</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">task</span>
 <span class="k">def</span> <span class="nf">add_days</span><span class="p">(</span><span class="n">days</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">)</span>
 
@@ -646,7 +645,7 @@ architectures is in fashion. These architectures use little and very specific se
 <p>Perhaps you see a warning like <code>warnings.warn(CDeprecationWarning(W_PICKLE_DEPRECATED))</code>. This is because we are using the <a href="https://docs.python.org/3.4/library/pickle.html" target="_blank" rel="noopener noreffer">pickle</a> serializer, which is deprecated. You can avoid it by adding:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -672,7 +671,7 @@ architectures is in fashion. These architectures use little and very specific se
 </span></span><span class="lnt">24
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery beat example: periodic date operation</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Celery beat example: periodic date operation</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
 <span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">group</span>
@@ -682,7 +681,7 @@ architectures is in fashion. These architectures use little and very specific se
 <span class="c1"># Redis</span>
 <span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s1">&#39;tasks&#39;</span><span class="p">,</span> <span class="n">broker</span><span class="o">=</span><span class="s1">&#39;redis://localhost:6379/0&#39;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;redis://localhost:6379/0&#39;</span><span class="p">)</span>
 
-<span class="nd">@app.task</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">task</span>
 <span class="k">def</span> <span class="nf">add_days</span><span class="p">(</span><span class="n">days</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">days</span><span class="p">)</span>
 
@@ -750,7 +749,7 @@ architectures is in fashion. These architectures use little and very specific se
                 Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
             </noscript></div></article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.79.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.91.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/en/" target="_blank">Miguel Ángel</a></span></div>
         </div>
     </footer></div>

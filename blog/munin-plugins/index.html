@@ -8,10 +8,10 @@
         <title>Munin: creando plugins - El blog de MagMax</title><meta name="Description" content="Pequeña introducción a la creación de plugins para munin"><meta property="og:title" content="Munin: creando plugins" />
 <meta property="og:description" content="Pequeña introducción a la creación de plugins para munin" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://magmax.org/blog/munin-plugins/" />
-<meta property="og:image" content="https://magmax.org/icons/favicon.png"/>
+<meta property="og:url" content="https://magmax.org/blog/munin-plugins/" /><meta property="og:image" content="https://magmax.org/icons/favicon.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2013-08-30T00:00:00+00:00" />
 <meta property="article:modified_time" content="2021-01-28T00:00:00+00:00" /><meta property="og:site_name" content="El blog de MagMax" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://magmax.org/icons/favicon.png"/>
 
@@ -122,9 +122,8 @@
 </nav></div>
             </div><div class="content" id="content"><p>En el <a href="https://magmax.org/blog/munin/" title="Munin" rel="">artículo anterior</a> vimos las características de <a href="https://munin-monitoring.org/" title="Munin page" target="_blank" rel="noopener noreffer">Munin</a>; en esta ocasión veremos cómo adaptarlo a nuestras necesidades escribiendo plugins específicos para nosotros.</p>
 <p>Los plugins pueden escribirse en cualquier lenguaje. Veremos la estructura básica, independiente del lenguaje en el que lo escribamos.</p>
-<figure>
-    <img src="/images/munin.png"
-         alt="Munin"/> 
+<figure><img src="/images/munin.png"
+         alt="Munin"/>
 </figure>
 
 <h2 id="lo-básico">Lo básico</h2>
@@ -139,20 +138,20 @@
 <p>Su estructura es la siguiente:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-text" data-lang="text">[métrica].value [valor]
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text">[métrica].value [valor]
 </code></pre></td></tr></table>
 </div>
 </div><p>Nuestro plugin podrá devolver varias líneas como ésa, con una métrica por línea. Ejemplo:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-text" data-lang="text">load.value 7.8890
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text">load.value 7.8890
 memory.value 84.321
 </code></pre></td></tr></table>
 </div>
@@ -160,13 +159,13 @@ memory.value 84.321
 <p>Obligatorio. Cuando se llame a nuestro plugin con el parámetro &ldquo;config&rdquo;, significa que munin nos pregunta qué valores vamos a devolver. La estructura básica puede ser la siguiente:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-text" data-lang="text">graph_title [Título de nuestro gráfico]
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text">graph_title [Título de nuestro gráfico]
 graph_category [Categoría en la que clasificar nuestro gráfico]
 graph_vlabel [Etiqueta del eje vertical]
 [métrica].label [Etiqueta de la métrica]
@@ -178,11 +177,11 @@ graph_vlabel [Etiqueta del eje vertical]
 <p>Para utilizar esta característica, debemos añadir en un comentario las cadenas:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-text" data-lang="text">#%# family=auto
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text">#%# family=auto
 #%# capabilities=autoconf
 </code></pre></td></tr></table>
 </div>
@@ -191,21 +190,21 @@ graph_vlabel [Etiqueta del eje vertical]
 <p>Para que funcione, requiere encontrar en el código la cadena &ldquo;#%# capabilities=suggest&rdquo;, aunque podemos aprovechar la de <code>autoconf</code>, separándolo con espacios:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-text" data-lang="text">#%# capabilities=autoconf suggest
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text">#%# capabilities=autoconf suggest
 </code></pre></td></tr></table>
 </div>
 </div><p>Al llamarlo con esta opción, el plugin debe imprimir qué recursos puede atender. Al llamarlo sin parámetros, el plugin tomará un parámetro extra de su propio nombre, por lo que deberemos llamarlo &ldquo;plugin_parámetro&rdquo;. Ejemplo:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-text" data-lang="text">if_ suggest
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text">if_ suggest
 eth0
 eth1
 </code></pre></td></tr></table>
@@ -218,10 +217,10 @@ eth1
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">$ munin-node-configure --suggest --remove-also --shell <span class="p">|</span> bash
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ munin-node-configure --suggest --remove-also --shell <span class="p">|</span> bash
 </code></pre></td></tr></table>
 </div>
 </div><ul>
@@ -235,12 +234,12 @@ eth1
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">$ ls -l /etc/munin/plugins/if_*
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ ls -l /etc/munin/plugins/if_*
 if_eth0 -&gt; /usr/share/munin/plugins/if_
 if_wlan0 -&gt; /usr/share/munin/plugins/if_
 </code></pre></td></tr></table>
@@ -252,7 +251,7 @@ if_wlan0 -&gt; /usr/share/munin/plugins/if_
 <p>Veamos un ejemplo completo en bash: Un pequeño plugin que muestra el estado de la cola en Jenkins. Soportará <code>autoconf</code>:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -280,7 +279,7 @@ if_wlan0 -&gt; /usr/share/munin/plugins/if_
 </span><span class="lnt">26
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/sh
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/sh
 </span><span class="cp"></span>
 <span class="nv">JENKINS_URL</span><span class="o">=</span>https://localhost:8080
 
@@ -339,7 +338,7 @@ if_wlan0 -&gt; /usr/share/munin/plugins/if_
                 Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
             </noscript></div></article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Provisto por <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.79.1">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Provisto por <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.91.2">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Miguel Ángel</a></span></div>
         </div>
     </footer></div>

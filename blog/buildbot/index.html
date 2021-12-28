@@ -8,10 +8,10 @@
         <title>Integración contínua: BuildBot - El blog de MagMax</title><meta name="Description" content="Primeros pasos utilizando Buildbot"><meta property="og:title" content="Integración contínua: BuildBot" />
 <meta property="og:description" content="Primeros pasos utilizando Buildbot" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://magmax.org/blog/buildbot/" />
-<meta property="og:image" content="https://magmax.org/icons/favicon.png"/>
+<meta property="og:url" content="https://magmax.org/blog/buildbot/" /><meta property="og:image" content="https://magmax.org/icons/favicon.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2012-08-02T00:00:00+00:00" />
 <meta property="article:modified_time" content="2021-01-28T00:00:00+00:00" /><meta property="og:site_name" content="El blog de MagMax" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://magmax.org/icons/favicon.png"/>
 
@@ -139,9 +139,8 @@
 </nav></div>
             </div><div class="content" id="content"><p>Como prometí en el <a href="https://magmax.org/blog/jenkins/" rel="">artículo anterior</a>, es hora de presentar otra alternativa para la Integración Contínua (<em>CI</em>, o <em>Continuous Integration</em>).</p>
 <p>No es la única alternativa, pero yo sólo he trasteado con <a href="https://jenkins-ci.org/" target="_blank" rel="noopener noreffer">Jenkins</a> y con <a href="https://buildbot.net/" target="_blank" rel="noopener noreffer">BuildBot</a>.</p>
-<figure>
-    <img src="/images/buildbot.png"
-         alt="Buildbot"/> 
+<figure><img src="/images/buildbot.png"
+         alt="Buildbot"/>
 </figure>
 
 <h2 id="maestroesclavo">Maestro/Esclavo</h2>
@@ -215,7 +214,7 @@ example-master$
 <p>Por defecto trae configurado el proyecto <em>pyFlakes</em>, que vamos a cambiar por <strong>pyDoubles</strong>. Veremos que no es tan complejo. Voy a pegar todo el archivo, pero si lo comparáis, veréis que sólo han cambiado las secciones &ldquo;<em>ChangeSources</em>&rdquo;, &ldquo;<em>Builders</em>&rdquo; y &ldquo;<em>Project Identity</em> &quot;</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">  1
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
 </span><span class="lnt">  2
 </span><span class="lnt">  3
 </span><span class="lnt">  4
@@ -344,7 +343,7 @@ example-master$
 </span><span class="lnt">127
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="c1"># -*- python -*-</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># -*- python -*-</span>
 <span class="c1"># ex: set syntax=python:</span>
 
 <span class="c1"># This is a sample buildmaster config file. It must be installed as</span>
@@ -391,7 +390,7 @@ example-master$
 <span class="n">c</span><span class="p">[</span><span class="s1">&#39;schedulers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleBranchScheduler</span><span class="p">(</span>
                             <span class="n">name</span><span class="o">=</span><span class="s2">&#34;all&#34;</span><span class="p">,</span>
                             <span class="n">change_filter</span><span class="o">=</span><span class="nb">filter</span><span class="o">.</span><span class="n">ChangeFilter</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="s1">&#39;master&#39;</span><span class="p">),</span>
-                            <span class="n">treeStableTimer</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                            <span class="n">treeStableTimer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                             <span class="n">builderNames</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;runtests&#34;</span><span class="p">]))</span>
 <span class="n">c</span><span class="p">[</span><span class="s1">&#39;schedulers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ForceScheduler</span><span class="p">(</span>
                             <span class="n">name</span><span class="o">=</span><span class="s2">&#34;force&#34;</span><span class="p">,</span>
@@ -437,13 +436,13 @@ example-master$
     <span class="c1"># change any of these to True to enable; see the manual for more</span>
     <span class="c1"># options</span>
     <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="o">.</span><span class="n">BasicAuth</span><span class="p">([(</span><span class="s2">&#34;pyflakes&#34;</span><span class="p">,</span><span class="s2">&#34;pyflakes&#34;</span><span class="p">)]),</span>
-    <span class="n">gracefulShutdown</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="n">gracefulShutdown</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">forceBuild</span> <span class="o">=</span> <span class="s1">&#39;auth&#39;</span><span class="p">,</span> <span class="c1"># use this to test your slave once it is set up</span>
-    <span class="n">forceAllBuilds</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
-    <span class="n">pingBuilder</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
-    <span class="n">stopBuild</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
-    <span class="n">stopAllBuilds</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
-    <span class="n">cancelPendingBuild</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="n">forceAllBuilds</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">pingBuilder</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">stopBuild</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">stopAllBuilds</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">cancelPendingBuild</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">c</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">WebStatus</span><span class="p">(</span><span class="n">http_port</span><span class="o">=</span><span class="mi">8010</span><span class="p">,</span> <span class="n">authz</span><span class="o">=</span><span class="n">authz_cfg</span><span class="p">))</span>
 
@@ -486,9 +485,8 @@ example-master$
 <p>Si os habéis fijado en los logs o en el archivo de configuración, el maestro está sirviendo una web en <a href="https://localhost:8010/" target="_blank" rel="noopener noreffer">https://localhost:8010/</a>. Lo primero que haremos será <em>LogIn</em>. Como no lo hemos modificado en el archivo de configuración, bastará con usar <strong>pyflakes/pyflakes</strong> (si dudáis, mirad la sección de autenticación del archivo <code>master.cfg</code>).</p>
 <p>Una vez autenticados, podemos irnos a la sección &ldquo;<em>Waterfall</em>&rdquo; y pulsar sobre &ldquo;<strong>runtests</strong>&rdquo;. Eso nos mostrará la página de ejecución de tests, donde está todo configurado. Basta pulsar el botón &ldquo;<strong>Force Build</strong>&rdquo;. Y, si todo es correcto, debería haberse ejecutado la batería de pruebas.</p>
 <p>La ventana más útil para ver resultados es la de <em>Waterfall</em>. A partir de ahí no os costará mucho navegar el resto.</p>
-<figure>
-    <img src="/images/buildbot-grid.jpg"
-         alt="Buildbot grid"/> 
+<figure><img src="/images/buildbot-grid.jpg"
+         alt="Buildbot grid"/>
 </figure>
 
 <h2 id="comparativa-entre-buildbot-y-jenkins">Comparativa entre BuildBot y Jenkins</h2>
@@ -565,7 +563,7 @@ example-master$
                 Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
             </noscript></div></article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Provisto por <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.79.1">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Provisto por <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.91.2">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Miguel Ángel</a></span></div>
         </div>
     </footer></div>

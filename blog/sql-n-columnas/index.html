@@ -9,10 +9,10 @@
 <meta property="og:description" content="En muchas ocasiones tenemos una tabla a la que queremos añadir un número indeterminado de atributosa modo de columnas. Sin embargo, esto plantea un problema, ya que el número de columnas puede variar de forma dinámica. Por ejemplo, tenemos una tabla &ldquo;libro&rdquo; que, en principio, tiene su título, su autor, etc, pero de pronto queremos añadirle un ISBN, o una keyword. ¿Cómo hacemos eso?
 En este artículo se explican las posibles soluciones a este problema." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://magmax.org/blog/sql-n-columnas/" />
-<meta property="og:image" content="https://magmax.org/icons/favicon.png"/>
+<meta property="og:url" content="https://magmax.org/blog/sql-n-columnas/" /><meta property="og:image" content="https://magmax.org/icons/favicon.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2010-07-08T00:00:00+00:00" />
 <meta property="article:modified_time" content="2021-01-28T00:00:00+00:00" /><meta property="og:site_name" content="El blog de MagMax" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://magmax.org/icons/favicon.png"/>
 
@@ -117,43 +117,37 @@ En este artículo se explican las posibles soluciones a este problema."/>
 </nav></div>
             </div><div class="content" id="content"><p>En muchas ocasiones tenemos una tabla a la que queremos añadir un número indeterminado de atributosa modo de columnas. Sin embargo, esto plantea un problema, ya que el número de columnas puede variar de forma dinámica. Por ejemplo, tenemos una tabla &ldquo;libro&rdquo; que, en principio, tiene su título, su autor, etc, pero de pronto queremos añadirle un ISBN, o una keyword. ¿Cómo hacemos eso?</p>
 <p>En este artículo se explican las posibles soluciones a este problema.</p>
-<figure>
-    <img src="/images/database.jpg"
-         alt="Databases"/> 
+<figure><img src="/images/database.jpg"
+         alt="Databases"/>
 </figure>
 
 <h2 id="abordando-el-problema">Abordando el problema</h2>
 <p>La mayor dificultad del problema radica en que estamos tratando de hacer uso de elementos estáticos como dinámicos. En SQL, las columnas son estáticas, no deberían alterarse a menudo (si es nunca, mejor). Sin embargo las filas sí son dinámicas y van a cambiar constantemente. Así que la solución a nuestro problema es tan simple como transformar las columnas en filas.</p>
 <p>De esta manera, lo que antes teníamos como una única tabla, ahora se transformará en 3. Evidentemente, esto va a tener un coste en complejidad y es probable que haga nuestra base de datos más lenta, aunque es probable que no sea así, como veremos más adelante.</p>
 <p>Para este artículo, utilizaré como ejemplo un &ldquo;nodo&rdquo;, que contiene los campos &ldquo;id&rdquo; y &ldquo;title&rdquo;, además de un conjunto de atributos.</p>
-<figure>
-    <img src="/images/mysql/mysql_table_diagram1.png"/> 
+<figure><img src="/images/mysql/mysql_table_diagram1.png"/>
 </figure>
 
-<figure>
-    <img src="/images/mysql/mysql_table_monolitic.png"/> 
+<figure><img src="/images/mysql/mysql_table_monolitic.png"/>
 </figure>
 
 <p>La técnica a utilizar consiste en dejar en la tabla principal sólo la información obligatoria o necesaria de nuestros elementos. En nuestro ejemplo, eso reduce la tabla &ldquo;nodo&rdquo; a dos columnas: &ldquo;id&rdquo; y &ldquo;title&rdquo;.</p>
 <p>Además, necesitaremos una tabla auxiliar con la definición de los atributos. Esta tabla contendrá 3 columnas: El &ldquo;id&rdquo; propio de la tabla, el &ldquo;id&rdquo; del nodo al que pertenece y el nombre del atributo; en este caso, si quisiéramos hacer una base de datos equivalente a la mostrada anteriormente, usaríamos 3 filas en esta tabla: &ldquo;attribute1&rdquo;, &ldquo;attribute2&rdquo; y &ldquo;attribute3&rdquo;. Le he añadido un campo &ldquo;type&rdquo; con el fin de complicarlo todo lo posible: algunos atributos tendrán distintos tipos. Por ejemplo: el &ldquo;attribute1&rdquo; va a ser un entero, &ldquo;attribute2&rdquo; una cadena.</p>
-<figure>
-    <img src="/images/mysql/mysql_only1table.png"/> 
+<figure><img src="/images/mysql/mysql_only1table.png"/>
 </figure>
 
 <p>Una vez hemos definido estas dos tablas, requerimos de otra más con los valores de los atributos. Esta tabla, como veremos a continuación, va a ser la más difícil de gestionar, ya que existen distintas formas de abordarla. En principio nos vamos a quedar con los campos necesarios de la tabla: &ldquo;id&rdquo; para la clave primaria (aunque no sería esencialmente necesario, ya que puede obtenerse la clave primaria con los dos campos siguientes), el &ldquo;id&rdquo; del nodo al que pertenece y el &ldquo;id&rdquo; del atributo al que pertenece.</p>
 <p>Esta tabla de valores contendrá también el valor de los atributos. Si tenemos suerte y queremos que todos los nodos de la tabla tengan el mismo tipo, basta con añadir una columna más &ldquo;value&rdquo; de ese tipo a esta tabla de valores y dejar de leer aquí. Sin embargo, es muy probable que esto no sea así y necesitemos diferentes tipos para poder solucionar nuestro problema. Existen 3 maneras de abordar este problema: jerarquías de tablas, una única tabla de valores y polimorfismo.</p>
 <h2 id="una-única-tabla-de-valores">Una única tabla de valores</h2>
 <p>La manera más sencilla es crear una columna de cada tipo en nuestra tabla de valores. De esta manera, elegiremos una columna u otra dependiendo del valor de la columna &ldquo;type&rdquo; de la tabla de definición de atributos.</p>
-<figure>
-    <img src="/images/mysql/mysql_table_diagram2.png"/> 
+<figure><img src="/images/mysql/mysql_table_diagram2.png"/>
 </figure>
 
 <p>En el ejemplo, podremos crear dos columnas, una de enteros y otra de cadenas, de manera que el &ldquo;attribute1&rdquo; lea los enteros y el &ldquo;attribute2&rdquo;, las cadenas.</p>
 <p>Esta solución es bastante sencilla de llevar a cabo, no requiere tablas extra, y el espacio requerido por cada fila es constante. El problema es que es muy probable que se van a tener muchos campos nulos (a menudo más que campos con contenido) y que no podemos obligar a tener valor en alguno de ellos, salvo mediante código. Ésta puede ser las solución cuando sólo hay uno o dos tipos de valores y sabemos a ciencia cierta que nunca va a haber más. Por experiencia sé que cuando estamos seguros de que no puede haber más de 2 de algo, en seguida aparece un tercero, un cuarto, &hellip; Por lo que no recomiendo el uso de esta técnica.</p>
 <h2 id="polimorfismo">Polimorfismo</h2>
 <p>Otra posible solución es utilizar un tipo de valor que pueda englobarlos a todos, como una cadena, por ejemplo. Se pueden utilizar distintas codificaciones para los distintos tipos, de manera que podamos &ldquo;hacer un cast&rdquo; a nuestro tipo original.</p>
-<figure>
-    <img src="/images/mysql/mysql_polimorfic.png"/> 
+<figure><img src="/images/mysql/mysql_polimorfic.png"/>
 </figure>
 
 <p>En el ejemplo, crearíamos una única columna &ldquo;value&rdquo; de tipo cadena, y convertiríamos los enteros a cadena. Dependiendo del tipo de la tabla de definición de atributos, durante la recuperación de datos transformaremos el valor a entero o no.</p>
@@ -161,8 +155,7 @@ En este artículo se explican las posibles soluciones a este problema."/>
 <p>Además, perdemos velocidad, ya que estaremos comparando con el más lento de los mecanismos, y perderemos características como los comparadores distintos del &ldquo;igual&rdquo; y el &ldquo;distinto de&rdquo;.</p>
 <h2 id="jerarquía-de-tablas">Jerarquía de tablas</h2>
 <p>Otra solución es crear una tabla por cada tipo, de manera que, gracias a lo que indique la columna &ldquo;type&rdquo; en la tabla de definición de atributos, sepamos a qué tabla tenemos que hacer referencia.</p>
-<figure>
-    <img src="/images/mysql/mysql_table_hierarchy.png"/> 
+<figure><img src="/images/mysql/mysql_table_hierarchy.png"/>
 </figure>
 
 <p>Ésta es la solución más económica en cuanto a espacio, nos permite aprovechar las ventajas de cada tipo, pero tiene el inconveniente de que, a menudo, habrá que filtrar cada tipo de forma individual. La buena noticia es que buscaremos entre menos información, lo que lo hará más rápido. La gestión de este tipo de soluciones suele ser bastante más compleja que el resto.</p>
@@ -199,7 +192,7 @@ En este artículo se explican las posibles soluciones a este problema."/>
                 Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
             </noscript></div></article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Provisto por <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.79.1">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Provisto por <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.91.2">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Miguel Ángel</a></span></div>
         </div>
     </footer></div>

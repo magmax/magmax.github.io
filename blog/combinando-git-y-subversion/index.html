@@ -8,10 +8,10 @@
         <title>Combinando Git y Subversion - El blog de MagMax</title><meta name="Description" content="Trabajando con Git de forma interna pero con Subversion de forma externa"><meta property="og:title" content="Combinando Git y Subversion" />
 <meta property="og:description" content="Trabajando con Git de forma interna pero con Subversion de forma externa" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://magmax.org/blog/combinando-git-y-subversion/" />
-<meta property="og:image" content="https://magmax.org/icons/favicon.png"/>
+<meta property="og:url" content="https://magmax.org/blog/combinando-git-y-subversion/" /><meta property="og:image" content="https://magmax.org/icons/favicon.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2014-07-13T10:05:55+02:00" />
 <meta property="article:modified_time" content="2021-01-28T00:00:00+00:00" /><meta property="og:site_name" content="El blog de MagMax" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://magmax.org/icons/favicon.png"/>
 
@@ -140,9 +140,8 @@
 <p>A menudo, cuando tenemos un problema no somos los únicos en enfrentarnos a él. Por eso he decidido publicar aquí mi solución, algo más elaborada de cómo se la conté a él, por supuesto.</p>
 <p>Y éste es el problema: Nuestra empresa utiliza <a href="https://git-scm.com/" target="_blank" rel="noopener noreffer">Git</a>, y una subcontrata utiliza <a href="https://subversion.apache.org/" target="_blank" rel="noopener noreffer">Subversion</a>. Cada vez que la subcontrata nos tiene que enviar código, lo hace a través del email (ésto no es tan raro, yo también lo he sufrido). Claro, eso supone perder el tiempo colocando los archivos en su sitio y <em>mergeando</em> a mano, con todos los problemas que esto supone.</p>
 <p>Veamos mi solución. Si alguien tiene otra mejor, por favor, que lo diga.</p>
-<figure>
-    <img src="/images/gitvssvn.jpg"
-         alt="Git vs Svn"/> 
+<figure><img src="/images/gitvssvn.jpg"
+         alt="Git vs Svn"/>
 </figure>
 
 <h2 id="primer-paso-ramas">Primer paso: Ramas</h2>
@@ -152,7 +151,7 @@
 <p>Éste es el caso fácil. Basta con seguir este <em>script</em>:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
@@ -160,7 +159,7 @@
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">git fetch
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">git fetch
 git rebase
 svn checkout
 git add -A
@@ -180,19 +179,19 @@ git push
 <p>Una mejora es usar parches. De esa manera sólo tendrán que enviarnos un único archivo y lo aplicaremos todo de golpe. En la empresa externa tendrán que hacer:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">svn diff &gt; changes.patch
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">svn diff &gt; changes.patch
 </code></pre></td></tr></table>
 </div>
 </div><p>Y hacernos llegar el archivo <code>changes.patch</code>. Gracias a este cambio, para nosotros será mucho más sencillo aplicar sus cambios (desde el directorio principal del repositorio):</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">patch -p0 -i /path/al/fichero/changes.patch
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">patch -p0 -i /path/al/fichero/changes.patch
 </code></pre></td></tr></table>
 </div>
 </div><p>Podemos incluir eso en nuestros archivos de automatización.</p>
@@ -201,7 +200,7 @@ git push
 <p>Nada más sencillo:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -220,7 +219,7 @@ git push
 </span><span class="lnt">17
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
 </span><span class="cp"></span><span class="nv">old_commit</span><span class="o">=</span><span class="k">$(</span>git rev-parse HEAD<span class="k">)</span>
 git fetch
 git rebase
@@ -244,7 +243,7 @@ svn commit <span class="s2">&#34;Automatic push&#34;</span>
 <p>Pues igual, pero aún más sencillo para nosotros:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -257,7 +256,7 @@ svn commit <span class="s2">&#34;Automatic push&#34;</span>
 </span><span class="lnt">11
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
 </span><span class="cp"></span>
 <span class="nv">PREFIX</span><span class="o">=</span><span class="s2">&#34;Please, could you apply these changes?\n&#34;</span>
 <span class="nv">SUFFIX</span><span class="o">=</span><span class="s2">&#34;\n\nThank you.&#34;</span>
@@ -324,7 +323,7 @@ git rebase
                 Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
             </noscript></div></article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Provisto por <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.79.1">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Provisto por <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.91.2">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Miguel Ángel</a></span></div>
         </div>
     </footer></div>

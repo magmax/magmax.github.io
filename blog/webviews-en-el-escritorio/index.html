@@ -8,10 +8,10 @@
         <title>WebViews en el escritorio - El blog de MagMax</title><meta name="Description" content="Veremos cómo aplicar WebViews en aplicaciones de escritorio"><meta property="og:title" content="WebViews en el escritorio" />
 <meta property="og:description" content="Veremos cómo aplicar WebViews en aplicaciones de escritorio" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://magmax.org/blog/webviews-en-el-escritorio/" />
-<meta property="og:image" content="https://magmax.org/icons/favicon.png"/>
+<meta property="og:url" content="https://magmax.org/blog/webviews-en-el-escritorio/" /><meta property="og:image" content="https://magmax.org/icons/favicon.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2013-12-07T00:00:00+00:00" />
 <meta property="article:modified_time" content="2021-01-28T00:00:00+00:00" /><meta property="og:site_name" content="El blog de MagMax" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://magmax.org/icons/favicon.png"/>
 
@@ -121,16 +121,15 @@
             </div><div class="content" id="content"><p>La programación en móviles ha conseguido poner de moda las <a href="https://developer.android.com/reference/android/webkit/WebView.html" title="WebViews en Android" target="_blank" rel="noopener noreffer">WebViews</a>. Esta técnica consiste en abrir un navegador y cargar la aplicación como si fuera una página web, embebida dentro del resto de la aplicación.</p>
 <p>La primera vez que vi esta técnica, sin embargo, no fue en móvil, sino el cliente de <a href="https://store.steampowered.com/" title="Steam, la plataforma de videojuegos de Valve" target="_blank" rel="noopener noreffer">Steam</a>, que se ejecutaba bajo Windows (ahora ya también está disponible para GNU/Linux). Desde entonces me picó la curiosidad sobre cómo se haría&hellip; y aquí lo tenemos.</p>
 <p>Para los ejemplos usaré Python y GTK, aprovechando el post sobre <a href="https://magmax.org/blog/micro-web-framework-en-python/" rel="">micro-framework web</a> anterior.</p>
-<figure>
-    <img src="/images/python.png"
-         alt="Python"/> 
+<figure><img src="/images/python.png"
+         alt="Python"/>
 </figure>
 
 <h2 id="la-idea">La idea</h2>
 <p>El diseño es sencillo: Necesitamos al menos dos hilos, uno para gestionar el servidor web y otro para la interfaz. Dado que la interfaz debe estar en el hilo principal por necesidades de <a href="https://www.gtk.org/" target="_blank" rel="noopener noreffer">GTK</a>, es lógico pensar que lo fácil es lanzar el servidor web en segundo plano. Por eso aquí está el código principal, que es lo más importante de todo:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -151,7 +150,7 @@
 </span><span class="lnt">19
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="n">ignorable</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="n">ignorable</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">gtk</span><span class="o">.</span><span class="n">main_quit</span><span class="p">()</span>
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -161,9 +160,9 @@
     <span class="n">web</span> <span class="o">=</span> <span class="n">WebServer</span><span class="p">()</span>
     <span class="n">web</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
-    <span class="n">uri</span> <span class="o">=</span> <span class="s1">&#39;https://localhost:{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">web</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
-    <span class="k">print</span> <span class="s1">&#39;serving at&#39;</span><span class="p">,</span> <span class="n">web</span><span class="o">.</span><span class="n">port</span>
-    <span class="k">print</span> <span class="s1">&#39;connecting to &#39;</span><span class="p">,</span> <span class="n">uri</span>
+    <span class="n">uri</span> <span class="o">=</span> <span class="s1">&#39;https://localhost:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">web</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+    <span class="nb">print</span> <span class="s1">&#39;serving at&#39;</span><span class="p">,</span> <span class="n">web</span><span class="o">.</span><span class="n">port</span>
+    <span class="nb">print</span> <span class="s1">&#39;connecting to &#39;</span><span class="p">,</span> <span class="n">uri</span>
     <span class="n">run_gui</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
 
     <span class="n">gtk</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
@@ -178,7 +177,7 @@
 <p>El servidor web está basado en el <a href="https://magmax.org/blog/micro-web-framework-en-python/" rel="">micro-framework web</a> que ya comenté:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -265,7 +264,7 @@
 </span><span class="lnt">85
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">sys</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">httplib</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
@@ -313,7 +312,7 @@
 
 <span class="k">class</span> <span class="nc">GreetingsHandler</span><span class="p">(</span><span class="n">Handler</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&lt;h1&gt;Cheers, {name[0]}!&lt;/h1&gt;&lt;br/&gt;&lt;br/&gt;&lt;a href=&#34;/&#34;&gt;Go back&lt;/a&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&lt;h1&gt;Cheers, </span><span class="si">{name[0]}</span><span class="s1">!&lt;/h1&gt;&lt;br/&gt;&lt;br/&gt;&lt;a href=&#34;/&#34;&gt;Go back&lt;/a&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
 
 <span class="k">class</span> <span class="nc">HTTPRequestHandler</span><span class="p">(</span><span class="n">BaseHTTPRequestHandler</span><span class="p">):</span>
@@ -328,7 +327,7 @@
         <span class="k">for</span> <span class="n">regex</span><span class="p">,</span> <span class="n">clazz</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">HANDLERS</span><span class="p">:</span>
             <span class="n">m</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
-                <span class="n">params</span> <span class="o">=</span> <span class="n">parse_qs</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="n">parse_qs</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
                 <span class="n">handler</span> <span class="o">=</span> <span class="n">clazz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
                 <span class="n">handler</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
@@ -363,7 +362,7 @@
 <p>Ahora vamos con la interfaz gráfica. Uno de los problemas aquí es ver qué motor se va a usar. Podemos elegir <a href="https://es.wikipedia.org/wiki/Gecko_%28motor_de_renderizado%29" title="Motor de renderizado Gecko, de Mozilla" target="_blank" rel="noopener noreffer">Gecko</a> o bien <a href="https://es.wikipedia.org/wiki/WebKit" title="Motor de renderizado WebKit" target="_blank" rel="noopener noreffer">WebKit</a>. La mejor opción es soportar ambos:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -409,14 +408,14 @@
 </span><span class="lnt">44
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="k">try</span><span class="p">:</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">webkit</span>
 <span class="k">except</span><span class="p">:</span>
-    <span class="n">webkit</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">webkit</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">gtkmozembed</span> <span class="kn">as</span> <span class="nn">gecko</span>
+    <span class="kn">import</span> <span class="nn">gtkmozembed</span> <span class="k">as</span> <span class="nn">gecko</span>
 <span class="k">except</span><span class="p">:</span>
-    <span class="n">gecko</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">gecko</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="k">if</span> <span class="ow">not</span> <span class="n">webkit</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">gecko</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to load both webkit and gecko modules&#39;</span><span class="p">)</span>
@@ -438,15 +437,15 @@
         <span class="n">browser</span><span class="o">.</span><span class="n">load_url</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">run_gui</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">run_gui</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="n">window</span> <span class="o">=</span> <span class="n">gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
     <span class="n">driver</span> <span class="o">=</span> <span class="n">WebKitDriver</span><span class="p">()</span> <span class="k">if</span> <span class="n">webkit</span> <span class="k">else</span> <span class="n">GeckoDriver</span><span class="p">()</span>
     <span class="n">browser</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">create_browser</span><span class="p">()</span>
 
-    <span class="n">box</span> <span class="o">=</span> <span class="n">gtk</span><span class="o">.</span><span class="n">VBox</span><span class="p">(</span><span class="n">homogeneous</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">gtk</span><span class="o">.</span><span class="n">VBox</span><span class="p">(</span><span class="n">homogeneous</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">window</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
 
-    <span class="n">box</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">box</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="n">window</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;destroy&#39;</span><span class="p">,</span> <span class="n">finish</span><span class="p">)</span>
     <span class="n">window</span><span class="o">.</span><span class="n">set_default_size</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">)</span>
@@ -463,7 +462,7 @@
 <p>Necesitaréis el paquete debian <a href="https://packages.debian.org/es/squeeze/python-webkit" title="Versión actual de python-webkit en Debian stable" target="_blank" rel="noopener noreffer">python-webkit</a>, por ejemplo, así como <a href="https://packages.debian.org/es/squeeze/python-gtk2" title="Versión actual de python-gtk2 en Debian stable" target="_blank" rel="noopener noreffer">python-gtk2</a>:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">  1
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
 </span><span class="lnt">  2
 </span><span class="lnt">  3
 </span><span class="lnt">  4
@@ -627,7 +626,7 @@
 </span><span class="lnt">162
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/env python</span>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/env python</span>
 
 <span class="c1"># file webserver.py</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -678,7 +677,7 @@
 
 <span class="k">class</span> <span class="nc">GreetingsHandler</span><span class="p">(</span><span class="n">Handler</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&lt;h1&gt;Cheers, {name[0]}!&lt;/h1&gt;&lt;br/&gt;&lt;br/&gt;&lt;a href=&#34;/&#34;&gt;Go back&lt;/a&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;&lt;h1&gt;Cheers, </span><span class="si">{name[0]}</span><span class="s1">!&lt;/h1&gt;&lt;br/&gt;&lt;br/&gt;&lt;a href=&#34;/&#34;&gt;Go back&lt;/a&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
 
 <span class="k">class</span> <span class="nc">HTTPRequestHandler</span><span class="p">(</span><span class="n">BaseHTTPRequestHandler</span><span class="p">):</span>
@@ -693,7 +692,7 @@
         <span class="k">for</span> <span class="n">regex</span><span class="p">,</span> <span class="n">clazz</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">HANDLERS</span><span class="p">:</span>
             <span class="n">m</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
-                <span class="n">params</span> <span class="o">=</span> <span class="n">parse_qs</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+                <span class="n">params</span> <span class="o">=</span> <span class="n">parse_qs</span><span class="p">(</span><span class="n">url</span><span class="o">.</span><span class="n">query</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
                 <span class="n">handler</span> <span class="o">=</span> <span class="n">clazz</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
                 <span class="n">handler</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
@@ -725,11 +724,11 @@
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">webkit</span>
 <span class="k">except</span><span class="p">:</span>
-    <span class="n">webkit</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">webkit</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">gtkmozembed</span> <span class="kn">as</span> <span class="nn">gecko</span>
+    <span class="kn">import</span> <span class="nn">gtkmozembed</span> <span class="k">as</span> <span class="nn">gecko</span>
 <span class="k">except</span><span class="p">:</span>
-    <span class="n">gecko</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">gecko</span> <span class="o">=</span> <span class="kc">False</span>
 
 <span class="k">if</span> <span class="ow">not</span> <span class="n">webkit</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">gecko</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Failed to load both webkit and gecko modules&#39;</span><span class="p">)</span>
@@ -751,15 +750,15 @@
         <span class="n">browser</span><span class="o">.</span><span class="n">load_url</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">run_gui</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">run_gui</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">echo</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="n">window</span> <span class="o">=</span> <span class="n">gtk</span><span class="o">.</span><span class="n">Window</span><span class="p">()</span>
     <span class="n">driver</span> <span class="o">=</span> <span class="n">WebKitDriver</span><span class="p">()</span> <span class="k">if</span> <span class="n">webkit</span> <span class="k">else</span> <span class="n">GeckoDriver</span><span class="p">()</span>
     <span class="n">browser</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">create_browser</span><span class="p">()</span>
 
-    <span class="n">box</span> <span class="o">=</span> <span class="n">gtk</span><span class="o">.</span><span class="n">VBox</span><span class="p">(</span><span class="n">homogeneous</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">box</span> <span class="o">=</span> <span class="n">gtk</span><span class="o">.</span><span class="n">VBox</span><span class="p">(</span><span class="n">homogeneous</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">spacing</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">window</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
 
-    <span class="n">box</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">box</span><span class="o">.</span><span class="n">pack_start</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
     <span class="n">window</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s1">&#39;destroy&#39;</span><span class="p">,</span> <span class="n">finish</span><span class="p">)</span>
     <span class="n">window</span><span class="o">.</span><span class="n">set_default_size</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">)</span>
@@ -768,7 +767,7 @@
     <span class="n">driver</span><span class="o">.</span><span class="n">open_uri</span><span class="p">(</span><span class="n">browser</span><span class="p">,</span> <span class="n">uri</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="n">ignorable</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="n">ignorable</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">gtk</span><span class="o">.</span><span class="n">main_quit</span><span class="p">()</span>
 
 
@@ -779,9 +778,9 @@
     <span class="n">web</span> <span class="o">=</span> <span class="n">WebServer</span><span class="p">()</span>
     <span class="n">web</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
-    <span class="n">uri</span> <span class="o">=</span> <span class="s1">&#39;https://localhost:{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">web</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
-    <span class="k">print</span> <span class="s1">&#39;serving at&#39;</span><span class="p">,</span> <span class="n">web</span><span class="o">.</span><span class="n">port</span>
-    <span class="k">print</span> <span class="s1">&#39;connecting to &#39;</span><span class="p">,</span> <span class="n">uri</span>
+    <span class="n">uri</span> <span class="o">=</span> <span class="s1">&#39;https://localhost:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">web</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+    <span class="nb">print</span> <span class="s1">&#39;serving at&#39;</span><span class="p">,</span> <span class="n">web</span><span class="o">.</span><span class="n">port</span>
+    <span class="nb">print</span> <span class="s1">&#39;connecting to &#39;</span><span class="p">,</span> <span class="n">uri</span>
     <span class="n">run_gui</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
 
     <span class="n">gtk</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
@@ -840,7 +839,7 @@
                 Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
             </noscript></div></article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Provisto por <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.79.1">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Provisto por <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.91.2">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Miguel Ángel</a></span></div>
         </div>
     </footer></div>

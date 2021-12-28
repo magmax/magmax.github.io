@@ -16,10 +16,10 @@ comentarios.
 Espero que os parezca tan interesante como a mí, aunque el último ejemplo lo he
 añadido sólo por completitud." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://magmax.org/blog/creando-tu-propia-entidad-certificadora-ssl/" />
-<meta property="og:image" content="https://magmax.org/icons/favicon.png"/>
+<meta property="og:url" content="https://magmax.org/blog/creando-tu-propia-entidad-certificadora-ssl/" /><meta property="og:image" content="https://magmax.org/icons/favicon.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2015-06-27T00:00:00+00:00" />
 <meta property="article:modified_time" content="2021-01-28T00:00:00+00:00" /><meta property="og:site_name" content="El blog de MagMax" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://magmax.org/icons/favicon.png"/>
 
@@ -142,9 +142,8 @@ Dumping Self Signed Certs)</a>, y creo que el autor es Tony Bourke, mirando los
 comentarios.</p>
 <p>Espero que os parezca tan interesante como a mí, aunque el último ejemplo lo he
 añadido sólo por completitud.</p>
-<figure>
-    <img src="/images/ssl.jpg"
-         alt="SSL"/> 
+<figure><img src="/images/ssl.jpg"
+         alt="SSL"/>
 </figure>
 
 <hr>
@@ -170,9 +169,8 @@ la compañía y del nivel de confianza.</p>
 de confianza. Tu navegador confía en ellas, ellas confían en un <em>website</em>, por
 lo que tu navegador confía en el <em>website</em> (se puede revisar su <a href="https://datacenteroverlords.com/2011/09/25/ssl-who-do-you-trust/" target="_blank" rel="noopener noreffer">artículo sobre
 confianza SSL</a>, que contiene el mejor diagrama SSL jamás imaginado).</p>
-<figure>
-    <img src="/images/ssl-creation/trustchain.png"
-         alt="Cadena de confianza"/> 
+<figure><img src="/images/ssl-creation/trustchain.png"
+         alt="Cadena de confianza"/>
 </figure>
 
 <p>Nuestros dispositivos, por otra parte, aquéllos que configuras y a los que sólo accede tu organización, no necesitan esa cadena de confianza sobre infrastructuras públicas. Lo primero, puede resultar realmente caro comprar un certificado SSL para cada dispositivo que se controla. Y segundo, fuiste tú quien levantó esos dispositivos, por lo que no necesitas ese nivel de confianza.</p>
@@ -181,9 +179,8 @@ siempre se protegen con certificados autofirmados. Son <a href="https://www.madb
 crear</a> y gratuítos. También proporcionan toda la seguiridad que implica la
 encriptación, aunque no hacen nada sobre la confianza. Por esa razón, cuando te
 conectas a un dispositivo con un certificado autofirmado verás algo como esto:</p>
-<figure>
-    <img src="/images/ssl-creation/securitywarningie.png"
-         alt="Alerta de certificado en el Internet Explorer"/> 
+<figure><img src="/images/ssl-creation/securitywarningie.png"
+         alt="Alerta de certificado en el Internet Explorer"/>
 </figure>
 
 <p>Por lo que tienes la elección, comprar un costoso certificado SSL de una
@@ -216,36 +213,36 @@ que sólo requiere un paso. En el ejemplo de abajo, estoy creando una clave de
 2048 bits:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">openssl genrsa -out rootCA.key <span class="m">2048</span>
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">openssl genrsa -out rootCA.key <span class="m">2048</span>
 </code></pre></td></tr></table>
 </div>
 </div><p>Los tamaños de clave estándar actuales son 1024, 2048 y, aunque mucho menos extendido, 4096. Yo he elegido 2048, que es el más utilizado hoy en día. 4096 suele ser una exageración (y las claves con longitud 4096 es 5 veces más intensa computacionalmente que 2048), y se está abandonando 1024.</p>
 <p>Nota importante: Mantener esta clave privada <strong>muy privada</strong>. Ésta es la base de toda confianza para tus certificados, y si alguien obtiene una copia, podría generar certificados que acepte el navegador. También se puede crear una clave que esté protegida mediante una contraseña añadiendo <code>-des3</code>:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">openssl genrsa -out rootCA.key <span class="m">2048</span> -des3
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">openssl genrsa -out rootCA.key <span class="m">2048</span> -des3
 </code></pre></td></tr></table>
 </div>
 </div><p>Se pedirá que se introduzca una contraseña, y desde entonces se retará a introducir la contraseña cada vez que se use la clave. Claro, si olvidads la clave tendrás que hacer todo esto de nuevo.</p>
 <h3 id="el-siguiente-paso-es-autofirmar-este-certificado">El siguiente paso es autofirmar este certificado</h3>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">openssl req -x509 -new -nodes -key rootCA.key -days <span class="m">1024</span> -out rootCA.pem
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">openssl req -x509 -new -nodes -key rootCA.key -days <span class="m">1024</span> -out rootCA.pem
 </code></pre></td></tr></table>
 </div>
 </div><p>Lo que comenzará un <em>script</em> interactivo que preguntará varios bits de información. Se rellenarán como vea conveniente:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
 </span><span class="lnt"> 3
 </span><span class="lnt"> 4
@@ -261,7 +258,7 @@ que sólo requiere un paso. En el ejemplo de abajo, estoy creando una clave de
 </span><span class="lnt">14
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">   You are about to be asked to enter information that will be incorporated
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">   You are about to be asked to enter information that will be incorporated
    into your certificate request.
    What you are about to enter is what is called a Distinguished Name or a DN.
    There are quite a few fields but you can leave some blank
@@ -281,9 +278,8 @@ que sólo requiere un paso. En el ejemplo de abajo, estoy creando una clave de
 <h3 id="instalar-el-certificado-raíz-en-las-máquinas">Instalar el certificado raíz en las máquinas</h3>
 <p>Para los portátiles/sobremesas/terminales, se necesitará instalar el certificado raíz en los repositorios de certificados confiables. Lo que puede ser un poco difícil.</p>
 <p>Algunos navegadores utilizan el repositorio por defecto del sistema operativo. Por ejemplo, en Windows tanto IE como Chrome usan la gestión por defecto de certificados. Vaya a IE, <strong>Internet Options</strong>, a la pestaña <strong>Contenido/Content</strong>, y pulse el botón <strong>Certificados/Certificates</strong>. En Chrome vaya a <strong>Opciones/Settings</strong>, <strong>Mostrar opciones avanzadas/Show advanced settings</strong> y <strong>Manejar certificados/Manage certificates</strong>. Lo que se pretende es instalar el certificado CA raíz (no la clave) bajo la pestaña <strong>Trusted root Certificate Authorities</strong>.</p>
-<figure>
-    <img src="/images/ssl-creation/setuprepo2.png"
-         alt="Configuración en el IE"/> 
+<figure><img src="/images/ssl-creation/setuprepo2.png"
+         alt="Configuración en el IE"/>
 </figure>
 
 <p>Por el contrario, en Windows Firefox tiene su propio repositorio de certificados, por lo que si se utiliza IE o Chrome tanto como Firefox, se tendrá que instalar el certificado raíz tanto en el repositorio de Windows como en el de Firefox.</p>
@@ -292,28 +288,28 @@ que sólo requiere un paso. En el ejemplo de abajo, estoy creando una clave de
 <p>Será necesario seguir este proceso para cada dispositivo en el que se desee instalar un certificado confiable. Primero, al igual que con el paso del CA raíz, se necesita una clave privada (diferente de la del CA raíz).</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">openssl genrsa -out device.key <span class="m">2048</span>
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">openssl genrsa -out device.key <span class="m">2048</span>
 </code></pre></td></tr></table>
 </div>
 </div><p>Una vez creada la clave, se generará la solicitud de firmado de certificado:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">openssl req -new -key device.key -out device.csr
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">openssl req -new -key device.key -out device.csr
 </code></pre></td></tr></table>
 </div>
 </div><p>El sistema realizará varias preguntas (País, Región/Provincia, etc.). Responder según corresponda. Sin embargo, la pregunta importante es <strong>common-name</strong>.</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">Common Name <span class="o">(</span>eg, YOUR name<span class="o">)</span> <span class="o">[]</span>: 10.0.0.1
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">Common Name <span class="o">(</span>eg, YOUR name<span class="o">)</span> <span class="o">[]</span>: 10.0.0.1
 </code></pre></td></tr></table>
 </div>
 </div><p>Lo que se ve en el campo de la dirección del navegador cuando se accede a tu dispositivo <strong>debe</strong> ser lo que se ponga bajo el <strong>common name</strong>, <em>incluso si es una dirección IP</em>. Sí, incluso una dirección IP (IPv4 o IPv6) funciona como <strong>common name</strong>.</p>
@@ -321,10 +317,10 @@ que sólo requiere un paso. En el ejemplo de abajo, estoy creando una clave de
 <p>Una vez hecho esto, se firmará el CSR, lo que requiere la clave CA raíz:</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-bash" data-lang="bash">openssl x509 -req -in device.csr -CA root.pem -CAkey root.key -CAcreateserial -out device.crt -days <span class="m">500</span>
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">openssl x509 -req -in device.csr -CA root.pem -CAkey root.key -CAcreateserial -out device.crt -days <span class="m">500</span>
 </code></pre></td></tr></table>
 </div>
 </div><p>Esto crea un certificado autofirmado llamado <code>device.crt</code> que es válido durante 500 días (se puede ajustar el número de días, claro, pero no tiene sentido que sea mayor que el del certificado raíz).</p>
@@ -334,21 +330,18 @@ que sólo requiere un paso. En el ejemplo de abajo, estoy creando una clave de
 
 web del F5 (y debería ser la última vez que saluda el aviso) y voy
 a <strong>System</strong>, <strong>Device Certificates</strong>,  y <strong>Device Certificate</strong>:</p>
-<figure>
-    <img src="/images/ssl-creation/importcert.png"
-         alt="Configuración del F5"/> 
+<figure><img src="/images/ssl-creation/importcert.png"
+         alt="Configuración del F5"/>
 </figure>
 
 <p>En el desplegable selecciono <strong>Certificate and Key</strong>, y bien puedo pegar el contenido de los ficheros con la clave y el certificado o puedo subirlos desde mi máquina:</p>
-<figure>
-    <img src="/images/ssl-creation/importcertandkeyf5.png"
-         alt="Importando el certificado y la clave en el F5"/> 
+<figure><img src="/images/ssl-creation/importcertandkeyf5.png"
+         alt="Importando el certificado y la clave en el F5"/>
 </figure>
 
 <p>Después, todo lo que necesito hacer es cerrar el navegador y volver a entrar en la web del GUI. Si todo fue bien, no habrá aviso y se obtendrá un precioso verde en la barra de navegación:</p>
-<figure>
-    <img src="/images/ssl-creation/importedcertkeyf5.png"
-         alt="Barra de navegación con el certificado correctamente firmado"/> 
+<figure><img src="/images/ssl-creation/importedcertkeyf5.png"
+         alt="Barra de navegación con el certificado correctamente firmado"/>
 </figure>
 
 <p>Y hablando de VMWare, ¿os suena, quizá, el molesto mensaje que se ve cuando se conecta contra un servidor ESXi?</p>
@@ -382,7 +375,7 @@ a <strong>System</strong>, <strong>Device Certificates</strong>,  y <strong>Devi
                 Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
             </noscript></div></article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Provisto por <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.79.1">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Provisto por <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.91.2">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Miguel Ángel</a></span></div>
         </div>
     </footer></div>
