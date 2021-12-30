@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Kubernetes (2): Helm - El blog de MagMax</title><meta name="Description" content="Introducción a helm para kubernetes"><meta property="og:title" content="Kubernetes (2): Helm" />
+<meta property="og:description" content="Introducción a helm para kubernetes" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://magmax.org/blog/kubernetes-2-helm/" /><meta property="og:image" content="https://magmax.org/icons/favicon.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-12-30T06:52:27+01:00" />
+<meta property="article:modified_time" content="2021-12-30T06:52:27+01:00" /><meta property="og:site_name" content="El blog de MagMax" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://magmax.org/icons/favicon.png"/>
+
+<meta name="twitter:title" content="Kubernetes (2): Helm"/>
+<meta name="twitter:description" content="Introducción a helm para kubernetes"/>
+<meta name="application-name" content="El blog de MagMax">
+<meta name="apple-mobile-web-app-title" content="El blog de MagMax"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://magmax.org/blog/kubernetes-2-helm/" /><link rel="prev" href="https://magmax.org/blog/kubernetes-1-conceptos-basicos/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Kubernetes (2): Helm",
+        "inLanguage": "es",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/magmax.org\/blog\/kubernetes-2-helm\/"
+        },"genre": "posts","keywords": "kubernetes, helm","wordcount":  1622 ,
+        "url": "https:\/\/magmax.org\/blog\/kubernetes-2-helm\/","datePublished": "2021-12-30T06:52:27+01:00","dateModified": "2021-12-30T06:52:27+01:00","publisher": {
+            "@type": "Organization",
+            "name": "Miguel Ángel"},"author": {
+                "@type": "Person",
+                "name": "Miguel Ángel"
+            },"description": "Introducción a helm para kubernetes"
+    }
+    </script></head>
+    <body header-desktop="" header-mobile=""><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="El blog de MagMax"><img
+        class="lazyload logo"
+        src="/svg/loading.min.svg"
+        data-src="/icons/favicon.png"
+        data-srcset="/icons/favicon.png, /icons/favicon.png 1.5x, /icons/favicon.png 2x"
+        data-sizes="auto"
+        alt="/icons/favicon.png"
+        title="/icons/favicon.png" />MagMax Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/"> Inicio </a><a class="menu-item" href="/posts"> Posts </a><a class="menu-item" href="/tags"> Tags </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item language" title="Selecciona el lenguage">Español<i class="fas fa-chevron-right fa-fw"></i>
+                        <select class="language-select" id="language-select-desktop" onchange="location = this.value;"><option value="/blog/kubernetes-2-helm/" selected>Español</option></select>
+                    </a><a href="javascript:void(0);" class="menu-item theme-switch" title="Cambia el tema">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="El blog de MagMax"><img
+        class="lazyload logo"
+        src="/svg/loading.min.svg"
+        data-src="/icons/favicon.png"
+        data-srcset="/icons/favicon.png, /icons/favicon.png 1.5x, /icons/favicon.png 2x"
+        data-sizes="auto"
+        alt="/icons/favicon.png"
+        title="/icons/favicon.png" />MagMax Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/" title="">Inicio</a><a class="menu-item" href="/posts" title="">Posts</a><a class="menu-item" href="/tags" title="">Tags</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Cambia el tema">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a><a href="javascript:void(0);" class="menu-item" title="Selecciona el lenguage">Español<i class="fas fa-chevron-right fa-fw"></i>
+                    <select class="language-select" onchange="location = this.value;"><option value="/blog/kubernetes-2-helm/" selected>Español</option></select>
+                </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contenido</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Kubernetes (2): Helm</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Miguel Ángel</a></span>&nbsp;<span class="post-category">incluido en <a href="/categories/kubernetes/"><i class="far fa-folder fa-fw"></i>kubernetes</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="30 Dec 2021">30 Dec 2021</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1622 palabras&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;8 minutos&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contenido</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#instalar-helm">Instalar helm</a></li>
+    <li><a href="#creación-de-un-paquete-helm">Creación de un paquete helm</a>
+      <ul>
+        <li><a href="#contenido-del-directorio">Contenido del directorio</a>
+          <ul>
+            <li><a href="#archivo-chartyaml">Archivo Chart.yaml</a></li>
+            <li><a href="#archivo-valuesyaml">Archivo values.yaml</a></li>
+            <li><a href="#directorio-de-templates">Directorio de templates</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+    <li><a href="#usando-helm">Usando helm</a></li>
+    <li><a href="#depurando-un-paquete-helm">Depurando un paquete Helm</a></li>
+    <li><a href="#personalizando-un-paquete-helm">Personalizando un paquete helm</a></li>
+    <li><a href="#recursos-helm">Recursos Helm</a></li>
+    <li><a href="#saber-más">Saber más</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p>Hoy en día es raro gestionar recursos en kubernetes de forma manual, ya que
+existe una forma de compartir grupos de recursos: <a href="https://helm.sh/" target="_blank" rel="noopener noreffer">Helm</a>. Ellos lo definen como
+un &ldquo;gestor de paquetes&rdquo;, es decir, como <code>pip</code> para python o <code>npm</code> para node.</p>
+<p>Aunque aún no hemos visto cómo utilizar kubernetes, sólo los <a href="https://magmax.org/blog/kubernetes-1-conceptos-basicos/" rel="">conceptos básicos
+sobre kubernetes</a>. Pero para poder gestionar es necesario tener algo que
+gestionar, así que comenzaremos la casa por el tejado mostrando cómo se instala
+algo hoy en día.</p>
+<p>En concreto mostraré lo básico para crear un paquete helm.</p>
+<!-- raw HTML omitted -->
+<figure><img src="/images/kubernetes-logo.jpg"
+         alt="Kubernetes"/>
+</figure>
+
+<h2 id="instalar-helm">Instalar helm</h2>
+<p>Lo primero será <a href="https://helm.sh/docs/intro/install/" target="_blank" rel="noopener noreffer">descargarnos helm</a>. Mis mecanismos favoritos son <code>snap</code> o bien
+descargar el binario directamente sobre <code>~/.local/bin</code>. El caso es que debe
+estar en la ruta.</p>
+<p>La versión 3 es la más actual, que es algo incompatible con la 2, así que me
+centraré en esta versión 3.</p>
+<p>Así que sugiero instalarlo con:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">sudo snap install helm --classic
+</code></pre></td></tr></table>
+</div>
+</div><p>En la documentación hay más opciones para <a href="https://helm.sh/docs/intro/install/" target="_blank" rel="noopener noreffer">descargarnos helm</a>.</p>
+<h2 id="creación-de-un-paquete-helm">Creación de un paquete helm</h2>
+<p>Crear un paquete es bastante sencillo. Supongamos que vamos a crear el paquete
+<code>mi-application</code>:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">helm create mi-application
+</code></pre></td></tr></table>
+</div>
+</div><p>Y ya está creado:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">╰─$ tree
+.
+└── mi-application
+    ├── charts
+    ├── Chart.yaml
+    ├── templates
+    │   ├── deployment.yaml
+    │   ├── _helpers.tpl
+    │   ├── hpa.yaml
+    │   ├── ingress.yaml
+    │   ├── NOTES.txt
+    │   ├── serviceaccount.yaml
+    │   ├── service.yaml
+    │   └── tests
+    │       └── test-connection.yaml
+    └── values.yaml
+
+<span class="m">4</span> directories, <span class="m">10</span> files
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="contenido-del-directorio">Contenido del directorio</h3>
+<p>Veamos lo básico del directorio:</p>
+<ul>
+<li>archivo <code>Chart.yaml</code>, que contiene el nombre y versión del paquete.</li>
+<li>archivo <code>values.yaml</code>, con los valores por defecto. Luego lo entenderemos.</li>
+<li>directorio <code>templates</code>, con las plantillas para generar recursos</li>
+</ul>
+<p>y ya. Luego veremos algunos archivos más, pero quedémonos con esos tres
+importantes.</p>
+<p>Mencionaré también que el directorio <code>charts</code> es sólo para descargarse
+dependencias, por lo que se gestiona de forma automática, habría que eliminarlo
+de nuestro repositorio metiéndolo en el <code>.gitignore</code> y podemos ignorar que está
+ahí.</p>
+<h4 id="archivo-chartyaml">Archivo Chart.yaml</h4>
+<p>El contenido de este archivo tras borrar los comentarios es bastante pobre:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v2</span><span class="w">
+</span><span class="w"></span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">mi-application</span><span class="w">
+</span><span class="w"></span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l">A Helm chart for Kubernetes</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">application</span><span class="w">
+</span><span class="w"></span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="m">0.1.0</span><span class="w">
+</span><span class="w"></span><span class="nt">appVersion</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;1.16.0&#34;</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>Con decir que <code>apiVersion</code> debe ser <code>v2</code> para que se reconozca como un paquete
+de tipo helm 3, y que el <code>type</code> puede ser <code>application</code> o <code>library</code> pero que el
+primero puede actuar como el segundo así que en la práctica no se utiliza, creo
+que lo demás es auto-explicativo o podéis entenderlo con el comentario.</p>
+<p>Otros campos interesantes:</p>
+<ul>
+<li><code>dependencies</code>, para definir dependencias de un proyecto.</li>
+<li><code>annotations</code>, clave-valor con metadatos</li>
+<li><code>deprecated</code>, <em>boolean</em> indicando si el paquete está obsoleto. Suele usarse
+sólo para indicar los que lo están.</li>
+</ul>
+<p>Si queréis verlos todos o más detalle sobre alguno, consultad el apartado <a href="https://helm.sh/docs/topics/charts/#the-chartyaml-file" target="_blank" rel="noopener noreffer">The
+Chart.yaml File</a> de la
+guía oficial.</p>
+<h4 id="archivo-valuesyaml">Archivo values.yaml</h4>
+<p>Este archivo es más largo, pero veamos sólo una parte del mismo:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">replicaCount</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">image</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">repository</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span><span class="w">  </span><span class="nt">pullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l">IfNotPresent</span><span class="w">
+</span><span class="w">  </span><span class="c"># Overrides the image tag whose default is the chart appVersion.</span><span class="w">
+</span><span class="w">  </span><span class="nt">tag</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;&#34;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">imagePullSecrets</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="w">
+</span><span class="w"></span><span class="nt">nameOverride</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;&#34;</span><span class="w">
+</span><span class="w"></span><span class="nt">fullnameOverride</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;&#34;</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>Como se ve, es un archivo YAML. Contiene claves y valores, y cuando tenemos una
+lista vacía, es necesario inicializarla como <code>[]</code>.</p>
+<p>Estos valores se utilizarán en las <code>templates</code>, pero eso lo veremos luego.
+Quedémonos con que podemos utilizar cualquier clave y valor, de momento.</p>
+<h4 id="directorio-de-templates">Directorio de templates</h4>
+<p>Aquí es necesario explicar cómo funciona <a href="https://helm.sh/" target="_blank" rel="noopener noreffer">Helm</a>.</p>
+<p><a href="https://helm.sh/" target="_blank" rel="noopener noreffer">Helm</a> es un programa <a href="https://go.dev/" target="_blank" rel="noopener noreffer">go</a>, y utiliza las <a href="https://pkg.go.dev/text/template" target="_blank" rel="noopener noreffer">templates de go</a>. Éstas se encuentran
+en el directorio <code>templates</code> para no despistar y sustituyen los valores de
+distintas fuentes:</p>
+<ul>
+<li><code>Release</code>, que describe la <em>release</em> misma. Contiene los siguientes campos:
+<ul>
+<li><code>Release.Name</code></li>
+<li><code>Release.Namespace</code></li>
+<li><code>Release.IsUpgrade</code></li>
+<li><code>Release.IsInstall</code></li>
+<li><code>Release.Revision</code></li>
+<li><code>Release.Service</code></li>
+</ul>
+</li>
+<li><code>Values</code>, con todo el contenido del archivo <code>values.yaml</code></li>
+<li><code>Chart</code>, con el contenido del archivo <code>Chart.yaml</code></li>
+<li><code>Files</code>, que es una api para acceder a otros archivos. Muy útil para crear
+<a href="https://kubernetes.io/docs/concepts/configuration/configmap/" target="_blank" rel="noopener noreffer">ConfigMap</a>s o <a href="https://kubernetes.io/docs/concepts/configuration/secret/" target="_blank" rel="noopener noreffer">Secret</a>s.</li>
+<li><code>Capabilities</code>, con información sobre qué soporta el cluster Kubernetes actual</li>
+<li><code>Template</code>, con información sobre la plantilla actual, como el nombre.</li>
+</ul>
+<p>Podéis verlo más en detalle en la sección <a href="https://helm.sh/docs/chart_template_guide/builtin_objects/" target="_blank" rel="noopener noreffer">Built-in Objects</a> de la documentación
+oficial.</p>
+<p>Estas fuentes se utilizan en las plantillas de la siguiente forma:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-golang" data-lang="golang"><span class="p">{{</span> <span class="p">.</span><span class="nx">Release</span><span class="p">.</span><span class="nx">Name</span> <span class="p">}}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Que se sustituirá por el nombre de la release actual.</p>
+<h5 id="ejemplo">Ejemplo</h5>
+<p>Veamos un uso real investigando un archivo pequeñito, como
+<code>templates/service.yaml</code>:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Service</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span>{{<span class="w"> </span><span class="l">include &#34;mi-application.fullname&#34; . }}</span><span class="w">
+</span><span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>{{- <span class="l">include &#34;mi-application.labels&#34; . | nindent 4 }}</span><span class="w">
+</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span>{{<span class="w"> </span><span class="l">.Values.service.type }}</span><span class="w">
+</span><span class="w">  </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">port</span><span class="p">:</span><span class="w"> </span>{{<span class="w"> </span><span class="l">.Values.service.port }}</span><span class="w">
+</span><span class="w">      </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l">http</span><span class="w">
+</span><span class="w">      </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l">TCP</span><span class="w">
+</span><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">http</span><span class="w">
+</span><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>{{- <span class="l">include &#34;mi-application.selectorLabels&#34; . | nindent 4 }}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>Aunque pequeñito, es bastante matón.</p>
+<p>Veamos primero algo sencillo, como es la clave <code>spec.type</code>, con el valor <code>{{ .Values.service.port }}</code>. Éste se encuentra en el archivo <code>values.yaml</code> y vale
+<code>ClusterIP</code>, os invito a comprobarlo. Así que cuando ejecutemos helm,
+reemplazará dicho valor, generando algo como:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">ClusterIP</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>La clave <code>metadata.name</code> tiene el valor <code>{{ include &quot;mi-application.fullname&quot; . }}</code>. Ésta es la manera de invocar una &ldquo;función&rdquo; en el lenguaje de plantillas de
+<a href="https://go.dev/" target="_blank" rel="noopener noreffer">go</a>. Su implementación se encuentra en el archivo <code>templates/_helpers.tpl</code> y
+tiene esta pinta:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml">{{<span class="l">/*</span><span class="w">
+</span><span class="w"></span><span class="l">Create a default fully qualified app name.</span><span class="w">
+</span><span class="w"></span><span class="l">We truncate at 63 chars because some Kubernetes name fields are limited to this</span><span class="w">
+</span><span class="w"></span><span class="l">(by the DNS naming spec).</span><span class="w">
+</span><span class="w"></span><span class="l">If release name contains chart name it will be used as a full name.</span><span class="w">
+</span><span class="w"></span><span class="cp">*/}}</span><span class="w">
+</span><span class="w"></span>{{- <span class="l">define &#34;mi-application.fullname&#34; -}}</span><span class="w">
+</span><span class="w"></span>{{- <span class="l">if .Values.fullnameOverride }}</span><span class="w">
+</span><span class="w"></span>{{- <span class="l">.Values.fullnameOverride | trunc 63 | trimSuffix &#34;-&#34; }}</span><span class="w">
+</span><span class="w"></span>{{- <span class="l">else }}</span><span class="w">
+</span><span class="w"></span>{{- <span class="l">$name := default .Chart.Name .Values.nameOverride }}</span><span class="w">
+</span><span class="w"></span>{{- <span class="l">if contains $name .Release.Name }}</span><span class="w">
+</span><span class="w"></span>{{- <span class="l">.Release.Name | trunc 63 | trimSuffix &#34;-&#34; }}</span><span class="w">
+</span><span class="w"></span>{{- <span class="l">else }}</span><span class="w">
+</span><span class="w"></span>{{- <span class="l">printf &#34;%s-%s&#34; .Release.Name $name | trunc 63 | trimSuffix &#34;-&#34; }}</span><span class="w">
+</span><span class="w"></span>{{- <span class="l">end }}</span><span class="w">
+</span><span class="w"></span>{{- <span class="l">end }}</span><span class="w">
+</span><span class="w"></span>{{- <span class="l">end }}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>No es muy obvio, pero tampoco complejo de seguir. Baste decir que tenemos todas
+las funciones proporcionadas por el sistema estándar de <a href="https://pkg.go.dev/text/template" target="_blank" rel="noopener noreffer">templates de go</a> y las
+de <a href="http://masterminds.github.io/sprig/" target="_blank" rel="noopener noreffer">sprig</a>.</p>
+<p>Finalmente, algo <strong>muy importante</strong> es que puede haber más de un archivo
+<code>values.yaml</code>, y helm los mezclará todos para obtener el valor final.</p>
+<h2 id="usando-helm">Usando helm</h2>
+<p>Basta ya de teoría y vamos a la práctica.  Todos los comandos los ejecutaremos
+desde el directorio <code>my-application</code>.  Vamos a instalar nuestra aplicación en
+my-application . un cluster Kubernetes. Para ello crearemos un cluster con
+<a href="https://kind.sigs.k8s.io/" target="_blank" rel="noopener noreffer">Kind</a>:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">kind create cluster
+</code></pre></td></tr></table>
+</div>
+</div><p>Y en unos 5 minutos tendremos nuestro cluster en pie. Ahora usaremos helm para
+descargar las dependencias aunque no tengamos, ya que si no lo hacemos y hay
+dependencias fallará, por lo que no es una mala costumbre:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">helm dependency update .
+</code></pre></td></tr></table>
+</div>
+</div><p>y ahora lo instalamos:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">helm upgrade -i my-application .
+</code></pre></td></tr></table>
+</div>
+</div><p>Siempre utilizo <code>upgrade -i</code> ya que <code>install</code> fallará si ya existía.</p>
+<p>Eso mostrará esta salida, más o menos:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-txt" data-lang="txt">Release &#34;my-application&#34; does not exist. Installing it now.
+NAME: my-application
+LAST DEPLOYED: Thu Dec 30 08:12:57 2021
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+NOTES:
+1. Get the application URL by running these commands:
+  export POD_NAME=$(kubectl get pods --namespace default -l &#34;app.kubernetes.io/name=mi-application,app.kubernetes.io/instance=my-application&#34; -o jsonpath=&#34;{.items[0].metadata.name}&#34;)
+  export CONTAINER_PORT=$(kubectl get pod --namespace default $POD_NAME -o jsonpath=&#34;{.spec.containers[0].ports[0].containerPort}&#34;)
+  echo &#34;Visit http://127.0.0.1:8080 to use your application&#34;
+  kubectl --namespace default port-forward $POD_NAME 8080:$CONTAINER_PORT
+</code></pre></td></tr></table>
+</div>
+</div><p>El final, <code>NOTES</code>, es el contenido renderizado del archivo <code>templates/NOTES.txt</code> de nuestro paquete.</p>
+<p>Y podemos preguntar a <a href="https://helm.sh/" target="_blank" rel="noopener noreffer">Helm</a> por el estado de nuestro paquete:</p>
+<pre tabindex="0"><code>$ helm list
+NAME            NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                   APP VERSION
+my-application  default         1               2021-12-30 08:12:57.930000745 +0100 CET deployed        mi-application-0.1.0    1.16.0
+</code></pre><p>o ver el estado de los pods con <a href="https://kubernetes.io/docs/reference/kubectl/overview/" target="_blank" rel="noopener noreffer">kubectl</a>:</p>
+<pre tabindex="0"><code>$ kubectl get pods
+NAME                                             READY   STATUS    RESTARTS   AGE
+my-application-mi-application-7dc8c8c7df-khx7j   0/1     Pending   0          3m52s
+</code></pre><h2 id="depurando-un-paquete-helm">Depurando un paquete Helm</h2>
+<p>Si nos ponemos a crear nuestro paquete <a href="https://helm.sh/" target="_blank" rel="noopener noreffer">Helm</a> tarde o temprano la liaremos
+parda. Así que es muy útil ver qué es lo que va a generar el paquete:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">helm template .
+</code></pre></td></tr></table>
+</div>
+</div><p>Nos mostrará todos los recursos que se van a generar en distintos documentos
+YAML separados por triple guión <code>---</code>. Ejemplo:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nn">---</span><span class="w">
+</span><span class="w"></span><span class="c"># Source: mi-application/templates/serviceaccount.yaml</span><span class="w">
+</span><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ServiceAccount</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">RELEASE-NAME-mi-application</span><span class="w">
+</span><span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">helm.sh/chart</span><span class="p">:</span><span class="w"> </span><span class="l">mi-application-0.1.0</span><span class="w">
+</span><span class="w">    </span><span class="nt">app.kubernetes.io/name</span><span class="p">:</span><span class="w"> </span><span class="l">mi-application</span><span class="w">
+</span><span class="w">    </span><span class="nt">app.kubernetes.io/instance</span><span class="p">:</span><span class="w"> </span><span class="l">RELEASE-NAME</span><span class="w">
+</span><span class="w">    </span><span class="nt">app.kubernetes.io/version</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;1.16.0&#34;</span><span class="w">
+</span><span class="w">    </span><span class="nt">app.kubernetes.io/managed-by</span><span class="p">:</span><span class="w"> </span><span class="l">Helm</span><span class="w">
+</span><span class="w"></span><span class="nn">---</span><span class="w">
+</span><span class="w"></span><span class="c"># Source: mi-application/templates/service.yaml</span><span class="w">
+</span><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Service</span><span class="w">
+</span><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">RELEASE-NAME-mi-application</span><span class="w">
+</span><span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">helm.sh/chart</span><span class="p">:</span><span class="w"> </span><span class="l">mi-application-0.1.0</span><span class="w">
+</span><span class="w">    </span><span class="nt">app.kubernetes.io/name</span><span class="p">:</span><span class="w"> </span><span class="l">mi-application</span><span class="w">
+</span><span class="w">    </span><span class="nt">app.kubernetes.io/instance</span><span class="p">:</span><span class="w"> </span><span class="l">RELEASE-NAME</span><span class="w">
+</span><span class="w">    </span><span class="nt">app.kubernetes.io/version</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;1.16.0&#34;</span><span class="w">
+</span><span class="w">    </span><span class="nt">app.kubernetes.io/managed-by</span><span class="p">:</span><span class="w"> </span><span class="l">Helm</span><span class="w">
+</span><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">ClusterIP</span><span class="w">
+</span><span class="w">  </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>- <span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span><span class="w">      </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l">http</span><span class="w">
+</span><span class="w">      </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l">TCP</span><span class="w">
+</span><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">http</span><span class="w">
+</span><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">app.kubernetes.io/name</span><span class="p">:</span><span class="w"> </span><span class="l">mi-application</span><span class="w">
+</span><span class="w">    </span><span class="nt">app.kubernetes.io/instance</span><span class="p">:</span><span class="w"> </span><span class="l">RELEASE-NAME</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>Como vemos, los valores de <code>.Release</code> se expanden a valores por defecto y no a
+los definitivos.</p>
+<h2 id="personalizando-un-paquete-helm">Personalizando un paquete helm</h2>
+<p>Lo más divertido de un paquete <a href="https://helm.sh/" target="_blank" rel="noopener noreffer">Helm</a> es que es personalizable. Basta con crear
+un archivo <code>values.yaml</code> adicional y pasárselo a <code>upgrade</code>, <code>install</code> o
+<code>template</code> para sobreescribir valores.</p>
+<p>Por ejemplo, podemos escribir el pequeño archivo <code>values.foo.yaml</code>:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">service</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">ClusterIP</span><span class="w">
+</span><span class="w">  </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">9000</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>Veamos dónde estaba escuchando nuestro servicio:</p>
+<pre tabindex="0"><code>$ kubectl get svc my-application-mi-application
+NAME                            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+my-application-mi-application   ClusterIP   10.107.195.23   &lt;none&gt;        80/TCP    23m
+</code></pre><p>Y ahora lo instalamos con ese archivo:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">helm upgrade -i my-application . --values values.foo.yaml
+</code></pre></td></tr></table>
+</div>
+</div><p>Y volvemos a comprobar:</p>
+<pre tabindex="0"><code>$ kubectl get svc my-application-mi-application
+NAME                            TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+my-application-mi-application   ClusterIP   10.107.195.23   &lt;none&gt;        9000/TCP  23m
+</code></pre><p>Con lo que el puerto del servicio ha cambiado.</p>
+<h2 id="recursos-helm">Recursos Helm</h2>
+<p>Es interesante conocer el mayor repositorio de paquetes <a href="https://helm.sh/" target="_blank" rel="noopener noreffer">helm</a>, el
+<a href="https://artifacthub.io/" target="_blank" rel="noopener noreffer">artifacthub</a>, donde podemos encontrar casi de todo, aunque puede que no siempre
+nos convenza lo que veamos.</p>
+<p>También se pueden instalar <a href="https://helm.sh/docs/community/related/#helm-plugins" target="_blank" rel="noopener noreffer">plugins para Helm</a>.</p>
+<p>Cuando instalamos un paquete de la nube, primero tendremos que instalar el
+repositorio Helm. Por ejemplo, para instalar
+<a href="https://artifacthub.io/packages/helm/grafana/grafana" target="_blank" rel="noopener noreffer">Grafana</a>:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">helm repo add grafana https://grafana.github.io/helm-charts
+</code></pre></td></tr></table>
+</div>
+</div><p>Y a continuación se puede instalar el programa:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">helm install my-grafana grafana/grafana --version 6.20.3
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="saber-más">Saber más</h2>
+<p>Recomiendo jugar un poco con <a href="https://helm.sh/" target="_blank" rel="noopener noreffer">helm</a>: borrar paquetes, sobreescribir valores, &hellip;</p>
+<p>Si ya se tienen algunos conocimientos de <a href="https://kubernetes.io/" target="_blank" rel="noopener noreffer">Kubernetes</a>, a lo mejor el lector se
+siente con fuerzas para intentar instalar algo útil pero sencillo, como un
+<a href="https://artifacthub.io/packages/helm/grafana/grafana" target="_blank" rel="noopener noreffer">Grafana</a> como se comentó antes o un <a href="https://artifacthub.io/packages/helm/prometheus-community/prometheus" target="_blank" rel="noopener noreffer">Prometheus</a>.</p>
+<p>En el próximo artículo veremos cómo instalar ambos, <a href="https://artifacthub.io/packages/helm/grafana/grafana" target="_blank" rel="noopener noreffer">Grafana</a> y <a href="https://artifacthub.io/packages/helm/prometheus-community/prometheus" target="_blank" rel="noopener noreffer">Prometheus</a>,
+para que trabajen juntos, lo que dará pie a hablar de más usos para <code>kubectl</code>,
+<code>namespaces</code>, &hellip;</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Actualizado el 30 Dec 2021</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Compartir en Twitter" data-sharer="twitter" data-url="https://magmax.org/blog/kubernetes-2-helm/" data-title="Kubernetes (2): Helm" data-hashtags="kubernetes,helm"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Compartir en Facebook" data-sharer="facebook" data-url="https://magmax.org/blog/kubernetes-2-helm/" data-hashtag="kubernetes"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Compartir en Linkedin" data-sharer="linkedin" data-url="https://magmax.org/blog/kubernetes-2-helm/"><i class="fab fa-linkedin fa-fw"></i></a><a href="javascript:void(0);" title="Compartir en WhatsApp" data-sharer="whatsapp" data-url="https://magmax.org/blog/kubernetes-2-helm/" data-title="Kubernetes (2): Helm" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Compartir en Tumblr" data-sharer="tumblr" data-url="https://magmax.org/blog/kubernetes-2-helm/" data-title="Kubernetes (2): Helm" data-caption="Introducción a helm para kubernetes" data-tags="kubernetes,helm"><i class="fab fa-tumblr fa-fw"></i></a><a href="javascript:void(0);" title="Compartir en Reddit" data-sharer="reddit" data-url="https://magmax.org/blog/kubernetes-2-helm/"><i class="fab fa-reddit fa-fw"></i></a><a href="javascript:void(0);" title="Compartir en Instapaper" data-sharer="instapaper" data-url="https://magmax.org/blog/kubernetes-2-helm/" data-title="Kubernetes (2): Helm" data-description="Introducción a helm para kubernetes"><i data-svg-src="/lib/simple-icons/icons/instapaper.min.svg"></i></a><a href="javascript:void(0);" title="Compartir en Digg" data-sharer="digg" data-url="https://magmax.org/blog/kubernetes-2-helm/"><i class="fab fa-digg fa-fw"></i></a><a href="javascript:void(0);" title="Compartir en Blogger" data-sharer="blogger" data-url="https://magmax.org/blog/kubernetes-2-helm/" data-title="Kubernetes (2): Helm" data-description="Introducción a helm para kubernetes"><i class="fab fa-blogger fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/kubernetes/">kubernetes</a>,&nbsp;<a href="/tags/helm/">helm</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Regresar</a></span>&nbsp;|&nbsp;<span><a href="/">Inicio</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/blog/kubernetes-1-conceptos-basicos/" class="prev" rel="prev" title="Kubernetes (1): conceptos básicos"><i class="fas fa-angle-left fa-fw"></i>Kubernetes (1): conceptos básicos</a></div>
+</div>
+<div id="comments"><div id="disqus_thread" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Provisto por <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.91.2">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Miguel Ángel</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Volver arriba">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="Ver comentarios">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><script type="text/javascript" src="https://magmax.disqus.com/embed.js" defer></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copiar al portapapeles","maxShownLines":10},"comment":{},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript">
+            window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+            gtag('config', 'UA-9308241-3', { 'anonymize_ip': true });
+        </script><script type="text/javascript" src="https://www.googletagmanager.com/gtag/js?id=UA-9308241-3" async></script></body>
+</html>
