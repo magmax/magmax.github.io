@@ -9,8 +9,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://magmax.org/blog/buildbot/" /><meta property="og:image" content="https://magmax.org/icons/favicon.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2012-08-02T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-01-28T00:00:00+00:00" /><meta property="og:site_name" content="El blog de MagMax" />
-
+<meta property="article:modified_time" content="2021-01-28T00:00:00+00:00" /><meta property="og:site_name" content="My cool site" />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://magmax.org/icons/favicon.png"/>
 
@@ -338,134 +337,134 @@ example-master$
 </span><span class="lnt">127
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># -*- python -*-</span>
-<span class="c1"># ex: set syntax=python:</span>
-
-<span class="c1"># This is a sample buildmaster config file. It must be installed as</span>
-<span class="c1"># &#39;master.cfg&#39; in your buildmaster&#39;s base directory.</span>
-
-<span class="c1"># This is the dictionary that the buildmaster pays attention to. We also use</span>
-<span class="c1"># a shorter alias to save typing.</span>
-<span class="n">c</span> <span class="o">=</span> <span class="n">BuildmasterConfig</span> <span class="o">=</span> <span class="p">{}</span>
-
-<span class="c1">####### BUILDSLAVES</span>
-
-<span class="c1"># The &#39;slaves&#39; list defines the set of recognized buildslaves. Each element is</span>
-<span class="c1"># a BuildSlave object, specifying a unique slave name and password.  The same</span>
-<span class="c1"># slave name and password must be configured on the slave.</span>
-<span class="kn">from</span> <span class="nn">buildbot.buildslave</span> <span class="kn">import</span> <span class="n">BuildSlave</span>
-<span class="n">c</span><span class="p">[</span><span class="s1">&#39;slaves&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">BuildSlave</span><span class="p">(</span><span class="s2">&#34;example-slave&#34;</span><span class="p">,</span> <span class="s2">&#34;pass&#34;</span><span class="p">)]</span>
-
-<span class="c1"># &#39;slavePortnum&#39; defines the TCP port to listen on for connections from slaves.</span>
-<span class="c1"># This must match the value configured into the buildslaves (with their</span>
-<span class="c1"># --master option)</span>
-<span class="n">c</span><span class="p">[</span><span class="s1">&#39;slavePortnum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">9989</span>
-
-<span class="c1">####### CHANGESOURCES</span>
-
-<span class="c1"># the &#39;change_source&#39; setting tells the buildmaster how it should find out</span>
-<span class="c1"># about source code changes.  Here we point to the buildbot clone of pyflakes.</span>
-
-<span class="kn">from</span> <span class="nn">buildbot.changes.gitpoller</span> <span class="kn">import</span> <span class="n">GitPoller</span>
-<span class="n">c</span><span class="p">[</span><span class="s1">&#39;change_source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="c1">#c[&#39;change_source&#39;].append(GitPoller(</span>
-<span class="c1">#        &#39;git://github.com/buildbot/pyflakes.git&#39;,</span>
-<span class="c1">#        workdir=&#39;gitpoller-workdir&#39;, branch=&#39;master&#39;,</span>
-<span class="c1">#        pollinterval=300))</span>
-
-<span class="c1">####### SCHEDULERS</span>
-
-<span class="c1"># Configure the Schedulers, which decide how to react to incoming changes.  In this</span>
-<span class="c1"># case, just kick off a &#39;runtests&#39; build</span>
-
-<span class="kn">from</span> <span class="nn">buildbot.schedulers.basic</span> <span class="kn">import</span> <span class="n">SingleBranchScheduler</span>
-<span class="kn">from</span> <span class="nn">buildbot.schedulers.forcesched</span> <span class="kn">import</span> <span class="n">ForceScheduler</span>
-<span class="kn">from</span> <span class="nn">buildbot.changes</span> <span class="kn">import</span> <span class="nb">filter</span>
-<span class="n">c</span><span class="p">[</span><span class="s1">&#39;schedulers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">c</span><span class="p">[</span><span class="s1">&#39;schedulers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleBranchScheduler</span><span class="p">(</span>
-                            <span class="n">name</span><span class="o">=</span><span class="s2">&#34;all&#34;</span><span class="p">,</span>
-                            <span class="n">change_filter</span><span class="o">=</span><span class="nb">filter</span><span class="o">.</span><span class="n">ChangeFilter</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="s1">&#39;master&#39;</span><span class="p">),</span>
-                            <span class="n">treeStableTimer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                            <span class="n">builderNames</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;runtests&#34;</span><span class="p">]))</span>
-<span class="n">c</span><span class="p">[</span><span class="s1">&#39;schedulers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ForceScheduler</span><span class="p">(</span>
-                            <span class="n">name</span><span class="o">=</span><span class="s2">&#34;force&#34;</span><span class="p">,</span>
-                            <span class="n">builderNames</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;runtests&#34;</span><span class="p">]))</span>
-
-<span class="c1">####### BUILDERS</span>
-
-<span class="c1"># The &#39;builders&#39; list defines the Builders, which tell Buildbot how to perform a build:</span>
-<span class="c1"># what steps, and which slaves can execute them.  Note that any particular build will</span>
-<span class="c1"># only take place on one slave.</span>
-
-<span class="kn">from</span> <span class="nn">buildbot.process.factory</span> <span class="kn">import</span> <span class="n">BuildFactory</span>
-<span class="kn">from</span> <span class="nn">buildbot.steps.source</span> <span class="kn">import</span> <span class="n">Mercurial</span>
-<span class="kn">from</span> <span class="nn">buildbot.steps.shell</span> <span class="kn">import</span> <span class="n">ShellCommand</span>
-
-<span class="n">factory</span> <span class="o">=</span> <span class="n">BuildFactory</span><span class="p">()</span>
-<span class="c1"># check out the source</span>
-<span class="n">factory</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span><span class="n">Mercurial</span><span class="p">(</span><span class="n">repourl</span><span class="o">=</span><span class="s1">&#39;https://bitbucket.org/carlosble/pydoubles&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;copy&#39;</span><span class="p">))</span>
-<span class="c1"># run the tests (note that this will require that &#39;trial&#39; is installed)</span>
-<span class="n">factory</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span><span class="n">ShellCommand</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;nosetests&#34;</span><span class="p">,</span> <span class="s2">&#34;pyDoublesTests/unit.py&#34;</span><span class="p">]))</span>
-<span class="n">factory</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span><span class="n">ShellCommand</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;nosetests&#34;</span><span class="p">,</span> <span class="s2">&#34;pyDoublesTests/hamcrest_integration.py&#34;</span><span class="p">]))</span>
-
-<span class="kn">from</span> <span class="nn">buildbot.config</span> <span class="kn">import</span> <span class="n">BuilderConfig</span>
-
-<span class="n">c</span><span class="p">[</span><span class="s1">&#39;builders&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">c</span><span class="p">[</span><span class="s1">&#39;builders&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-    <span class="n">BuilderConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&#34;runtests&#34;</span><span class="p">,</span>
-      <span class="n">slavenames</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;example-slave&#34;</span><span class="p">],</span>
-      <span class="n">factory</span><span class="o">=</span><span class="n">factory</span><span class="p">))</span>
-
-<span class="c1">####### STATUS TARGETS</span>
-
-<span class="c1"># &#39;status&#39; is a list of Status Targets. The results of each build will be</span>
-<span class="c1"># pushed to these targets. buildbot/status/*.py has a variety to choose from,</span>
-<span class="c1"># including web pages, email senders, and IRC bots.</span>
-
-<span class="n">c</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="kn">from</span> <span class="nn">buildbot.status</span> <span class="kn">import</span> <span class="n">html</span>
-<span class="kn">from</span> <span class="nn">buildbot.status.web</span> <span class="kn">import</span> <span class="n">authz</span><span class="p">,</span> <span class="n">auth</span>
-
-<span class="n">authz_cfg</span><span class="o">=</span><span class="n">authz</span><span class="o">.</span><span class="n">Authz</span><span class="p">(</span>
-    <span class="c1"># change any of these to True to enable; see the manual for more</span>
-    <span class="c1"># options</span>
-    <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="o">.</span><span class="n">BasicAuth</span><span class="p">([(</span><span class="s2">&#34;pyflakes&#34;</span><span class="p">,</span><span class="s2">&#34;pyflakes&#34;</span><span class="p">)]),</span>
-    <span class="n">gracefulShutdown</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">forceBuild</span> <span class="o">=</span> <span class="s1">&#39;auth&#39;</span><span class="p">,</span> <span class="c1"># use this to test your slave once it is set up</span>
-    <span class="n">forceAllBuilds</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">pingBuilder</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">stopBuild</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">stopAllBuilds</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">cancelPendingBuild</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">c</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">WebStatus</span><span class="p">(</span><span class="n">http_port</span><span class="o">=</span><span class="mi">8010</span><span class="p">,</span> <span class="n">authz</span><span class="o">=</span><span class="n">authz_cfg</span><span class="p">))</span>
-
-<span class="c1">####### PROJECT IDENTITY</span>
-
-<span class="c1"># the &#39;title&#39; string will appear at the top of this buildbot</span>
-<span class="c1"># installation&#39;s html.WebStatus home page (linked to the</span>
-<span class="c1"># &#39;titleURL&#39;) and is embedded in the title of the waterfall HTML page.</span>
-
-<span class="n">c</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;My BuildBot Installation&#34;</span>
-<span class="n">c</span><span class="p">[</span><span class="s1">&#39;titleURL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;https://www.magmax.org&#34;</span>
-
-<span class="c1"># the &#39;buildbotURL&#39; string should point to the location where the buildbot&#39;s</span>
-<span class="c1"># internal web server (usually the html.WebStatus page) is visible. This</span>
-<span class="c1"># typically uses the port number set in the Waterfall &#39;status&#39; entry, but</span>
-<span class="c1"># with an externally-visible host name which the buildbot cannot figure out</span>
-<span class="c1"># without some help.</span>
-
-<span class="n">c</span><span class="p">[</span><span class="s1">&#39;buildbotURL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;https://localhost:8010/&#34;</span>
-
-<span class="c1">####### DB URL</span>
-
-<span class="n">c</span><span class="p">[</span><span class="s1">&#39;db&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="c1"># This specifies what database buildbot uses to store its state.  You can leave</span>
-    <span class="c1"># this at its default for all but the largest installations.</span>
-    <span class="s1">&#39;db_url&#39;</span> <span class="p">:</span> <span class="s2">&#34;sqlite:///state.sqlite&#34;</span><span class="p">,</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># -*- python -*-</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># ex: set syntax=python:</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># This is a sample buildmaster config file. It must be installed as</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># &#39;master.cfg&#39; in your buildmaster&#39;s base directory.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># This is the dictionary that the buildmaster pays attention to. We also use</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># a shorter alias to save typing.</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span> <span class="o">=</span> <span class="n">BuildmasterConfig</span> <span class="o">=</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">####### BUILDSLAVES</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The &#39;slaves&#39; list defines the set of recognized buildslaves. Each element is</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># a BuildSlave object, specifying a unique slave name and password.  The same</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># slave name and password must be configured on the slave.</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.buildslave</span> <span class="kn">import</span> <span class="n">BuildSlave</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;slaves&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">BuildSlave</span><span class="p">(</span><span class="s2">&#34;example-slave&#34;</span><span class="p">,</span> <span class="s2">&#34;pass&#34;</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># &#39;slavePortnum&#39; defines the TCP port to listen on for connections from slaves.</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># This must match the value configured into the buildslaves (with their</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># --master option)</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;slavePortnum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">9989</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">####### CHANGESOURCES</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># the &#39;change_source&#39; setting tells the buildmaster how it should find out</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># about source code changes.  Here we point to the buildbot clone of pyflakes.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.changes.gitpoller</span> <span class="kn">import</span> <span class="n">GitPoller</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;change_source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#c[&#39;change_source&#39;].append(GitPoller(</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#        &#39;git://github.com/buildbot/pyflakes.git&#39;,</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#        workdir=&#39;gitpoller-workdir&#39;, branch=&#39;master&#39;,</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#        pollinterval=300))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">####### SCHEDULERS</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Configure the Schedulers, which decide how to react to incoming changes.  In this</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># case, just kick off a &#39;runtests&#39; build</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.schedulers.basic</span> <span class="kn">import</span> <span class="n">SingleBranchScheduler</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.schedulers.forcesched</span> <span class="kn">import</span> <span class="n">ForceScheduler</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.changes</span> <span class="kn">import</span> <span class="nb">filter</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;schedulers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;schedulers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleBranchScheduler</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                            <span class="n">name</span><span class="o">=</span><span class="s2">&#34;all&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                            <span class="n">change_filter</span><span class="o">=</span><span class="nb">filter</span><span class="o">.</span><span class="n">ChangeFilter</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="s1">&#39;master&#39;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                            <span class="n">treeStableTimer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                            <span class="n">builderNames</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;runtests&#34;</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;schedulers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ForceScheduler</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                            <span class="n">name</span><span class="o">=</span><span class="s2">&#34;force&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                            <span class="n">builderNames</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;runtests&#34;</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">####### BUILDERS</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># The &#39;builders&#39; list defines the Builders, which tell Buildbot how to perform a build:</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># what steps, and which slaves can execute them.  Note that any particular build will</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># only take place on one slave.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.process.factory</span> <span class="kn">import</span> <span class="n">BuildFactory</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.steps.source</span> <span class="kn">import</span> <span class="n">Mercurial</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.steps.shell</span> <span class="kn">import</span> <span class="n">ShellCommand</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">factory</span> <span class="o">=</span> <span class="n">BuildFactory</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># check out the source</span>
+</span></span><span class="line"><span class="cl"><span class="n">factory</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span><span class="n">Mercurial</span><span class="p">(</span><span class="n">repourl</span><span class="o">=</span><span class="s1">&#39;https://bitbucket.org/carlosble/pydoubles&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;copy&#39;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># run the tests (note that this will require that &#39;trial&#39; is installed)</span>
+</span></span><span class="line"><span class="cl"><span class="n">factory</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span><span class="n">ShellCommand</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;nosetests&#34;</span><span class="p">,</span> <span class="s2">&#34;pyDoublesTests/unit.py&#34;</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl"><span class="n">factory</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span><span class="n">ShellCommand</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;nosetests&#34;</span><span class="p">,</span> <span class="s2">&#34;pyDoublesTests/hamcrest_integration.py&#34;</span><span class="p">]))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.config</span> <span class="kn">import</span> <span class="n">BuilderConfig</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;builders&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;builders&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">BuilderConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&#34;runtests&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">slavenames</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;example-slave&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="n">factory</span><span class="o">=</span><span class="n">factory</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">####### STATUS TARGETS</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># &#39;status&#39; is a list of Status Targets. The results of each build will be</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># pushed to these targets. buildbot/status/*.py has a variety to choose from,</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># including web pages, email senders, and IRC bots.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.status</span> <span class="kn">import</span> <span class="n">html</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.status.web</span> <span class="kn">import</span> <span class="n">authz</span><span class="p">,</span> <span class="n">auth</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">authz_cfg</span><span class="o">=</span><span class="n">authz</span><span class="o">.</span><span class="n">Authz</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># change any of these to True to enable; see the manual for more</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># options</span>
+</span></span><span class="line"><span class="cl">    <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="o">.</span><span class="n">BasicAuth</span><span class="p">([(</span><span class="s2">&#34;pyflakes&#34;</span><span class="p">,</span><span class="s2">&#34;pyflakes&#34;</span><span class="p">)]),</span>
+</span></span><span class="line"><span class="cl">    <span class="n">gracefulShutdown</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">forceBuild</span> <span class="o">=</span> <span class="s1">&#39;auth&#39;</span><span class="p">,</span> <span class="c1"># use this to test your slave once it is set up</span>
+</span></span><span class="line"><span class="cl">    <span class="n">forceAllBuilds</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">pingBuilder</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">stopBuild</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">stopAllBuilds</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cancelPendingBuild</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">WebStatus</span><span class="p">(</span><span class="n">http_port</span><span class="o">=</span><span class="mi">8010</span><span class="p">,</span> <span class="n">authz</span><span class="o">=</span><span class="n">authz_cfg</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">####### PROJECT IDENTITY</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># the &#39;title&#39; string will appear at the top of this buildbot</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># installation&#39;s html.WebStatus home page (linked to the</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># &#39;titleURL&#39;) and is embedded in the title of the waterfall HTML page.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;My BuildBot Installation&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;titleURL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;https://www.magmax.org&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># the &#39;buildbotURL&#39; string should point to the location where the buildbot&#39;s</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># internal web server (usually the html.WebStatus page) is visible. This</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># typically uses the port number set in the Waterfall &#39;status&#39; entry, but</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># with an externally-visible host name which the buildbot cannot figure out</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># without some help.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;buildbotURL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;https://localhost:8010/&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">####### DB URL</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;db&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># This specifies what database buildbot uses to store its state.  You can leave</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># this at its default for all but the largest installations.</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;db_url&#39;</span> <span class="p">:</span> <span class="s2">&#34;sqlite:///state.sqlite&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="ejecutando-el-maestro">Ejecutando el maestro</h3>
 <p>Ningún misterio: desde el directorio del maestro, basta ejecutar:</p>
@@ -537,7 +536,7 @@ example-master$
         <div class="post-info-line">
             <div class="post-info-md"></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Compartir en Twitter" data-sharer="twitter" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot" data-hashtags="testing,agile,continuous integration,buildbot"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Facebook" data-sharer="facebook" data-url="https://magmax.org/blog/buildbot/" data-hashtag="testing"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Linkedin" data-sharer="linkedin" data-url="https://magmax.org/blog/buildbot/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en WhatsApp" data-sharer="whatsapp" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot" data-web><i class="fab fa-whatsapp fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Tumblr" data-sharer="tumblr" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot" data-caption="Primeros pasos utilizando Buildbot" data-tags="testing,agile,continuous integration,buildbot"><i class="fab fa-tumblr fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Reddit" data-sharer="reddit" data-url="https://magmax.org/blog/buildbot/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Instapaper" data-sharer="instapaper" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot" data-description="Primeros pasos utilizando Buildbot"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/instapaper.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en 微博" data-sharer="weibo" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Blogger" data-sharer="blogger" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot" data-description="Primeros pasos utilizando Buildbot"><i class="fab fa-blogger fa-fw" aria-hidden="true"></i></a></span>
+                <span><a href="javascript:void(0);" title="Compartir en Twitter" data-sharer="twitter" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot" data-via="magmax_en" data-hashtags="testing,agile,continuous integration,buildbot"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Facebook" data-sharer="facebook" data-url="https://magmax.org/blog/buildbot/" data-hashtag="testing"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Linkedin" data-sharer="linkedin" data-url="https://magmax.org/blog/buildbot/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en WhatsApp" data-sharer="whatsapp" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot" data-web><i class="fab fa-whatsapp fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Tumblr" data-sharer="tumblr" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot" data-caption="Primeros pasos utilizando Buildbot" data-tags="testing,agile,continuous integration,buildbot"><i class="fab fa-tumblr fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Reddit" data-sharer="reddit" data-url="https://magmax.org/blog/buildbot/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Instapaper" data-sharer="instapaper" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot" data-description="Primeros pasos utilizando Buildbot"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/instapaper.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en 微博" data-sharer="weibo" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Blogger" data-sharer="blogger" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot" data-description="Primeros pasos utilizando Buildbot"><i class="fab fa-blogger fa-fw" aria-hidden="true"></i></a></span>
             </div>
         </div>
     </div>
@@ -556,8 +555,8 @@ example-master$
                 Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
             </noscript></div></article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Con la tecnología de <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.92.2">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
-                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Miguel Ángel</a></span></div>
+        <div class="footer-container"><div class="footer-line">Con la tecnología de <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.114.1">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022 - 2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Miguel Ángel</a></span></div>
         </div>
     </footer></div>
 
@@ -568,6 +567,6 @@ example-master$
             </a>
         </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css"><script type="text/javascript" src="https://magmax.disqus.com/embed.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/copy-tex.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/mhchem.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copiar al portapapeles","maxShownLines":50},"comment":{},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript">
             window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
-            gtag('config', 'UA-9308241-3', { 'anonymize_ip': true });
-        </script><script type="text/javascript" src="https://www.googletagmanager.com/gtag/js?id=UA-9308241-3" async></script></body>
+            gtag('config', 'G-X5FEBMGR06', { 'anonymize_ip': true });
+        </script><script type="text/javascript" src="https://www.googletagmanager.com/gtag/js?id=G-X5FEBMGR06" async></script></body>
 </html>

@@ -11,8 +11,7 @@ Admito que la sección más importante sea, probablemente, las conclusiones. Si 
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://magmax.org/blog/python3-slow/" /><meta property="og:image" content="https://magmax.org/icons/favicon.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2012-10-19T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-01-28T00:00:00+00:00" /><meta property="og:site_name" content="El blog de MagMax" />
-
+<meta property="article:modified_time" content="2021-01-28T00:00:00+00:00" /><meta property="og:site_name" content="My cool site" />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://magmax.org/icons/favicon.png"/>
 
@@ -34,7 +33,7 @@ Admito que la sección más importante sea, probablemente, las conclusiones. Si 
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/magmax.org\/blog\/python3-slow\/"
-        },"genre": "posts","keywords": "python","wordcount":  1258 ,
+        },"genre": "posts","keywords": "python","wordcount":  1259 ,
         "url": "https:\/\/magmax.org\/blog\/python3-slow\/","datePublished": "2012-10-19T00:00:00+00:00","dateModified": "2021-01-28T00:00:00+00:00","publisher": {
             "@type": "Organization",
             "name": ""},"author": {
@@ -96,7 +95,7 @@ Admito que la sección más importante sea, probablemente, las conclusiones. Si 
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Python 3 es lento (I)</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Miguel Ángel</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="19 Oct 2012">19 Oct 2012</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1258 palabras&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="19 Oct 2012">19 Oct 2012</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1259 palabras&nbsp;
                 <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;6 minutos&nbsp;</div>
         </div><div class="details toc" id="toc-static"  data-kept="">
                 <div class="details-summary toc-title">
@@ -153,39 +152,39 @@ Admito que la sección más importante sea, probablemente, las conclusiones. Si 
 </span><span class="lnt">32
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/python</span>
-<span class="c1"># -*- coding:utf-8; tab-width:4; mode:python -*-</span>
-
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">import</span> <span class="nn">re</span>
-
-<span class="n">ITEMS</span> <span class="o">=</span> <span class="mi">1000000</span>
-<span class="n">LIMIT</span> <span class="o">=</span> <span class="mi">500000</span>
-
-<span class="c1"># python 3 do not support range assigment</span>
-<span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ITEMS</span><span class="p">)]</span>
-<span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">filterfunc</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">LIMIT</span>
-
-<span class="k">def</span> <span class="nf">print_result</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-    <span class="nb">print</span> <span class="p">(</span><span class="s2">&#34;</span><span class="si">{0:02.10f}</span><span class="s2"> - </span><span class="si">{1}</span><span class="s2">&#34;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
-
-<span class="k">def</span> <span class="nf">exec_filter</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-    <span class="n">t</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t</span>
-
-    <span class="c1"># python3 returns a filter object</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">r</span><span class="p">]</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">!=</span> <span class="n">LIMIT</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;ERROR&#34;</span><span class="p">)</span>
-    <span class="n">print_result</span> <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">( )*&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\\\\</span><span class="s1">n&#39;</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()),</span> <span class="n">end</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="ch">#!/usr/bin/python</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># -*- coding:utf-8; tab-width:4; mode:python -*-</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">time</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">random</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">inspect</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">re</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">ITEMS</span> <span class="o">=</span> <span class="mi">1000000</span>
+</span></span><span class="line"><span class="cl"><span class="n">LIMIT</span> <span class="o">=</span> <span class="mi">500000</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># python 3 do not support range assigment</span>
+</span></span><span class="line"><span class="cl"><span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ITEMS</span><span class="p">)]</span>
+</span></span><span class="line"><span class="cl"><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">filterfunc</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">LIMIT</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">print_result</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span> <span class="p">(</span><span class="s2">&#34;</span><span class="si">{0:02.10f}</span><span class="s2"> - </span><span class="si">{1}</span><span class="s2">&#34;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">msg</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">exec_filter</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">t</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1"># python3 returns a filter object</span>
+</span></span><span class="line"><span class="cl">    <span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">r</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">!=</span> <span class="n">LIMIT</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;ERROR&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">print_result</span> <span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">( )*&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\\\\</span><span class="s1">n&#39;</span><span class="p">,</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsource</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()),</span> <span class="n">end</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>El problema, pues, queda reducido a lo siguiente:</p>
 <div class="highlight"><div class="chroma">
@@ -236,51 +235,51 @@ Admito que la sección más importante sea, probablemente, las conclusiones. Si 
 </span><span class="lnt">44
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/python</span>
-<span class="c1"># -*- coding:utf-8; tab-width:4; mode:python -*-</span>
-
-<span class="kn">import</span> <span class="nn">helper</span>
-
-
-<span class="k">def</span> <span class="nf">filter_for</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">helper</span><span class="o">.</span><span class="n">LIMIT</span><span class="p">:</span>
-            <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">r</span>
-
-<span class="k">def</span> <span class="nf">filter_for_function</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">helper</span><span class="o">.</span><span class="n">filterfunc</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">r</span>
-
-<span class="k">def</span> <span class="nf">filter_filter</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="o">&lt;</span><span class="n">helper</span><span class="o">.</span><span class="n">LIMIT</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">filter_filter_function</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">filter</span><span class="p">(</span><span class="n">helper</span><span class="o">.</span><span class="n">filterfunc</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">filter_filter_inline</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-    <span class="n">inline</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">helper</span><span class="o">.</span><span class="n">LIMIT</span>
-    <span class="k">return</span> <span class="nb">filter</span><span class="p">(</span><span class="n">inline</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_for</span><span class="p">)</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_for_function</span><span class="p">)</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter</span><span class="p">)</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter_function</span><span class="p">)</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter_inline</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
-
-<span class="c1">#again, to avoid skews, AST generation, ...</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_for</span><span class="p">)</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_for_function</span><span class="p">)</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter</span><span class="p">)</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter_function</span><span class="p">)</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter_inline</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="ch">#!/usr/bin/python</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># -*- coding:utf-8; tab-width:4; mode:python -*-</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">helper</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">filter_for</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">helper</span><span class="o">.</span><span class="n">LIMIT</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">r</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">filter_for_function</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">helper</span><span class="o">.</span><span class="n">filterfunc</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">r</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">filter_filter</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="o">&lt;</span><span class="n">helper</span><span class="o">.</span><span class="n">LIMIT</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">filter_filter_function</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">filter</span><span class="p">(</span><span class="n">helper</span><span class="o">.</span><span class="n">filterfunc</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">filter_filter_inline</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">inline</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">helper</span><span class="o">.</span><span class="n">LIMIT</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">filter</span><span class="p">(</span><span class="n">inline</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_for</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_for_function</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter_function</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter_inline</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#again, to avoid skews, AST generation, ...</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_for</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_for_function</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter_function</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter_inline</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><h1 id="resultados">Resultados</h1>
 <p>A continuación, los resultados.</p>
@@ -301,19 +300,19 @@ Admito que la sección más importante sea, probablemente, las conclusiones. Si 
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ python2.6 ./filter.py
-0.2856931686 - def filter_for<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n</span>for x in v:<span class="se">\n</span>if x &lt; helper.LIMIT:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
-0.5035881996 - def filter_for_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n\n</span>for x in v:<span class="se">\n</span>if helper.filterfunc<span class="o">(</span>x<span class="o">)</span>:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
-0.3672192097 - def filter_filter<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>lambda x:x&lt;helper.LIMIT, v<span class="o">)</span>
-0.3303260803 - def filter_filter_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>helper.filterfunc, v<span class="o">)</span>
-0.3741078377 - def filter_filter_inline<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>inline <span class="o">=</span> lambda x:x &lt; helper.LIMIT<span class="se">\n</span>return filter<span class="o">(</span>inline, v<span class="o">)</span>
---
-0.2876720428 - def filter_for<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n</span>for x in v:<span class="se">\n</span>if x &lt; helper.LIMIT:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
-0.5014550686 - def filter_for_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n\n</span>for x in v:<span class="se">\n</span>if helper.filterfunc<span class="o">(</span>x<span class="o">)</span>:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
-0.3667922020 - def filter_filter<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>lambda x:x&lt;helper.LIMIT, v<span class="o">)</span>
-0.3289639950 - def filter_filter_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>helper.filterfunc, v<span class="o">)</span>
-0.3746089935 - def filter_filter_inline<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>inline <span class="o">=</span> lambda x:x &lt; helper.LIMIT<span class="se">\n</span>return filter<span class="o">(</span>inline, v<span class="o">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ python2.6 ./filter.py
+</span></span><span class="line"><span class="cl">0.2856931686 - def filter_for<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n</span>for x in v:<span class="se">\n</span>if x &lt; helper.LIMIT:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
+</span></span><span class="line"><span class="cl">0.5035881996 - def filter_for_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n\n</span>for x in v:<span class="se">\n</span>if helper.filterfunc<span class="o">(</span>x<span class="o">)</span>:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
+</span></span><span class="line"><span class="cl">0.3672192097 - def filter_filter<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>lambda x:x&lt;helper.LIMIT, v<span class="o">)</span>
+</span></span><span class="line"><span class="cl">0.3303260803 - def filter_filter_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>helper.filterfunc, v<span class="o">)</span>
+</span></span><span class="line"><span class="cl">0.3741078377 - def filter_filter_inline<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>inline <span class="o">=</span> lambda x:x &lt; helper.LIMIT<span class="se">\n</span>return filter<span class="o">(</span>inline, v<span class="o">)</span>
+</span></span><span class="line"><span class="cl">--
+</span></span><span class="line"><span class="cl">0.2876720428 - def filter_for<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n</span>for x in v:<span class="se">\n</span>if x &lt; helper.LIMIT:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
+</span></span><span class="line"><span class="cl">0.5014550686 - def filter_for_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n\n</span>for x in v:<span class="se">\n</span>if helper.filterfunc<span class="o">(</span>x<span class="o">)</span>:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
+</span></span><span class="line"><span class="cl">0.3667922020 - def filter_filter<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>lambda x:x&lt;helper.LIMIT, v<span class="o">)</span>
+</span></span><span class="line"><span class="cl">0.3289639950 - def filter_filter_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>helper.filterfunc, v<span class="o">)</span>
+</span></span><span class="line"><span class="cl">0.3746089935 - def filter_filter_inline<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>inline <span class="o">=</span> lambda x:x &lt; helper.LIMIT<span class="se">\n</span>return filter<span class="o">(</span>inline, v<span class="o">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>Como vemos, lo más eficiente es utilizar un <code>for</code> y no llamar a ninguna función de manera interna. Sin embargo, lo menos eficiente es lo mismo, pero llamando a una función que realice el trabajo.</p>
 <p>Sinceramente, esperaba que el <code>filter</code> ganara por goleada; una decepción por mi parte.</p>
@@ -334,19 +333,19 @@ Admito que la sección más importante sea, probablemente, las conclusiones. Si 
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ python2.7 ./filter.py
-0.2703018188 - def filter_for<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n</span>for x in v:<span class="se">\n</span>if x &lt; helper.LIMIT:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
-0.4657788277 - def filter_for_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n\n</span>for x in v:<span class="se">\n</span>if helper.filterfunc<span class="o">(</span>x<span class="o">)</span>:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
-0.3513321877 - def filter_filter<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>lambda x:x&lt;helper.LIMIT, v<span class="o">)</span>
-0.3194220066 - def filter_filter_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>helper.filterfunc, v<span class="o">)</span>
-0.3497390747 - def filter_filter_inline<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>inline <span class="o">=</span> lambda x:x &lt; helper.LIMIT<span class="se">\n</span>return filter<span class="o">(</span>inline, v<span class="o">)</span>
---
-0.2715458870 - def filter_for<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n</span>for x in v:<span class="se">\n</span>if x &lt; helper.LIMIT:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
-0.4667217731 - def filter_for_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n\n</span>for x in v:<span class="se">\n</span>if helper.filterfunc<span class="o">(</span>x<span class="o">)</span>:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
-0.3523530960 - def filter_filter<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>lambda x:x&lt;helper.LIMIT, v<span class="o">)</span>
-0.3194179535 - def filter_filter_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>helper.filterfunc, v<span class="o">)</span>
-0.3495810032 - def filter_filter_inline<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>inline <span class="o">=</span> lambda x:x &lt; helper.LIMIT<span class="se">\n</span>return filter<span class="o">(</span>inline, v<span class="o">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ python2.7 ./filter.py
+</span></span><span class="line"><span class="cl">0.2703018188 - def filter_for<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n</span>for x in v:<span class="se">\n</span>if x &lt; helper.LIMIT:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
+</span></span><span class="line"><span class="cl">0.4657788277 - def filter_for_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n\n</span>for x in v:<span class="se">\n</span>if helper.filterfunc<span class="o">(</span>x<span class="o">)</span>:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
+</span></span><span class="line"><span class="cl">0.3513321877 - def filter_filter<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>lambda x:x&lt;helper.LIMIT, v<span class="o">)</span>
+</span></span><span class="line"><span class="cl">0.3194220066 - def filter_filter_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>helper.filterfunc, v<span class="o">)</span>
+</span></span><span class="line"><span class="cl">0.3497390747 - def filter_filter_inline<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>inline <span class="o">=</span> lambda x:x &lt; helper.LIMIT<span class="se">\n</span>return filter<span class="o">(</span>inline, v<span class="o">)</span>
+</span></span><span class="line"><span class="cl">--
+</span></span><span class="line"><span class="cl">0.2715458870 - def filter_for<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n</span>for x in v:<span class="se">\n</span>if x &lt; helper.LIMIT:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
+</span></span><span class="line"><span class="cl">0.4667217731 - def filter_for_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n\n</span>for x in v:<span class="se">\n</span>if helper.filterfunc<span class="o">(</span>x<span class="o">)</span>:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
+</span></span><span class="line"><span class="cl">0.3523530960 - def filter_filter<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>lambda x:x&lt;helper.LIMIT, v<span class="o">)</span>
+</span></span><span class="line"><span class="cl">0.3194179535 - def filter_filter_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>helper.filterfunc, v<span class="o">)</span>
+</span></span><span class="line"><span class="cl">0.3495810032 - def filter_filter_inline<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>inline <span class="o">=</span> lambda x:x &lt; helper.LIMIT<span class="se">\n</span>return filter<span class="o">(</span>inline, v<span class="o">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>Como vemos, los tiempos son ligeramente menores, pero más o menos se siguen observando las mismas diferencias entre implementaciones.</p>
 <p>Veamos qué ocurre en Python 3.2, versión 3.2.3-5:</p>
@@ -366,19 +365,19 @@ Admito que la sección más importante sea, probablemente, las conclusiones. Si 
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ python3.2 ./filter.py
-0.2830071449 - def filter_for<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n</span>for x in v:<span class="se">\n</span>if x &lt; helper.LIMIT:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
-0.4660561085 - def filter_for_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n\n</span>for x in v:<span class="se">\n</span>if helper.filterfunc<span class="o">(</span>x<span class="o">)</span>:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
-0.0000162125 - def filter_filter<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>lambda x:x&lt;helper.LIMIT, v<span class="o">)</span>
-0.0000150204 - def filter_filter_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>helper.filterfunc, v<span class="o">)</span>
-0.0000159740 - def filter_filter_inline<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>inline <span class="o">=</span> lambda x:x &lt; helper.LIMIT<span class="se">\n</span>return filter<span class="o">(</span>inline, v<span class="o">)</span>
---
-0.2845621109 - def filter_for<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n</span>for x in v:<span class="se">\n</span>if x &lt; helper.LIMIT:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
-0.4680821896 - def filter_for_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n\n</span>for x in v:<span class="se">\n</span>if helper.filterfunc<span class="o">(</span>x<span class="o">)</span>:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
-0.0000150204 - def filter_filter<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>lambda x:x&lt;helper.LIMIT, v<span class="o">)</span>
-0.0000150204 - def filter_filter_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>helper.filterfunc, v<span class="o">)</span>
-0.0000140667 - def filter_filter_inline<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>inline <span class="o">=</span> lambda x:x &lt; helper.LIMIT<span class="se">\n</span>return filter<span class="o">(</span>inline, v<span class="o">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ python3.2 ./filter.py
+</span></span><span class="line"><span class="cl">0.2830071449 - def filter_for<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n</span>for x in v:<span class="se">\n</span>if x &lt; helper.LIMIT:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
+</span></span><span class="line"><span class="cl">0.4660561085 - def filter_for_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n\n</span>for x in v:<span class="se">\n</span>if helper.filterfunc<span class="o">(</span>x<span class="o">)</span>:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
+</span></span><span class="line"><span class="cl">0.0000162125 - def filter_filter<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>lambda x:x&lt;helper.LIMIT, v<span class="o">)</span>
+</span></span><span class="line"><span class="cl">0.0000150204 - def filter_filter_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>helper.filterfunc, v<span class="o">)</span>
+</span></span><span class="line"><span class="cl">0.0000159740 - def filter_filter_inline<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>inline <span class="o">=</span> lambda x:x &lt; helper.LIMIT<span class="se">\n</span>return filter<span class="o">(</span>inline, v<span class="o">)</span>
+</span></span><span class="line"><span class="cl">--
+</span></span><span class="line"><span class="cl">0.2845621109 - def filter_for<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n</span>for x in v:<span class="se">\n</span>if x &lt; helper.LIMIT:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
+</span></span><span class="line"><span class="cl">0.4680821896 - def filter_for_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n\n</span>for x in v:<span class="se">\n</span>if helper.filterfunc<span class="o">(</span>x<span class="o">)</span>:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
+</span></span><span class="line"><span class="cl">0.0000150204 - def filter_filter<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>lambda x:x&lt;helper.LIMIT, v<span class="o">)</span>
+</span></span><span class="line"><span class="cl">0.0000150204 - def filter_filter_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return filter<span class="o">(</span>helper.filterfunc, v<span class="o">)</span>
+</span></span><span class="line"><span class="cl">0.0000140667 - def filter_filter_inline<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>inline <span class="o">=</span> lambda x:x &lt; helper.LIMIT<span class="se">\n</span>return filter<span class="o">(</span>inline, v<span class="o">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>¿¿Cómo?? ¡¡Hay 3 implementaciones que tardan 30.000 veces menos!! ¿Cómo es posible?</p>
 <p>Bueno, vayamos desde el principio. Podemos observar que la diferencia entre python 2.6 y python 3.2 no es tan grande en las primeras funciones.</p>
@@ -432,51 +431,51 @@ Admito que la sección más importante sea, probablemente, las conclusiones. Si 
 </span><span class="lnt">44
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="ch">#!/usr/bin/python</span>
-<span class="c1"># -*- coding:utf-8; tab-width:4; mode:python -*-</span>
-
-<span class="kn">import</span> <span class="nn">helper</span>
-
-
-<span class="k">def</span> <span class="nf">filter_for</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">helper</span><span class="o">.</span><span class="n">LIMIT</span><span class="p">:</span>
-            <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">r</span>
-
-<span class="k">def</span> <span class="nf">filter_for_function</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">helper</span><span class="o">.</span><span class="n">filterfunc</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-            <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">r</span>
-
-<span class="k">def</span> <span class="nf">filter_filter</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="o">&lt;</span><span class="n">helper</span><span class="o">.</span><span class="n">LIMIT</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
-
-<span class="k">def</span> <span class="nf">filter_filter_function</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">helper</span><span class="o">.</span><span class="n">filterfunc</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
-
-<span class="k">def</span> <span class="nf">filter_filter_inline</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-    <span class="n">inline</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">helper</span><span class="o">.</span><span class="n">LIMIT</span>
-    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">inline</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
-
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_for</span><span class="p">)</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_for_function</span><span class="p">)</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter</span><span class="p">)</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter_function</span><span class="p">)</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter_inline</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
-
-<span class="c1">#again, to avoid skews</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_for</span><span class="p">)</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_for_function</span><span class="p">)</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter</span><span class="p">)</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter_function</span><span class="p">)</span>
-<span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter_inline</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="ch">#!/usr/bin/python</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># -*- coding:utf-8; tab-width:4; mode:python -*-</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">helper</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">filter_for</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">helper</span><span class="o">.</span><span class="n">LIMIT</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">r</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">filter_for_function</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">r</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">helper</span><span class="o">.</span><span class="n">filterfunc</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">            <span class="n">r</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">r</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">filter_filter</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="o">&lt;</span><span class="n">helper</span><span class="o">.</span><span class="n">LIMIT</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">filter_filter_function</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">helper</span><span class="o">.</span><span class="n">filterfunc</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">filter_filter_inline</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">inline</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">helper</span><span class="o">.</span><span class="n">LIMIT</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">inline</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_for</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_for_function</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter_function</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter_inline</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#again, to avoid skews</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_for</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_for_function</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter_function</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">helper</span><span class="o">.</span><span class="n">exec_filter</span><span class="p">(</span><span class="n">filter_filter_inline</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>Y los nuevos tiempos:</p>
 <div class="highlight"><div class="chroma">
@@ -495,19 +494,19 @@ Admito que la sección más importante sea, probablemente, las conclusiones. Si 
 </span><span class="lnt">12
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ python3.2 ./filter.py
-0.2852241993 - def filter_for<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n</span>for x in v:<span class="se">\n</span>if x &lt; helper.LIMIT:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
-0.4744341373 - def filter_for_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n\n</span>for x in v:<span class="se">\n</span>if helper.filterfunc<span class="o">(</span>x<span class="o">)</span>:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
-0.4047920704 - def filter_filter<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return list<span class="o">(</span>filter<span class="o">(</span>lambda x:x&lt;helper.LIMIT, v<span class="o">))</span>
-0.3826260567 - def filter_filter_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return list<span class="o">(</span>filter<span class="o">(</span>helper.filterfunc, v<span class="o">))</span>
-0.3997330666 - def filter_filter_inline<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>inline <span class="o">=</span> lambda x:x &lt; helper.LIMIT<span class="se">\n</span>return list<span class="o">(</span>filter<span class="o">(</span>inline, v<span class="o">))</span>
---
-0.2863130569 - def filter_for<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n</span>for x in v:<span class="se">\n</span>if x &lt; helper.LIMIT:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
-0.4698469639 - def filter_for_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n\n</span>for x in v:<span class="se">\n</span>if helper.filterfunc<span class="o">(</span>x<span class="o">)</span>:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
-0.4008741379 - def filter_filter<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return list<span class="o">(</span>filter<span class="o">(</span>lambda x:x&lt;helper.LIMIT, v<span class="o">))</span>
-0.3857419491 - def filter_filter_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return list<span class="o">(</span>filter<span class="o">(</span>helper.filterfunc, v<span class="o">))</span>
-0.3994090557 - def filter_filter_inline<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>inline <span class="o">=</span> lambda x:x &lt; helper.LIMIT<span class="se">\n</span>return list<span class="o">(</span>filter<span class="o">(</span>inline, v<span class="o">))</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ python3.2 ./filter.py
+</span></span><span class="line"><span class="cl">0.2852241993 - def filter_for<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n</span>for x in v:<span class="se">\n</span>if x &lt; helper.LIMIT:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
+</span></span><span class="line"><span class="cl">0.4744341373 - def filter_for_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n\n</span>for x in v:<span class="se">\n</span>if helper.filterfunc<span class="o">(</span>x<span class="o">)</span>:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
+</span></span><span class="line"><span class="cl">0.4047920704 - def filter_filter<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return list<span class="o">(</span>filter<span class="o">(</span>lambda x:x&lt;helper.LIMIT, v<span class="o">))</span>
+</span></span><span class="line"><span class="cl">0.3826260567 - def filter_filter_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return list<span class="o">(</span>filter<span class="o">(</span>helper.filterfunc, v<span class="o">))</span>
+</span></span><span class="line"><span class="cl">0.3997330666 - def filter_filter_inline<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>inline <span class="o">=</span> lambda x:x &lt; helper.LIMIT<span class="se">\n</span>return list<span class="o">(</span>filter<span class="o">(</span>inline, v<span class="o">))</span>
+</span></span><span class="line"><span class="cl">--
+</span></span><span class="line"><span class="cl">0.2863130569 - def filter_for<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n</span>for x in v:<span class="se">\n</span>if x &lt; helper.LIMIT:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
+</span></span><span class="line"><span class="cl">0.4698469639 - def filter_for_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>r <span class="o">=</span> <span class="o">[]</span><span class="se">\n\n</span>for x in v:<span class="se">\n</span>if helper.filterfunc<span class="o">(</span>x<span class="o">)</span>:<span class="se">\n</span>r.append<span class="o">(</span>x<span class="o">)</span><span class="se">\n</span>return r
+</span></span><span class="line"><span class="cl">0.4008741379 - def filter_filter<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return list<span class="o">(</span>filter<span class="o">(</span>lambda x:x&lt;helper.LIMIT, v<span class="o">))</span>
+</span></span><span class="line"><span class="cl">0.3857419491 - def filter_filter_function<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>return list<span class="o">(</span>filter<span class="o">(</span>helper.filterfunc, v<span class="o">))</span>
+</span></span><span class="line"><span class="cl">0.3994090557 - def filter_filter_inline<span class="o">(</span>v<span class="o">)</span>:<span class="se">\n</span>inline <span class="o">=</span> lambda x:x &lt; helper.LIMIT<span class="se">\n</span>return list<span class="o">(</span>filter<span class="o">(</span>inline, v<span class="o">))</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>Los tiempos del resto de versiones se ven ligeramente afectadas, pero no demasiado.</p>
 <h1 id="conclusiones">Conclusiones</h1>
@@ -523,7 +522,7 @@ una función, nos interesa utilizar <code>filter</code>, mucho más que utilizar
         <div class="post-info-line">
             <div class="post-info-md"></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Compartir en Twitter" data-sharer="twitter" data-url="https://magmax.org/blog/python3-slow/" data-title="Python 3 es lento (I)" data-hashtags="python"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Facebook" data-sharer="facebook" data-url="https://magmax.org/blog/python3-slow/" data-hashtag="python"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Linkedin" data-sharer="linkedin" data-url="https://magmax.org/blog/python3-slow/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en WhatsApp" data-sharer="whatsapp" data-url="https://magmax.org/blog/python3-slow/" data-title="Python 3 es lento (I)" data-web><i class="fab fa-whatsapp fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Tumblr" data-sharer="tumblr" data-url="https://magmax.org/blog/python3-slow/" data-title="Python 3 es lento (I)" data-tags="python"><i class="fab fa-tumblr fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Reddit" data-sharer="reddit" data-url="https://magmax.org/blog/python3-slow/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Instapaper" data-sharer="instapaper" data-url="https://magmax.org/blog/python3-slow/" data-title="Python 3 es lento (I)" data-description=""><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/instapaper.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en 微博" data-sharer="weibo" data-url="https://magmax.org/blog/python3-slow/" data-title="Python 3 es lento (I)"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Blogger" data-sharer="blogger" data-url="https://magmax.org/blog/python3-slow/" data-title="Python 3 es lento (I)" data-description=""><i class="fab fa-blogger fa-fw" aria-hidden="true"></i></a></span>
+                <span><a href="javascript:void(0);" title="Compartir en Twitter" data-sharer="twitter" data-url="https://magmax.org/blog/python3-slow/" data-title="Python 3 es lento (I)" data-via="magmax_en" data-hashtags="python"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Facebook" data-sharer="facebook" data-url="https://magmax.org/blog/python3-slow/" data-hashtag="python"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Linkedin" data-sharer="linkedin" data-url="https://magmax.org/blog/python3-slow/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en WhatsApp" data-sharer="whatsapp" data-url="https://magmax.org/blog/python3-slow/" data-title="Python 3 es lento (I)" data-web><i class="fab fa-whatsapp fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Tumblr" data-sharer="tumblr" data-url="https://magmax.org/blog/python3-slow/" data-title="Python 3 es lento (I)" data-tags="python"><i class="fab fa-tumblr fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Reddit" data-sharer="reddit" data-url="https://magmax.org/blog/python3-slow/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Instapaper" data-sharer="instapaper" data-url="https://magmax.org/blog/python3-slow/" data-title="Python 3 es lento (I)" data-description=""><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/instapaper.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en 微博" data-sharer="weibo" data-url="https://magmax.org/blog/python3-slow/" data-title="Python 3 es lento (I)"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Blogger" data-sharer="blogger" data-url="https://magmax.org/blog/python3-slow/" data-title="Python 3 es lento (I)" data-description=""><i class="fab fa-blogger fa-fw" aria-hidden="true"></i></a></span>
             </div>
         </div>
     </div>
@@ -542,8 +541,8 @@ una función, nos interesa utilizar <code>filter</code>, mucho más que utilizar
                 Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
             </noscript></div></article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Con la tecnología de <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.92.2">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
-                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Miguel Ángel</a></span></div>
+        <div class="footer-container"><div class="footer-line">Con la tecnología de <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.114.1">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022 - 2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Miguel Ángel</a></span></div>
         </div>
     </footer></div>
 
@@ -554,6 +553,6 @@ una función, nos interesa utilizar <code>filter</code>, mucho más que utilizar
             </a>
         </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css"><script type="text/javascript" src="https://magmax.disqus.com/embed.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/copy-tex.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/mhchem.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copiar al portapapeles","maxShownLines":50},"comment":{},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript">
             window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
-            gtag('config', 'UA-9308241-3', { 'anonymize_ip': true });
-        </script><script type="text/javascript" src="https://www.googletagmanager.com/gtag/js?id=UA-9308241-3" async></script></body>
+            gtag('config', 'G-X5FEBMGR06', { 'anonymize_ip': true });
+        </script><script type="text/javascript" src="https://www.googletagmanager.com/gtag/js?id=G-X5FEBMGR06" async></script></body>
 </html>

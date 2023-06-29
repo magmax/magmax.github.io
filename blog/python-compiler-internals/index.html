@@ -12,8 +12,7 @@ Espero que también os guste:" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://magmax.org/blog/python-compiler-internals/" /><meta property="og:image" content="https://magmax.org/icons/favicon.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2012-05-20T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-01-28T00:00:00+00:00" /><meta property="og:site_name" content="El blog de MagMax" />
-
+<meta property="article:modified_time" content="2021-01-28T00:00:00+00:00" /><meta property="og:site_name" content="My cool site" />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://magmax.org/icons/favicon.png"/>
 
@@ -140,13 +139,13 @@ Espero que también os guste:"/>
 </span><span class="lnt">6
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">sys</span>
-
-<span class="n">passwd</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-<span class="n">unless</span> <span class="n">passwd</span> <span class="o">==</span> <span class="s1">&#39;tehsecret&#39;</span><span class="p">:</span>
-       <span class="nb">print</span> <span class="s1">&#39;Password do not match. Exiting!&#39;</span>
-       <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">sys</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">passwd</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">unless</span> <span class="n">passwd</span> <span class="o">==</span> <span class="s1">&#39;tehsecret&#39;</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">       <span class="nb">print</span> <span class="s1">&#39;Password do not match. Exiting!&#39;</span>
+</span></span><span class="line"><span class="cl">       <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>Todo el código de este artículo se ha escrito y probado con Python 2.6 beta 3, cuyo repositorio Subversion puede encontrarse aquí: <a href="https://svn.python.org/projects/python/tags/r26b3/" target="_blank" rel="noopener noreffer ">https://svn.python.org/projects/python/tags/r26b3/</a> . La única cosa que debería cambiar en la versión 2.6 final son los números de línea referenciados en los listados de fuentes aquí presentes.</p>
 <h2 id="2-análisis-léxico">2. Análisis léxico</h2>
@@ -167,12 +166,12 @@ Espero que también os guste:"/>
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cm">/* Grammar/Grammar:78 */</span>
-<span class="nl">if_stmt</span><span class="p">:</span> <span class="err">&#39;</span><span class="k">if</span><span class="err">&#39;</span> <span class="n">test</span> <span class="sc">&#39;:&#39;</span> <span class="n">suite</span> <span class="p">(</span><span class="err">&#39;</span><span class="n">elif</span><span class="err">&#39;</span> <span class="n">test</span> <span class="sc">&#39;:&#39;</span> <span class="n">suite</span><span class="p">)</span><span class="o">*</span> <span class="p">[</span><span class="err">&#39;</span><span class="k">else</span><span class="sc">&#39; &#39;</span><span class="o">:</span><span class="err">&#39;</span> <span class="n">suite</span><span class="p">]</span>
-<span class="nl">while_stmt</span><span class="p">:</span> <span class="err">&#39;</span><span class="k">while</span><span class="err">&#39;</span> <span class="n">test</span> <span class="sc">&#39;:&#39;</span> <span class="n">suite</span> <span class="p">[</span><span class="err">&#39;</span><span class="k">else</span><span class="sc">&#39; &#39;</span><span class="o">:</span><span class="err">&#39;</span> <span class="n">suite</span><span class="p">]</span>
-<span class="nl">unless_stmt</span><span class="p">:</span> <span class="err">&#39;</span><span class="n">unless</span><span class="err">&#39;</span> <span class="n">test</span> <span class="sc">&#39;:&#39;</span> <span class="n">suite</span>
-<span class="nl">for_stmt</span><span class="p">:</span> <span class="err">&#39;</span><span class="k">for</span><span class="err">&#39;</span> <span class="n">exprlist</span> <span class="err">&#39;</span><span class="n">in</span><span class="err">&#39;</span> <span class="n">testlist</span> <span class="sc">&#39;:&#39;</span> <span class="n">suite</span> <span class="p">[</span><span class="err">&#39;</span><span class="k">else</span><span class="sc">&#39; &#39;</span><span class="o">:</span><span class="err">&#39;</span> <span class="n">suite</span><span class="p">]</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="cm">/* Grammar/Grammar:78 */</span>
+</span></span><span class="line"><span class="cl"><span class="nl">if_stmt</span><span class="p">:</span> <span class="err">&#39;</span><span class="k">if</span><span class="err">&#39;</span> <span class="n">test</span> <span class="sc">&#39;:&#39;</span> <span class="n">suite</span> <span class="p">(</span><span class="err">&#39;</span><span class="n">elif</span><span class="err">&#39;</span> <span class="n">test</span> <span class="sc">&#39;:&#39;</span> <span class="n">suite</span><span class="p">)</span><span class="o">*</span> <span class="p">[</span><span class="err">&#39;</span><span class="k">else</span><span class="sc">&#39; &#39;</span><span class="o">:</span><span class="err">&#39;</span> <span class="n">suite</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nl">while_stmt</span><span class="p">:</span> <span class="err">&#39;</span><span class="k">while</span><span class="err">&#39;</span> <span class="n">test</span> <span class="sc">&#39;:&#39;</span> <span class="n">suite</span> <span class="p">[</span><span class="err">&#39;</span><span class="k">else</span><span class="sc">&#39; &#39;</span><span class="o">:</span><span class="err">&#39;</span> <span class="n">suite</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nl">unless_stmt</span><span class="p">:</span> <span class="err">&#39;</span><span class="n">unless</span><span class="err">&#39;</span> <span class="n">test</span> <span class="sc">&#39;:&#39;</span> <span class="n">suite</span>
+</span></span><span class="line"><span class="cl"><span class="nl">for_stmt</span><span class="p">:</span> <span class="err">&#39;</span><span class="k">for</span><span class="err">&#39;</span> <span class="n">exprlist</span> <span class="err">&#39;</span><span class="n">in</span><span class="err">&#39;</span> <span class="n">testlist</span> <span class="sc">&#39;:&#39;</span> <span class="n">suite</span> <span class="p">[</span><span class="err">&#39;</span><span class="k">else</span><span class="sc">&#39; &#39;</span><span class="o">:</span><span class="err">&#39;</span> <span class="n">suite</span><span class="p">]</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>Dado que nuesta instrucción <code>unless</code> es realmente una instrucción &ldquo;if&rdquo; con la lógica invertida, para implementarlo <em>podríamos</em> utilizar los nodos AST del &ldquo;if&rdquo; y el &ldquo;Not&rdquo; existentes. De hecho, así es como se introdujo la sintaxis el try&hellip;except&hellip;finally en Python 2.5. De todas formas, para los propósitos de este artículo se modificará la estructura AST para poder demostrar cómo generar <em>bytecode</em> para nuestra nueva construcción. Con tal fin, se modifica <a href="https://svn.python.org/projects/python/tags/r26b3/Parser/Python.asdl" target="_blank" rel="noopener noreffer ">Parser/Python.asdl</a>  &ndash; que contiene la definición del AST &ndash; como en el listado siguiente:</p>
 <div class="highlight"><div class="chroma">
@@ -184,12 +183,12 @@ Espero que también os guste:"/>
 </span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cm">/* Parser/Python.asdl:25 */</span>
-    <span class="o">|</span> <span class="n">For</span><span class="p">(</span><span class="n">expr</span> <span class="n">target</span><span class="p">,</span> <span class="n">expr</span> <span class="n">iter</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">orelse</span><span class="p">)</span>
-    <span class="o">|</span> <span class="n">While</span><span class="p">(</span><span class="n">expr</span> <span class="n">test</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">orelse</span><span class="p">)</span>
-    <span class="o">|</span> <span class="n">Unless</span><span class="p">(</span><span class="n">expr</span> <span class="n">test</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">)</span>
-    <span class="o">|</span> <span class="n">If</span><span class="p">(</span><span class="n">expr</span> <span class="n">test</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">orelse</span><span class="p">)</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="cm">/* Parser/Python.asdl:25 */</span>
+</span></span><span class="line"><span class="cl">    <span class="o">|</span> <span class="n">For</span><span class="p">(</span><span class="n">expr</span> <span class="n">target</span><span class="p">,</span> <span class="n">expr</span> <span class="n">iter</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">orelse</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">|</span> <span class="n">While</span><span class="p">(</span><span class="n">expr</span> <span class="n">test</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">orelse</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">|</span> <span class="n">Unless</span><span class="p">(</span><span class="n">expr</span> <span class="n">test</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">|</span> <span class="n">If</span><span class="p">(</span><span class="n">expr</span> <span class="n">test</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">body</span><span class="p">,</span> <span class="n">stmt</span><span class="o">*</span> <span class="n">orelse</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>Finalmente, necesitamos añadir algo de código para manejar la transformación de la gramática al AST en <a href="https://svn.python.org/projects/python/tags/r26b3/Python/ast.c" target="_blank" rel="noopener noreffer ">Python/ast.c</a> . Aquí añadimos <code>ast_for_unless_stmt</code>, como se muestra a continuación:</p>
 <div class="highlight"><div class="chroma">
@@ -218,29 +217,29 @@ Espero que también os guste:"/>
 </span><span class="lnt">22
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cm">/* Python/ast.c:2805 */</span>
-<span class="k">static</span> <span class="n">stmt_ty</span>
-<span class="nf">ast_for_unless_stmt</span><span class="p">(</span><span class="k">struct</span> <span class="nc">compiling</span><span class="o">*</span> <span class="n">c</span><span class="p">,</span> <span class="k">const</span> <span class="n">node</span> <span class="o">*</span><span class="n">n</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="n">expr_ty</span> <span class="n">test_expr</span><span class="p">;</span>
-    <span class="n">asdl_seq</span> <span class="o">*</span><span class="n">suite_seq</span><span class="p">;</span>
-    <span class="cm">/* unless_stmt: &#39;unless&#39; test &#39;:&#39; suite */</span>
-    <span class="n">REQ</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">unless_stmt</span><span class="p">);</span>
-    <span class="n">test_expr</span> <span class="o">=</span> <span class="n">ast_for_expr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">CHILD</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">));</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">test_expr</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
-    <span class="n">suite_seq</span> <span class="o">=</span> <span class="n">ast_for_suite</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">CHILD</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">suite_seq</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
-    <span class="k">return</span> <span class="n">Unless</span><span class="p">(</span><span class="n">test_expr</span><span class="p">,</span> <span class="n">suite_seq</span><span class="p">,</span> <span class="n">LINENO</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">n</span><span class="o">-&gt;</span><span class="n">n_col_offset</span><span class="p">,</span> <span class="n">c</span><span class="o">-&gt;</span><span class="n">c_arena</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="cm">/* ... &lt;snip&gt; ... */</span>
-<span class="cm">/* Python/ast.c:3125 */</span>
-    <span class="k">case</span> <span class="nl">while_stmt</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">ast_for_while_stmt</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">ch</span><span class="p">);</span>
-    <span class="k">case</span> <span class="nl">unless_stmt</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">ast_for_unless_stmt</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">ch</span><span class="p">);</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="cm">/* Python/ast.c:2805 */</span>
+</span></span><span class="line"><span class="cl"><span class="k">static</span> <span class="n">stmt_ty</span>
+</span></span><span class="line"><span class="cl"><span class="nf">ast_for_unless_stmt</span><span class="p">(</span><span class="k">struct</span> <span class="nc">compiling</span><span class="o">*</span> <span class="n">c</span><span class="p">,</span> <span class="k">const</span> <span class="n">node</span> <span class="o">*</span><span class="n">n</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">expr_ty</span> <span class="n">test_expr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">asdl_seq</span> <span class="o">*</span><span class="n">suite_seq</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/* unless_stmt: &#39;unless&#39; test &#39;:&#39; suite */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">REQ</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">unless_stmt</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">test_expr</span> <span class="o">=</span> <span class="n">ast_for_expr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">CHILD</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">test_expr</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">suite_seq</span> <span class="o">=</span> <span class="n">ast_for_suite</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">CHILD</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">suite_seq</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">Unless</span><span class="p">(</span><span class="n">test_expr</span><span class="p">,</span> <span class="n">suite_seq</span><span class="p">,</span> <span class="n">LINENO</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">n</span><span class="o">-&gt;</span><span class="n">n_col_offset</span><span class="p">,</span> <span class="n">c</span><span class="o">-&gt;</span><span class="n">c_arena</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="cm">/* ... &lt;snip&gt; ... */</span>
+</span></span><span class="line"><span class="cl"><span class="cm">/* Python/ast.c:3125 */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nl">while_stmt</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">ast_for_while_stmt</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">ch</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="nl">unless_stmt</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">ast_for_unless_stmt</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">ch</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>El código de transformación del árbol sintáctico al AST sigue un popular patrón Visitor. En la línea 3123, se añade un <em>hook</em> para llamar al código de transformación apropiado si se encuentra un nodo <code>unless_stmt</code> en el árbol sintáctico. Una vez dentro de la función de transformación, se construye un nodo Unless analizando recursivamente la condición y el cuerpo.</p>
 <p>Note que puede necesitar regenerar explícitamente algunos ficheros tras realizar estos cambios:</p>
@@ -250,9 +249,9 @@ Espero que también os guste:"/>
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ rm -f Python/graminit.c <span class="o">&amp;&amp;</span> make Python/graminit.c
-$ rm -f Python/Python-ast.c <span class="o">&amp;&amp;</span> make Python/Python-ast.c
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ rm -f Python/graminit.c <span class="o">&amp;&amp;</span> make Python/graminit.c
+</span></span><span class="line"><span class="cl">$ rm -f Python/Python-ast.c <span class="o">&amp;&amp;</span> make Python/Python-ast.c
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>En este punto, el compilador podrá escanear y analizar nuestra nueva instrucción &ldquo;unless&rdquo;. Lo único que falta es añadir código para generar el <em>bytecode</em> para nuestro nuevo nodo AST.</p>
 <h2 id="4-generación-de-código">4. Generación de código</h2>
@@ -291,36 +290,36 @@ $ rm -f Python/Python-ast.c <span class="o">&amp;&amp;</span> make Python/Python
 </span><span class="lnt">29
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="cm">/* Python/compile.c:1623 */</span>
-<span class="k">static</span> <span class="kt">int</span>
-<span class="nf">compiler_unless</span><span class="p">(</span><span class="k">struct</span> <span class="nc">compiler</span> <span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="n">stmt_ty</span> <span class="n">s</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="n">basicblock</span> <span class="o">*</span><span class="n">end</span><span class="p">;</span>
-    <span class="n">basicblock</span> <span class="o">*</span><span class="n">next</span><span class="p">;</span>
-    <span class="n">assert</span><span class="p">(</span><span class="n">s</span><span class="o">-&gt;</span><span class="n">kind</span> <span class="o">==</span> <span class="n">Unless_kind</span><span class="p">);</span>
-    <span class="n">end</span> <span class="o">=</span> <span class="n">compiler_new_block</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">end</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="n">next</span> <span class="o">=</span> <span class="n">compiler_new_block</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">next</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="n">VISIT</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">s</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">.</span><span class="n">Unless</span><span class="p">.</span><span class="n">test</span><span class="p">);</span>
-    <span class="n">ADDOP_JREL</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">JUMP_IF_TRUE</span><span class="p">,</span> <span class="n">next</span><span class="p">);</span>
-    <span class="n">ADDOP</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">POP_TOP</span><span class="p">);</span>
-    <span class="n">VISIT_SEQ</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">stmt</span><span class="p">,</span> <span class="n">s</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">.</span><span class="n">Unless</span><span class="p">.</span><span class="n">body</span><span class="p">);</span>
-    <span class="n">ADDOP_JREL</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">JUMP_FORWARD</span><span class="p">,</span> <span class="n">end</span><span class="p">);</span>
-    <span class="n">compiler_use_next_block</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">next</span><span class="p">);</span>
-    <span class="n">ADDOP</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">POP_TOP</span><span class="p">);</span>
-    <span class="n">compiler_use_next_block</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">end</span><span class="p">);</span>
-    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
-<span class="p">}</span>
-<span class="cm">/* ... &lt;snip&gt; ... */</span>
-<span class="cm">/* Python/compile.c:2167 */</span>
-<span class="k">case</span> <span class="nl">If_kind</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">compiler_if</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
-<span class="k">case</span> <span class="nl">Unless_kind</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">compiler_unless</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="cm">/* Python/compile.c:1623 */</span>
+</span></span><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="nf">compiler_unless</span><span class="p">(</span><span class="k">struct</span> <span class="nc">compiler</span> <span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="n">stmt_ty</span> <span class="n">s</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">basicblock</span> <span class="o">*</span><span class="n">end</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">basicblock</span> <span class="o">*</span><span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">assert</span><span class="p">(</span><span class="n">s</span><span class="o">-&gt;</span><span class="n">kind</span> <span class="o">==</span> <span class="n">Unless_kind</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">end</span> <span class="o">=</span> <span class="n">compiler_new_block</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">end</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">next</span> <span class="o">=</span> <span class="n">compiler_new_block</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">next</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">VISIT</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">s</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">.</span><span class="n">Unless</span><span class="p">.</span><span class="n">test</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ADDOP_JREL</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">JUMP_IF_TRUE</span><span class="p">,</span> <span class="n">next</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ADDOP</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">POP_TOP</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">VISIT_SEQ</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">stmt</span><span class="p">,</span> <span class="n">s</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">.</span><span class="n">Unless</span><span class="p">.</span><span class="n">body</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ADDOP_JREL</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">JUMP_FORWARD</span><span class="p">,</span> <span class="n">end</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">compiler_use_next_block</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">next</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ADDOP</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">POP_TOP</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">compiler_use_next_block</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">end</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="cm">/* ... &lt;snip&gt; ... */</span>
+</span></span><span class="line"><span class="cl"><span class="cm">/* Python/compile.c:2167 */</span>
+</span></span><span class="line"><span class="cl"><span class="k">case</span> <span class="nl">If_kind</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">compiler_if</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">case</span> <span class="nl">Unless_kind</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">compiler_unless</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>En este punto, nuestra implementación de la instrucción &ldquo;Unless&rdquo; está terminada. Recompile Python y pruébelo:</p>
 <div class="highlight"><div class="chroma">
@@ -335,15 +334,15 @@ $ rm -f Python/Python-ast.c <span class="o">&amp;&amp;</span> make Python/Python
 </span><span class="lnt">8
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ ./configure <span class="o">&amp;&amp;</span> make clean <span class="o">&amp;&amp;</span> make
-$ ./python <span class="s">&lt;&lt;EOF
-</span><span class="s">&gt; dv = False
-</span><span class="s">&gt; unless v:
-</span><span class="s">&gt;
-</span><span class="s">print &#39;test&#39;
-</span><span class="s">&gt; EOF</span>
-<span class="nb">test</span>
-</code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ ./configure <span class="o">&amp;&amp;</span> make clean <span class="o">&amp;&amp;</span> make
+</span></span><span class="line"><span class="cl">$ ./python <span class="s">&lt;&lt;EOF
+</span></span></span><span class="line"><span class="cl"><span class="s">&gt; dv = False
+</span></span></span><span class="line"><span class="cl"><span class="s">&gt; unless v:
+</span></span></span><span class="line"><span class="cl"><span class="s">&gt;
+</span></span></span><span class="line"><span class="cl"><span class="s">print &#39;test&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s">&gt; EOF</span>
+</span></span><span class="line"><span class="cl"><span class="nb">test</span>
+</span></span></code></pre></td></tr></table>
 </div>
 </div><p>Vea <a href="https://svn.python.org/projects/python/tags/r26b3/Python/compile.c" target="_blank" rel="noopener noreffer ">Python/compile.c</a>  para más detalles sobre el generador de <em>bytecode</em> de Python.</p>
 <h2 id="5-ejecución-de-código">5. Ejecución de código</h2>
@@ -372,7 +371,7 @@ Traducción: <a href="https://magmax.org" target="_blank" rel="noopener noreffer
         <div class="post-info-line">
             <div class="post-info-md"></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Compartir en Twitter" data-sharer="twitter" data-url="https://magmax.org/blog/python-compiler-internals/" data-title="El compilador de Python desde dentro" data-hashtags="compilers,python"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Facebook" data-sharer="facebook" data-url="https://magmax.org/blog/python-compiler-internals/" data-hashtag="compilers"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Linkedin" data-sharer="linkedin" data-url="https://magmax.org/blog/python-compiler-internals/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en WhatsApp" data-sharer="whatsapp" data-url="https://magmax.org/blog/python-compiler-internals/" data-title="El compilador de Python desde dentro" data-web><i class="fab fa-whatsapp fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Tumblr" data-sharer="tumblr" data-url="https://magmax.org/blog/python-compiler-internals/" data-title="El compilador de Python desde dentro" data-tags="compilers,python"><i class="fab fa-tumblr fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Reddit" data-sharer="reddit" data-url="https://magmax.org/blog/python-compiler-internals/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Instapaper" data-sharer="instapaper" data-url="https://magmax.org/blog/python-compiler-internals/" data-title="El compilador de Python desde dentro" data-description=""><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/instapaper.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en 微博" data-sharer="weibo" data-url="https://magmax.org/blog/python-compiler-internals/" data-title="El compilador de Python desde dentro"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Blogger" data-sharer="blogger" data-url="https://magmax.org/blog/python-compiler-internals/" data-title="El compilador de Python desde dentro" data-description=""><i class="fab fa-blogger fa-fw" aria-hidden="true"></i></a></span>
+                <span><a href="javascript:void(0);" title="Compartir en Twitter" data-sharer="twitter" data-url="https://magmax.org/blog/python-compiler-internals/" data-title="El compilador de Python desde dentro" data-via="magmax_en" data-hashtags="compilers,python"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Facebook" data-sharer="facebook" data-url="https://magmax.org/blog/python-compiler-internals/" data-hashtag="compilers"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Linkedin" data-sharer="linkedin" data-url="https://magmax.org/blog/python-compiler-internals/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en WhatsApp" data-sharer="whatsapp" data-url="https://magmax.org/blog/python-compiler-internals/" data-title="El compilador de Python desde dentro" data-web><i class="fab fa-whatsapp fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Tumblr" data-sharer="tumblr" data-url="https://magmax.org/blog/python-compiler-internals/" data-title="El compilador de Python desde dentro" data-tags="compilers,python"><i class="fab fa-tumblr fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Reddit" data-sharer="reddit" data-url="https://magmax.org/blog/python-compiler-internals/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Instapaper" data-sharer="instapaper" data-url="https://magmax.org/blog/python-compiler-internals/" data-title="El compilador de Python desde dentro" data-description=""><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/instapaper.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en 微博" data-sharer="weibo" data-url="https://magmax.org/blog/python-compiler-internals/" data-title="El compilador de Python desde dentro"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Blogger" data-sharer="blogger" data-url="https://magmax.org/blog/python-compiler-internals/" data-title="El compilador de Python desde dentro" data-description=""><i class="fab fa-blogger fa-fw" aria-hidden="true"></i></a></span>
             </div>
         </div>
     </div>
@@ -391,8 +390,8 @@ Traducción: <a href="https://magmax.org" target="_blank" rel="noopener noreffer
                 Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
             </noscript></div></article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Con la tecnología de <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.92.2">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
-                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Miguel Ángel</a></span></div>
+        <div class="footer-container"><div class="footer-line">Con la tecnología de <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.114.1">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022 - 2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Miguel Ángel</a></span></div>
         </div>
     </footer></div>
 
@@ -403,6 +402,6 @@ Traducción: <a href="https://magmax.org" target="_blank" rel="noopener noreffer
             </a>
         </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css"><script type="text/javascript" src="https://magmax.disqus.com/embed.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/copy-tex.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/mhchem.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copiar al portapapeles","maxShownLines":50},"comment":{},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript">
             window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
-            gtag('config', 'UA-9308241-3', { 'anonymize_ip': true });
-        </script><script type="text/javascript" src="https://www.googletagmanager.com/gtag/js?id=UA-9308241-3" async></script></body>
+            gtag('config', 'G-X5FEBMGR06', { 'anonymize_ip': true });
+        </script><script type="text/javascript" src="https://www.googletagmanager.com/gtag/js?id=G-X5FEBMGR06" async></script></body>
 </html>
