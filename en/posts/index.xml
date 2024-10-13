@@ -1,114 +1,150 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
-    <channel>
-        <title>All Posts - MagMax&#39;s blog</title>
-        <link>https://magmax.org/en/posts/</link>
-        <description>All Posts | MagMax&#39;s blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 19 Sep 2022 13:03:11 &#43;0100</lastBuildDate><atom:link href="https://magmax.org/en/posts/" rel="self" type="application/rss+xml" /><item>
-    <title>When to use a Cache</title>
-    <link>https://magmax.org/en/blog/when-to-use-a-cache/</link>
-    <pubDate>Mon, 19 Sep 2022 13:03:11 &#43;0100</pubDate>
-    <author>Miguel Ángel</author>
-    <guid>https://magmax.org/en/blog/when-to-use-a-cache/</guid>
-    <description><![CDATA[Discussion about when a Cache system should be added to an application. It includes a calculator to help developers arriving this site.
-Short answer Should I use a Cache to solve my current problem?
-No, but this answer might be wrong because it was cached ;)
-Cache Optimization Calculator Probability to find data in cache (0-100) Average time to read from Cache (ms). Average time to write to Cache (ms). Average operation time (ms).]]></description>
-</item>
-<item>
-    <title>ArgoCD with Kind</title>
-    <link>https://magmax.org/en/blog/argocd/</link>
-    <pubDate>Sun, 11 Oct 2020 00:00:00 &#43;0000</pubDate>
-    <author>Miguel Ángel</author>
-    <guid>https://magmax.org/en/blog/argocd/</guid>
-    <description><![CDATA[<p>This post will document how to run an
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>All Posts - MagMax's blog</title><link>/en/posts/</link><description>All Posts | MagMax's blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 19 Sep 2022 13:03:11 +0100</lastBuildDate><atom:link href="/en/posts/" rel="self" type="application/rss+xml"/><item><title>When to use a Cache</title><link>/en/blog/when-to-use-a-cache/</link><pubDate>Mon, 19 Sep 2022 13:03:11 +0100</pubDate><author>Miguel Ángel</author><guid>/en/blog/when-to-use-a-cache/</guid><description><![CDATA[<p>Discussion about when a Cache system should be added to an application. It includes a calculator to help developers
+arriving this site.</p>
+<!-- raw HTML omitted -->
+<h2 id="short-answer">Short answer</h2>
+<p><em>Should I use a Cache to solve my current problem?</em></p>
+<p><strong>No</strong>, but this answer might be wrong because it was cached ;)</p>
+<h2 id="cache-optimization-calculator">Cache Optimization Calculator</h2>
+<div>
+    <div class="formcontainer">
+        <div class="inlineform">
+            <div class="my-row">
+                <div class="my-col-25">
+                    <input id="rs"
+                           type="number"
+                           min="0.0"
+                           max="100.0"
+                           step="5"
+                           onchange="cacheCalculation()" onkeyup="cacheCalculation()"
+                           placeholder="Percentage 0-100" value="80"/>
+                </div>
+
+                <div class="my-col-75">
+                    <label for="rs">Probability to find data in cache (0-100)</label>
+                </div>
+            </div>
+
+            <div class="my-row">
+                <div class="my-col-25">
+                    <input id="cache-read"
+                           type="number"
+                           min="0.0"
+                           step="100"
+                           onchange="cacheCalculation()" onkeyup="cacheCalculation()"
+                           placeholder="Milliseconds" value="100"/>
+                </div>
+
+                <div class="my-col-75">
+                    <label for="cache-read">Average time to read from Cache (ms).</label>
+                </div>
+            </div>
+
+            <div class="my-row">
+                <div class="my-col-25">
+                    <input id="cache-write"
+                           type="number"
+                           min="0.0"
+                           step="100"
+                           onchange="cacheCalculation()" onkeyup="cacheCalculation()"
+                           placeholder="Milliseconds" value="200"/>
+                </div>
+
+                <div class="my-col-75">
+                    <label for="cache-write">Average time to write to Cache (ms).</label>
+                </div>
+            </div>
+
+            <div class="my-row">
+                <div class="my-col-25">
+                    <input id="operation"
+                           type="number"
+                           min="0.0"
+                           step="100"
+                           onchange="cacheCalculation()" onkeyup="cacheCalculation()"
+                           placeholder="Milliseconds" value="150"/>
+                </div>
+
+                <div class="my-col-75">
+                    <label for="operation">Average operation time (ms).</label>
+                </div>
+            </div>
+
+            <hr/>
+
+            <div class="my-row">
+                <div class="my-col-25">
+                    <input id="result-cache-time"
+                           class="result"
+                           type="text"
+                           readonly=true
+                           onchange="cacheCalculation()" onkeyup="cacheCalculation()"
+                           placeholder="Milliseconds"/>
+                </div>
+
+                <div class="my-col-75">
+                    <label for="result-cache-time">Expected Average Time using the Cache system (ms)</label>
+                </div>
+            </div>
+
+            <div class="my-row">
+                <div class="my-col-25">
+                    <input id="result-cache-percent"
+                           class="result"
+                           type="text"
+                           readonly=true
+                           onchange="cacheCalculation()" onkeyup="cacheCalculation()"
+                           placeholder="%"/>
+                </div>
+
+                <div class="my-col-75">
+                    <label for="result-cache-percent">Expected improvement percentage (0-100)</label >
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    function cacheCalculation() {
+        console.log("entra");
+        var rs = parseFloat(document.getElementById('rs').value);
+        var cacheRead = parseFloat(document.getElementById('cache-read').value);
+        var cacheWrite = parseFloat(document.getElementById('cache-write').value);
+        var operation = parseFloat(document.getElementById('operation').value);
+
+        var result = (cacheRead + ((100 - rs)*(operation + cacheWrite)/100)).toFixed(2);
+
+        document.getElementById('result-cache-time').value = result + "ms";
+        document.getElementById('result-cache-percent').value = ((100 * operation / result) - 100).toFixed(2) + "%";
+    }
+    cacheCalculation();
+</script>
+
+
+<h2 id="long-answer">Long answer</h2>
+<p>When anyone says about adding a cache to make any service faster I can only ask: &ldquo;how faster is it going to be?&rdquo;.
+Usually I have no answer, just people angry with me.</p>]]></description></item><item><title>ArgoCD with Kind</title><link>/en/blog/argocd/</link><pubDate>Sun, 11 Oct 2020 00:00:00 +0000</pubDate><author>Miguel Ángel</author><guid>/en/blog/argocd/</guid><description><![CDATA[<p>This post will document how to run an
 <a href="https://argoproj.github.io/argo-cd/https://argoproj.github.io/argo-cd/" target="_blank" rel="noopener noreffer ">ArgoCD</a>
 instance locally, using <a href="https://kind.sigs.k8s.io/" target="_blank" rel="noopener noreffer ">Kind</a> to create the
 Kubernetes cluster.
 In addition, I will use cert-manager to create a self-signed certificate to
-serve it with HTTPS.</p>]]></description>
-</item>
-<item>
-    <title>Is Code Coverage Irrelevant?</title>
-    <link>https://magmax.org/en/blog/is-code-coverage-irrelevant/</link>
-    <pubDate>Tue, 17 Nov 2015 00:00:00 &#43;0000</pubDate>
-    <author>Miguel Ángel</author>
-    <guid>https://magmax.org/en/blog/is-code-coverage-irrelevant/</guid>
-    <description><![CDATA[<p>After reading the article <a href="https://ronjeffries.com/articles/015-11/coverage/" target="_blank" rel="noopener noreffer ">&ldquo;Is Code Coverage Irrelevant?&rdquo; by Ron Jeffries</a> I feel the necessity to accept the challenge and tell what I really think about code coverage.</p>
-<p>I&rsquo;ve being thinking for some time about writting this article&hellip; So this is the best moment, I think.</p>]]></description>
-</item>
-<item>
-    <title>Distributed Python: Celery</title>
-    <link>https://magmax.org/en/blog/python-distribuido-celery/</link>
-    <pubDate>Sat, 22 Aug 2015 00:00:00 &#43;0000</pubDate>
-    <author>Miguel Ángel</author>
-    <guid>https://magmax.org/en/blog/python-distribuido-celery/</guid>
-    <description><![CDATA[<p>Nowadays,
+serve it with HTTPS.</p>]]></description></item><item><title>Is Code Coverage Irrelevant?</title><link>/en/blog/is-code-coverage-irrelevant/</link><pubDate>Tue, 17 Nov 2015 00:00:00 +0000</pubDate><author>Miguel Ángel</author><guid>/en/blog/is-code-coverage-irrelevant/</guid><description><![CDATA[<p>After reading the article <a href="https://ronjeffries.com/articles/015-11/coverage/" target="_blank" rel="noopener noreffer ">&ldquo;Is Code Coverage Irrelevant?&rdquo; by Ron Jeffries</a> I feel the necessity to accept the challenge and tell what I really think about code coverage.</p>
+<p>I&rsquo;ve being thinking for some time about writting this article&hellip; So this is the best moment, I think.</p>]]></description></item><item><title>Distributed Python: Celery</title><link>/en/blog/python-distribuido-celery/</link><pubDate>Sat, 22 Aug 2015 00:00:00 +0000</pubDate><author>Miguel Ángel</author><guid>/en/blog/python-distribuido-celery/</guid><description><![CDATA[<p>Nowadays,
 <abbr title="Service Oriented Architectures">SOA</abbr>
 
 architectures is in fashion. These architectures use little and very specific services, so they interact each other.</p>
-<p>In this post I&rsquo;ll show how to use <a href="https://www.celeryproject.org/" target="_blank" rel="noopener noreffer ">Celery</a> in order to create a SOA architecture.</p>]]></description>
-</item>
-<item>
-    <title>What is an Engineer?</title>
-    <link>https://magmax.org/en/blog/que-es-ingeniero/</link>
-    <pubDate>Tue, 21 Apr 2015 00:00:00 &#43;0000</pubDate>
-    <author>Miguel Ángel</author>
-    <guid>https://magmax.org/en/blog/que-es-ingeniero/</guid>
-    <description><![CDATA[<p>In this article I will talk about what Engineering means to me.</p>
+<p>In this post I&rsquo;ll show how to use <a href="https://www.celeryproject.org/" target="_blank" rel="noopener noreffer ">Celery</a> in order to create a SOA architecture.</p>]]></description></item><item><title>What is an Engineer?</title><link>/en/blog/que-es-ingeniero/</link><pubDate>Tue, 21 Apr 2015 00:00:00 +0000</pubDate><author>Miguel Ángel</author><guid>/en/blog/que-es-ingeniero/</guid><description><![CDATA[<p>In this article I will talk about what Engineering means to me.</p>
 <p>I&rsquo;d like to ask any reader that, before reading this article, use a couple of minutes to answer the question: <em>&ldquo;What does &rsquo;to be an Engineer&rsquo; mean?&rdquo;</em>. After this small exercise, I suggest to write a short answer down in a piece of paper.</p>
 <p>After doing that, you can read the article. If it likes you or not, compare my answer with yours. Finally, try to define it again and, if you want, share your definition as a comment.</p>
-<p>I hope you like this post. I hope it to make you to think.</p>]]></description>
-</item>
-<item>
-    <title>Gashlycode Tinies</title>
-    <link>https://magmax.org/en/blog/gashlycode-tinies/</link>
-    <pubDate>Sat, 01 Nov 2014 00:00:00 &#43;0000</pubDate>
-    <author>Miguel Ángel</author>
-    <guid>https://magmax.org/en/blog/gashlycode-tinies/</guid>
-    <description><![CDATA[<p>I&rsquo;m following the <a href="https://www.coursera.org/course/softwaresec" target="_blank" rel="noopener noreffer ">Software Security</a> course at <a href="https://www.coursera.org" target="_blank" rel="noopener noreffer ">Coursera</a>.</p>
+<p>I hope you like this post. I hope it to make you to think.</p>]]></description></item><item><title>Gashlycode Tinies</title><link>/en/blog/gashlycode-tinies/</link><pubDate>Sat, 01 Nov 2014 00:00:00 +0000</pubDate><author>Miguel Ángel</author><guid>/en/blog/gashlycode-tinies/</guid><description><![CDATA[<p>I&rsquo;m following the <a href="https://www.coursera.org/course/softwaresec" target="_blank" rel="noopener noreffer ">Software Security</a> course at <a href="https://www.coursera.org" target="_blank" rel="noopener noreffer ">Coursera</a>.</p>
 <p>In this course, they explain how an adversary can take advantage of code defects and how to defend from them. I&rsquo;ve looking for some like this for long time.</p>
 <p>At the end of one of the videos there is a kind of poetry I liked. But I didn&rsquo;t found it in Internet. So I&rsquo;ve copied it here. It gathers all kind of code defects we should avoid because an adversary can try to use them.</p>
-<p>So here you are: &ldquo;Gashlycode Tinies&rdquo; by <a href="https://www.cs.cornell.edu/andru/" target="_blank" rel="noopener noreffer ">Andrew Myers</a>, inspired by the &ldquo;<a href="https://en.wikipedia.org/wiki/The_Gashlycrumb_Tinies" target="_blank" rel="noopener noreffer ">Gashlycrumb Tinies</a>&rdquo; (1963) by <a href="https://en.wikipedia.org/wiki/Edward_Gorey" target="_blank" rel="noopener noreffer ">Edward Gorey</a></p>]]></description>
-</item>
-<item>
-    <title>Why Python rocks</title>
-    <link>https://magmax.org/en/blog/why-python-rocks/</link>
-    <pubDate>Fri, 22 Feb 2013 00:00:00 &#43;0000</pubDate>
-    <author>Miguel Ángel</author>
-    <guid>https://magmax.org/en/blog/why-python-rocks/</guid>
-    <description><![CDATA[<p>After writting the article <a href="https://magmax.org/en/blog/why-java-rocks/" rel="">Why Java rocks</a>, I have no other option than writting why Python rocks.</p>
-<p>Before starting, I might advise you that Python is my favourite language. And this is like search your best friends defects.</p>]]></description>
-</item>
-<item>
-    <title>Why Java Rocks</title>
-    <link>https://magmax.org/en/blog/why-java-rocks/</link>
-    <pubDate>Sat, 26 Jan 2013 00:00:00 &#43;0000</pubDate>
-    <author>Miguel Ángel</author>
-    <guid>https://magmax.org/en/blog/why-java-rocks/</guid>
-    <description><![CDATA[<p>Some days ago I browsed a Kinisoftware slideshow and he said that &ldquo;Java rules&rdquo;. He couldn&rsquo;t explain why Java rules at the end, so I decided to do it in his place.</p>
+<p>So here you are: &ldquo;Gashlycode Tinies&rdquo; by <a href="https://www.cs.cornell.edu/andru/" target="_blank" rel="noopener noreffer ">Andrew Myers</a>, inspired by the &ldquo;<a href="https://en.wikipedia.org/wiki/The_Gashlycrumb_Tinies" target="_blank" rel="noopener noreffer ">Gashlycrumb Tinies</a>&rdquo; (1963) by <a href="https://en.wikipedia.org/wiki/Edward_Gorey" target="_blank" rel="noopener noreffer ">Edward Gorey</a></p>]]></description></item><item><title>Why Python rocks</title><link>/en/blog/why-python-rocks/</link><pubDate>Fri, 22 Feb 2013 00:00:00 +0000</pubDate><author>Miguel Ángel</author><guid>/en/blog/why-python-rocks/</guid><description><![CDATA[<p>After writting the article <a href="/en/blog/why-java-rocks/" rel="">Why Java rocks</a>, I have no other option than writting why Python rocks.</p>
+<p>Before starting, I might advise you that Python is my favourite language. And this is like search your best friends defects.</p>]]></description></item><item><title>Why Java Rocks</title><link>/en/blog/why-java-rocks/</link><pubDate>Sat, 26 Jan 2013 00:00:00 +0000</pubDate><author>Miguel Ángel</author><guid>/en/blog/why-java-rocks/</guid><description><![CDATA[<p>Some days ago I browsed a Kinisoftware slideshow and he said that &ldquo;Java rules&rdquo;. He couldn&rsquo;t explain why Java rules at the end, so I decided to do it in his place.</p>
 <p>But at the end I will explain why <em>Java <em>does not</em> rule</em>.</p>
-<p>I hope that Kinisoftware can read this and criticate it with all his soul. Kini: This is for you!</p>]]></description>
-</item>
-<item>
-    <title>Constructors as simple as you can</title>
-    <link>https://magmax.org/en/blog/constructores-simples/</link>
-    <pubDate>Mon, 12 Mar 2012 00:00:00 &#43;0000</pubDate>
-    <author>Miguel Ángel</author>
-    <guid>https://magmax.org/en/blog/constructores-simples/</guid>
-    <description><![CDATA[<p>This week I realized about the difference between an ugly constructor and a pretty one. It is curious how easy doing it well is and how cheap it is, so I am going to share my point with you, waiting your comments.</p>
-<p>Since I began to work, I have done lots of ugly things, so do not face me up if you find something mine done in a different way :D The real goal is to improve yourself day after day!</p>]]></description>
-</item>
-<item>
-    <title>Do not comment. Assert it!</title>
-    <link>https://magmax.org/en/blog/asegura/</link>
-    <pubDate>Sat, 11 Feb 2012 00:00:00 &#43;0000</pubDate>
-    <author>Miguel Ángel</author>
-    <guid>https://magmax.org/en/blog/asegura/</guid>
-    <description><![CDATA[<p>Today I have discovered lots of things about this great unknown <em>assert</em>.</p>
+<p>I hope that Kinisoftware can read this and criticate it with all his soul. Kini: This is for you!</p>]]></description></item><item><title>Constructors as simple as you can</title><link>/en/blog/constructores-simples/</link><pubDate>Mon, 12 Mar 2012 00:00:00 +0000</pubDate><author>Miguel Ángel</author><guid>/en/blog/constructores-simples/</guid><description>&lt;p>This week I realized about the difference between an ugly constructor and a pretty one. It is curious how easy doing it well is and how cheap it is, so I am going to share my point with you, waiting your comments.&lt;/p>
+&lt;p>Since I began to work, I have done lots of ugly things, so do not face me up if you find something mine done in a different way :D The real goal is to improve yourself day after day!&lt;/p></description></item><item><title>Do not comment. Assert it!</title><link>/en/blog/asegura/</link><pubDate>Sat, 11 Feb 2012 00:00:00 +0000</pubDate><author>Miguel Ángel</author><guid>/en/blog/asegura/</guid><description><![CDATA[<p>Today I have discovered lots of things about this great unknown <em>assert</em>.</p>
 <p>It happens that I had a very strong debugging tool too close from myself and I hadn&rsquo;t used it.</p>
 <p>Trying to fix this problem, I write this article, but I am not going to write
 anything that is not already written at <a href="https://download.oracle.com/javase/6/docs/technotes/guides/language/assert.html" target="_blank" rel="noopener noreffer ">Java Assert Documentation</a>  or <a href="https://docs.python.org/release/2.5.2/ref/assert.html" target="_blank" rel="noopener noreffer ">Python
-Documentation</a>.</p>]]></description>
-</item>
-</channel>
-</rss>
+Documentation</a>.</p>]]></description></item></channel></rss>

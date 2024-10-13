@@ -1,18 +1,126 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
-    <channel>
-        <title>cache - Tag - MagMax&#39;s blog</title>
-        <link>https://magmax.org/en/tags/cache/</link>
-        <description>cache - Tag - MagMax&#39;s blog</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 19 Sep 2022 13:03:11 &#43;0100</lastBuildDate><atom:link href="https://magmax.org/en/tags/cache/" rel="self" type="application/rss+xml" /><item>
-    <title>When to use a Cache</title>
-    <link>https://magmax.org/en/blog/when-to-use-a-cache/</link>
-    <pubDate>Mon, 19 Sep 2022 13:03:11 &#43;0100</pubDate>
-    <author>Miguel Ángel</author>
-    <guid>https://magmax.org/en/blog/when-to-use-a-cache/</guid>
-    <description><![CDATA[Discussion about when a Cache system should be added to an application. It includes a calculator to help developers arriving this site.
-Short answer Should I use a Cache to solve my current problem?
-No, but this answer might be wrong because it was cached ;)
-Cache Optimization Calculator Probability to find data in cache (0-100) Average time to read from Cache (ms). Average time to write to Cache (ms). Average operation time (ms).]]></description>
-</item>
-</channel>
-</rss>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Cache - Tag - MagMax's blog</title><link>/en/tags/cache/</link><description>Cache - Tag - MagMax's blog</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 19 Sep 2022 13:03:11 +0100</lastBuildDate><atom:link href="/en/tags/cache/" rel="self" type="application/rss+xml"/><item><title>When to use a Cache</title><link>/en/blog/when-to-use-a-cache/</link><pubDate>Mon, 19 Sep 2022 13:03:11 +0100</pubDate><author>Miguel Ángel</author><guid>/en/blog/when-to-use-a-cache/</guid><description><![CDATA[<p>Discussion about when a Cache system should be added to an application. It includes a calculator to help developers
+arriving this site.</p>
+<!-- raw HTML omitted -->
+<h2 id="short-answer">Short answer</h2>
+<p><em>Should I use a Cache to solve my current problem?</em></p>
+<p><strong>No</strong>, but this answer might be wrong because it was cached ;)</p>
+<h2 id="cache-optimization-calculator">Cache Optimization Calculator</h2>
+<div>
+    <div class="formcontainer">
+        <div class="inlineform">
+            <div class="my-row">
+                <div class="my-col-25">
+                    <input id="rs"
+                           type="number"
+                           min="0.0"
+                           max="100.0"
+                           step="5"
+                           onchange="cacheCalculation()" onkeyup="cacheCalculation()"
+                           placeholder="Percentage 0-100" value="80"/>
+                </div>
+
+                <div class="my-col-75">
+                    <label for="rs">Probability to find data in cache (0-100)</label>
+                </div>
+            </div>
+
+            <div class="my-row">
+                <div class="my-col-25">
+                    <input id="cache-read"
+                           type="number"
+                           min="0.0"
+                           step="100"
+                           onchange="cacheCalculation()" onkeyup="cacheCalculation()"
+                           placeholder="Milliseconds" value="100"/>
+                </div>
+
+                <div class="my-col-75">
+                    <label for="cache-read">Average time to read from Cache (ms).</label>
+                </div>
+            </div>
+
+            <div class="my-row">
+                <div class="my-col-25">
+                    <input id="cache-write"
+                           type="number"
+                           min="0.0"
+                           step="100"
+                           onchange="cacheCalculation()" onkeyup="cacheCalculation()"
+                           placeholder="Milliseconds" value="200"/>
+                </div>
+
+                <div class="my-col-75">
+                    <label for="cache-write">Average time to write to Cache (ms).</label>
+                </div>
+            </div>
+
+            <div class="my-row">
+                <div class="my-col-25">
+                    <input id="operation"
+                           type="number"
+                           min="0.0"
+                           step="100"
+                           onchange="cacheCalculation()" onkeyup="cacheCalculation()"
+                           placeholder="Milliseconds" value="150"/>
+                </div>
+
+                <div class="my-col-75">
+                    <label for="operation">Average operation time (ms).</label>
+                </div>
+            </div>
+
+            <hr/>
+
+            <div class="my-row">
+                <div class="my-col-25">
+                    <input id="result-cache-time"
+                           class="result"
+                           type="text"
+                           readonly=true
+                           onchange="cacheCalculation()" onkeyup="cacheCalculation()"
+                           placeholder="Milliseconds"/>
+                </div>
+
+                <div class="my-col-75">
+                    <label for="result-cache-time">Expected Average Time using the Cache system (ms)</label>
+                </div>
+            </div>
+
+            <div class="my-row">
+                <div class="my-col-25">
+                    <input id="result-cache-percent"
+                           class="result"
+                           type="text"
+                           readonly=true
+                           onchange="cacheCalculation()" onkeyup="cacheCalculation()"
+                           placeholder="%"/>
+                </div>
+
+                <div class="my-col-75">
+                    <label for="result-cache-percent">Expected improvement percentage (0-100)</label >
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    function cacheCalculation() {
+        console.log("entra");
+        var rs = parseFloat(document.getElementById('rs').value);
+        var cacheRead = parseFloat(document.getElementById('cache-read').value);
+        var cacheWrite = parseFloat(document.getElementById('cache-write').value);
+        var operation = parseFloat(document.getElementById('operation').value);
+
+        var result = (cacheRead + ((100 - rs)*(operation + cacheWrite)/100)).toFixed(2);
+
+        document.getElementById('result-cache-time').value = result + "ms";
+        document.getElementById('result-cache-percent').value = ((100 * operation / result) - 100).toFixed(2) + "%";
+    }
+    cacheCalculation();
+</script>
+
+
+<h2 id="long-answer">Long answer</h2>
+<p>When anyone says about adding a cache to make any service faster I can only ask: &ldquo;how faster is it going to be?&rdquo;.
+Usually I have no answer, just people angry with me.</p>]]></description></item></channel></rss>

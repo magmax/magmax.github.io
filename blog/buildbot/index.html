@@ -1,153 +1,13 @@
-<!DOCTYPE html>
-<html lang="es">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <title>Integración contínua: BuildBot - El blog de MagMax</title><meta name="Description" content="Primeros pasos utilizando Buildbot"><meta property="og:title" content="Integración contínua: BuildBot" />
-<meta property="og:description" content="Primeros pasos utilizando Buildbot" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://magmax.org/blog/buildbot/" /><meta property="og:image" content="https://magmax.org/icons/favicon.png"/><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2012-08-02T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-01-28T00:00:00+00:00" /><meta property="og:site_name" content="My cool site" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://magmax.org/icons/favicon.png"/>
-
-<meta name="twitter:title" content="Integración contínua: BuildBot"/>
-<meta name="twitter:description" content="Primeros pasos utilizando Buildbot"/>
-<meta name="application-name" content="My cool site">
-<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://magmax.org/blog/buildbot/" /><link rel="prev" href="https://magmax.org/blog/jenkins/" /><link rel="next" href="https://magmax.org/blog/mea-culpa/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
-        "headline": "Integración contínua: BuildBot",
-        "inLanguage": "es",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "https:\/\/magmax.org\/blog\/buildbot\/"
-        },"genre": "posts","keywords": "testing, agile, continuous integration, buildbot","wordcount":  2417 ,
-        "url": "https:\/\/magmax.org\/blog\/buildbot\/","datePublished": "2012-08-02T00:00:00+00:00","dateModified": "2021-01-28T00:00:00+00:00","publisher": {
-            "@type": "Organization",
-            "name": ""},"author": {
-                "@type": "Person",
-                "name": "Miguel Ángel"
-            },"description": "Primeros pasos utilizando Buildbot"
-    }
-    </script></head>
-    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
-
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
-    <div class="header-wrapper">
-        <div class="header-title">
-            <a href="/" title="El blog de MagMax"><img
-        class="lazyload logo"
-        src="/svg/loading.min.svg"
-        data-src="/icons/favicon.png"
-        data-srcset="/icons/favicon.png, /icons/favicon.png 1.5x, /icons/favicon.png 2x"
-        data-sizes="auto"
-        alt="/icons/favicon.png"
-        title="/icons/favicon.png" />MagMax Blog</a>
-        </div>
-        <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/"> Inicio </a><a class="menu-item" href="/posts"> Posts </a><a class="menu-item" href="/tags"> Tags </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Cambia el tema">
-                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-                </a><a href="javascript:void(0);" class="menu-item language" title="Selecciona el lenguage">
-                    <i class="fa fa-globe" aria-hidden="true"></i>                      
-                    <select class="language-select" id="language-select-desktop" onchange="location = this.value;"><option value="/blog/buildbot/" selected>Español</option></select>
-                </a></div>
-        </div>
-    </div>
-</header><header class="mobile" id="header-mobile">
-    <div class="header-container">
-        <div class="header-wrapper">
-            <div class="header-title">
-                <a href="/" title="El blog de MagMax"><img
-        class="lazyload logo"
-        src="/svg/loading.min.svg"
-        data-src="/icons/favicon.png"
-        data-srcset="/icons/favicon.png, /icons/favicon.png 1.5x, /icons/favicon.png 2x"
-        data-sizes="auto"
-        alt="/icons/favicon.png"
-        title="/icons/favicon.png" />MagMax Blog</a>
-            </div>
-            <div class="menu-toggle" id="menu-toggle-mobile">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <div class="menu" id="menu-mobile"><a class="menu-item" href="/" title="">Inicio</a><a class="menu-item" href="/posts" title="">Posts</a><a class="menu-item" href="/tags" title="">Tags</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Cambia el tema">
-                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-            </a><a href="javascript:void(0);" class="menu-item" title="Selecciona el lenguage">
-                    <i class="fa fa-globe fa-fw" aria-hidden="true"></i>
-                    <select class="language-select" onchange="location = this.value;"><option value="/blog/buildbot/" selected>Español</option></select>
-                </a></div>
-    </div>
-</header><main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">Contenido</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Integración contínua: BuildBot</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Miguel Ángel</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="02 Aug 2012">02 Aug 2012</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;2417 palabras&nbsp;
-                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;12 minutos&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  data-kept="">
-                <div class="details-summary toc-title">
-                    <span>Contenido</span>
-                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
-                </div>
-                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
-  <ul>
-    <li><a href="#maestroesclavo">Maestro/Esclavo</a>
-      <ul>
-        <li><a href="#instalando">Instalando</a></li>
-      </ul>
-    </li>
-    <li><a href="#el-ejemplo">El ejemplo</a>
-      <ul>
-        <li><a href="#creando-el-esclavo">Creando el esclavo</a></li>
-        <li><a href="#creando-el-maestro">Creando el maestro</a></li>
-        <li><a href="#configurando-el-maestro">Configurando el maestro</a></li>
-        <li><a href="#ejecutando-el-maestro">Ejecutando el maestro</a></li>
-        <li><a href="#ejecutando-el-esclavo">Ejecutando el esclavo</a></li>
-      </ul>
-    </li>
-    <li><a href="#lanzando-una-build-cómo-usar-la-gui">Lanzando una build (cómo usar la GUI)</a></li>
-    <li><a href="#comparativa-entre-buildbot-y-jenkins">Comparativa entre BuildBot y Jenkins</a>
-      <ul>
-        <li><a href="#guardando-las-configuraciones">Guardando las configuraciones</a></li>
-        <li><a href="#configuraciones-cambiantes">Configuraciones cambiantes</a></li>
-        <li><a href="#try">Try</a></li>
-        <li><a href="#bonito">Bonito</a></li>
-        <li><a href="#ampliable">Ampliable</a></li>
-        <li><a href="#rápido">Rápido</a></li>
-        <li><a href="#api">API</a></li>
-      </ul>
-    </li>
-    <li><a href="#otras-opciones">Otras opciones</a></li>
-    <li><a href="#en-producción">En producción</a></li>
-    <li><a href="#y-fin">Y fin</a></li>
-  </ul>
-</nav></div>
-            </div><div class="content" id="content"><p>Como prometí en el <a href="https://magmax.org/blog/jenkins/" rel="">artículo anterior</a>, es hora de presentar otra alternativa para la Integración Contínua (<em>CI</em>, o <em>Continuous Integration</em>).</p>
-<p>No es la única alternativa, pero yo sólo he trasteado con <a href="https://jenkins-ci.org/" target="_blank" rel="noopener noreffer ">Jenkins</a> y con <a href="https://buildbot.net/" target="_blank" rel="noopener noreffer ">BuildBot</a>.</p>
-<figure><img src="/images/buildbot.png"
-         alt="Buildbot"/>
-</figure>
-
-<h2 id="maestroesclavo">Maestro/Esclavo</h2>
-<p>De la misma manera que Jenkins, BuildBot tiene una arquitectura Maestro/Esclavo. Sin embargo, Jenkins nos gestionaba la instalación de los esclavos, mientras que BuildBot no lo hará. En general, es menos amigable que Jenkins.</p>
-<p>Cuando comenzamos un proyecto hay que crear el maestro y después crear los esclavos. Este es un proceso sencillo que veremos mediante un ejemplo.</p>
-<h3 id="instalando">Instalando</h3>
-<p>El maestro y el esclavo son paquetes debian separados. Eso nos permite instalarlos sólo allí donde hacen falta. En el ejemplo se considerará que ambos están en la misma máquina, aunque no tendría por qué.</p>
-<p>Se puede ejecutar en casi cualquier parte, ya que está escrito en python. Basta con tener el intérprete instalado en la máquina.</p>
-<h2 id="el-ejemplo">El ejemplo</h2>
-<p>Y como ejemplo, trataré de realizar lo mismo que ya hicimos en Jenkins: Vamos a configurar <a href="https://www.pydoubles.org/" target="_blank" rel="noopener noreffer ">pyDoubles</a> para ejecutarlo con BuildBot.</p>
-<h3 id="creando-el-esclavo">Creando el esclavo</h3>
-<p>Comienzo por el esclavo porque no vamos a configurar nada, así que bastará con ejecutar:</p>
-<pre><code>$ buildslave create-slave -r ./example-slave localhost example-slave pass
+<!doctype html><html lang=es><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>Integración contínua: BuildBot - El blog de MagMax</title><meta name=Description content="Primeros pasos utilizando Buildbot"><meta property="og:url" content="/blog/buildbot/">
+<meta property="og:site_name" content="El blog de MagMax"><meta property="og:title" content="Integración contínua: BuildBot"><meta property="og:description" content="Primeros pasos utilizando Buildbot"><meta property="og:locale" content="es"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2012-08-02T00:00:00+00:00"><meta property="article:modified_time" content="2021-01-28T00:00:00+00:00"><meta property="article:tag" content="Testing"><meta property="article:tag" content="Agile"><meta property="article:tag" content="Continuous Integration"><meta property="article:tag" content="Buildbot"><meta property="og:image" content="/icons/favicon.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="/icons/favicon.png"><meta name=twitter:title content="Integración contínua: BuildBot"><meta name=twitter:description content="Primeros pasos utilizando Buildbot"><meta name=twitter:site content="@magmax_en"><meta name=application-name content="My cool site"><meta name=apple-mobile-web-app-title content="My cool site"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=/blog/buildbot/><link rel=prev href=/blog/jenkins/><link rel=next href=/blog/mea-culpa/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css></noscript><link rel=preload href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Integración contínua: BuildBot","inLanguage":"es","mainEntityOfPage":{"@type":"WebPage","@id":"\/blog\/buildbot\/"},"genre":"posts","keywords":"testing, agile, continuous integration, buildbot","wordcount":2417,"url":"\/blog\/buildbot\/","datePublished":"2012-08-02T00:00:00+00:00","dateModified":"2021-01-28T00:00:00+00:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"Miguel Ángel"},"description":"Primeros pasos utilizando Buildbot"}</script></head><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"auto"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"auto"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="El blog de MagMax"><img class="lazyload logo" src=/svg/loading.min.svg data-src=/icons/favicon.png data-srcset="/icons/favicon.png, /icons/favicon.png 1.5x, /icons/favicon.png 2x" data-sizes=auto alt=/icons/favicon.png title=/icons/favicon.png>MagMax Blog</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/>Inicio </a><a class=menu-item href=/posts>Posts </a><a class=menu-item href=/tags>Tags </a><span class="menu-item delimiter"></span><a href=javascript:void(0); class="menu-item theme-switch" title="Cambia el tema">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="menu-item language" title="Selecciona el lenguage"><i class="fa fa-globe" aria-hidden=true></i>
+<select class=language-select id=language-select-desktop onchange="location=this.value"><option value=/blog/buildbot/ selected>Español</option></select></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="El blog de MagMax"><img class="lazyload logo" src=/svg/loading.min.svg data-src=/icons/favicon.png data-srcset="/icons/favicon.png, /icons/favicon.png 1.5x, /icons/favicon.png 2x" data-sizes=auto alt=/icons/favicon.png title=/icons/favicon.png>MagMax Blog</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><a class=menu-item href=/ title>Inicio</a><a class=menu-item href=/posts title>Posts</a><a class=menu-item href=/tags title>Tags</a><a href=javascript:void(0); class="menu-item theme-switch" title="Cambia el tema">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class=menu-item title="Selecciona el lenguage"><i class="fa fa-globe fa-fw" aria-hidden=true></i>
+<select class=language-select onchange="location=this.value"><option value=/blog/buildbot/ selected>Español</option></select></a></div></div></header><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contenido</h2><div class=toc-content id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Integración contínua: BuildBot</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>Miguel Ángel</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime="02 Aug 2012">02 Aug 2012</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;2417 palabras&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;12 minutos&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contenido</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#maestroesclavo>Maestro/Esclavo</a><ul><li><a href=#instalando>Instalando</a></li></ul></li><li><a href=#el-ejemplo>El ejemplo</a><ul><li><a href=#creando-el-esclavo>Creando el esclavo</a></li><li><a href=#creando-el-maestro>Creando el maestro</a></li><li><a href=#configurando-el-maestro>Configurando el maestro</a></li><li><a href=#ejecutando-el-maestro>Ejecutando el maestro</a></li><li><a href=#ejecutando-el-esclavo>Ejecutando el esclavo</a></li></ul></li><li><a href=#lanzando-una-build-cómo-usar-la-gui>Lanzando una build (cómo usar la GUI)</a></li><li><a href=#comparativa-entre-buildbot-y-jenkins>Comparativa entre BuildBot y Jenkins</a><ul><li><a href=#guardando-las-configuraciones>Guardando las configuraciones</a></li><li><a href=#configuraciones-cambiantes>Configuraciones cambiantes</a></li><li><a href=#try>Try</a></li><li><a href=#bonito>Bonito</a></li><li><a href=#ampliable>Ampliable</a></li><li><a href=#rápido>Rápido</a></li><li><a href=#api>API</a></li></ul></li><li><a href=#otras-opciones>Otras opciones</a></li><li><a href=#en-producción>En producción</a></li><li><a href=#y-fin>Y fin</a></li></ul></nav></div></div><div class=content id=content><p>Como prometí en el <a href=/blog/jenkins/ rel>artículo anterior</a>, es hora de presentar otra alternativa para la Integración Contínua (<em>CI</em>, o <em>Continuous Integration</em>).</p><p>No es la única alternativa, pero yo sólo he trasteado con <a href=https://jenkins-ci.org/ target=_blank rel="noopener noreffer">Jenkins</a> y con <a href=https://buildbot.net/ target=_blank rel="noopener noreffer">BuildBot</a>.</p><figure><img src=/images/buildbot.png alt=Buildbot></figure><h2 id=maestroesclavo>Maestro/Esclavo</h2><p>De la misma manera que Jenkins, BuildBot tiene una arquitectura Maestro/Esclavo. Sin embargo, Jenkins nos gestionaba la instalación de los esclavos, mientras que BuildBot no lo hará. En general, es menos amigable que Jenkins.</p><p>Cuando comenzamos un proyecto hay que crear el maestro y después crear los esclavos. Este es un proceso sencillo que veremos mediante un ejemplo.</p><h3 id=instalando>Instalando</h3><p>El maestro y el esclavo son paquetes debian separados. Eso nos permite instalarlos sólo allí donde hacen falta. En el ejemplo se considerará que ambos están en la misma máquina, aunque no tendría por qué.</p><p>Se puede ejecutar en casi cualquier parte, ya que está escrito en python. Basta con tener el intérprete instalado en la máquina.</p><h2 id=el-ejemplo>El ejemplo</h2><p>Y como ejemplo, trataré de realizar lo mismo que ya hicimos en Jenkins: Vamos a configurar <a href=https://www.pydoubles.org/ target=_blank rel="noopener noreffer">pyDoubles</a> para ejecutarlo con BuildBot.</p><h3 id=creando-el-esclavo>Creando el esclavo</h3><p>Comienzo por el esclavo porque no vamos a configurar nada, así que bastará con ejecutar:</p><pre><code>$ buildslave create-slave -r ./example-slave localhost example-slave pass
 mkdir ./example-slave
 chdir ./example-slave
 mkdir ./example-slave/info
@@ -157,23 +17,14 @@ Not creating info/access_uri - add it if you wish
 Please edit the files in ./example-slave/info appropriately.
 buildslave configured in ./example-slave
 $
-</code></pre>
-<p>Como véis, un proceso bastante sencillo. Y ahora sólo hay que seguir las instrucciones y editar los archivos que se indican: <code>info/admin</code>, <code>info/host</code> y uno que no indica claramente, que es el <code>buildbot.tac</code>. Si abrís los archivos, veréis que <code>buildbot.tac</code> es un programa python. Realmente no es necesario saber python para editarlo, ya que la plantilla es autoexplicativa. En nuestro caso, ni siquiera es necesario editarlo porque va a estar todo en local.</p>
-<p>La opción &lsquo;<code>-r</code>&rsquo; que utilicé en la línea de órdenes sirve para que utilice rutas relativas. Así, podríamos mover de directorio la configuración del esclavo.</p>
-<p>En el caso del esclavo está claro qué archivos podemos mantener en un sistema de control de versiones: los tres indicados (<code>info/admin</code>, <code>info/host</code> y <code>buildbot.tac</code>).</p>
-<h3 id="creando-el-maestro">Creando el maestro</h3>
-<p>De manera similar al esclavo, podemos crear el maestro:</p>
-<pre><code>$ buildbot create-master -r example-master
+</code></pre><p>Como véis, un proceso bastante sencillo. Y ahora sólo hay que seguir las instrucciones y editar los archivos que se indican: <code>info/admin</code>, <code>info/host</code> y uno que no indica claramente, que es el <code>buildbot.tac</code>. Si abrís los archivos, veréis que <code>buildbot.tac</code> es un programa python. Realmente no es necesario saber python para editarlo, ya que la plantilla es autoexplicativa. En nuestro caso, ni siquiera es necesario editarlo porque va a estar todo en local.</p><p>La opción &lsquo;<code>-r</code>&rsquo; que utilicé en la línea de órdenes sirve para que utilice rutas relativas. Así, podríamos mover de directorio la configuración del esclavo.</p><p>En el caso del esclavo está claro qué archivos podemos mantener en un sistema de control de versiones: los tres indicados (<code>info/admin</code>, <code>info/host</code> y <code>buildbot.tac</code>).</p><h3 id=creando-el-maestro>Creando el maestro</h3><p>De manera similar al esclavo, podemos crear el maestro:</p><pre><code>$ buildbot create-master -r example-master
 mkdir ./example-master
 creating master.cfg.sample
 populating public_html/
 creating database (sqlite:///state.sqlite)
 buildmaster configured in ./example-master
 $
-</code></pre>
-<p>Como podeis observar ahora tardará un poco más, ya que tiene que crear e inicializar la base de datos. Por defecto utilizará <strong>sqlite</strong>, pero podemos configurarlo contra un <strong>mysql</strong>. Para el ejemplo, <strong>sqlite</strong> será suficiente.</p>
-<p>Veamos lo que nos ha creado aquí:</p>
-<pre><code>.
+</code></pre><p>Como podeis observar ahora tardará un poco más, ya que tiene que crear e inicializar la base de datos. Por defecto utilizará <strong>sqlite</strong>, pero podemos configurarlo contra un <strong>mysql</strong>. Para el ejemplo, <strong>sqlite</strong> será suficiente.</p><p>Veamos lo que nos ha creado aquí:</p><pre><code>.
 ├── buildbot.tac
 ├── master.cfg.sample
 ├── public_html
@@ -182,10 +33,7 @@ $
 │   ├── favicon.ico
 │   └── robots.txt
 └── state.sqlite
-</code></pre>
-<p>Lo primero es mover el archivo &ldquo;<code>master.cfg.sample</code>&rdquo; a &ldquo;<code>master.cfg</code>&rdquo;. Éste será nuestra plantilla a modificar.</p>
-<p>¿Qué tendríamos que guardar en un sistema de control de versiones? Pues basta con guardar <code>buildbot.tac</code> y <code>master.cfg</code>. Nada más. El resto de los archivos podemos volver a obtenerlos con la orden (fijáos que lo ejecuto desde dentro del directorio creado):</p>
-<pre><code>example-master$ buildbot upgrade-master
+</code></pre><p>Lo primero es mover el archivo &ldquo;<code>master.cfg.sample</code>&rdquo; a &ldquo;<code>master.cfg</code>&rdquo;. Éste será nuestra plantilla a modificar.</p><p>¿Qué tendríamos que guardar en un sistema de control de versiones? Pues basta con guardar <code>buildbot.tac</code> y <code>master.cfg</code>. Nada más. El resto de los archivos podemos volver a obtenerlos con la orden (fijáos que lo ejecuto desde dentro del directorio creado):</p><pre><code>example-master$ buildbot upgrade-master
 checking for running master
 checking master.cfg
 upgrading basedir
@@ -199,374 +47,262 @@ upgrading database (sqlite:///state.sqlite)
 
 upgrade complete
 example-master$
-</code></pre>
-<p>Evidentemente, perderemos el histórico de datos, pero&hellip; ¿es realmente importante? Si es así, recomiendo hacer copias de seguridad como se harían de cualquier otra base de datos. Y, evidentemente, no utilizar sqlite.</p>
-<h3 id="configurando-el-maestro">Configurando el maestro</h3>
-<p>Ahora es necesario configurar el maestro. Podéis observar el parecido que hay en el archivo <code>buildbot.tac</code> con el del esclavo. Dejaremos las opciones tal y como están.</p>
-<p>Vamos con el complicado: <code>master.cfg</code>.</p>
-<p>Sí, es python. Pero para hacer lo básico no es necesario saber python, sino seguir los consejos de los comentarios. La ventaja de utilizar python es que ofrece mucha versatilidad.</p>
-<p>Por defecto trae configurado el proyecto <em>pyFlakes</em>, que vamos a cambiar por <strong>pyDoubles</strong>. Veremos que no es tan complejo. Voy a pegar todo el archivo, pero si lo comparáis, veréis que sólo han cambiado las secciones &ldquo;<em>ChangeSources</em>&rdquo;, &ldquo;<em>Builders</em>&rdquo; y &ldquo;<em>Project Identity</em> &quot;</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">  1
-</span><span class="lnt">  2
-</span><span class="lnt">  3
-</span><span class="lnt">  4
-</span><span class="lnt">  5
-</span><span class="lnt">  6
-</span><span class="lnt">  7
-</span><span class="lnt">  8
-</span><span class="lnt">  9
-</span><span class="lnt"> 10
-</span><span class="lnt"> 11
-</span><span class="lnt"> 12
-</span><span class="lnt"> 13
-</span><span class="lnt"> 14
-</span><span class="lnt"> 15
-</span><span class="lnt"> 16
-</span><span class="lnt"> 17
-</span><span class="lnt"> 18
-</span><span class="lnt"> 19
-</span><span class="lnt"> 20
-</span><span class="lnt"> 21
-</span><span class="lnt"> 22
-</span><span class="lnt"> 23
-</span><span class="lnt"> 24
-</span><span class="lnt"> 25
-</span><span class="lnt"> 26
-</span><span class="lnt"> 27
-</span><span class="lnt"> 28
-</span><span class="lnt"> 29
-</span><span class="lnt"> 30
-</span><span class="lnt"> 31
-</span><span class="lnt"> 32
-</span><span class="lnt"> 33
-</span><span class="lnt"> 34
-</span><span class="lnt"> 35
-</span><span class="lnt"> 36
-</span><span class="lnt"> 37
-</span><span class="lnt"> 38
-</span><span class="lnt"> 39
-</span><span class="lnt"> 40
-</span><span class="lnt"> 41
-</span><span class="lnt"> 42
-</span><span class="lnt"> 43
-</span><span class="lnt"> 44
-</span><span class="lnt"> 45
-</span><span class="lnt"> 46
-</span><span class="lnt"> 47
-</span><span class="lnt"> 48
-</span><span class="lnt"> 49
-</span><span class="lnt"> 50
-</span><span class="lnt"> 51
-</span><span class="lnt"> 52
-</span><span class="lnt"> 53
-</span><span class="lnt"> 54
-</span><span class="lnt"> 55
-</span><span class="lnt"> 56
-</span><span class="lnt"> 57
-</span><span class="lnt"> 58
-</span><span class="lnt"> 59
-</span><span class="lnt"> 60
-</span><span class="lnt"> 61
-</span><span class="lnt"> 62
-</span><span class="lnt"> 63
-</span><span class="lnt"> 64
-</span><span class="lnt"> 65
-</span><span class="lnt"> 66
-</span><span class="lnt"> 67
-</span><span class="lnt"> 68
-</span><span class="lnt"> 69
-</span><span class="lnt"> 70
-</span><span class="lnt"> 71
-</span><span class="lnt"> 72
-</span><span class="lnt"> 73
-</span><span class="lnt"> 74
-</span><span class="lnt"> 75
-</span><span class="lnt"> 76
-</span><span class="lnt"> 77
-</span><span class="lnt"> 78
-</span><span class="lnt"> 79
-</span><span class="lnt"> 80
-</span><span class="lnt"> 81
-</span><span class="lnt"> 82
-</span><span class="lnt"> 83
-</span><span class="lnt"> 84
-</span><span class="lnt"> 85
-</span><span class="lnt"> 86
-</span><span class="lnt"> 87
-</span><span class="lnt"> 88
-</span><span class="lnt"> 89
-</span><span class="lnt"> 90
-</span><span class="lnt"> 91
-</span><span class="lnt"> 92
-</span><span class="lnt"> 93
-</span><span class="lnt"> 94
-</span><span class="lnt"> 95
-</span><span class="lnt"> 96
-</span><span class="lnt"> 97
-</span><span class="lnt"> 98
-</span><span class="lnt"> 99
-</span><span class="lnt">100
-</span><span class="lnt">101
-</span><span class="lnt">102
-</span><span class="lnt">103
-</span><span class="lnt">104
-</span><span class="lnt">105
-</span><span class="lnt">106
-</span><span class="lnt">107
-</span><span class="lnt">108
-</span><span class="lnt">109
-</span><span class="lnt">110
-</span><span class="lnt">111
-</span><span class="lnt">112
-</span><span class="lnt">113
-</span><span class="lnt">114
-</span><span class="lnt">115
-</span><span class="lnt">116
-</span><span class="lnt">117
-</span><span class="lnt">118
-</span><span class="lnt">119
-</span><span class="lnt">120
-</span><span class="lnt">121
-</span><span class="lnt">122
-</span><span class="lnt">123
-</span><span class="lnt">124
-</span><span class="lnt">125
-</span><span class="lnt">126
-</span><span class="lnt">127
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># -*- python -*-</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># ex: set syntax=python:</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># This is a sample buildmaster config file. It must be installed as</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># &#39;master.cfg&#39; in your buildmaster&#39;s base directory.</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># This is the dictionary that the buildmaster pays attention to. We also use</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># a shorter alias to save typing.</span>
-</span></span><span class="line"><span class="cl"><span class="n">c</span> <span class="o">=</span> <span class="n">BuildmasterConfig</span> <span class="o">=</span> <span class="p">{}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">####### BUILDSLAVES</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># The &#39;slaves&#39; list defines the set of recognized buildslaves. Each element is</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># a BuildSlave object, specifying a unique slave name and password.  The same</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># slave name and password must be configured on the slave.</span>
-</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.buildslave</span> <span class="kn">import</span> <span class="n">BuildSlave</span>
-</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;slaves&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">BuildSlave</span><span class="p">(</span><span class="s2">&#34;example-slave&#34;</span><span class="p">,</span> <span class="s2">&#34;pass&#34;</span><span class="p">)]</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># &#39;slavePortnum&#39; defines the TCP port to listen on for connections from slaves.</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># This must match the value configured into the buildslaves (with their</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># --master option)</span>
-</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;slavePortnum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">9989</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">####### CHANGESOURCES</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># the &#39;change_source&#39; setting tells the buildmaster how it should find out</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># about source code changes.  Here we point to the buildbot clone of pyflakes.</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.changes.gitpoller</span> <span class="kn">import</span> <span class="n">GitPoller</span>
-</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;change_source&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#c[&#39;change_source&#39;].append(GitPoller(</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#        &#39;git://github.com/buildbot/pyflakes.git&#39;,</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#        workdir=&#39;gitpoller-workdir&#39;, branch=&#39;master&#39;,</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#        pollinterval=300))</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">####### SCHEDULERS</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># Configure the Schedulers, which decide how to react to incoming changes.  In this</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># case, just kick off a &#39;runtests&#39; build</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.schedulers.basic</span> <span class="kn">import</span> <span class="n">SingleBranchScheduler</span>
-</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.schedulers.forcesched</span> <span class="kn">import</span> <span class="n">ForceScheduler</span>
-</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.changes</span> <span class="kn">import</span> <span class="nb">filter</span>
-</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;schedulers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;schedulers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SingleBranchScheduler</span><span class="p">(</span>
-</span></span><span class="line"><span class="cl">                            <span class="n">name</span><span class="o">=</span><span class="s2">&#34;all&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                            <span class="n">change_filter</span><span class="o">=</span><span class="nb">filter</span><span class="o">.</span><span class="n">ChangeFilter</span><span class="p">(</span><span class="n">branch</span><span class="o">=</span><span class="s1">&#39;master&#39;</span><span class="p">),</span>
-</span></span><span class="line"><span class="cl">                            <span class="n">treeStableTimer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                            <span class="n">builderNames</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;runtests&#34;</span><span class="p">]))</span>
-</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;schedulers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ForceScheduler</span><span class="p">(</span>
-</span></span><span class="line"><span class="cl">                            <span class="n">name</span><span class="o">=</span><span class="s2">&#34;force&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">                            <span class="n">builderNames</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;runtests&#34;</span><span class="p">]))</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">####### BUILDERS</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># The &#39;builders&#39; list defines the Builders, which tell Buildbot how to perform a build:</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># what steps, and which slaves can execute them.  Note that any particular build will</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># only take place on one slave.</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.process.factory</span> <span class="kn">import</span> <span class="n">BuildFactory</span>
-</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.steps.source</span> <span class="kn">import</span> <span class="n">Mercurial</span>
-</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.steps.shell</span> <span class="kn">import</span> <span class="n">ShellCommand</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">factory</span> <span class="o">=</span> <span class="n">BuildFactory</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># check out the source</span>
-</span></span><span class="line"><span class="cl"><span class="n">factory</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span><span class="n">Mercurial</span><span class="p">(</span><span class="n">repourl</span><span class="o">=</span><span class="s1">&#39;https://bitbucket.org/carlosble/pydoubles&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;copy&#39;</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># run the tests (note that this will require that &#39;trial&#39; is installed)</span>
-</span></span><span class="line"><span class="cl"><span class="n">factory</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span><span class="n">ShellCommand</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;nosetests&#34;</span><span class="p">,</span> <span class="s2">&#34;pyDoublesTests/unit.py&#34;</span><span class="p">]))</span>
-</span></span><span class="line"><span class="cl"><span class="n">factory</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span><span class="n">ShellCommand</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;nosetests&#34;</span><span class="p">,</span> <span class="s2">&#34;pyDoublesTests/hamcrest_integration.py&#34;</span><span class="p">]))</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.config</span> <span class="kn">import</span> <span class="n">BuilderConfig</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;builders&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;builders&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span></span><span class="line"><span class="cl">    <span class="n">BuilderConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&#34;runtests&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">slavenames</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;example-slave&#34;</span><span class="p">],</span>
-</span></span><span class="line"><span class="cl">      <span class="n">factory</span><span class="o">=</span><span class="n">factory</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">####### STATUS TARGETS</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># &#39;status&#39; is a list of Status Targets. The results of each build will be</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># pushed to these targets. buildbot/status/*.py has a variety to choose from,</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># including web pages, email senders, and IRC bots.</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.status</span> <span class="kn">import</span> <span class="n">html</span>
-</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">buildbot.status.web</span> <span class="kn">import</span> <span class="n">authz</span><span class="p">,</span> <span class="n">auth</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">authz_cfg</span><span class="o">=</span><span class="n">authz</span><span class="o">.</span><span class="n">Authz</span><span class="p">(</span>
-</span></span><span class="line"><span class="cl">    <span class="c1"># change any of these to True to enable; see the manual for more</span>
-</span></span><span class="line"><span class="cl">    <span class="c1"># options</span>
-</span></span><span class="line"><span class="cl">    <span class="n">auth</span><span class="o">=</span><span class="n">auth</span><span class="o">.</span><span class="n">BasicAuth</span><span class="p">([(</span><span class="s2">&#34;pyflakes&#34;</span><span class="p">,</span><span class="s2">&#34;pyflakes&#34;</span><span class="p">)]),</span>
-</span></span><span class="line"><span class="cl">    <span class="n">gracefulShutdown</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="n">forceBuild</span> <span class="o">=</span> <span class="s1">&#39;auth&#39;</span><span class="p">,</span> <span class="c1"># use this to test your slave once it is set up</span>
-</span></span><span class="line"><span class="cl">    <span class="n">forceAllBuilds</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="n">pingBuilder</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="n">stopBuild</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="n">stopAllBuilds</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="n">cancelPendingBuild</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl"><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;status&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">html</span><span class="o">.</span><span class="n">WebStatus</span><span class="p">(</span><span class="n">http_port</span><span class="o">=</span><span class="mi">8010</span><span class="p">,</span> <span class="n">authz</span><span class="o">=</span><span class="n">authz_cfg</span><span class="p">))</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">####### PROJECT IDENTITY</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># the &#39;title&#39; string will appear at the top of this buildbot</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># installation&#39;s html.WebStatus home page (linked to the</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># &#39;titleURL&#39;) and is embedded in the title of the waterfall HTML page.</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;My BuildBot Installation&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;titleURL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;https://www.magmax.org&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># the &#39;buildbotURL&#39; string should point to the location where the buildbot&#39;s</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># internal web server (usually the html.WebStatus page) is visible. This</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># typically uses the port number set in the Waterfall &#39;status&#39; entry, but</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># with an externally-visible host name which the buildbot cannot figure out</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># without some help.</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;buildbotURL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;https://localhost:8010/&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">####### DB URL</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;db&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="c1"># This specifies what database buildbot uses to store its state.  You can leave</span>
-</span></span><span class="line"><span class="cl">    <span class="c1"># this at its default for all but the largest installations.</span>
-</span></span><span class="line"><span class="cl">    <span class="s1">&#39;db_url&#39;</span> <span class="p">:</span> <span class="s2">&#34;sqlite:///state.sqlite&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h3 id="ejecutando-el-maestro">Ejecutando el maestro</h3>
-<p>Ningún misterio: desde el directorio del maestro, basta ejecutar:</p>
-<pre><code>example-master$ buildbot start
-</code></pre>
-<h3 id="ejecutando-el-esclavo">Ejecutando el esclavo</h3>
-<p>Tampoco tiene misterio: desde el directorio del esclavo, basta ejecutar:</p>
-<pre><code>example-slave$ buildslave start
-</code></pre>
-<p>Y todo debería ir correctamente.</p>
-<h2 id="lanzando-una-build-cómo-usar-la-gui">Lanzando una build (cómo usar la GUI)</h2>
-<p>Si os habéis fijado en los logs o en el archivo de configuración, el maestro está sirviendo una web en <a href="https://localhost:8010/" target="_blank" rel="noopener noreffer ">https://localhost:8010/</a>. Lo primero que haremos será <em>LogIn</em>. Como no lo hemos modificado en el archivo de configuración, bastará con usar <strong>pyflakes/pyflakes</strong> (si dudáis, mirad la sección de autenticación del archivo <code>master.cfg</code>).</p>
-<p>Una vez autenticados, podemos irnos a la sección &ldquo;<em>Waterfall</em>&rdquo; y pulsar sobre &ldquo;<strong>runtests</strong>&rdquo;. Eso nos mostrará la página de ejecución de tests, donde está todo configurado. Basta pulsar el botón &ldquo;<strong>Force Build</strong>&rdquo;. Y, si todo es correcto, debería haberse ejecutado la batería de pruebas.</p>
-<p>La ventana más útil para ver resultados es la de <em>Waterfall</em>. A partir de ahí no os costará mucho navegar el resto.</p>
-<figure><img src="/images/buildbot-grid.jpg"
-         alt="Buildbot grid"/>
-</figure>
-
-<h2 id="comparativa-entre-buildbot-y-jenkins">Comparativa entre BuildBot y Jenkins</h2>
-<p>A menudo las comparativas son odiosas. Éste es uno de esos casos. No se puede decir que uno sea mejor que el otro, pero sí que cada cual tiene sus puntos fuertes.</p>
-<p>Voy a exponer algunas de estas ventajas de cada uno.</p>
-<h3 id="guardando-las-configuraciones">Guardando las configuraciones</h3>
-<p>Ambos utilizan una base de datos para almacenar los resultados. Sin embargo, la forma de guardar las configuraciones de los trabajos es completamente diferente: Jenkins utiliza archivos XML, mientras que BuildBot utiliza un único archivo Python.</p>
-<p>Dado que los archivos de Jenkins no se modificarán a mano, sino utilizando la GUI, resultará dificil mantenerlos en un sistema de control de versiones. Sin embargo, resulta muy sencillo hacerlo con BuildBot.</p>
-<h3 id="configuraciones-cambiantes">Configuraciones cambiantes</h3>
-<p>Si tenemos configuraciones que cambian mucho, entonces es mejor no utilizar BuildBot. En BuildBot las configuraciones son estáticas y se requiere un reinicio del maestro para aplicar los cambios. Por esa razón, en estos casos es mejor utilizar Jenkins.</p>
-<p>Si lo único que va a cambiar son algunos parámetros, entonces sí podemos plantearnos usar BuildBot.</p>
-<h3 id="try">Try</h3>
-<p>BuildBot tiene una característica que Jenkins no tiene: el <strong>try</strong>. Sirve para &ldquo;<em>intentar</em>&rdquo; una build, de manera que coja los cambios locales, aunque no estén en el repositorio, e intente realizar una build con ellos. Esta característica puede resultar de mucha utilidad cuando se quieren probar situaciones que pueden no funcionar correctamente o para probar el propio sistema de CI.</p>
-<h3 id="bonito">Bonito</h3>
-<p>Indiscutiblemente, Jenkins es mucho más bonito que BuildBot. Han cuidado mucho más la interfaz.</p>
-<p>Además, BuildBot ofrece los resultados sin más, mientras que Jenkins permite procesarlos y presentarlos con una interfaz más bonita.</p>
-<h3 id="ampliable">Ampliable</h3>
-<p>Jenkins permite la fácil ampliación mediante la creación de <em>plug-ins</em>. Estas extensiones requieren conocimientos de Java, <a href="https://commons.apache.org/jelly/" target="_blank" rel="noopener noreffer ">Jelly</a> y, probablemente, un poco de Groovy, además de conocer la API.</p>
-<p>Con BuildBot es probable que no necesitemos de ampliaciones, ya que se puede programar sobre la propia build. En caso de necesitarlas, basta con escribir el programa Python adecuado. Para ello, podemos basarnos en el propio código de la clase de la que heredaremos.</p>
-<p>Para algunas cosas, será más sencillo el sistema de Jenkins. Para otras, el de BuildBot.</p>
-<h3 id="rápido">Rápido</h3>
-<p>Jenkins tarda más de un minuto en reiniciarse. BuildBot breves segundos.</p>
-<p>Tras un reinicio, Jenkins pierde el control de los esclavos: no sabe si están ejecutando algo, así que es probable que los trate como desocupados. Esto puede producir que fallen tanto el trabajo en curso como el nuevo. En el caso de que no lance un nuevo trabajo, Jenkins ignorará los resultados del trabajo en curso, por lo que se habrá perdido irremediablemente.</p>
-<p>Con BuildBot también se pierde la ejecución en curso. Además, cuando recupera el contacto con el esclavo, relanzará la build que estaba a medias. Sin embargo, el maestro reinicia al esclavo, evitando que haya dos instancias del esclavo corriendo simultáneamente.</p>
-<p>La documentación de Jenkins es extensa, pero entrar en el código suele ser complejo. La documentación de BuildBot es bastante buena, aunque la página web está desactualizada: recomiendo descargarse el código y leer la documentación directamente de allí (formato <em>sphinx</em>, que podéis compilar en vuestras máquinas). De todas maneras, es código Python, que suele ser bastante legible.</p>
-<h3 id="api">API</h3>
-<p>Jenkins tiene API en formatos JSON y XML. Además, ofrece un cliente java bastante potente.</p>
-<p>BuildBot tiene API en formato JSON. Es algo más sencilla, pero es normal: la mayor parte de las cosas que queremos hacer estarán escritas en python, en el archivo de configuración.</p>
-<p>Jenkins, además, ofrece una interfaz Groovy, sólo disponible para administradores. Sobre esta interfaz debo prevenir que es peligrosa: un descuido en una condición y puedes renombrar todos los trabajos en curso; un <code>System.exit</code>, y se apagará el servidor.</p>
-<h2 id="otras-opciones">Otras opciones</h2>
-<p>No son las dos únicas opciones disponibles. Existen muchas otras, de libre disposición, como <a href="https://cruisecontrol.sourceforge.net/" target="_blank" rel="noopener noreffer ">CruiseControl</a>, <a href="https://jenkins-ci.org/" target="_blank" rel="noopener noreffer ">Jenkins</a>, <a href="https://buildbot.net/" target="_blank" rel="noopener noreffer ">BuildBot</a>, <a href="https://gump.apache.org/" target="_blank" rel="noopener noreffer ">Apache Gump</a> o <a href="https://continuum.apache.org/" target="_blank" rel="noopener noreffer ">Apache Continuum</a>. También hay aplicaciones propietarias, como <a href="https://www.atlassian.com/es/software/bamboo/overview" target="_blank" rel="noopener noreffer ">Bamboo</a> o <a href="https://en.wikipedia.org/wiki/Azure_DevOps_Server" target="_blank" rel="noopener noreffer ">Team Foundation Server</a>.</p>
-<p>Otro ejemplo es <a href="https://travis-ci.org/" target="_blank" rel="noopener noreffer ">Travis-CI</a>. En este caso, nos venden el servicio, ya que no resulta sencillo encontrar información sobre cómo instalárnoslo. Aún así, es software libre y el código está disponible.</p>
-<p>Como véis, todas estas sólo las mencionaré, ya que nunca las he utilizado. Hay muchas otras. Tan sólo tenéis que elegir una y comenzar a usarla.</p>
-<h2 id="en-producción">En producción</h2>
-<p>Y como no hay nada mejor que un ejemplo, podéis visitar los <em>waterfall</em> de gente que ya lo está usando:</p>
-<ul>
-<li><a href="https://builder.blender.org/waterfall" target="_blank" rel="noopener noreffer ">Blender</a></li>
-<li><a href="https://chromium-build.appspot.com/p/chromium/console" target="_blank" rel="noopener noreffer ">Chromium</a></li>
-<li><a href="https://build.gnome.org/" target="_blank" rel="noopener noreffer ">Gnome</a></li>
-<li><a href="https://buildbot.python.org/all/waterfall" target="_blank" rel="noopener noreffer ">Python</a></li>
-</ul>
-<h2 id="y-fin">Y fin</h2>
-<p>Realmente las condiciones para utilizar cualquier sistema de integración contínua son las mismas: <strong>deben existir pruebas</strong> y <strong>debe ser fácil de desplegar</strong>.</p>
-<p>La elección de un buen servidor de integración contínua es importante. Al principio será más un estorbo que otra cosa, pero poco a poco termina transformándose en un servicio crítico que, cuando está parado, la empresa no avanza.</p>
-<p>Puede parecer exagerado, pero la dependencia con el mismo es importante: termina siendo el <em>juez supremo</em> de nuestros cambios. Si el servidor de CI no lo aprueba, nuestros cambios no se aplican. Da igual cómo nos defendamos o cómo queramos interpretarlo: si no hay verde, nuestro trabajo no está terminado.</p>
-<p>Además, un buen servidor de CI nos permitirá recoger estadísticas de uso, de manera que podamos optimizar el proceso. Será interesante evaluar la posibilidad de lanzar varios hilos, comprar más hardware (más esclavos), evaluar el impacto de un cambio, comprobar el estilo de nuestro código, etc.</p>
-<p>Elegid uno, y usadlo.</p></div><div class="post-footer" id="post-footer">
-    <div class="post-info">
-        <div class="post-info-line">
-            <div class="post-info-mod">
-                <span>Actualizado el 28 Jan 2021</span>
-            </div></div>
-        <div class="post-info-line">
-            <div class="post-info-md"></div>
-            <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Compartir en Twitter" data-sharer="twitter" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot" data-via="magmax_en" data-hashtags="testing,agile,continuous integration,buildbot"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Facebook" data-sharer="facebook" data-url="https://magmax.org/blog/buildbot/" data-hashtag="testing"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Linkedin" data-sharer="linkedin" data-url="https://magmax.org/blog/buildbot/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en WhatsApp" data-sharer="whatsapp" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot" data-web><i class="fab fa-whatsapp fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Tumblr" data-sharer="tumblr" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot" data-caption="Primeros pasos utilizando Buildbot" data-tags="testing,agile,continuous integration,buildbot"><i class="fab fa-tumblr fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Reddit" data-sharer="reddit" data-url="https://magmax.org/blog/buildbot/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Instapaper" data-sharer="instapaper" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot" data-description="Primeros pasos utilizando Buildbot"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/instapaper.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en 微博" data-sharer="weibo" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Blogger" data-sharer="blogger" data-url="https://magmax.org/blog/buildbot/" data-title="Integración contínua: BuildBot" data-description="Primeros pasos utilizando Buildbot"><i class="fab fa-blogger fa-fw" aria-hidden="true"></i></a></span>
-            </div>
-        </div>
-    </div>
-
-    <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/testing/">testing</a>,&nbsp;<a href="/tags/agile/">agile</a>,&nbsp;<a href="/tags/continuous-integration/">continuous integration</a>,&nbsp;<a href="/tags/buildbot/">buildbot</a></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">Regresar</a></span>&nbsp;|&nbsp;<span><a href="/">Inicio</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav"><a href="/blog/jenkins/" class="prev" rel="prev" title="Integración continua: Jenkins"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Integración continua: Jenkins</a>
-            <a href="/blog/mea-culpa/" class="next" rel="next" title="Entonando el &#39;Mea Culpa&#39;">Entonando el 'Mea Culpa'<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
-</div>
-<div id="comments"><div id="disqus_thread" class="comment"></div><noscript>
-                Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
-            </noscript></div></article></div>
-            </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Con la tecnología de <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.119.0">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
-                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022 - 2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Miguel Ángel</a></span></div>
-        </div>
-    </footer></div>
-
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Volver arriba">
-                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="Ver comentarios">
-                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
-            </a>
-        </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css"><script type="text/javascript" src="https://magmax.disqus.com/embed.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/copy-tex.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/mhchem.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copiar al portapapeles","maxShownLines":50},"comment":{},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript">
-            window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
-            gtag('config', 'G-X5FEBMGR06', { 'anonymize_ip': true });
-        </script><script type="text/javascript" src="https://www.googletagmanager.com/gtag/js?id=G-X5FEBMGR06" async></script></body>
-</html>
+</code></pre><p>Evidentemente, perderemos el histórico de datos, pero&mldr; ¿es realmente importante? Si es así, recomiendo hacer copias de seguridad como se harían de cualquier otra base de datos. Y, evidentemente, no utilizar sqlite.</p><h3 id=configurando-el-maestro>Configurando el maestro</h3><p>Ahora es necesario configurar el maestro. Podéis observar el parecido que hay en el archivo <code>buildbot.tac</code> con el del esclavo. Dejaremos las opciones tal y como están.</p><p>Vamos con el complicado: <code>master.cfg</code>.</p><p>Sí, es python. Pero para hacer lo básico no es necesario saber python, sino seguir los consejos de los comentarios. La ventaja de utilizar python es que ofrece mucha versatilidad.</p><p>Por defecto trae configurado el proyecto <em>pyFlakes</em>, que vamos a cambiar por <strong>pyDoubles</strong>. Veremos que no es tan complejo. Voy a pegar todo el archivo, pero si lo comparáis, veréis que sólo han cambiado las secciones &ldquo;<em>ChangeSources</em>&rdquo;, &ldquo;<em>Builders</em>&rdquo; y &ldquo;<em>Project Identity</em> "</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>  1
+</span><span class=lnt>  2
+</span><span class=lnt>  3
+</span><span class=lnt>  4
+</span><span class=lnt>  5
+</span><span class=lnt>  6
+</span><span class=lnt>  7
+</span><span class=lnt>  8
+</span><span class=lnt>  9
+</span><span class=lnt> 10
+</span><span class=lnt> 11
+</span><span class=lnt> 12
+</span><span class=lnt> 13
+</span><span class=lnt> 14
+</span><span class=lnt> 15
+</span><span class=lnt> 16
+</span><span class=lnt> 17
+</span><span class=lnt> 18
+</span><span class=lnt> 19
+</span><span class=lnt> 20
+</span><span class=lnt> 21
+</span><span class=lnt> 22
+</span><span class=lnt> 23
+</span><span class=lnt> 24
+</span><span class=lnt> 25
+</span><span class=lnt> 26
+</span><span class=lnt> 27
+</span><span class=lnt> 28
+</span><span class=lnt> 29
+</span><span class=lnt> 30
+</span><span class=lnt> 31
+</span><span class=lnt> 32
+</span><span class=lnt> 33
+</span><span class=lnt> 34
+</span><span class=lnt> 35
+</span><span class=lnt> 36
+</span><span class=lnt> 37
+</span><span class=lnt> 38
+</span><span class=lnt> 39
+</span><span class=lnt> 40
+</span><span class=lnt> 41
+</span><span class=lnt> 42
+</span><span class=lnt> 43
+</span><span class=lnt> 44
+</span><span class=lnt> 45
+</span><span class=lnt> 46
+</span><span class=lnt> 47
+</span><span class=lnt> 48
+</span><span class=lnt> 49
+</span><span class=lnt> 50
+</span><span class=lnt> 51
+</span><span class=lnt> 52
+</span><span class=lnt> 53
+</span><span class=lnt> 54
+</span><span class=lnt> 55
+</span><span class=lnt> 56
+</span><span class=lnt> 57
+</span><span class=lnt> 58
+</span><span class=lnt> 59
+</span><span class=lnt> 60
+</span><span class=lnt> 61
+</span><span class=lnt> 62
+</span><span class=lnt> 63
+</span><span class=lnt> 64
+</span><span class=lnt> 65
+</span><span class=lnt> 66
+</span><span class=lnt> 67
+</span><span class=lnt> 68
+</span><span class=lnt> 69
+</span><span class=lnt> 70
+</span><span class=lnt> 71
+</span><span class=lnt> 72
+</span><span class=lnt> 73
+</span><span class=lnt> 74
+</span><span class=lnt> 75
+</span><span class=lnt> 76
+</span><span class=lnt> 77
+</span><span class=lnt> 78
+</span><span class=lnt> 79
+</span><span class=lnt> 80
+</span><span class=lnt> 81
+</span><span class=lnt> 82
+</span><span class=lnt> 83
+</span><span class=lnt> 84
+</span><span class=lnt> 85
+</span><span class=lnt> 86
+</span><span class=lnt> 87
+</span><span class=lnt> 88
+</span><span class=lnt> 89
+</span><span class=lnt> 90
+</span><span class=lnt> 91
+</span><span class=lnt> 92
+</span><span class=lnt> 93
+</span><span class=lnt> 94
+</span><span class=lnt> 95
+</span><span class=lnt> 96
+</span><span class=lnt> 97
+</span><span class=lnt> 98
+</span><span class=lnt> 99
+</span><span class=lnt>100
+</span><span class=lnt>101
+</span><span class=lnt>102
+</span><span class=lnt>103
+</span><span class=lnt>104
+</span><span class=lnt>105
+</span><span class=lnt>106
+</span><span class=lnt>107
+</span><span class=lnt>108
+</span><span class=lnt>109
+</span><span class=lnt>110
+</span><span class=lnt>111
+</span><span class=lnt>112
+</span><span class=lnt>113
+</span><span class=lnt>114
+</span><span class=lnt>115
+</span><span class=lnt>116
+</span><span class=lnt>117
+</span><span class=lnt>118
+</span><span class=lnt>119
+</span><span class=lnt>120
+</span><span class=lnt>121
+</span><span class=lnt>122
+</span><span class=lnt>123
+</span><span class=lnt>124
+</span><span class=lnt>125
+</span><span class=lnt>126
+</span><span class=lnt>127
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=c1># -*- python -*-</span>
+</span></span><span class=line><span class=cl><span class=c1># ex: set syntax=python:</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># This is a sample buildmaster config file. It must be installed as</span>
+</span></span><span class=line><span class=cl><span class=c1># &#39;master.cfg&#39; in your buildmaster&#39;s base directory.</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># This is the dictionary that the buildmaster pays attention to. We also use</span>
+</span></span><span class=line><span class=cl><span class=c1># a shorter alias to save typing.</span>
+</span></span><span class=line><span class=cl><span class=n>c</span> <span class=o>=</span> <span class=n>BuildmasterConfig</span> <span class=o>=</span> <span class=p>{}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>####### BUILDSLAVES</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># The &#39;slaves&#39; list defines the set of recognized buildslaves. Each element is</span>
+</span></span><span class=line><span class=cl><span class=c1># a BuildSlave object, specifying a unique slave name and password.  The same</span>
+</span></span><span class=line><span class=cl><span class=c1># slave name and password must be configured on the slave.</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>buildbot.buildslave</span> <span class=kn>import</span> <span class=n>BuildSlave</span>
+</span></span><span class=line><span class=cl><span class=n>c</span><span class=p>[</span><span class=s1>&#39;slaves&#39;</span><span class=p>]</span> <span class=o>=</span> <span class=p>[</span><span class=n>BuildSlave</span><span class=p>(</span><span class=s2>&#34;example-slave&#34;</span><span class=p>,</span> <span class=s2>&#34;pass&#34;</span><span class=p>)]</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># &#39;slavePortnum&#39; defines the TCP port to listen on for connections from slaves.</span>
+</span></span><span class=line><span class=cl><span class=c1># This must match the value configured into the buildslaves (with their</span>
+</span></span><span class=line><span class=cl><span class=c1># --master option)</span>
+</span></span><span class=line><span class=cl><span class=n>c</span><span class=p>[</span><span class=s1>&#39;slavePortnum&#39;</span><span class=p>]</span> <span class=o>=</span> <span class=mi>9989</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>####### CHANGESOURCES</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># the &#39;change_source&#39; setting tells the buildmaster how it should find out</span>
+</span></span><span class=line><span class=cl><span class=c1># about source code changes.  Here we point to the buildbot clone of pyflakes.</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>buildbot.changes.gitpoller</span> <span class=kn>import</span> <span class=n>GitPoller</span>
+</span></span><span class=line><span class=cl><span class=n>c</span><span class=p>[</span><span class=s1>&#39;change_source&#39;</span><span class=p>]</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl><span class=c1>#c[&#39;change_source&#39;].append(GitPoller(</span>
+</span></span><span class=line><span class=cl><span class=c1>#        &#39;git://github.com/buildbot/pyflakes.git&#39;,</span>
+</span></span><span class=line><span class=cl><span class=c1>#        workdir=&#39;gitpoller-workdir&#39;, branch=&#39;master&#39;,</span>
+</span></span><span class=line><span class=cl><span class=c1>#        pollinterval=300))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>####### SCHEDULERS</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># Configure the Schedulers, which decide how to react to incoming changes.  In this</span>
+</span></span><span class=line><span class=cl><span class=c1># case, just kick off a &#39;runtests&#39; build</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>buildbot.schedulers.basic</span> <span class=kn>import</span> <span class=n>SingleBranchScheduler</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>buildbot.schedulers.forcesched</span> <span class=kn>import</span> <span class=n>ForceScheduler</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>buildbot.changes</span> <span class=kn>import</span> <span class=nb>filter</span>
+</span></span><span class=line><span class=cl><span class=n>c</span><span class=p>[</span><span class=s1>&#39;schedulers&#39;</span><span class=p>]</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl><span class=n>c</span><span class=p>[</span><span class=s1>&#39;schedulers&#39;</span><span class=p>]</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>SingleBranchScheduler</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                            <span class=n>name</span><span class=o>=</span><span class=s2>&#34;all&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                            <span class=n>change_filter</span><span class=o>=</span><span class=nb>filter</span><span class=o>.</span><span class=n>ChangeFilter</span><span class=p>(</span><span class=n>branch</span><span class=o>=</span><span class=s1>&#39;master&#39;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>                            <span class=n>treeStableTimer</span><span class=o>=</span><span class=kc>None</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                            <span class=n>builderNames</span><span class=o>=</span><span class=p>[</span><span class=s2>&#34;runtests&#34;</span><span class=p>]))</span>
+</span></span><span class=line><span class=cl><span class=n>c</span><span class=p>[</span><span class=s1>&#39;schedulers&#39;</span><span class=p>]</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>ForceScheduler</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>                            <span class=n>name</span><span class=o>=</span><span class=s2>&#34;force&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                            <span class=n>builderNames</span><span class=o>=</span><span class=p>[</span><span class=s2>&#34;runtests&#34;</span><span class=p>]))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>####### BUILDERS</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># The &#39;builders&#39; list defines the Builders, which tell Buildbot how to perform a build:</span>
+</span></span><span class=line><span class=cl><span class=c1># what steps, and which slaves can execute them.  Note that any particular build will</span>
+</span></span><span class=line><span class=cl><span class=c1># only take place on one slave.</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>buildbot.process.factory</span> <span class=kn>import</span> <span class=n>BuildFactory</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>buildbot.steps.source</span> <span class=kn>import</span> <span class=n>Mercurial</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>buildbot.steps.shell</span> <span class=kn>import</span> <span class=n>ShellCommand</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>factory</span> <span class=o>=</span> <span class=n>BuildFactory</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=c1># check out the source</span>
+</span></span><span class=line><span class=cl><span class=n>factory</span><span class=o>.</span><span class=n>addStep</span><span class=p>(</span><span class=n>Mercurial</span><span class=p>(</span><span class=n>repourl</span><span class=o>=</span><span class=s1>&#39;https://bitbucket.org/carlosble/pydoubles&#39;</span><span class=p>,</span> <span class=n>mode</span><span class=o>=</span><span class=s1>&#39;copy&#39;</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=c1># run the tests (note that this will require that &#39;trial&#39; is installed)</span>
+</span></span><span class=line><span class=cl><span class=n>factory</span><span class=o>.</span><span class=n>addStep</span><span class=p>(</span><span class=n>ShellCommand</span><span class=p>(</span><span class=n>command</span><span class=o>=</span><span class=p>[</span><span class=s2>&#34;nosetests&#34;</span><span class=p>,</span> <span class=s2>&#34;pyDoublesTests/unit.py&#34;</span><span class=p>]))</span>
+</span></span><span class=line><span class=cl><span class=n>factory</span><span class=o>.</span><span class=n>addStep</span><span class=p>(</span><span class=n>ShellCommand</span><span class=p>(</span><span class=n>command</span><span class=o>=</span><span class=p>[</span><span class=s2>&#34;nosetests&#34;</span><span class=p>,</span> <span class=s2>&#34;pyDoublesTests/hamcrest_integration.py&#34;</span><span class=p>]))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>buildbot.config</span> <span class=kn>import</span> <span class=n>BuilderConfig</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>c</span><span class=p>[</span><span class=s1>&#39;builders&#39;</span><span class=p>]</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl><span class=n>c</span><span class=p>[</span><span class=s1>&#39;builders&#39;</span><span class=p>]</span><span class=o>.</span><span class=n>append</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>BuilderConfig</span><span class=p>(</span><span class=n>name</span><span class=o>=</span><span class=s2>&#34;runtests&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=n>slavenames</span><span class=o>=</span><span class=p>[</span><span class=s2>&#34;example-slave&#34;</span><span class=p>],</span>
+</span></span><span class=line><span class=cl>      <span class=n>factory</span><span class=o>=</span><span class=n>factory</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>####### STATUS TARGETS</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># &#39;status&#39; is a list of Status Targets. The results of each build will be</span>
+</span></span><span class=line><span class=cl><span class=c1># pushed to these targets. buildbot/status/*.py has a variety to choose from,</span>
+</span></span><span class=line><span class=cl><span class=c1># including web pages, email senders, and IRC bots.</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>c</span><span class=p>[</span><span class=s1>&#39;status&#39;</span><span class=p>]</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>buildbot.status</span> <span class=kn>import</span> <span class=n>html</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>buildbot.status.web</span> <span class=kn>import</span> <span class=n>authz</span><span class=p>,</span> <span class=n>auth</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>authz_cfg</span><span class=o>=</span><span class=n>authz</span><span class=o>.</span><span class=n>Authz</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=c1># change any of these to True to enable; see the manual for more</span>
+</span></span><span class=line><span class=cl>    <span class=c1># options</span>
+</span></span><span class=line><span class=cl>    <span class=n>auth</span><span class=o>=</span><span class=n>auth</span><span class=o>.</span><span class=n>BasicAuth</span><span class=p>([(</span><span class=s2>&#34;pyflakes&#34;</span><span class=p>,</span><span class=s2>&#34;pyflakes&#34;</span><span class=p>)]),</span>
+</span></span><span class=line><span class=cl>    <span class=n>gracefulShutdown</span> <span class=o>=</span> <span class=kc>False</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>forceBuild</span> <span class=o>=</span> <span class=s1>&#39;auth&#39;</span><span class=p>,</span> <span class=c1># use this to test your slave once it is set up</span>
+</span></span><span class=line><span class=cl>    <span class=n>forceAllBuilds</span> <span class=o>=</span> <span class=kc>False</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>pingBuilder</span> <span class=o>=</span> <span class=kc>False</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>stopBuild</span> <span class=o>=</span> <span class=kc>False</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>stopAllBuilds</span> <span class=o>=</span> <span class=kc>False</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>cancelPendingBuild</span> <span class=o>=</span> <span class=kc>False</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>c</span><span class=p>[</span><span class=s1>&#39;status&#39;</span><span class=p>]</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>html</span><span class=o>.</span><span class=n>WebStatus</span><span class=p>(</span><span class=n>http_port</span><span class=o>=</span><span class=mi>8010</span><span class=p>,</span> <span class=n>authz</span><span class=o>=</span><span class=n>authz_cfg</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>####### PROJECT IDENTITY</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># the &#39;title&#39; string will appear at the top of this buildbot</span>
+</span></span><span class=line><span class=cl><span class=c1># installation&#39;s html.WebStatus home page (linked to the</span>
+</span></span><span class=line><span class=cl><span class=c1># &#39;titleURL&#39;) and is embedded in the title of the waterfall HTML page.</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>c</span><span class=p>[</span><span class=s1>&#39;title&#39;</span><span class=p>]</span> <span class=o>=</span> <span class=s2>&#34;My BuildBot Installation&#34;</span>
+</span></span><span class=line><span class=cl><span class=n>c</span><span class=p>[</span><span class=s1>&#39;titleURL&#39;</span><span class=p>]</span> <span class=o>=</span> <span class=s2>&#34;https://www.magmax.org&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># the &#39;buildbotURL&#39; string should point to the location where the buildbot&#39;s</span>
+</span></span><span class=line><span class=cl><span class=c1># internal web server (usually the html.WebStatus page) is visible. This</span>
+</span></span><span class=line><span class=cl><span class=c1># typically uses the port number set in the Waterfall &#39;status&#39; entry, but</span>
+</span></span><span class=line><span class=cl><span class=c1># with an externally-visible host name which the buildbot cannot figure out</span>
+</span></span><span class=line><span class=cl><span class=c1># without some help.</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>c</span><span class=p>[</span><span class=s1>&#39;buildbotURL&#39;</span><span class=p>]</span> <span class=o>=</span> <span class=s2>&#34;https://localhost:8010/&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>####### DB URL</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>c</span><span class=p>[</span><span class=s1>&#39;db&#39;</span><span class=p>]</span> <span class=o>=</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1># This specifies what database buildbot uses to store its state.  You can leave</span>
+</span></span><span class=line><span class=cl>    <span class=c1># this at its default for all but the largest installations.</span>
+</span></span><span class=line><span class=cl>    <span class=s1>&#39;db_url&#39;</span> <span class=p>:</span> <span class=s2>&#34;sqlite:///state.sqlite&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=ejecutando-el-maestro>Ejecutando el maestro</h3><p>Ningún misterio: desde el directorio del maestro, basta ejecutar:</p><pre><code>example-master$ buildbot start
+</code></pre><h3 id=ejecutando-el-esclavo>Ejecutando el esclavo</h3><p>Tampoco tiene misterio: desde el directorio del esclavo, basta ejecutar:</p><pre><code>example-slave$ buildslave start
+</code></pre><p>Y todo debería ir correctamente.</p><h2 id=lanzando-una-build-cómo-usar-la-gui>Lanzando una build (cómo usar la GUI)</h2><p>Si os habéis fijado en los logs o en el archivo de configuración, el maestro está sirviendo una web en <a href=https://localhost:8010/ target=_blank rel="noopener noreffer">https://localhost:8010/</a>. Lo primero que haremos será <em>LogIn</em>. Como no lo hemos modificado en el archivo de configuración, bastará con usar <strong>pyflakes/pyflakes</strong> (si dudáis, mirad la sección de autenticación del archivo <code>master.cfg</code>).</p><p>Una vez autenticados, podemos irnos a la sección &ldquo;<em>Waterfall</em>&rdquo; y pulsar sobre &ldquo;<strong>runtests</strong>&rdquo;. Eso nos mostrará la página de ejecución de tests, donde está todo configurado. Basta pulsar el botón &ldquo;<strong>Force Build</strong>&rdquo;. Y, si todo es correcto, debería haberse ejecutado la batería de pruebas.</p><p>La ventana más útil para ver resultados es la de <em>Waterfall</em>. A partir de ahí no os costará mucho navegar el resto.</p><figure><img src=/images/buildbot-grid.jpg alt="Buildbot grid"></figure><h2 id=comparativa-entre-buildbot-y-jenkins>Comparativa entre BuildBot y Jenkins</h2><p>A menudo las comparativas son odiosas. Éste es uno de esos casos. No se puede decir que uno sea mejor que el otro, pero sí que cada cual tiene sus puntos fuertes.</p><p>Voy a exponer algunas de estas ventajas de cada uno.</p><h3 id=guardando-las-configuraciones>Guardando las configuraciones</h3><p>Ambos utilizan una base de datos para almacenar los resultados. Sin embargo, la forma de guardar las configuraciones de los trabajos es completamente diferente: Jenkins utiliza archivos XML, mientras que BuildBot utiliza un único archivo Python.</p><p>Dado que los archivos de Jenkins no se modificarán a mano, sino utilizando la GUI, resultará dificil mantenerlos en un sistema de control de versiones. Sin embargo, resulta muy sencillo hacerlo con BuildBot.</p><h3 id=configuraciones-cambiantes>Configuraciones cambiantes</h3><p>Si tenemos configuraciones que cambian mucho, entonces es mejor no utilizar BuildBot. En BuildBot las configuraciones son estáticas y se requiere un reinicio del maestro para aplicar los cambios. Por esa razón, en estos casos es mejor utilizar Jenkins.</p><p>Si lo único que va a cambiar son algunos parámetros, entonces sí podemos plantearnos usar BuildBot.</p><h3 id=try>Try</h3><p>BuildBot tiene una característica que Jenkins no tiene: el <strong>try</strong>. Sirve para &ldquo;<em>intentar</em>&rdquo; una build, de manera que coja los cambios locales, aunque no estén en el repositorio, e intente realizar una build con ellos. Esta característica puede resultar de mucha utilidad cuando se quieren probar situaciones que pueden no funcionar correctamente o para probar el propio sistema de CI.</p><h3 id=bonito>Bonito</h3><p>Indiscutiblemente, Jenkins es mucho más bonito que BuildBot. Han cuidado mucho más la interfaz.</p><p>Además, BuildBot ofrece los resultados sin más, mientras que Jenkins permite procesarlos y presentarlos con una interfaz más bonita.</p><h3 id=ampliable>Ampliable</h3><p>Jenkins permite la fácil ampliación mediante la creación de <em>plug-ins</em>. Estas extensiones requieren conocimientos de Java, <a href=https://commons.apache.org/jelly/ target=_blank rel="noopener noreffer">Jelly</a> y, probablemente, un poco de Groovy, además de conocer la API.</p><p>Con BuildBot es probable que no necesitemos de ampliaciones, ya que se puede programar sobre la propia build. En caso de necesitarlas, basta con escribir el programa Python adecuado. Para ello, podemos basarnos en el propio código de la clase de la que heredaremos.</p><p>Para algunas cosas, será más sencillo el sistema de Jenkins. Para otras, el de BuildBot.</p><h3 id=rápido>Rápido</h3><p>Jenkins tarda más de un minuto en reiniciarse. BuildBot breves segundos.</p><p>Tras un reinicio, Jenkins pierde el control de los esclavos: no sabe si están ejecutando algo, así que es probable que los trate como desocupados. Esto puede producir que fallen tanto el trabajo en curso como el nuevo. En el caso de que no lance un nuevo trabajo, Jenkins ignorará los resultados del trabajo en curso, por lo que se habrá perdido irremediablemente.</p><p>Con BuildBot también se pierde la ejecución en curso. Además, cuando recupera el contacto con el esclavo, relanzará la build que estaba a medias. Sin embargo, el maestro reinicia al esclavo, evitando que haya dos instancias del esclavo corriendo simultáneamente.</p><p>La documentación de Jenkins es extensa, pero entrar en el código suele ser complejo. La documentación de BuildBot es bastante buena, aunque la página web está desactualizada: recomiendo descargarse el código y leer la documentación directamente de allí (formato <em>sphinx</em>, que podéis compilar en vuestras máquinas). De todas maneras, es código Python, que suele ser bastante legible.</p><h3 id=api>API</h3><p>Jenkins tiene API en formatos JSON y XML. Además, ofrece un cliente java bastante potente.</p><p>BuildBot tiene API en formato JSON. Es algo más sencilla, pero es normal: la mayor parte de las cosas que queremos hacer estarán escritas en python, en el archivo de configuración.</p><p>Jenkins, además, ofrece una interfaz Groovy, sólo disponible para administradores. Sobre esta interfaz debo prevenir que es peligrosa: un descuido en una condición y puedes renombrar todos los trabajos en curso; un <code>System.exit</code>, y se apagará el servidor.</p><h2 id=otras-opciones>Otras opciones</h2><p>No son las dos únicas opciones disponibles. Existen muchas otras, de libre disposición, como <a href=https://cruisecontrol.sourceforge.net/ target=_blank rel="noopener noreffer">CruiseControl</a>, <a href=https://jenkins-ci.org/ target=_blank rel="noopener noreffer">Jenkins</a>, <a href=https://buildbot.net/ target=_blank rel="noopener noreffer">BuildBot</a>, <a href=https://gump.apache.org/ target=_blank rel="noopener noreffer">Apache Gump</a> o <a href=https://continuum.apache.org/ target=_blank rel="noopener noreffer">Apache Continuum</a>. También hay aplicaciones propietarias, como <a href=https://www.atlassian.com/es/software/bamboo/overview target=_blank rel="noopener noreffer">Bamboo</a> o <a href=https://en.wikipedia.org/wiki/Azure_DevOps_Server target=_blank rel="noopener noreffer">Team Foundation Server</a>.</p><p>Otro ejemplo es <a href=https://travis-ci.org/ target=_blank rel="noopener noreffer">Travis-CI</a>. En este caso, nos venden el servicio, ya que no resulta sencillo encontrar información sobre cómo instalárnoslo. Aún así, es software libre y el código está disponible.</p><p>Como véis, todas estas sólo las mencionaré, ya que nunca las he utilizado. Hay muchas otras. Tan sólo tenéis que elegir una y comenzar a usarla.</p><h2 id=en-producción>En producción</h2><p>Y como no hay nada mejor que un ejemplo, podéis visitar los <em>waterfall</em> de gente que ya lo está usando:</p><ul><li><a href=https://builder.blender.org/waterfall target=_blank rel="noopener noreffer">Blender</a></li><li><a href=https://chromium-build.appspot.com/p/chromium/console target=_blank rel="noopener noreffer">Chromium</a></li><li><a href=https://build.gnome.org/ target=_blank rel="noopener noreffer">Gnome</a></li><li><a href=https://buildbot.python.org/all/waterfall target=_blank rel="noopener noreffer">Python</a></li></ul><h2 id=y-fin>Y fin</h2><p>Realmente las condiciones para utilizar cualquier sistema de integración contínua son las mismas: <strong>deben existir pruebas</strong> y <strong>debe ser fácil de desplegar</strong>.</p><p>La elección de un buen servidor de integración contínua es importante. Al principio será más un estorbo que otra cosa, pero poco a poco termina transformándose en un servicio crítico que, cuando está parado, la empresa no avanza.</p><p>Puede parecer exagerado, pero la dependencia con el mismo es importante: termina siendo el <em>juez supremo</em> de nuestros cambios. Si el servidor de CI no lo aprueba, nuestros cambios no se aplican. Da igual cómo nos defendamos o cómo queramos interpretarlo: si no hay verde, nuestro trabajo no está terminado.</p><p>Además, un buen servidor de CI nos permitirá recoger estadísticas de uso, de manera que podamos optimizar el proceso. Será interesante evaluar la posibilidad de lanzar varios hilos, comprar más hardware (más esclavos), evaluar el impacto de un cambio, comprobar el estilo de nuestro código, etc.</p><p>Elegid uno, y usadlo.</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Actualizado el 28 Jan 2021</span></div></div><div class=post-info-line><div class=post-info-md></div><div class=post-info-share><span><a href=javascript:void(0); title="Compartir en Twitter" data-sharer=twitter data-url=/blog/buildbot/ data-title="Integración contínua: BuildBot" data-via=magmax_en data-hashtags="testing,agile,continuous integration,buildbot"><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Compartir en Facebook" data-sharer=facebook data-url=/blog/buildbot/ data-hashtag=testing><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Compartir en Linkedin" data-sharer=linkedin data-url=/blog/buildbot/><i class="fab fa-linkedin fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Compartir en WhatsApp" data-sharer=whatsapp data-url=/blog/buildbot/ data-title="Integración contínua: BuildBot" data-web><i class="fab fa-whatsapp fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Compartir en Tumblr" data-sharer=tumblr data-url=/blog/buildbot/ data-title="Integración contínua: BuildBot" data-caption="Primeros pasos utilizando Buildbot" data-tags="testing,agile,continuous integration,buildbot"><i class="fab fa-tumblr fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Compartir en Reddit" data-sharer=reddit data-url=/blog/buildbot/><i class="fab fa-reddit fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Compartir en Instapaper" data-sharer=instapaper data-url=/blog/buildbot/ data-title="Integración contínua: BuildBot" data-description="Primeros pasos utilizando Buildbot"><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/instapaper.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Compartir en 微博" data-sharer=weibo data-url=/blog/buildbot/ data-title="Integración contínua: BuildBot"><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Compartir en Blogger" data-sharer=blogger data-url=/blog/buildbot/ data-title="Integración contínua: BuildBot" data-description="Primeros pasos utilizando Buildbot"><i class="fab fa-blogger fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw" aria-hidden=true></i>&nbsp;<a href=/tags/testing/>Testing</a>,&nbsp;<a href=/tags/agile/>Agile</a>,&nbsp;<a href=/tags/continuous-integration/>Continuous Integration</a>,&nbsp;<a href=/tags/buildbot/>Buildbot</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Regresar</a></span>&nbsp;|&nbsp;<span><a href=/>Inicio</a></span></section></div><div class=post-nav><a href=/blog/jenkins/ class=prev rel=prev title="Integración continua: Jenkins"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>Integración continua: Jenkins</a>
+<a href=/blog/mea-culpa/ class=next rel=next title="Entonando el 'Mea Culpa'">Entonando el 'Mea Culpa'<i class="fas fa-angle-right fa-fw" aria-hidden=true></i></a></div></div><div id=comments><div id=disqus_thread class=comment></div><noscript>Please enable JavaScript to view the comments powered by <a href=https://disqus.com/?ref_noscript>Disqus</a>.</noscript></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>Con la tecnología de <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.135.0">Hugo</a> | Tema - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i> LoveIt</a></div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2022 - 2024</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>Miguel Ángel</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Volver arriba"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="Ver comentarios"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css><script type=text/javascript src=https://magmax.disqus.com/embed.js defer></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/copy-tex.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copiar al portapapeles",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1}}</script><script type=text/javascript src=/js/theme.min.js></script><script type=text/javascript>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-X5FEBMGR06",{anonymize_ip:!0})</script><script type=text/javascript src="https://www.googletagmanager.com/gtag/js?id=G-X5FEBMGR06" async></script></body></html>

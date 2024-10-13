@@ -1,444 +1,194 @@
-<!DOCTYPE html>
-<html lang="es">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <title>Ajax, principios básicos - El blog de MagMax</title><meta name="Description" content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ..."><meta property="og:title" content="Ajax, principios básicos" />
-<meta property="og:description" content="Todo el mundo habla de Ajax, pero&hellip; ¿qué es esta nueva y revolucionaria teconología?
-Realmente es una técnica para sustituir una parte de nuestra página web por datos obtenidos del servidor. Conviene no equivocarse: sustituir una parte de nuestra página web por otros datos es JavaScript; lo que incorpora Ajax es la posibilidad de que esos datos se obtengan del servidor." />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://magmax.org/blog/ajax-principios-basicos/" /><meta property="og:image" content="https://magmax.org/icons/favicon.png"/><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2011-08-22T00:00:00+00:00" />
-<meta property="article:modified_time" content="2021-01-28T00:00:00+00:00" /><meta property="og:site_name" content="My cool site" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://magmax.org/icons/favicon.png"/>
-
-<meta name="twitter:title" content="Ajax, principios básicos"/>
-<meta name="twitter:description" content="Todo el mundo habla de Ajax, pero&hellip; ¿qué es esta nueva y revolucionaria teconología?
-Realmente es una técnica para sustituir una parte de nuestra página web por datos obtenidos del servidor. Conviene no equivocarse: sustituir una parte de nuestra página web por otros datos es JavaScript; lo que incorpora Ajax es la posibilidad de que esos datos se obtengan del servidor."/>
-<meta name="application-name" content="My cool site">
-<meta name="apple-mobile-web-app-title" content="My cool site"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://magmax.org/blog/ajax-principios-basicos/" /><link rel="prev" href="https://magmax.org/blog/django-tests/" /><link rel="next" href="https://magmax.org/blog/tarta-queso/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
-        "headline": "Ajax, principios básicos",
-        "inLanguage": "es",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "https:\/\/magmax.org\/blog\/ajax-principios-basicos\/"
-        },"genre": "posts","keywords": "javascript, ajax","wordcount":  955 ,
-        "url": "https:\/\/magmax.org\/blog\/ajax-principios-basicos\/","datePublished": "2011-08-22T00:00:00+00:00","dateModified": "2021-01-28T00:00:00+00:00","publisher": {
-            "@type": "Organization",
-            "name": ""},"author": {
-                "@type": "Person",
-                "name": "Miguel Ángel"
-            },"description": ""
-    }
-    </script></head>
-    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
-
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
-    <div class="header-wrapper">
-        <div class="header-title">
-            <a href="/" title="El blog de MagMax"><img
-        class="lazyload logo"
-        src="/svg/loading.min.svg"
-        data-src="/icons/favicon.png"
-        data-srcset="/icons/favicon.png, /icons/favicon.png 1.5x, /icons/favicon.png 2x"
-        data-sizes="auto"
-        alt="/icons/favicon.png"
-        title="/icons/favicon.png" />MagMax Blog</a>
-        </div>
-        <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/"> Inicio </a><a class="menu-item" href="/posts"> Posts </a><a class="menu-item" href="/tags"> Tags </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Cambia el tema">
-                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-                </a><a href="javascript:void(0);" class="menu-item language" title="Selecciona el lenguage">
-                    <i class="fa fa-globe" aria-hidden="true"></i>                      
-                    <select class="language-select" id="language-select-desktop" onchange="location = this.value;"><option value="/blog/ajax-principios-basicos/" selected>Español</option></select>
-                </a></div>
-        </div>
-    </div>
-</header><header class="mobile" id="header-mobile">
-    <div class="header-container">
-        <div class="header-wrapper">
-            <div class="header-title">
-                <a href="/" title="El blog de MagMax"><img
-        class="lazyload logo"
-        src="/svg/loading.min.svg"
-        data-src="/icons/favicon.png"
-        data-srcset="/icons/favicon.png, /icons/favicon.png 1.5x, /icons/favicon.png 2x"
-        data-sizes="auto"
-        alt="/icons/favicon.png"
-        title="/icons/favicon.png" />MagMax Blog</a>
-            </div>
-            <div class="menu-toggle" id="menu-toggle-mobile">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <div class="menu" id="menu-mobile"><a class="menu-item" href="/" title="">Inicio</a><a class="menu-item" href="/posts" title="">Posts</a><a class="menu-item" href="/tags" title="">Tags</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Cambia el tema">
-                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-            </a><a href="javascript:void(0);" class="menu-item" title="Selecciona el lenguage">
-                    <i class="fa fa-globe fa-fw" aria-hidden="true"></i>
-                    <select class="language-select" onchange="location = this.value;"><option value="/blog/ajax-principios-basicos/" selected>Español</option></select>
-                </a></div>
-    </div>
-</header><main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">Contenido</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Ajax, principios básicos</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel="author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>Miguel Ángel</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="22 Aug 2011">22 Aug 2011</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;955 palabras&nbsp;
-                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;5 minutos&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  data-kept="">
-                <div class="details-summary toc-title">
-                    <span>Contenido</span>
-                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
-                </div>
-                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
-  <ul>
-    <li><a href="#palabrotas-básicas">Palabrotas básicas</a></li>
-    <li><a href="#sustitución-de-objetos-en-el-dom">Sustitución de objetos en el DOM</a></li>
-    <li><a href="#herramientas-proporcionadas-por-ajax">Herramientas proporcionadas por AJAX</a></li>
-    <li><a href="#creando-un-objeto-xmlhttprequest">Creando un objeto XMLHttpRequest</a>
-      <ul>
-        <li><a href="#ejemplo-básico">Ejemplo básico</a>
-          <ul>
-            <li><a href="#un-poquito-de-por-favor">Un poquito de por favor!!!</a></li>
-          </ul>
-        </li>
-        <li><a href="#comunicaciones-asíncronas">Comunicaciones asíncronas</a></li>
-      </ul>
-    </li>
-  </ul>
-</nav></div>
-            </div><div class="content" id="content"><p>Todo el mundo habla de Ajax, pero&hellip; ¿qué es esta nueva y revolucionaria teconología?</p>
-<p>Realmente es una técnica para sustituir una parte de nuestra página web por datos obtenidos del servidor. Conviene no equivocarse: sustituir una parte de nuestra página web por otros datos es JavaScript; lo que incorpora Ajax es la posibilidad de que esos datos se obtengan del servidor.</p>
-<figure><img src="/images/html_css.png"
-         alt="HTML"/>
-</figure>
-
-<h2 id="palabrotas-básicas">Palabrotas básicas</h2>
-<p>Cuando hablamos de una página HTML entendemos un archivo con extensión HTML y un montón de &ldquo;tags&rdquo;. Al hablar de Ajax no queda más remedio que referirnos al DOM, que consiste en la representación interna que tiene el Browser del archivo HTML que estamos mostrando.</p>
-<p>La diferencia fundamental es que un archivo HTML es muy probable que no cambie en circunstancias normales. El DOM puede evolucionar dinámicamente. Además, cuando el resultado lo genera un servlet o servicio, es probable que el archivo HTML ni siquiera exista como tal, sino que se ha construido de forma dinámica.</p>
-<h2 id="sustitución-de-objetos-en-el-dom">Sustitución de objetos en el DOM</h2>
-<p>Sustituir unos datos en el DOM por otros es algo muy sencillo:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl">      <span class="kd">function</span> <span class="nx">sustituye</span><span class="p">(</span><span class="nx">param</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="kd">var</span> <span class="nx">mensaje</span> <span class="o">=</span> <span class="s2">&#34;Ha elegido: &#34;</span> <span class="o">+</span> <span class="nx">param</span><span class="p">.</span><span class="nx">options</span><span class="p">[</span><span class="nx">param</span><span class="p">.</span><span class="nx">selectedIndex</span><span class="p">].</span><span class="nx">value</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&#34;mensaje&#34;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">mensaje</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">      <span class="p">};</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>Como véis, basta con obtener el elemento (&ldquo;document.getElementById&rdquo;) y asignar un valor a su propiedad innerHTML. Y ya está :D</p>
-<p>Esto es un poquitín de JavaScript, pero nada de Ajax.</p>
-<h2 id="herramientas-proporcionadas-por-ajax">Herramientas proporcionadas por AJAX</h2>
-<p>Ajax incorpora una clase a nuestro repertorio JavaScript. Esta clase es
-<code>XMLHttpRequest</code>, que tiene 2 métodos principales:</p>
-<ul>
-<li><code>open(método, ruta, asíncrono)</code>, que abre una conexión</li>
-<li><code>send()</code>, que envía una petición</li>
-</ul>
-<p>También tiene tres atributos muy interesantes, que son:</p>
-<ul>
-<li><code>onreadystatechange</code>, que permite establecer la acción asíncrona a realizar (luego lo vemos)</li>
-<li><code>readyState</code>, que nos permite comprobar en qué estado se encuentra nuestra petición.</li>
-<li><code>responseText</code>, donde se devolverá la respuesta del servidor</li>
-</ul>
-<p>Y eso es casi todo Ajax. Es probable que no necesitéis nada más.</p>
-<h2 id="creando-un-objeto-xmlhttprequest">Creando un objeto XMLHttpRequest</h2>
-<p>Para crear un objeto <code>XMLHttpRequest</code> basta con hacer:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="nx">xmlhttp</span><span class="o">=</span><span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>Pero nuestros &ldquo;amigos&rdquo; de Microsoft, siempre innovadores, nos complican un poquito la creación de un objeto XMLHttpRequest, ya que en IE5 y 6 la cosa cambia mucho. Por eso recomiendo el uso de una función como ésta:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kd">function</span> <span class="nx">getAjaxObject</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">      <span class="kd">var</span> <span class="nx">xmlhttp</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">XMLHttpRequest</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">      <span class="p">{</span><span class="c1">// code for IE7+, Firefox, Chrome, Opera, Safari
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>         <span class="nx">xmlhttp</span><span class="o">=</span><span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
-</span></span><span class="line"><span class="cl">      <span class="p">}</span>
-</span></span><span class="line"><span class="cl">      <span class="k">else</span>
-</span></span><span class="line"><span class="cl">      <span class="p">{</span><span class="c1">// code for IE6, IE5
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>         <span class="nx">xmlhttp</span><span class="o">=</span><span class="k">new</span> <span class="nx">ActiveXObject</span><span class="p">(</span><span class="s2">&#34;Microsoft.XMLHTTP&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">      <span class="p">}</span>
-</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="nx">xmlhttp</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">};</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>De esta manera tendremos un constructor adecuado a nuestro navegador.</p>
-<h3 id="ejemplo-básico">Ejemplo básico</h3>
-<p>Ya sabemos todo lo que necesitamos. Vamos a construir un ejemplo.</p>
-<p>Va a ser muy sencillo: un combobox que, al seleccionar una provincia, mostrará algunos pueblos. Por no liarlo, tendremos dos provincias y 4 pueblos cada una.</p>
-<p>Vamos primero con el HTML con el que sustituiremos una zona de nuestro DOM:</p>
-<p>Archivo <code>ciudadreal.html</code>:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl">Seleccione población:
-</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">select</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;poblacion&#34;</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">option</span><span class="p">&gt;</span>Ciudad Real<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">option</span><span class="p">&gt;</span>Miguelturra<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">option</span><span class="p">&gt;</span>Malagón<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">option</span><span class="p">&gt;</span>Tomelloso<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">select</span><span class="p">&gt;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>Archivo <code>toledo.html</code>:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl">Seleccione población:
-</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">select</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;poblacion&#34;</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">option</span><span class="p">&gt;</span>Toledo<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">option</span><span class="p">&gt;</span>Sonseca<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">option</span><span class="p">&gt;</span>Torrijos<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">option</span><span class="p">&gt;</span>Talavera<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">select</span><span class="p">&gt;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>Y ahora vamos con el principal (index.html, por ejemplo):</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Ejemplo Ajax<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl">      <span class="kd">function</span> <span class="nx">getAjaxObject</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">      <span class="kd">var</span> <span class="nx">xmlhttp</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">XMLHttpRequest</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">      <span class="p">{</span><span class="c1">// code for IE7+, Firefox, Chrome, Opera, Safari
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>         <span class="nx">xmlhttp</span><span class="o">=</span><span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
-</span></span><span class="line"><span class="cl">      <span class="p">}</span>
-</span></span><span class="line"><span class="cl">      <span class="k">else</span>
-</span></span><span class="line"><span class="cl">      <span class="p">{</span><span class="c1">// code for IE6, IE5
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>         <span class="nx">xmlhttp</span><span class="o">=</span><span class="k">new</span> <span class="nx">ActiveXObject</span><span class="p">(</span><span class="s2">&#34;Microsoft.XMLHTTP&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">      <span class="p">}</span>
-</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="nx">xmlhttp</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">      <span class="p">};</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">      <span class="kd">function</span> <span class="nx">provinciaModificada</span><span class="p">(</span><span class="nx">param</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="kd">var</span> <span class="nx">address</span> <span class="o">=</span>  <span class="nx">param</span><span class="p">.</span><span class="nx">options</span><span class="p">[</span><span class="nx">param</span><span class="p">.</span><span class="nx">selectedIndex</span><span class="p">].</span><span class="nx">value</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="nx">conn</span> <span class="o">=</span> <span class="nx">getAjaxObject</span><span class="p">();</span>
-</span></span><span class="line"><span class="cl">        <span class="nx">conn</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s2">&#34;GET&#34;</span><span class="p">,</span> <span class="nx">address</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="nx">conn</span><span class="p">.</span><span class="nx">send</span><span class="p">();</span>
-</span></span><span class="line"><span class="cl">        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&#34;lugar&#34;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">responseText</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">      <span class="p">};</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
-</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h4 id="un-poquito-de-por-favor">Un poquito de por favor!!!</h4>
-<p>Vale, no os asustéis, que tampoco es tanto :D</p>
-<p>Olvidemos el JavaScript por un momento. Los puntos calientes son la operación
-<code>onChange</code> del <code>select</code> y también el <code>div</code> de nombre &ldquo;provincia&rdquo;. Todo lo demás es HTML estándar y no hay mucho que contar.</p>
-<p>Con esas instrucciones sabemos que cuando cambie el <code>select</code> se debe llamar a la
+<!doctype html><html lang=es><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content="noodp"><title>Ajax, principios básicos - El blog de MagMax</title><meta name=Description content="El blog de un Ingeniero Informático: tutoriales, manuales, opiniones, comparativas, ..."><meta property="og:url" content="/blog/ajax-principios-basicos/">
+<meta property="og:site_name" content="El blog de MagMax"><meta property="og:title" content="Ajax, principios básicos"><meta property="og:description" content="Todo el mundo habla de Ajax, pero… ¿qué es esta nueva y revolucionaria teconología?
+Realmente es una técnica para sustituir una parte de nuestra página web por datos obtenidos del servidor. Conviene no equivocarse: sustituir una parte de nuestra página web por otros datos es JavaScript; lo que incorpora Ajax es la posibilidad de que esos datos se obtengan del servidor."><meta property="og:locale" content="es"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2011-08-22T00:00:00+00:00"><meta property="article:modified_time" content="2021-01-28T00:00:00+00:00"><meta property="article:tag" content="Javascript"><meta property="article:tag" content="Ajax"><meta property="og:image" content="/icons/favicon.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:image content="/icons/favicon.png"><meta name=twitter:title content="Ajax, principios básicos"><meta name=twitter:description content="Todo el mundo habla de Ajax, pero… ¿qué es esta nueva y revolucionaria teconología?
+Realmente es una técnica para sustituir una parte de nuestra página web por datos obtenidos del servidor. Conviene no equivocarse: sustituir una parte de nuestra página web por otros datos es JavaScript; lo que incorpora Ajax es la posibilidad de que esos datos se obtengan del servidor."><meta name=twitter:site content="@magmax_en"><meta name=application-name content="My cool site"><meta name=apple-mobile-web-app-title content="My cool site"><meta name=theme-color content="#ffffff"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=manifest href=/site.webmanifest><link rel=canonical href=/blog/ajax-principios-basicos/><link rel=prev href=/blog/django-tests/><link rel=next href=/blog/tarta-queso/><link rel=stylesheet href=/css/style.min.css><link rel=preload href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css></noscript><link rel=preload href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css as=style onload='this.onload=null,this.rel="stylesheet"'><noscript><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css></noscript><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Ajax, principios básicos","inLanguage":"es","mainEntityOfPage":{"@type":"WebPage","@id":"\/blog\/ajax-principios-basicos\/"},"genre":"posts","keywords":"javascript, ajax","wordcount":955,"url":"\/blog\/ajax-principios-basicos\/","datePublished":"2011-08-22T00:00:00+00:00","dateModified":"2021-01-28T00:00:00+00:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"Miguel Ángel"},"description":""}</script></head><body data-header-desktop=fixed data-header-mobile=auto><script type=text/javascript>(window.localStorage&&localStorage.getItem("theme")?localStorage.getItem("theme")==="dark":"auto"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"auto"==="dark")&&document.body.setAttribute("theme","dark")</script><div id=mask></div><div class=wrapper><header class=desktop id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="El blog de MagMax"><img class="lazyload logo" src=/svg/loading.min.svg data-src=/icons/favicon.png data-srcset="/icons/favicon.png, /icons/favicon.png 1.5x, /icons/favicon.png 2x" data-sizes=auto alt=/icons/favicon.png title=/icons/favicon.png>MagMax Blog</a></div><div class=menu><div class=menu-inner><a class=menu-item href=/>Inicio </a><a class=menu-item href=/posts>Posts </a><a class=menu-item href=/tags>Tags </a><span class="menu-item delimiter"></span><a href=javascript:void(0); class="menu-item theme-switch" title="Cambia el tema">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="menu-item language" title="Selecciona el lenguage"><i class="fa fa-globe" aria-hidden=true></i>
+<select class=language-select id=language-select-desktop onchange="location=this.value"><option value=/blog/ajax-principios-basicos/ selected>Español</option></select></a></div></div></div></header><header class=mobile id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="El blog de MagMax"><img class="lazyload logo" src=/svg/loading.min.svg data-src=/icons/favicon.png data-srcset="/icons/favicon.png, /icons/favicon.png 1.5x, /icons/favicon.png 2x" data-sizes=auto alt=/icons/favicon.png title=/icons/favicon.png>MagMax Blog</a></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><div class=menu id=menu-mobile><a class=menu-item href=/ title>Inicio</a><a class=menu-item href=/posts title>Posts</a><a class=menu-item href=/tags title>Tags</a><a href=javascript:void(0); class="menu-item theme-switch" title="Cambia el tema">
+<i class="fas fa-adjust fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class=menu-item title="Selecciona el lenguage"><i class="fa fa-globe fa-fw" aria-hidden=true></i>
+<select class=language-select onchange="location=this.value"><option value=/blog/ajax-principios-basicos/ selected>Español</option></select></a></div></div></header><main class=main><div class=container><div class=toc id=toc-auto><h2 class=toc-title>Contenido</h2><div class=toc-content id=toc-content-auto></div></div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Ajax, principios básicos</h1><div class=post-meta><div class=post-meta-line><span class=post-author><a href=/ title=Author rel=author class=author><i class="fas fa-user-circle fa-fw" aria-hidden=true></i>Miguel Ángel</a></span></div><div class=post-meta-line><i class="far fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime="22 Aug 2011">22 Aug 2011</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden=true></i>&nbsp;955 palabras&nbsp;
+<i class="far fa-clock fa-fw" aria-hidden=true></i>&nbsp;5 minutos&nbsp;</div></div><div class="details toc" id=toc-static data-kept><div class="details-summary toc-title"><span>Contenido</span>
+<span><i class="details-icon fas fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#palabrotas-básicas>Palabrotas básicas</a></li><li><a href=#sustitución-de-objetos-en-el-dom>Sustitución de objetos en el DOM</a></li><li><a href=#herramientas-proporcionadas-por-ajax>Herramientas proporcionadas por AJAX</a></li><li><a href=#creando-un-objeto-xmlhttprequest>Creando un objeto XMLHttpRequest</a><ul><li><a href=#ejemplo-básico>Ejemplo básico</a><ul><li><a href=#un-poquito-de-por-favor>Un poquito de por favor!!!</a></li></ul></li><li><a href=#comunicaciones-asíncronas>Comunicaciones asíncronas</a></li></ul></li></ul></nav></div></div><div class=content id=content><p>Todo el mundo habla de Ajax, pero&mldr; ¿qué es esta nueva y revolucionaria teconología?</p><p>Realmente es una técnica para sustituir una parte de nuestra página web por datos obtenidos del servidor. Conviene no equivocarse: sustituir una parte de nuestra página web por otros datos es JavaScript; lo que incorpora Ajax es la posibilidad de que esos datos se obtengan del servidor.</p><figure><img src=/images/html_css.png alt=HTML></figure><h2 id=palabrotas-básicas>Palabrotas básicas</h2><p>Cuando hablamos de una página HTML entendemos un archivo con extensión HTML y un montón de &ldquo;tags&rdquo;. Al hablar de Ajax no queda más remedio que referirnos al DOM, que consiste en la representación interna que tiene el Browser del archivo HTML que estamos mostrando.</p><p>La diferencia fundamental es que un archivo HTML es muy probable que no cambie en circunstancias normales. El DOM puede evolucionar dinámicamente. Además, cuando el resultado lo genera un servlet o servicio, es probable que el archivo HTML ni siquiera exista como tal, sino que se ha construido de forma dinámica.</p><h2 id=sustitución-de-objetos-en-el-dom>Sustitución de objetos en el DOM</h2><p>Sustituir unos datos en el DOM por otros es algo muy sencillo:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-html data-lang=html><span class=line><span class=cl><span class=p>&lt;</span><span class=nt>html</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=p>&lt;</span><span class=nt>head</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nt>script</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>      <span class=kd>function</span> <span class=nx>sustituye</span><span class=p>(</span><span class=nx>param</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>var</span> <span class=nx>mensaje</span> <span class=o>=</span> <span class=s2>&#34;Ha elegido: &#34;</span> <span class=o>+</span> <span class=nx>param</span><span class=p>.</span><span class=nx>options</span><span class=p>[</span><span class=nx>param</span><span class=p>.</span><span class=nx>selectedIndex</span><span class=p>].</span><span class=nx>value</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=nb>document</span><span class=p>.</span><span class=nx>getElementById</span><span class=p>(</span><span class=s2>&#34;mensaje&#34;</span><span class=p>).</span><span class=nx>innerHTML</span> <span class=o>=</span> <span class=nx>mensaje</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;/</span><span class=nt>script</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>&lt;/</span><span class=nt>head</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=nt>body</span><span class=p>&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>Como véis, basta con obtener el elemento (&ldquo;document.getElementById&rdquo;) y asignar un valor a su propiedad innerHTML. Y ya está :D</p><p>Esto es un poquitín de JavaScript, pero nada de Ajax.</p><h2 id=herramientas-proporcionadas-por-ajax>Herramientas proporcionadas por AJAX</h2><p>Ajax incorpora una clase a nuestro repertorio JavaScript. Esta clase es
+<code>XMLHttpRequest</code>, que tiene 2 métodos principales:</p><ul><li><code>open(método, ruta, asíncrono)</code>, que abre una conexión</li><li><code>send()</code>, que envía una petición</li></ul><p>También tiene tres atributos muy interesantes, que son:</p><ul><li><code>onreadystatechange</code>, que permite establecer la acción asíncrona a realizar (luego lo vemos)</li><li><code>readyState</code>, que nos permite comprobar en qué estado se encuentra nuestra petición.</li><li><code>responseText</code>, donde se devolverá la respuesta del servidor</li></ul><p>Y eso es casi todo Ajax. Es probable que no necesitéis nada más.</p><h2 id=creando-un-objeto-xmlhttprequest>Creando un objeto XMLHttpRequest</h2><p>Para crear un objeto <code>XMLHttpRequest</code> basta con hacer:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-javascript data-lang=javascript><span class=line><span class=cl><span class=nx>xmlhttp</span><span class=o>=</span><span class=k>new</span> <span class=nx>XMLHttpRequest</span><span class=p>();</span>
+</span></span></code></pre></td></tr></table></div></div><p>Pero nuestros &ldquo;amigos&rdquo; de Microsoft, siempre innovadores, nos complican un poquito la creación de un objeto XMLHttpRequest, ya que en IE5 y 6 la cosa cambia mucho. Por eso recomiendo el uso de una función como ésta:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-javascript data-lang=javascript><span class=line><span class=cl><span class=kd>function</span> <span class=nx>getAjaxObject</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=kd>var</span> <span class=nx>xmlhttp</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=k>if</span> <span class=p>(</span><span class=nb>window</span><span class=p>.</span><span class=nx>XMLHttpRequest</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>      <span class=p>{</span><span class=c1>// code for IE7+, Firefox, Chrome, Opera, Safari
+</span></span></span><span class=line><span class=cl><span class=c1></span>         <span class=nx>xmlhttp</span><span class=o>=</span><span class=k>new</span> <span class=nx>XMLHttpRequest</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>      <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=k>else</span>
+</span></span><span class=line><span class=cl>      <span class=p>{</span><span class=c1>// code for IE6, IE5
+</span></span></span><span class=line><span class=cl><span class=c1></span>         <span class=nx>xmlhttp</span><span class=o>=</span><span class=k>new</span> <span class=nx>ActiveXObject</span><span class=p>(</span><span class=s2>&#34;Microsoft.XMLHTTP&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>      <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=k>return</span> <span class=nx>xmlhttp</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>};</span>
+</span></span></code></pre></td></tr></table></div></div><p>De esta manera tendremos un constructor adecuado a nuestro navegador.</p><h3 id=ejemplo-básico>Ejemplo básico</h3><p>Ya sabemos todo lo que necesitamos. Vamos a construir un ejemplo.</p><p>Va a ser muy sencillo: un combobox que, al seleccionar una provincia, mostrará algunos pueblos. Por no liarlo, tendremos dos provincias y 4 pueblos cada una.</p><p>Vamos primero con el HTML con el que sustituiremos una zona de nuestro DOM:</p><p>Archivo <code>ciudadreal.html</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-html data-lang=html><span class=line><span class=cl>Seleccione población:
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=nt>select</span> <span class=na>id</span><span class=o>=</span><span class=s>&#34;poblacion&#34;</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=p>&lt;</span><span class=nt>option</span><span class=p>&gt;</span>Ciudad Real<span class=p>&lt;/</span><span class=nt>option</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=p>&lt;</span><span class=nt>option</span><span class=p>&gt;</span>Miguelturra<span class=p>&lt;/</span><span class=nt>option</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=p>&lt;</span><span class=nt>option</span><span class=p>&gt;</span>Malagón<span class=p>&lt;/</span><span class=nt>option</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=p>&lt;</span><span class=nt>option</span><span class=p>&gt;</span>Tomelloso<span class=p>&lt;/</span><span class=nt>option</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>&lt;/</span><span class=nt>select</span><span class=p>&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>Archivo <code>toledo.html</code>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-html data-lang=html><span class=line><span class=cl>Seleccione población:
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=nt>select</span> <span class=na>id</span><span class=o>=</span><span class=s>&#34;poblacion&#34;</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=p>&lt;</span><span class=nt>option</span><span class=p>&gt;</span>Toledo<span class=p>&lt;/</span><span class=nt>option</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=p>&lt;</span><span class=nt>option</span><span class=p>&gt;</span>Sonseca<span class=p>&lt;/</span><span class=nt>option</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=p>&lt;</span><span class=nt>option</span><span class=p>&gt;</span>Torrijos<span class=p>&lt;/</span><span class=nt>option</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=p>&lt;</span><span class=nt>option</span><span class=p>&gt;</span>Talavera<span class=p>&lt;/</span><span class=nt>option</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>&lt;/</span><span class=nt>select</span><span class=p>&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><p>Y ahora vamos con el principal (index.html, por ejemplo):</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-html data-lang=html><span class=line><span class=cl><span class=p>&lt;</span><span class=nt>html</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=p>&lt;</span><span class=nt>head</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nt>title</span><span class=p>&gt;</span>Ejemplo Ajax<span class=p>&lt;/</span><span class=nt>title</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;</span><span class=nt>script</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>      <span class=kd>function</span> <span class=nx>getAjaxObject</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=kd>var</span> <span class=nx>xmlhttp</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=k>if</span> <span class=p>(</span><span class=nb>window</span><span class=p>.</span><span class=nx>XMLHttpRequest</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>      <span class=p>{</span><span class=c1>// code for IE7+, Firefox, Chrome, Opera, Safari
+</span></span></span><span class=line><span class=cl><span class=c1></span>         <span class=nx>xmlhttp</span><span class=o>=</span><span class=k>new</span> <span class=nx>XMLHttpRequest</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>      <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=k>else</span>
+</span></span><span class=line><span class=cl>      <span class=p>{</span><span class=c1>// code for IE6, IE5
+</span></span></span><span class=line><span class=cl><span class=c1></span>         <span class=nx>xmlhttp</span><span class=o>=</span><span class=k>new</span> <span class=nx>ActiveXObject</span><span class=p>(</span><span class=s2>&#34;Microsoft.XMLHTTP&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>      <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=k>return</span> <span class=nx>xmlhttp</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>      <span class=kd>function</span> <span class=nx>provinciaModificada</span><span class=p>(</span><span class=nx>param</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>var</span> <span class=nx>address</span> <span class=o>=</span>  <span class=nx>param</span><span class=p>.</span><span class=nx>options</span><span class=p>[</span><span class=nx>param</span><span class=p>.</span><span class=nx>selectedIndex</span><span class=p>].</span><span class=nx>value</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=nx>conn</span> <span class=o>=</span> <span class=nx>getAjaxObject</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=nx>conn</span><span class=p>.</span><span class=nx>open</span><span class=p>(</span><span class=s2>&#34;GET&#34;</span><span class=p>,</span> <span class=nx>address</span><span class=p>,</span> <span class=kc>false</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=nx>conn</span><span class=p>.</span><span class=nx>send</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=nb>document</span><span class=p>.</span><span class=nx>getElementById</span><span class=p>(</span><span class=s2>&#34;lugar&#34;</span><span class=p>).</span><span class=nx>innerHTML</span> <span class=o>=</span> <span class=nx>conn</span><span class=p>.</span><span class=nx>responseText</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=p>&lt;/</span><span class=nt>script</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>&lt;/</span><span class=nt>head</span><span class=p>&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>&lt;</span><span class=nt>body</span><span class=p>&gt;</span>
+</span></span></code></pre></td></tr></table></div></div><h4 id=un-poquito-de-por-favor>Un poquito de por favor!!!</h4><p>Vale, no os asustéis, que tampoco es tanto :D</p><p>Olvidemos el JavaScript por un momento. Los puntos calientes son la operación
+<code>onChange</code> del <code>select</code> y también el <code>div</code> de nombre &ldquo;provincia&rdquo;. Todo lo demás es HTML estándar y no hay mucho que contar.</p><p>Con esas instrucciones sabemos que cuando cambie el <code>select</code> se debe llamar a la
 función &ldquo;provinciaModificada&rdquo;. El identificador del <code>div</code> es para poder
-seleccionarlo después mediante <code>document.getElementById</code>.</p>
-<p>Vamos con el javascript. Lo primero es una función que nos permite obtener el objeto XMLHttpRequest independientemente del browser utilizado. Ya lo explicamos antes.</p>
-<p>Después es donde está la chicha. Lo copio de nuevo:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kd">function</span> <span class="nx">provinciaModificada</span><span class="p">(</span><span class="nx">param</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="kd">var</span> <span class="nx">address</span> <span class="o">=</span>  <span class="nx">param</span><span class="p">.</span><span class="nx">options</span><span class="p">[</span><span class="nx">param</span><span class="p">.</span><span class="nx">selectedIndex</span><span class="p">].</span><span class="nx">value</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="nx">conn</span> <span class="o">=</span> <span class="nx">getAjaxObject</span><span class="p">();</span>
-</span></span><span class="line"><span class="cl">        <span class="nx">conn</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s2">&#34;GET&#34;</span><span class="p">,</span> <span class="nx">address</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="nx">conn</span><span class="p">.</span><span class="nx">send</span><span class="p">();</span>
-</span></span><span class="line"><span class="cl">        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&#34;lugar&#34;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">responseText</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">      <span class="p">};</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>En la línea 2 obtenemos el valor seleccionado. Si miramos las opciones, veremos que los valores indican el HTML a cargar. Eso es un truco que he utilizado para facilitarme la vida.</p>
-<p>En la línea 3, obtenemos el objeto Request.</p>
-<p>En la línea 4, abrimos una conexión mediante GET (en este caso nos daba igual POST) que no es asíncrona.</p>
-<p>En la línea 5 realizamos la comunicación propiamente dicha.</p>
-<p>Finalmente, en la línea 6 sustituimos el HTML por el obtenido.</p>
-<h3 id="comunicaciones-asíncronas">Comunicaciones asíncronas</h3>
-<p>En las comunicaciones asíncronas basta con utilizar el atributo onreadystatechange:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kd">function</span> <span class="nx">provinciaModificada</span><span class="p">(</span><span class="nx">param</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="kd">var</span> <span class="nx">address</span> <span class="o">=</span>  <span class="nx">param</span><span class="p">.</span><span class="nx">options</span><span class="p">[</span><span class="nx">param</span><span class="p">.</span><span class="nx">selectedIndex</span><span class="p">].</span><span class="nx">value</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">        <span class="nx">conn</span> <span class="o">=</span> <span class="nx">getAjaxObject</span><span class="p">();</span>
-</span></span><span class="line"><span class="cl">        <span class="nx">conn</span><span class="p">.</span><span class="nx">onreadystatechange</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">          <span class="k">if</span> <span class="p">(</span><span class="nx">xmlhttp</span><span class="p">.</span><span class="nx">readyState</span><span class="o">==</span><span class="mi">4</span> <span class="o">&amp;&amp;</span> <span class="nx">xmlhttp</span><span class="p">.</span><span class="nx">status</span><span class="o">==</span><span class="mi">200</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">          <span class="p">{</span>
-</span></span><span class="line"><span class="cl">             <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s2">&#34;lugar&#34;</span><span class="p">).</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">responseText</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">          <span class="p">}</span>
-</span></span><span class="line"><span class="cl">        <span class="p">};</span>
-</span></span><span class="line"><span class="cl">        <span class="nx">conn</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="s2">&#34;GET&#34;</span><span class="p">,</span> <span class="nx">address</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">        <span class="nx">conn</span><span class="p">.</span><span class="nx">send</span><span class="p">();</span>
-</span></span><span class="line"><span class="cl">      <span class="p">};</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>No os olvidéis de cambiar el tercer parámetro del open, que ahora vale <code>true</code>.</p>
-<p>En este caso, la función se ejecutará cuando el objeto ya se haya obtenido. En nuestro caso, que es una tontería, da igual asíncrono que síncrono, pero si hay que acceder a BBDD entre medias, la diferencia puede ser crucial.</p>
-<p>Enlaces:</p>
-<p>La propia W3C proporciona un montón de ejemplos de Ajax, así como un buen tutorial.</p>
-<p>A disfrutar!!!</p></div><div class="post-footer" id="post-footer">
-    <div class="post-info">
-        <div class="post-info-line">
-            <div class="post-info-mod">
-                <span>Actualizado el 28 Jan 2021</span>
-            </div></div>
-        <div class="post-info-line">
-            <div class="post-info-md"></div>
-            <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Compartir en Twitter" data-sharer="twitter" data-url="https://magmax.org/blog/ajax-principios-basicos/" data-title="Ajax, principios básicos" data-via="magmax_en" data-hashtags="javascript,ajax"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Facebook" data-sharer="facebook" data-url="https://magmax.org/blog/ajax-principios-basicos/" data-hashtag="javascript"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Linkedin" data-sharer="linkedin" data-url="https://magmax.org/blog/ajax-principios-basicos/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en WhatsApp" data-sharer="whatsapp" data-url="https://magmax.org/blog/ajax-principios-basicos/" data-title="Ajax, principios básicos" data-web><i class="fab fa-whatsapp fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Tumblr" data-sharer="tumblr" data-url="https://magmax.org/blog/ajax-principios-basicos/" data-title="Ajax, principios básicos" data-tags="javascript,ajax"><i class="fab fa-tumblr fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Reddit" data-sharer="reddit" data-url="https://magmax.org/blog/ajax-principios-basicos/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Instapaper" data-sharer="instapaper" data-url="https://magmax.org/blog/ajax-principios-basicos/" data-title="Ajax, principios básicos" data-description=""><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/instapaper.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en 微博" data-sharer="weibo" data-url="https://magmax.org/blog/ajax-principios-basicos/" data-title="Ajax, principios básicos"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Compartir en Blogger" data-sharer="blogger" data-url="https://magmax.org/blog/ajax-principios-basicos/" data-title="Ajax, principios básicos" data-description=""><i class="fab fa-blogger fa-fw" aria-hidden="true"></i></a></span>
-            </div>
-        </div>
-    </div>
-
-    <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/javascript/">javascript</a>,&nbsp;<a href="/tags/ajax/">ajax</a></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">Regresar</a></span>&nbsp;|&nbsp;<span><a href="/">Inicio</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav"><a href="/blog/django-tests/" class="prev" rel="prev" title="Django: Test del modelo y Fixtures"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Django: Test del modelo y Fixtures</a>
-            <a href="/blog/tarta-queso/" class="next" rel="next" title="Cocina: Tarta de queso">Cocina: Tarta de queso<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
-</div>
-<div id="comments"><div id="disqus_thread" class="comment"></div><noscript>
-                Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
-            </noscript></div></article></div>
-            </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Con la tecnología de <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.119.0">Hugo</a> | Tema - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
-                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2022 - 2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">Miguel Ángel</a></span></div>
-        </div>
-    </footer></div>
-
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Volver arriba">
-                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="Ver comentarios">
-                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
-            </a>
-        </div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css"><script type="text/javascript" src="https://magmax.disqus.com/embed.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/copy-tex.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/mhchem.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copiar al portapapeles","maxShownLines":50},"comment":{},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":true,"left":"\\begin{equation}","right":"\\end{equation}"},{"display":true,"left":"\\begin{equation*}","right":"\\end{equation*}"},{"display":true,"left":"\\begin{align}","right":"\\end{align}"},{"display":true,"left":"\\begin{align*}","right":"\\end{align*}"},{"display":true,"left":"\\begin{alignat}","right":"\\end{alignat}"},{"display":true,"left":"\\begin{alignat*}","right":"\\end{alignat*}"},{"display":true,"left":"\\begin{gather}","right":"\\end{gather}"},{"display":true,"left":"\\begin{CD}","right":"\\end{CD}"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript">
-            window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
-            gtag('config', 'G-X5FEBMGR06', { 'anonymize_ip': true });
-        </script><script type="text/javascript" src="https://www.googletagmanager.com/gtag/js?id=G-X5FEBMGR06" async></script></body>
-</html>
+seleccionarlo después mediante <code>document.getElementById</code>.</p><p>Vamos con el javascript. Lo primero es una función que nos permite obtener el objeto XMLHttpRequest independientemente del browser utilizado. Ya lo explicamos antes.</p><p>Después es donde está la chicha. Lo copio de nuevo:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-javascript data-lang=javascript><span class=line><span class=cl><span class=kd>function</span> <span class=nx>provinciaModificada</span><span class=p>(</span><span class=nx>param</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>var</span> <span class=nx>address</span> <span class=o>=</span>  <span class=nx>param</span><span class=p>.</span><span class=nx>options</span><span class=p>[</span><span class=nx>param</span><span class=p>.</span><span class=nx>selectedIndex</span><span class=p>].</span><span class=nx>value</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=nx>conn</span> <span class=o>=</span> <span class=nx>getAjaxObject</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=nx>conn</span><span class=p>.</span><span class=nx>open</span><span class=p>(</span><span class=s2>&#34;GET&#34;</span><span class=p>,</span> <span class=nx>address</span><span class=p>,</span> <span class=kc>false</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=nx>conn</span><span class=p>.</span><span class=nx>send</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=nb>document</span><span class=p>.</span><span class=nx>getElementById</span><span class=p>(</span><span class=s2>&#34;lugar&#34;</span><span class=p>).</span><span class=nx>innerHTML</span> <span class=o>=</span> <span class=nx>conn</span><span class=p>.</span><span class=nx>responseText</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=p>};</span>
+</span></span></code></pre></td></tr></table></div></div><p>En la línea 2 obtenemos el valor seleccionado. Si miramos las opciones, veremos que los valores indican el HTML a cargar. Eso es un truco que he utilizado para facilitarme la vida.</p><p>En la línea 3, obtenemos el objeto Request.</p><p>En la línea 4, abrimos una conexión mediante GET (en este caso nos daba igual POST) que no es asíncrona.</p><p>En la línea 5 realizamos la comunicación propiamente dicha.</p><p>Finalmente, en la línea 6 sustituimos el HTML por el obtenido.</p><h3 id=comunicaciones-asíncronas>Comunicaciones asíncronas</h3><p>En las comunicaciones asíncronas basta con utilizar el atributo onreadystatechange:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-javascript data-lang=javascript><span class=line><span class=cl><span class=kd>function</span> <span class=nx>provinciaModificada</span><span class=p>(</span><span class=nx>param</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>var</span> <span class=nx>address</span> <span class=o>=</span>  <span class=nx>param</span><span class=p>.</span><span class=nx>options</span><span class=p>[</span><span class=nx>param</span><span class=p>.</span><span class=nx>selectedIndex</span><span class=p>].</span><span class=nx>value</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=nx>conn</span> <span class=o>=</span> <span class=nx>getAjaxObject</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=nx>conn</span><span class=p>.</span><span class=nx>onreadystatechange</span> <span class=o>=</span> <span class=kd>function</span> <span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=k>if</span> <span class=p>(</span><span class=nx>xmlhttp</span><span class=p>.</span><span class=nx>readyState</span><span class=o>==</span><span class=mi>4</span> <span class=o>&amp;&amp;</span> <span class=nx>xmlhttp</span><span class=p>.</span><span class=nx>status</span><span class=o>==</span><span class=mi>200</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>          <span class=p>{</span>
+</span></span><span class=line><span class=cl>             <span class=nb>document</span><span class=p>.</span><span class=nx>getElementById</span><span class=p>(</span><span class=s2>&#34;lugar&#34;</span><span class=p>).</span><span class=nx>innerHTML</span> <span class=o>=</span> <span class=nx>conn</span><span class=p>.</span><span class=nx>responseText</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>          <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>};</span>
+</span></span><span class=line><span class=cl>        <span class=nx>conn</span><span class=p>.</span><span class=nx>open</span><span class=p>(</span><span class=s2>&#34;GET&#34;</span><span class=p>,</span> <span class=nx>address</span><span class=p>,</span> <span class=kc>true</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=nx>conn</span><span class=p>.</span><span class=nx>send</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>      <span class=p>};</span>
+</span></span></code></pre></td></tr></table></div></div><p>No os olvidéis de cambiar el tercer parámetro del open, que ahora vale <code>true</code>.</p><p>En este caso, la función se ejecutará cuando el objeto ya se haya obtenido. En nuestro caso, que es una tontería, da igual asíncrono que síncrono, pero si hay que acceder a BBDD entre medias, la diferencia puede ser crucial.</p><p>Enlaces:</p><p>La propia W3C proporciona un montón de ejemplos de Ajax, así como un buen tutorial.</p><p>A disfrutar!!!</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span>Actualizado el 28 Jan 2021</span></div></div><div class=post-info-line><div class=post-info-md></div><div class=post-info-share><span><a href=javascript:void(0); title="Compartir en Twitter" data-sharer=twitter data-url=/blog/ajax-principios-basicos/ data-title="Ajax, principios básicos" data-via=magmax_en data-hashtags=javascript,ajax><i class="fab fa-twitter fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Compartir en Facebook" data-sharer=facebook data-url=/blog/ajax-principios-basicos/ data-hashtag=javascript><i class="fab fa-facebook-square fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Compartir en Linkedin" data-sharer=linkedin data-url=/blog/ajax-principios-basicos/><i class="fab fa-linkedin fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Compartir en WhatsApp" data-sharer=whatsapp data-url=/blog/ajax-principios-basicos/ data-title="Ajax, principios básicos" data-web><i class="fab fa-whatsapp fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Compartir en Tumblr" data-sharer=tumblr data-url=/blog/ajax-principios-basicos/ data-title="Ajax, principios básicos" data-tags=javascript,ajax><i class="fab fa-tumblr fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Compartir en Reddit" data-sharer=reddit data-url=/blog/ajax-principios-basicos/><i class="fab fa-reddit fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Compartir en Instapaper" data-sharer=instapaper data-url=/blog/ajax-principios-basicos/ data-title="Ajax, principios básicos" data-description><i data-svg-src=https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/instapaper.svg aria-hidden=true></i></a><a href=javascript:void(0); title="Compartir en 微博" data-sharer=weibo data-url=/blog/ajax-principios-basicos/ data-title="Ajax, principios básicos"><i class="fab fa-weibo fa-fw" aria-hidden=true></i></a><a href=javascript:void(0); title="Compartir en Blogger" data-sharer=blogger data-url=/blog/ajax-principios-basicos/ data-title="Ajax, principios básicos" data-description><i class="fab fa-blogger fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fas fa-tags fa-fw" aria-hidden=true></i>&nbsp;<a href=/tags/javascript/>Javascript</a>,&nbsp;<a href=/tags/ajax/>Ajax</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Regresar</a></span>&nbsp;|&nbsp;<span><a href=/>Inicio</a></span></section></div><div class=post-nav><a href=/blog/django-tests/ class=prev rel=prev title="Django: Test del modelo y Fixtures"><i class="fas fa-angle-left fa-fw" aria-hidden=true></i>Django: Test del modelo y Fixtures</a>
+<a href=/blog/tarta-queso/ class=next rel=next title="Cocina: Tarta de queso">Cocina: Tarta de queso<i class="fas fa-angle-right fa-fw" aria-hidden=true></i></a></div></div><div id=comments><div id=disqus_thread class=comment></div><noscript>Please enable JavaScript to view the comments powered by <a href=https://disqus.com/?ref_noscript>Disqus</a>.</noscript></div></article></div></main><footer class=footer><div class=footer-container><div class=footer-line>Con la tecnología de <a href=https://gohugo.io/ target=_blank rel="noopener noreffer" title="Hugo 0.135.0">Hugo</a> | Tema - <a href=https://github.com/dillonzq/LoveIt target=_blank rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden=true></i> LoveIt</a></div><div class=footer-line itemscope itemtype=http://schema.org/CreativeWork><i class="far fa-copyright fa-fw" aria-hidden=true></i><span itemprop=copyrightYear>2022 - 2024</span><span class=author itemprop=copyrightHolder>&nbsp;<a href=/ target=_blank>Miguel Ángel</a></span></div></div></footer></div><div id=fixed-buttons><a href=# id=back-to-top class=fixed-button title="Volver arriba"><i class="fas fa-arrow-up fa-fw" aria-hidden=true></i>
+</a><a href=# id=view-comments class=fixed-button title="Ver comentarios"><i class="fas fa-comment fa-fw" aria-hidden=true></i></a></div><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css><script type=text/javascript src=https://magmax.disqus.com/embed.js defer></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/copy-tex.min.js></script><script type=text/javascript src=https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/mhchem.min.js></script><script type=text/javascript>window.config={code:{copyTitle:"Copiar al portapapeles",maxShownLines:50},comment:{},math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1}}</script><script type=text/javascript src=/js/theme.min.js></script><script type=text/javascript>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date),gtag("config","G-X5FEBMGR06",{anonymize_ip:!0})</script><script type=text/javascript src="https://www.googletagmanager.com/gtag/js?id=G-X5FEBMGR06" async></script></body></html>
